@@ -1,0 +1,646 @@
+ethic_categories = {
+	soc = {}
+
+	foc = {}
+}
+
+ethic_fanatic_socialism = {
+	cost = 2
+	category = "soc"
+	category_value = 0
+
+	use_for_pops = no
+
+	regular_variant = ethic_socialism
+
+	country_modifier = {
+		planet_jobs_worker_produces_mult = 0.2
+		pop_housing_usage_mult = -0.2
+		planet_pops_consumer_goods_upkeep_mult = -0.3
+		trade_value_mult = -0.2
+		planet_pops_organics_food_upkeep_mult = 0.15
+		planet_pops_organics_minerals_upkeep_mult = 0.15
+	}
+
+	tags = {
+		ETHIC_SOCIALISM_UNITY
+		EGALITARIAN_ETHIC_ALLOWS_UTOPIA
+		PROHIBITS_DECENT
+	}
+
+	random_weight = {
+		base = 150
+	}
+}
+
+ethic_socialism = {
+	cost = 1
+	category = "soc"
+	category_value = 1
+
+	fanatic_variant = ethic_fanatic_socialism
+
+	country_modifier = {
+		planet_jobs_worker_produces_mult = 0.1
+		pop_housing_usage_mult = -0.1
+		planet_pops_consumer_goods_upkeep_mult = -0.15
+		trade_value_mult = -0.1
+	}
+
+	tags = {
+		ETHIC_SOCIALISM_UNITY
+		EGALITARIAN_ETHIC_ALLOWS_SHARED_BURDEN
+	}
+
+	random_weight = {
+		base = 100
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SOCIALISM_POS
+		trigger = {
+			OR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_FACTION_POS
+		trigger = {
+			NOR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+			OR = {
+				leader_of_faction = socialists 
+				leader_of_faction = pioneer 
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_RULER_FACTION_POS
+		trigger = {
+			exists = ruler
+			ruler = {
+				OR = {
+					leader_of_faction = socialists 
+					leader_of_faction = pioneer 
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_RULER_TRAIT_FERTILITY_POS
+		trigger = {
+			exists = ruler
+			ruler = { has_trait = "trait_ruler_fertility_preacher" }
+		}
+	}
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CONSUMER_GOODS_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+	}
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SLOW_LEARN_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_slow_learners"
+				}
+			}
+		}
+	}
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SOCIOLOGIST_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_natural_sociologists"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_COMMUNAL_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_communal"
+				}
+			}
+		}
+	}
+
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_WASTEFUL_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_thrifty"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SOLITARY_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_solitary"
+				}
+			}
+		}
+	}
+
+
+
+
+	country_attraction = {
+		base = 1
+		modifier = {
+			factor = 0
+			NOR = {
+				is_country_type = default
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+				AND = {
+					is_country_type = primitive
+					capital_scope = {
+						has_observation_outpost = yes
+						observation_outpost = {
+							has_mission = native_indoctrination
+						}
+						observation_outpost_owner = {
+							OR = {
+								has_ethic = ethic_fanatic_socialism
+								has_ethic = ethic_socialism
+							}
+						}
+					}
+				}
+			}
+		}
+		# Effects of indoctrination mission
+		modifier = {
+			factor = 10
+			is_country_type = primitive
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost = {
+					has_mission = native_indoctrination
+				}
+				observation_outpost_owner = { has_ethic = ethic_fanatic_socialism }
+			}
+		}
+		modifier = {
+			factor = 5
+			is_country_type = primitive
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost = {
+					has_mission = native_indoctrination
+				}
+				observation_outpost_owner = { has_ethic = ethic_socialism }
+			}
+		}
+		modifier = {
+			factor = 2
+			NOR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+			has_faction = socialists
+		}
+		modifier = {
+			factor = 1.5
+			exists = ruler
+			ruler = { leader_of_faction = socialists }
+		}
+		modifier = {
+			factor = 1.5
+			is_country_type = default
+			exists = ruler
+			ruler = { or = { has_trait = trait_ruler_fertility_preacher } }
+		}
+		modifier = {
+			factor = 2
+			has_ethic = ethic_socialism
+		}
+		modifier = {
+			factor = 3
+			has_ethic = ethic_fanatic_socialism
+		}
+
+	}
+
+	# from = planet
+	pop_attraction = {
+		base = 1
+
+		modifier = {
+			factor = 0
+			has_trait = trait_hive_mind
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = "trait_natural_sociologists"
+		}
+		modifier = {
+			factor = 2
+			has_trait = "trait_communal"
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = "trait_thrifty"
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = "trait_solitary"
+		}
+
+		modifier = {
+			factor = 1.5
+			has_trait = "trait_slow_learners"
+		}
+
+
+
+		modifier = {
+			factor = 1.25
+			OR = {
+			    has_living_standard = { type = living_standard_shared_burden }
+				has_living_standard = { type = living_standard_utopian }
+				has_living_standard = { type = living_standard_good }
+			}
+		}
+
+	}
+}
+
+ethic_fanatic_capitalism = {
+	cost = 2
+	category = "soc"
+	category_value = 4
+
+	category_opposite = yes
+
+	regular_variant = ethic_capitalism
+
+	use_for_pops = no
+
+	tags = {
+		ETHIC_CAPITALISM_UNITY
+		ELITIST_ETHIC_ALLOWS_STRATIFIED
+		PROHIBITS_WELFARE
+		NO_CAMPAIGNS
+		REDUCED_TRADE_OUTPUT_PENALTY_PLUS
+	}
+
+	country_modifier = {
+		planet_pops_organics_food_upkeep_mult = -0.2
+		planet_pops_organics_minerals_upkeep_mult = -0.2
+		country_trade_fee = -0.07
+		trade_value_mult = 0.2
+		planet_pops_consumer_goods_upkeep_mult = 0.3
+		planet_crime_mult = 0.2
+	}
+
+	random_weight = {
+		base = 150
+	}
+}
+
+ethic_capitalism = {
+	cost = 1
+	category = "soc"
+	category_value = 3
+
+	fanatic_variant = ethic_fanatic_capitalism
+
+	category_opposite = yes
+
+	tags = {
+		ETHIC_CAPITALISM_UNITY
+		REDUCED_TRADE_OUTPUT_PENALTY
+	}
+
+	country_modifier = {
+		planet_pops_organics_food_upkeep_mult = -0.1
+		planet_pops_organics_minerals_upkeep_mult = -0.1
+		country_trade_fee = -0.03
+		trade_value_mult = 0.1
+		planet_pops_consumer_goods_upkeep_mult = 0.15
+	}
+
+	random_weight = {
+		base = 100
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CAPITALISM_POS
+		trigger = {
+			OR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_capitalism
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_FACTION_POS
+		trigger = {
+			NOR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_capitalism
+			}
+			OR = {
+				leader_of_faction = industrialist 
+				leader_of_faction = bankers 
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_RULER_FACTION_POS
+		trigger = {
+			exists = ruler
+			ruler = {
+				OR = {
+					leader_of_faction = industrialist 
+					leader_of_faction = bankers 
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_RULER_TRAIT_INVESTOR_POS
+		trigger = {
+			exists = ruler
+			ruler = { has_trait = "trait_ruler_investor" }
+		}
+	}
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_TALENTED_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_talented"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_QUICK_LEARN_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_quick_learners"
+				}
+			}
+		}
+	}
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CONSUMER_GOODS_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_THRIFTY_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_thrifty"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CHARISMA_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_charismatic"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_WASTEFUL_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_wasteful"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SOLITARY_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_solitary"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CONSERVATIONAL_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_conservational"
+				}
+			}
+		}
+	}
+
+
+
+	country_attraction = {
+		base = 1
+		modifier = {
+			factor = 0
+			NOR = {
+				is_country_type = default
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_capitalism
+				AND = {
+					is_country_type = primitive
+					capital_scope = {
+						has_observation_outpost = yes
+						observation_outpost = {
+							has_mission = native_indoctrination
+						}
+						observation_outpost_owner = {
+							OR = {
+								has_ethic = ethic_fanatic_capitalism
+								has_ethic = ethic_capitalism
+							}
+						}
+					}
+				}
+			}
+		}
+		# Effects of indoctrination mission
+		modifier = {
+			factor = 10
+			is_country_type = primitive
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost = {
+					has_mission = native_indoctrination
+				}
+				observation_outpost_owner = { has_ethic = ethic_fanatic_capitalism }
+			}
+		}
+		modifier = {
+			factor = 5
+			is_country_type = primitive
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost = {
+					has_mission = native_indoctrination
+				}
+				observation_outpost_owner = { has_ethic = ethic_capitalism }
+			}
+		}
+		modifier = {
+			factor = 2
+			NOR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_capitalism
+			}
+			has_faction = bankers
+		}
+		modifier = {
+			factor = 1.5
+			exists = ruler
+			ruler = { leader_of_faction = bankers }
+		}
+		modifier = {
+			factor = 1.5
+			is_country_type = default
+			exists = ruler
+			ruler = { or = { has_trait = trait_ruler_investor } }
+		}
+		modifier = {
+			factor = 2
+			has_ethic = ethic_capitalism
+		}
+		modifier = {
+			factor = 3
+			has_ethic = ethic_fanatic_capitalism
+		}
+
+	}
+
+	# from = planet
+	pop_attraction = {
+		base = 1
+
+		modifier = {
+			factor = 0
+			has_trait = trait_hive_mind
+		}
+		modifier = {
+			factor = 1.7
+			has_trait = "trait_thrifty"
+		}
+		modifier = {
+			factor = 1.2
+			has_trait = "trait_charismatic"
+		}
+		modifier = {
+			factor = 1.3
+			has_trait = "trait_solitary"
+		}
+		modifier = {
+			factor = 0.75
+			has_trait = "trait_conservational"
+		}
+		modifier = {
+			factor = 1.2
+			has_trait = "trait_wasteful"
+		}
+
+		modifier = {
+			factor = 1.5
+			has_trait = "trait_talented"
+		}
+
+		modifier = {
+			factor = 1.25
+			or = {
+			has_trait = trait_quick_learners
+			}
+		}
+
+		modifier = {
+			factor = 0.5
+			OR = {
+				has_living_standard = { type = living_standard_utopian }
+				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_shared_burden }
+			}
+		}
+
+	}
+}
+
+ethic_focused = {
+	cost = 2
+	category = "foc"
+	category_value = 0
+	use_for_pops = no
+	random_weight = {
+		value = 0
+	}
+}

@@ -1,0 +1,779 @@
+namespace = distar
+
+#蜥蜴
+country_event = {
+	id = distar.2038
+	title = "distar.2038.name"
+	desc = "distar.2038.desc"
+	picture = GFX_evt_metropolis
+	show_sound = event_mystic_reveal
+	location = event_target:time_loop_world
+
+	is_triggered_only = yes
+
+	trigger = {
+		event_target:time_loop_world = {
+			solar_system = {
+				NOT = { exists = space_owner }
+			}
+		}
+	}
+
+	immediate = {
+		event_target:time_loop_world = {
+			change_pc = pc_desert
+			set_name = "NAME_Gish"
+			clear_planet_modifiers = yes
+			create_species = {
+				name = "NAME_Prikki"
+				plural = "NAME_Prikki"
+				class = REP
+				portrait = rep16
+				namelist = REP4
+				traits = {
+					ideal_planet_class = pc_desert
+					trait = trait_industrious
+					trait = trait_solitary
+					trait = trait_decadent
+				}
+				homeworld = this
+			}
+			create_country = {
+				name = "NAME_Prikkiki-Ti"
+				authority = random
+				civics = {
+					civic = civic_fanatic_purifiers
+					civic = civic_cutthroat_politics
+				}
+				species = last_created_species
+				ethos = {
+					ethic = ethic_fanatic_militarist
+					ethic = ethic_fanatic_xenophobe
+					ethic = ethic_spiritualist
+				}
+				flag = {
+					icon = {
+						category = "domination"
+						file = "domination_1.dds"
+					}
+					background= {
+						category = backgrounds
+						file = "v.dds"
+					}
+					colors = {
+						"teal"
+						"orange"
+						"null"
+						"null"
+					}
+				}
+				type = default
+				exclude_day_zero_contact = root #will not establish contact with this country or its federation allies
+				effect = {
+					establish_communications_no_message = root
+					save_global_event_target_as = time_loop_country
+					species = {
+						save_global_event_target_as = time_loop_species
+					}
+					root = {
+						every_federation_ally = {
+							establish_communications = event_target:time_loop_country
+						}
+					}
+					##Copy technology
+					IF = {
+						LIMIT = {
+							any_neighbor_country = {
+								exists = this
+								is_country_type = default
+							}
+						}
+						random_neighbor_country = {
+							limit = { is_country_type = default }
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					ELSE_IF = {
+						LIMIT = {
+							any_country = {
+								is_ai = no
+							}
+						}
+						random_country = {
+							limit = { is_ai = no }
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					ELSE = {
+						random_country = {
+							limit = { is_country_type = default	}
+							save_event_target_as = tech_country
+						}
+						copy_techs_from = {
+							target = event_target:tech_country
+							except = {
+								# Horizon Signal
+								tech_akx_worm_1
+								tech_akx_worm_2
+								tech_akx_worm_3
+							}
+						}
+					}
+					##Add some new technologies
+					inverted_switch = {
+						trigger = has_technology
+						tech_starbase_2 = { give_technology = { tech = tech_starbase_2 } }
+						tech_starbase_3 = { give_technology = { tech = tech_starbase_3 } }
+						tech_starbase_4 = { give_technology = { tech = tech_starbase_4 } }
+						tech_starbase_5 = { give_technology = { tech = tech_starbase_5 } }
+						tech_power_plant_4 = { give_technology = { tech = tech_power_plant_4 } }
+						tech_mining_3 = { give_technology = { tech = tech_mining_3 } }
+						tech_power_hub_1 = { give_technology = { tech = tech_power_hub_1 } }
+					}
+
+					##Add resources
+					add_resource = { minerals = 10000 }
+					add_resource = { energy = 10000 }
+					add_resource = { food = 3000 }
+					add_resource = { consumer_goods = 3000 }
+					add_resource = { alloys = 7000 }
+					add_resource = { influence = 1000 }
+					add_resource = { unity = 27000 }
+
+					##Create fleets
+					if = {
+						limit = {
+							has_technology = tech_destroyers
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 8
+									create_ship = {
+										name = random
+										random_existing_design = destroyer
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_technology = tech_cruisers
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 6
+									create_ship = {
+										name = random
+										random_existing_design = cruiser
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_technology = tech_battleships
+						}
+						create_fleet = {
+							effect = {
+								set_owner = event_target:time_loop_country
+								while = {
+									count = 2
+									create_ship = {
+										name = random
+										random_existing_design = battleship
+										graphical_culture = "reptilian_01"
+									}
+								}
+								set_location = {
+									target = event_target:time_loop_world
+									distance = 10
+									angle = random
+								}
+							}
+						}
+					}
+					create_fleet = {
+						effect = {
+							set_owner = event_target:time_loop_country
+							while = {
+								count = 10
+								create_ship = {
+									name = random
+									random_existing_design = corvette
+									graphical_culture = "reptilian_01"
+								}
+							}
+						}
+					}
+				}
+			}
+
+			set_owner = event_target:time_loop_country
+			set_capital = yes
+			while = {
+				count = 52
+				create_pop = {
+					species = event_target:time_loop_species
+				}
+			}
+
+			while = {
+				count = 3
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_city
+				}
+			}
+			while = {
+				count = 5
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_industrial
+				}
+			}
+			while = {
+				count = 4
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_farming
+				}
+			}
+			while = {
+				count = 4
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_mining
+				}
+			}
+			while = {
+				count = 6
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_generator
+				}
+			}
+			add_building = building_system_capital
+			add_building = building_research_lab_1
+			add_building = building_foundry_1
+			add_building = building_food_processing_facility
+			add_building = building_energy_grid
+			add_building = building_mineral_purification_plant
+			add_building = building_bureaucratic_1
+			add_building = building_bureaucratic_1
+
+			while = {
+				count = 10
+				create_army = {
+					name = random
+					owner = event_target:time_loop_country
+					species = event_target:time_loop_species
+					type = defense_army
+				}
+			}
+			solar_system = {
+				create_starbase = {
+					size = starbase_citadel
+					module = shipyard
+					owner = event_target:time_loop_country
+				}
+			}
+		}
+	}
+
+	option = {
+		name = distar.2038.a
+	}
+}
+
+
+#鼠人
+country_event = { #Create Full Ratling Empire #Root = Global Event Country
+	id = distar.236
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		NOT = {
+			has_country_flag = spawned_ratling_country
+		}
+		exists = event_target:ratling_pre_space_country
+		any_system = {
+			has_star_flag = ratling_system
+			NOT = { #At least one Ratling system does not have ongoing starbase construction
+				any_fleet_in_system = {
+					is_ship_size = constructor
+					is_constructing = starbase
+				}
+			}
+			any_system_planet = {
+				has_planet_flag = ratling_planet
+				exists = owner
+				owner = {
+					is_same_value = event_target:ratling_pre_space_country
+				}
+				NOR = {
+					has_orbital_bombardment = yes
+					has_ground_combat = yes
+					is_planet_class = "pc_broken"
+				}
+			}
+		}
+	}
+
+	immediate = {
+		every_country = {
+			limit = { has_country_flag = discovered_ratlings }
+			country_event = { id = distar.237 days = 1 }
+		}
+		#Create the proper country
+		create_country = {
+			name = "NAME_Ketling_Multitude"
+			ethos = {
+			    ethic = ethic_fanatic_xenophile
+				ethic = ethic_materialist
+				ethic = ethic_egalitarian
+				ethic = ethic_pacifist
+			}
+			authority = auth_oligarchic
+			civics = {
+				civic = civic_star_settlers
+				civic = civic_exploration
+			}
+			origin = origin_star_pack
+			flag = {
+				icon = {
+					category = "zoological"
+					file = "flag_zoological_12.dds"
+				}
+				background = {
+					category = "backgrounds"
+					file = "00_solid.dds"
+				}
+				colors = {
+					"light_green"
+					"yellow"
+					"null"
+					"null"
+				}
+			}
+			species = event_target:ratling_species
+			ignore_initial_colony_error = yes
+			type = default
+		}
+		last_created_country = {
+			set_graphical_culture = mammalian_01
+			save_global_event_target_as = ratling_country
+			country_event = {
+				id = ariphaos_patch.9998
+				days = 1
+			}
+			country_event = {
+				id = distar.23600
+				days = 1
+			}
+			country_event = {
+				id = distar.20330
+				days = 1
+			}
+		}
+
+		##Prepare the planets
+		every_system = {
+			limit = {
+				has_star_flag = ratling_system
+				NOT = { exists = owner }
+			}
+			every_system_planet = {
+				limit = {
+					has_planet_flag = ratling_planet
+					exists = owner
+					owner = {
+						is_same_value = event_target:ratling_pre_space_country
+					}
+					NOR = {
+						has_orbital_bombardment = yes
+						has_ground_combat = yes
+						is_planet_class = "pc_broken"
+					}
+				}
+				set_owner = event_target:ratling_country
+				remove_building = building_junkheap
+				clear_blockers = yes
+				remove_all_armies = yes
+				while = {
+					count = 25
+					create_pop = {
+						species = event_target:ratling_species
+					}
+				}
+				while = {
+					count = 4
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_city
+					}
+				}
+				while = {
+					count = 2
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_industrial
+					}
+				}
+				while = {
+					count = 3
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_farming
+					}
+				}
+				while = {
+					count = 3
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_mining
+					}
+				}
+				while = {
+					count = 3
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_generator
+					}
+				}
+				add_building = building_capital
+				add_building = building_research_lab_1
+				add_building = building_foundry_1
+				add_building = building_commercial_zone
+				add_building = building_food_processing_facility
+				add_building = building_energy_grid
+				add_building = building_mineral_purification_plant
+				add_building = building_bureaucratic_1
+			}
+
+			##Build Starbases
+			create_starbase = {
+				size = starbase_starhold
+				owner = event_target:ratling_country
+				module = shipyard
+				building = crew_quarters
+				effect = {
+					set_starbase_module = {
+						slot = 1
+						module = anchorage
+					}
+					set_starbase_module = {
+						slot = 2
+						module = anchorage
+					}
+					set_starbase_module = {
+						slot = 3
+						module = trading_hub
+					}
+				}
+			}
+		}
+
+		##Destroy old country
+		event_target:ratling_pre_space_country = {
+			every_owned_pop = { #In case any pops are left behind
+				kill_pop = yes
+			}
+			destroy_country = yes
+		}
+
+		#So we don't get "orphaned" pops with no job categories in case of non-Ketling system owners
+		every_system = {
+			limit = {
+				has_star_flag = ratling_system
+				OR = {
+					NOT = { exists = owner }
+					AND = {
+						exists = owner
+						NOT = {
+							owner = { is_same_empire = event_target:ratling_country }
+						}
+					}
+				}
+			}
+			every_system_planet = {
+				limit = {
+					has_planet_flag = ratling_planet
+					any_owned_pop = {
+						is_same_species = event_target:ratling_species
+						NOT = { exists = owner }
+					}
+				}
+				every_owned_pop = {
+					limit = {
+						is_same_species = event_target:ratling_species
+						NOT = { exists = owner }
+					}
+					kill_pop = yes
+				}
+			}
+		}
+
+		#Create a Capital
+		IF = { #If the old capital belongs to Ratlings, use it
+			limit = {
+				exists = event_target:ratling_capital
+				event_target:ratling_capital = {
+					exists = owner
+					owner = {
+						is_same_value = event_target:ratling_country
+					}
+				}
+			}
+			event_target:ratling_capital = {
+				set_capital = yes
+			}
+		}
+		ELSE = { #Otherwise, make a new Capital
+			random_system = {
+				limit = { has_star_flag = ratling_system }
+				random_system_planet = {
+					limit = {
+						has_planet_flag = ratling_planet
+						exists = owner
+						owner = {
+							is_same_value = event_target:ratling_country
+						}
+						planet_size > 12
+						NOT = { is_planet_class = "pc_broken" }
+					}
+					save_global_event_target_as = ratling_capital
+					set_capital = yes
+				}
+			}
+		}
+
+		event_target:ratling_country = {
+			##Copy technology
+			IF = {
+				LIMIT = {
+					any_neighbor_country = {
+						exists = this
+						is_country_type = default
+						NOT = { has_ascension_perk = ap_enigmatic_engineering }
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						is_country_type = default
+						NOT = { has_ascension_perk = ap_enigmatic_engineering }
+					}
+					save_event_target_as = tech_country
+				}
+				copy_techs_from = {
+					target = event_target:tech_country
+					except = {
+						# Horizon Signal
+						tech_akx_worm_1
+						tech_akx_worm_2
+						tech_akx_worm_3
+					}
+				}
+			}
+			ELSE_IF = {
+				LIMIT = {
+					any_country = {
+						is_country_type = default
+						is_ai = no
+						NOT = { has_ascension_perk = ap_enigmatic_engineering }
+					}
+				}
+				random_country = {
+					limit = {
+						is_country_type = default
+						is_ai = no
+						NOT = { has_ascension_perk = ap_enigmatic_engineering }
+					}
+					save_event_target_as = tech_country
+				}
+				copy_techs_from = {
+					target = event_target:tech_country
+					except = {
+						# Horizon Signal
+						tech_akx_worm_1
+						tech_akx_worm_2
+						tech_akx_worm_3
+					}
+				}
+			}
+			ELSE = {
+				random_country = {
+					limit = {
+						is_country_type = default
+						NOT = { has_ascension_perk = ap_enigmatic_engineering }
+					}
+					save_event_target_as = tech_country
+				}
+				copy_techs_from = {
+					target = event_target:tech_country
+					except = {
+						# Horizon Signal
+						tech_akx_worm_1
+						tech_akx_worm_2
+						tech_akx_worm_3
+					}
+				}
+			}
+			##Add some new technologies
+			inverted_switch = {
+				trigger = has_technology
+				tech_power_plant_4 = { give_technology = { tech = tech_power_plant_4 } }
+				tech_mining_3 = { give_technology = { tech = tech_mining_3 } }
+				tech_starbase_4 = { give_technology = { tech = tech_starbase_4 } }
+				tech_nano_vitality_crops = { give_technology = { tech = tech_nano_vitality_crops } }
+				tech_power_hub_1 = { give_technology = { tech = tech_power_hub_1 } }
+				tech_food_processing_1 = { give_technology = { tech = tech_food_processing_1 } }
+			}
+
+			##Add resources
+			add_resource = {
+				minerals = 7000
+				energy = 7000
+				food = 3000
+				consumer_goods = 3000
+				alloys = 2000
+				influence = 1000
+				unity = 27000
+			}
+
+			event_target:ratling_country = {
+				##Create Mining Stations
+				# Handle with .23600
+				#every_planet_within_border = {
+				#	limit = {
+				#		has_deposit_for = shipclass_mining_station
+				#	}
+				#	create_mining_station = { owner = event_target:ratling_country }
+				#}
+				##Create fleets
+				create_fleet = {
+					effect = {
+						set_owner = event_target:ratling_country
+						while = {
+							count = 5
+							create_ship = {
+								name = random
+								random_existing_design = corvette
+								graphical_culture = "reptilian_01"
+							}
+						}
+						while = {
+							count = 4
+							create_ship = {
+								name = random
+								random_existing_design = destroyer
+								graphical_culture = "reptilian_01"
+							}
+						}
+						while = {
+							count = 2
+							create_ship = {
+								name = random
+								random_existing_design = cruiser
+								graphical_culture = "reptilian_01"
+							}
+						}
+						set_location = {
+							target = event_target:ratling_capital
+							distance = 10
+							angle = random
+						}
+					}
+				}
+				create_fleet = {
+					effect = {
+						set_owner = event_target:ratling_country
+						create_ship = {
+							name = random
+							random_existing_design = constructor
+							graphical_culture = "reptilian_01"
+						}
+						set_location = {
+							target = event_target:ratling_capital
+							distance = 10
+							angle = random
+						}
+					}
+				}
+				create_fleet = {
+					effect = {
+						set_owner = event_target:ratling_country
+						create_ship = {
+							name = random
+							random_existing_design = science
+							graphical_culture = "reptilian_01"
+						}
+						set_location = {
+							target = event_target:ratling_capital
+							distance = 10
+							angle = random
+						}
+					}
+				}
+			}
+
+			##Add leaders
+			while = {
+				count = 4
+				create_leader = {
+					class = scientist
+					species = event_target:ratling_species
+					name = random
+					skill = 3
+				}
+			}
+			while = {
+				count = 1
+				create_leader = {
+					class = admiral
+					species = event_target:ratling_species
+					name = random
+					skill = 3
+				}
+			}
+			create_leader = {
+				class = governor
+				species = event_target:ratling_species
+				name = random
+				skill = 3
+			}
+		}
+
+		set_country_flag = spawned_ratling_country
+	}
+}
+

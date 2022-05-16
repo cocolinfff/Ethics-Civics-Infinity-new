@@ -1,0 +1,679 @@
+namespace = emperor
+
+# Rise of the Galactic Empire
+country_event = {
+	id = emperor.2
+	title = "emperor.2.name"
+	desc = {
+		trigger = { 
+		    is_gestalt = no
+			NOT = { has_policy_flag = nt_galactic_empire_no_change }
+			NOT = { has_civic = civic_shared_burden }
+		}
+		text = "emperor.2.normal.desc"
+	}
+	desc = {
+		trigger = { 
+		    is_gestalt = no
+			OR = {
+			    has_policy_flag = nt_galactic_empire_no_change
+			    is_egalitarian = yes
+			}
+			NOT = { has_civic = civic_shared_burden }
+		}
+		text = "emperor.2.nochange.desc"
+	}
+	desc = {
+		trigger = { has_civic = civic_shared_burden }
+		text = "emperor.2.communism.desc"
+	}
+	desc = {
+		trigger = { is_machine_empire = yes }
+		text = "emperor.2.machine.desc"
+	}
+	desc = {
+		trigger = { is_hive_empire = yes }
+		text = "emperor.2.hive.desc"
+	}
+	picture = GFX_evt_coronation
+	show_sound = event_coronation
+
+	is_triggered_only = yes
+
+	immediate = {
+		remove_modifier = gal_custodian
+		if = {
+			limit = { has_federation = yes }
+			leave_alliance = { override_requirements = yes }
+		}
+		set_galactic_emperor = yes
+		if = {
+			limit = { has_country_flag = united_front_active }
+			pass_resolution_no_cooldown = resolution_emperor_united_front
+			remove_country_flag = united_front_active
+		}
+		if = {
+			limit = { has_country_flag = custodian_ina_active }
+			pass_resolution_no_cooldown = resolution_emperor_ina
+			remove_country_flag = custodian_ina_active
+		}
+		if = {
+			limit = { has_country_flag = custodian_gto_active }
+			pass_resolution_no_cooldown = resolution_emperor_gto
+			remove_country_flag = custodian_gto_active
+		}
+
+		################################### 改过的议案
+		if = {
+			limit = { has_country_flag = custodian_galactic_standard_active }
+			pass_resolution_no_cooldown = resolution_emperor_galactic_standard
+			remove_country_flag = custodian_galactic_standard_active
+		}
+		if = {
+			limit = { has_country_flag = custodian_galactic_mobilization_active }
+			pass_resolution_no_cooldown = resolution_emperor_galactic_mobilization
+			remove_country_flag = custodian_galactic_mobilization_active
+		}
+		if = {
+			limit = { has_country_flag = custodian_webway_project }
+			pass_resolution_no_cooldown = resolution_emperor_webway_project
+			remove_country_flag = custodian_webway_project
+		}
+		###################################
+
+		################################### 帝国税议案
+		pass_resolution_no_cooldown = resolution_emperor_food_1
+		pass_resolution_no_cooldown = resolution_emperor_minerals_1
+		pass_resolution_no_cooldown = resolution_emperor_energy_1
+		pass_resolution_no_cooldown = resolution_emperor_consumer_goods_1
+		pass_resolution_no_cooldown = resolution_emperor_alloys_1
+		###################################
+
+		random_country = {
+			limit = { is_country_type = global_event }
+			change_variable = {
+				which = galactic_empires
+				value = 1
+			}
+		}
+		store_galactic_community_leader_backup_data = {
+			flag = yes
+			name = yes
+			ethics = yes
+			government = yes
+		}
+		if = {
+			limit = {
+				has_civic = civic_vilified
+			}
+			country_event = { id = future_society.2 }
+		}
+		if = {
+			limit = {
+				has_policy_flag = nt_galactic_empire_no_change
+				is_gestalt = no
+				is_megacorp = no
+				NOR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				}
+			}
+			change_government = {
+				cooldown = no
+			}
+			force_add_civic = civic_galactic_sovereign
+		}
+		else_if = {
+			limit = {
+			    OR = {
+			        is_egalitarian = yes
+					is_megacorp = no
+				    has_civic = civic_socialistic
+				}
+				NOR = {
+				    has_civic = civic_shared_burden
+				}
+			}
+			change_government = {
+				cooldown = no
+			}
+			force_add_civic = civic_galactic_sovereign
+		}
+		else_if = {
+			limit = {
+			    has_civic = civic_shared_burden
+			}
+			change_government = {
+				cooldown = no
+			}
+			force_add_civic = civic_galactic_sovereign_people
+		}
+		else_if = {
+			limit = {
+				is_gestalt = no
+				is_megacorp = no
+			    is_egalitarian = no
+				NOR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				}
+			}
+			shift_ethic = "ethic_fanatic_authoritarian"
+			change_government = {
+				authority = auth_imperial
+				cooldown = no
+				remove_invalid_civics = yes
+			}
+			force_add_civic = civic_galactic_sovereign
+		}
+		else_if = {
+			limit = { is_gestalt = yes }
+			force_add_civic = civic_galactic_sovereign
+		}
+		else_if = {
+			limit = {
+				has_policy_flag = nt_galactic_empire_no_change
+				is_megacorp = yes
+			}
+			force_add_civic = civic_galactic_sovereign_megacorp
+			change_government = {
+				cooldown = no
+			}
+		}
+		else_if = {
+			limit = {
+				#has_policy_flag = nt_galactic_empire_change
+				is_megacorp = yes
+			}
+			shift_ethic = "ethic_fanatic_authoritarian"
+			force_add_civic = civic_galactic_sovereign_megacorp
+			change_government = {
+				authority = auth_imperial
+				cooldown = no
+				remove_invalid_civics = yes
+			}
+		}
+
+		set_government_cooldown = no
+		set_name = random
+		room_name_override = ""
+
+		if = {
+			limit = { has_policy_flag = nt_galactic_empire_no_change_flag }
+		}
+		else_if = {
+			change_country_flag = {
+				icon = {
+					category = "special"
+					file = "the_empire.dds"
+				}
+				background= {
+					category = "backgrounds"
+					file = "00_solid.dds"
+				}
+				colors={
+					"red"
+					"red"
+					"null"
+					"null"
+				}
+			}
+		}
+		every_playable_country = {
+			limit = {
+				NOT = { is_same_value = root }
+			}
+			country_event = { id = emperor.3 }
+		}
+		pass_resolution_no_cooldown = resolution_emperor_by_election
+	}
+
+	option = {
+		name = emperor.2.a
+		add_resource = {
+			influence = 250
+		}
+		if = {
+			limit = {
+				is_gestalt = yes
+			}
+			custom_tooltip = emperor.2.a.tooltip.gestalt
+		}
+		else_if = {
+			limit = {
+				is_megacorp = yes
+			}
+			custom_tooltip = emperor.2.a.tooltip.megacorp
+		}
+		else_if = {
+			limit = {
+			    OR = {
+			        has_policy_flag = nt_galactic_empire_no_change
+			        is_egalitarian = yes
+					has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				}
+			}
+			custom_tooltip = emperor.2.a.tooltip.nochange
+		}
+		else = {
+			custom_tooltip = emperor.2.a.tooltip
+		}
+	}
+}
+
+# Rise of the Galactic Empire (Others)
+country_event = {
+	id = emperor.3
+	title = "emperor.2.name"
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    is_gestalt = no 
+			    NOT = { has_civic = civic_shared_burden }
+			}
+		}
+		text = "emperor.3.normal.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { has_civic = civic_shared_burden }
+		}
+		text = "emperor.3.communism.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { is_machine_empire = yes }
+		}
+		text = "emperor.3.machine.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { is_hive_empire = yes }
+		}
+		text = "emperor.3.hive.desc"
+	}
+	picture = GFX_evt_coronation
+	show_sound = event_coronation
+
+	is_triggered_only = yes
+
+	after = {
+		if = {
+			limit = {
+				is_galactic_community_member = yes
+				is_subject = yes
+				overlord = { is_galactic_community_member = no }
+			}
+			country_event = { id = emperor.10 }
+		}
+		else_if = {
+			limit = { is_galactic_community_member = yes }
+			country_event = { id = emperor.4 }
+		}
+		if = {
+			limit = {
+				is_galactic_community_member = yes
+				has_federation = yes
+			}
+			country_event = { id = emperor.5 days = 5 }
+		}
+	}
+
+	option = {
+		trigger = {
+			is_galactic_community_member = yes
+			NOT = { has_ascension_perk = ap_future_society }
+		}
+		name = emperor.3.a
+		custom_tooltip = emperor.3.a.tooltip
+	}
+	option = {
+		trigger = { is_galactic_community_member = no }
+		name = emperor.3.b
+		custom_tooltip = emperor.3.a.tooltip
+	}
+	option = {
+		trigger = {
+			is_galactic_community_member = yes
+			has_ascension_perk = ap_future_society
+		}
+		name = emperor.3.c
+		custom_tooltip = emperor.3.c.tooltip
+		remove_from_galactic_community = yes
+	}
+}
+
+# Proclamation of Empire
+country_event = {
+	id = emperor.4
+	title = "emperor.4.title"
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    is_gestalt = no 
+			    NOT = { has_civic = civic_shared_burden }
+			}
+		}
+		text = "emperor.4.a.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { is_machine_empire = yes }
+		}
+		text = "emperor.4.b.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { is_hive_empire = yes }
+		}
+		text = "emperor.4.c.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { has_civic = civic_shared_burden }
+		}
+		text = "emperor.4.d.desc"
+	}
+
+	diplomatic = yes
+
+	picture_event_data = {
+		portrait = event_target:gal_emperor
+		planet_background = event_target:gal_emperor
+		graphical_culture = event_target:gal_emperor
+		city_level = event_target:gal_emperor
+		room = event_target:gal_emperor.ruler
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = emperor.4.a
+	}
+}
+
+# Imperial Armada Founded
+country_event = {
+	id = emperor.50
+	title = "emperor.50.name"
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    NOR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				    has_civic = civic_martial_brotherhood
+				}
+			}
+		}
+		text = "emperor.50.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    OR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				    has_civic = civic_martial_brotherhood
+				}
+			}
+		}
+		text = "emperor.50.communism.desc"
+	}
+	picture = GFX_evt_salute
+	show_sound = event_salute
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = gdf_turned_into_armada }
+	}
+
+	immediate = {
+		random_playable_country = {
+			limit = { is_galactic_emperor = yes }
+			save_event_target_as = gal_emperor
+		}
+	}
+
+	option = {
+		name = emperor.50.a
+		trigger = {
+			is_galactic_emperor = yes
+			is_gestalt = no
+		}
+	}
+	option = {
+		name = emperor.50.b
+		trigger = {
+			is_galactic_emperor = yes
+			is_gestalt = yes
+		}
+	}
+	option = {
+		name = emperor.50.c
+		trigger = {
+			is_galactic_emperor = no
+		}
+	}
+}
+
+# GDF Becomes Imperial Armada
+country_event = {
+	id = emperor.52
+	title = "emperor.50.name"
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    NOR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				    has_civic = civic_martial_brotherhood
+				}
+			}
+		}
+		text = "emperor.52.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    OR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				    has_civic = civic_martial_brotherhood
+				}
+			}
+		}
+		text = "emperor.52.communism.desc"
+	}
+	picture = GFX_evt_salute
+	show_sound = event_salute
+
+	is_triggered_only = yes
+
+	immediate = {
+		random_playable_country = {
+			limit = { is_galactic_emperor = yes }
+			save_event_target_as = gal_emperor
+		}
+	}
+
+	option = {
+		name = emperor.50.a
+		trigger = {
+			is_galactic_emperor = yes
+			is_gestalt = no
+		}
+	}
+	option = {
+		name = emperor.50.b
+		trigger = {
+			is_galactic_emperor = yes
+			is_gestalt = yes
+		}
+	}
+	option = {
+		name = emperor.50.c
+		trigger = {
+			is_galactic_emperor = no
+		}
+	}
+}
+
+# Imperial Legions Founded
+country_event = {
+	id = emperor.55
+	title = "emperor.55.name"
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    NOR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				    has_civic = civic_martial_brotherhood
+				}
+			}
+		}
+		text = "emperor.55.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    OR = {
+				    has_civic = civic_shared_burden
+				    has_civic = civic_socialistic
+				    has_civic = civic_martial_brotherhood
+				}
+			}
+		}
+		text = "emperor.55.communism.desc"
+	}
+	picture = GFX_evt_galactic_empire
+	show_sound = event_salute
+
+	is_triggered_only = yes
+
+	immediate = {
+		random_playable_country = {
+			limit = { is_galactic_emperor = yes }
+			save_event_target_as = gal_emperor
+		}
+	}
+
+	option = {
+		name = emperor.55.a
+		trigger = {
+			is_galactic_emperor = yes
+			is_gestalt = no 
+			NOR = {
+			    has_civic = civic_shared_burden
+				has_civic = civic_socialistic
+			    has_civic = civic_martial_brotherhood
+			}
+		}
+	}
+	option = {
+		name = emperor.55.b
+		trigger = {
+			is_galactic_emperor = yes
+			is_gestalt = yes
+		}
+	}
+	option = {
+		name = emperor.55.c
+		trigger = {
+			is_galactic_emperor = no
+			OR = {
+			    is_socialism = no
+			    is_authoritarian = yes
+			}
+		}
+	}
+	option = {
+		name = emperor.55.d
+		trigger = {
+			is_galactic_emperor = yes
+			OR = {
+			    has_civic = civic_shared_burden
+			    has_civic = civic_martial_brotherhood
+			}
+		}
+	}
+	option = {
+		name = emperor.55.e
+		trigger = {
+			is_galactic_emperor = no
+			is_socialism = yes
+			is_authoritarian = no
+		}
+	}
+}
+
+# Imperial Security Directorate Founded
+country_event = {
+	id = emperor.70
+	title = "emperor.70.name"
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    NOR = {
+				    has_ethic = ethic_fanatic_socialism
+				}
+			}
+		}
+		text = "emperor.70.desc"
+	}
+	desc = {
+		trigger = {
+			event_target:gal_emperor = { 
+			    has_ethic = ethic_fanatic_socialism
+			}
+		}
+		text = "emperor.70.communism.desc"
+	}
+	picture = GFX_evt_spymaster
+	show_sound = event_spymaster
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = galpol_turned_into_isd }
+	}
+
+	immediate = {
+		random_playable_country = {
+			limit = { is_galactic_emperor = yes }
+			save_event_target_as = gal_emperor
+		}
+	}
+
+	option = {
+		name = emperor.70.a
+		trigger = { 
+		    is_galactic_emperor = yes
+			NOT = { has_ethic = ethic_fanatic_socialism }
+		}
+	}
+	option = {
+		name = emperor.70.b
+		trigger = { 
+		    is_galactic_emperor = yes
+			has_ethic = ethic_fanatic_socialism
+		}
+	}
+	option = {
+		name = emperor.70.c
+		trigger = { 
+		    is_galactic_emperor = no
+			has_ethic = ethic_fanatic_socialism
+		}
+	}
+	option = {
+		name = DISCONCERTING
+		trigger = { 
+		    is_galactic_emperor = no
+			NOT = { has_ethic = ethic_fanatic_socialism }
+		}
+	}
+}

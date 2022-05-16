@@ -1,0 +1,149 @@
+namespace = ancrel
+
+planet_event = {
+	#Baol Life-Seeding complete
+	id = ancrel.2025
+	title = "ancrel.2025.name"
+	desc = {
+		trigger = {
+			owner = {
+				NOT = {
+					has_country_flag = has_used_baol_lifseeding
+				}
+			}
+		}
+		text = ancrel.2025.desc.first
+	}
+	desc = {
+		trigger = {
+			owner = {
+				has_country_flag = has_used_baol_lifseeding
+			}
+		}
+		text = ancrel.2025.desc
+	}
+	picture = GFX_evt_gaia
+	location = root
+	show_sound = event_mystic_reveal
+	is_triggered_only = yes
+	immediate = {
+		owner = {
+			set_country_flag = has_used_baol_lifseeding
+		}
+	}
+	option = {
+		exclusive_trigger = {
+			owner = {
+				has_valid_civic = civic_machine_terminator
+			}
+		}
+		name = EXTERMINATE
+	}
+	option = {
+		exclusive_trigger = {
+			owner = {
+				has_valid_civic = civic_hive_devouring_swarm
+			}
+		}
+		name = PREY
+	}
+	option = {
+		exclusive_trigger = {
+			owner = {
+				has_valid_civic = civic_fanatic_purifiers
+			}
+		}
+		name = SCUM
+	}
+	option = {
+		trigger = {
+			owner = {
+				OR = {
+					has_ethic = ethic_xenophile
+					has_ethic = ethic_fanatic_xenophile
+					has_valid_civic = civic_machine_servitor
+				}
+			}
+		}
+		name = ancrel.2025.a
+	}
+	option = {
+		trigger = {
+			owner = {
+				allows_purge = yes
+			}
+		}
+		name = ancrel.2025.b
+	}
+	option = {
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_barbaric_despoilers
+					has_valid_civic = civic_triple_the_profit
+					has_ascension_perk = ap_nihilistic_acquisition
+					has_policy_flag = slavery_allowed
+					has_ethic = ethic_gestalt_consciousness
+				}
+			}
+		}
+		name = ancrel.2025.c
+	}
+	option = {
+		name = INCREDIBLE
+	}
+}
+
+# Relic Acquired (HIDDEN)
+country_event = {
+	id = ancrel.6499
+	hide_window = yes
+	is_triggered_only = yes
+	trigger = {
+		From = {
+			is_country_type = default
+			num_owned_relics > 0
+		}
+		FromFrom = {
+			is_capital = yes
+		}
+		any_war = {
+			any_attacker = {
+				is_same_value = root
+			}
+			any_defender = {
+				is_same_value = from
+			}
+			NOT = {
+				using_war_goal = {
+					type = wg_take_galatron
+					owner = attacker
+				}
+			}
+		}
+	}
+	immediate = {
+		FromFrom = {
+			save_event_target_as = planet
+		}
+		From = {
+			save_event_target_as = victim
+		}
+		random_list = {
+			100 = {
+			}
+			10 = {
+				modifier = {
+					factor = 1.5
+					OR = {
+						has_valid_civic = civic_barbaric_despoilers
+						has_valid_civic = civic_triple_the_profit
+					}
+				}
+				country_event = {
+					id = ancrel.6500
+				}
+			}
+		}
+	}
+}

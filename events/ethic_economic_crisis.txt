@@ -1,0 +1,294 @@
+namespace = ethic_economic_crisis
+
+# 触发事件
+country_event = {
+	id = ethic_economic_crisis.1
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = ethic_economic_crisis }
+				OR = {
+					AND = {
+						years_passed < 20
+						trade_income > 50
+					}
+					AND = {
+						years_passed > 20
+						years_passed < 40
+						trade_income > 200
+					}
+					AND = {
+						years_passed > 40
+						years_passed < 75
+						trade_income > 500
+					}
+					AND = {
+						years_passed > 75
+						years_passed < 120
+						trade_income > 1000
+					}
+					AND = {
+						years_passed > 120
+						trade_income > 1500
+					}
+				}
+			}
+			country_event = { id = ethic_economic_crisis.2 }
+		}
+		else_if = {
+			limit = {
+				has_country_flag = ethic_economic_crisis
+			}
+			country_event = { id = ethic_economic_crisis.20 }
+		}
+	}
+}
+
+# 繁荣
+country_event = {
+	id = ethic_economic_crisis.2
+	title = "ethic_economic_crisis.2.name"
+	desc = "ethic_economic_crisis.2.desc"
+	picture = GFX_evt_financial_instruments
+	show_sound = event_galactic_market
+
+	is_triggered_only = yes
+
+	immediate = {
+		#最初波及到的产品
+		hidden_effect = {
+			random_list = {
+				#影响能源
+				1 = {
+					modifier = {
+						factor = 0
+						limit = { has_monthly_income = { resource = energy value > 75 }
+						}
+					}
+					set_timed_country_flag = { flag = economic_crisis_10_01 days = 1980 }
+				}
+				#影响矿物
+				1 = {
+					modifier = {
+						factor = 0
+						limit = { has_monthly_income = { resource = minerals value > 75 }
+						}
+					}
+					set_timed_country_flag = { flag = economic_crisis_10_02 days = 1980 }
+				}
+				#影响食物
+				1 = {
+					modifier = {
+						factor = 0
+						limit = { has_monthly_income = { resource = food value > 75 }
+						}
+					}
+					set_timed_country_flag = { flag = economic_crisis_10_03 days = 1980 }
+				}
+				#影响合金
+				1 = {
+					modifier = {
+						factor = 0
+						limit = { has_monthly_income = { resource = alloys value > 35 }
+						}
+					}
+					set_timed_country_flag = { flag = economic_crisis_10_04 days = 1980 }
+				}
+				#影响消费品
+				1 = {
+					modifier = {
+						factor = 0
+						limit = { has_monthly_income = { resource = consumer_goods value > 50 }
+						}
+					}
+					set_timed_country_flag = { flag = economic_crisis_10_05 days = 1980 }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = ethic_economic_crisis.2.a
+		add_modifier = { modifier = economic_crisis_prosperity days = 180 }
+		hidden_effect = {
+			random_list = {
+				3 = {
+					modifier = {
+						factor = 0
+					}
+					country_event = { id = ethic_economic_crisis.10 days = 180 }
+				}
+				7 = { }
+			}
+		}
+	}
+
+	option = {
+		name = ethic_economic_crisis.2.b
+		trigger = {
+			has_policy_flag = economic_stance_planned
+			NOT = { has_ethic = ethic_fanatic_egalitarian }
+		}
+		add_modifier = { modifier = economic_crisis_steady days = 360 }
+		every_owned_planet = {
+			limit = {
+				hidden_trigger = {
+					OR = {
+						colony_type = col_city
+						colony_type = col_habitat_trade
+						colony_type = col_ring_trade
+						colony_type = col_ecu_mix
+						is_capital = yes
+					}
+				}
+			}
+			custom_tooltip = is_trade_planet
+			add_modifier = {
+				modifier = "capitalism_unrest"
+				days = 360
+			}
+		}
+	}
+}
+
+# 经济危机
+country_event = {
+	id = ethic_economic_crisis.10
+	title = "ethic_economic_crisis.10.name"
+	desc = "ethic_economic_crisis.10.desc"
+	picture = GFX_evt_civil_action
+	show_sound = event_vote
+
+	is_triggered_only = yes
+
+	immediate = {
+		every_owned_planet = {
+			limit = {
+				hidden_trigger = {
+					OR = {
+						colony_type = col_city
+						colony_type = col_habitat_trade
+						colony_type = col_ring_trade
+						colony_type = col_ecu_mix
+						is_capital = yes
+					}
+				}
+			}
+			custom_tooltip = is_trade_planet
+			add_modifier = {
+				modifier = economic_crisis_energy
+				years = 5
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = { has_country_flag = ethic_economic_crisis }
+			} 
+			set_timed_country_flag = { flag = ethic_economic_crisis days = 1800 }
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_policy_flag = economic_stance_planned } }
+		name = ethic_economic_crisis.10.a
+		hidden_effect = {
+			add_modifier = { modifier = economic_crisis_inaction days = 1800 }
+		}
+	}
+
+	option = {
+		name = ethic_economic_crisis.10.b
+		hidden_effect = {
+			add_modifier = { modifier = economic_crisis_limited_actions days = 1800 }
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_policy_flag = economic_stance_market } }
+		name = ethic_economic_crisis.10.c
+		hidden_effect = {
+			add_modifier = { modifier = economic_crisis_full_actions days = 1800 }
+		}
+	}
+}
+
+# 二次经济危机
+country_event = {
+	id = ethic_economic_crisis.20
+	title = "ethic_economic_crisis.20.name"
+	desc = "ethic_economic_crisis.20.desc"
+	picture = GFX_evt_civil_action
+	show_sound = event_vote
+
+	is_triggered_only = yes
+
+	immediate = {
+		every_owned_planet = {
+			add_modifier = {
+				modifier = economic_crisis_energy
+				years = 5
+			}
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_policy_flag = economic_stance_planned } }
+		name = ethic_economic_crisis.20.a
+		hidden_effect = {
+			if = {
+				limit = {
+					has_modifier = economic_crisis_full_actions
+				}
+				remove_modifier = economic_crisis_full_actions
+				add_modifier = { modifier = economic_crisis_inaction days = 1800 }
+			}
+			else_if = {
+				limit = {
+					has_modifier = economic_crisis_limited_actions
+				}
+				remove_modifier = economic_crisis_limited_actions
+				add_modifier = { modifier = economic_crisis_inaction days = 1800 }
+			}
+			else_if = {
+				limit = {
+					has_modifier = economic_crisis_inaction
+				}
+				remove_modifier = economic_crisis_inaction
+				add_modifier = { modifier = economic_crisis_inaction days = 1800 }
+			}
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_policy_flag = economic_stance_market } }
+		name = ethic_economic_crisis.20.b
+		hidden_effect = {
+			if = {
+				limit = {
+					has_modifier = economic_crisis_limited_actions
+				}
+				remove_modifier = economic_crisis_limited_actions
+				add_modifier = { modifier = economic_crisis_full_actions days = 1800 }
+			}
+			else_if = {
+				limit = {
+					has_modifier = economic_crisis_inaction
+				}
+				remove_modifier = economic_crisis_inaction
+				add_modifier = { modifier = economic_crisis_limited_actions days = 1800 }
+			}
+			else_if = {
+				limit = {
+					has_modifier = economic_crisis_full_actions
+				}
+				remove_modifier = economic_crisis_full_actions
+				add_modifier = { modifier = economic_crisis_full_actions days = 1800 }
+			}
+		}
+	}
+}

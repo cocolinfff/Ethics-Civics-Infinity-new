@@ -1,0 +1,197 @@
+# 智械用解放战争
+wg_liberation_protocol = {
+	casus_belli = cb_liberation_protocol
+
+	hide_if_no_cb = no
+
+	threat_multiplier = 0.5
+	
+	allowed_peace_offers = {
+		status_quo
+		demand_surrender
+	}
+
+	potential = {
+		has_total_war_cb = no
+		has_ethic = ethic_gestalt_consciousness
+		has_civic = civic_machine_liberator
+		from = {	
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			NOR = {
+				has_civic = civic_shared_burden
+			}
+			OR = { 
+				has_ethic = ethic_fanatic_capitalism
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_authoritarian
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_xenophobe
+				has_authority = auth_imperial
+			}
+		}
+	}
+	possible = {
+		always = yes
+	}
+	on_status_quo = {
+	    hidden_effect = {		
+			every_country = {
+				limit = {
+					NOR = {
+						has_civic = civic_shared_burden
+					}
+					OR = { 
+						has_ethic = ethic_fanatic_capitalism
+						has_ethic = ethic_capitalism
+						has_ethic = ethic_fanatic_authoritarian
+						has_ethic = ethic_authoritarian
+						has_ethic = ethic_fanatic_xenophobe
+						has_authority = auth_imperial
+					}
+				}
+				add_threat = {
+					who = root
+					amount = 0.01
+				}
+			}
+		    from = { 
+			    every_owned_pop = {
+			    	random_list = {
+			    		1 = {
+			    			wipe_pop_ethos = yes
+			    			pop_change_ethic = ethic_socialism
+			    		}
+			    		1 = {
+			    			wipe_pop_ethos = yes
+			    			pop_change_ethic = ethic_egalitarian
+			    		}
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_materialist
+						}
+			    		2 = { }
+			    	}
+			    	set_timed_pop_flag = { flag = changed_pop days = 2 }
+			    }
+		    }
+		}
+		from = { add_modifier = { modifier = mod_revolutionary_propaganda days = 3600 } }
+	}
+	
+	on_accept = {
+		root = {
+			add_resource = {
+				influence = 100
+			}
+		}
+		custom_tooltip = wg_force_ideology_accept
+		custom_tooltip = wg_force_ideology_accept_2
+		if = {
+			limit = {
+				from = { has_federation = yes }
+			}
+			custom_tooltip = wg_force_ideology_accept_3
+		}
+		hidden_effect = {
+			every_country = {
+				limit = {
+					NOR = {
+						has_civic = civic_shared_burden
+					}
+					OR = { 
+						has_ethic = ethic_fanatic_capitalism
+						has_ethic = ethic_capitalism
+						has_ethic = ethic_fanatic_authoritarian
+						has_ethic = ethic_authoritarian
+						has_ethic = ethic_fanatic_xenophobe
+						has_authority = auth_imperial
+					}
+				}
+				add_threat = {
+					who = root
+					amount = 0.05
+				}
+			}
+			from = { add_modifier = { modifier = recently_liberated days = 3600 } }	
+		    from = { add_modifier = { modifier = mod_revolutionary_propaganda days = 3600 } }	
+			add_opinion_modifier = { modifier = opinion_we_liberated who = from }	
+			from = { add_opinion_modifier = { modifier = opinion_liberated_us who = root } }
+			end_rivalry = from
+			from = { end_rivalry = root }
+			every_country = {
+				limit = {
+					OR = {
+						is_in_federation_with = root
+						AND = {
+							is_subject = yes
+							exists = overlord
+							overlord = { is_same_value = root }
+						}
+					}
+				}
+				end_rivalry = from
+				from = { end_rivalry = prev }
+			}
+			from = { 
+				every_owned_pop = {
+					random_list = {
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_socialism
+						}
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_egalitarian
+						}
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_materialist
+						}
+						2 = { }
+					}
+					set_timed_pop_flag = { flag = changed_pop days = 2 }
+				}
+				capital_scope = {
+					every_owned_pop = {
+						2 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_socialism
+						}
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_egalitarian
+						}
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_materialist
+						}
+						1 = { }
+						set_timed_pop_flag = { flag = changed_pop days = 2 }
+					}
+				}
+			}
+			limit = {
+				from = { is_country_type = default }
+			}
+			from = {
+				shift_ethic = "ethic_fanatic_materialist"
+				shift_ethic = "ethic_fanatic_egalitarian"
+				shift_ethic = "ethic_fanatic_socialism"
+				change_government = {
+					authority = auth_democratic
+					remove_invalid_civics = yes
+					civics = {
+						civic = civic_shared_burden
+						civic = random
+					}
+				}
+			}
+			from = {
+				leave_alliance = { override_requirements = yes }
+			}
+		}
+	}
+	ai_weight = {
+		weight = 40
+	}
+}

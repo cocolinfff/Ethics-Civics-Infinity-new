@@ -1,0 +1,232 @@
+#
+# This file is to store the upkeep / production of objects that are not otherwise scripted
+# right now it ignores the "cost" part of it
+# subjects upkeep/production is not stored here, but in the subject type
+#
+once = {
+	# this is applied only once per country
+	federation = {
+		trigger = {
+			has_federation = yes
+			NOR = {
+				has_valid_civic = civic_peacekeepers
+			}
+		}
+		resources = {
+			category = federation
+			upkeep = {
+				influence = 1
+			}
+		}
+	}
+}
+
+per_relation = {
+	# this is applied for each such relation with another country
+	# scope: this = current country, FROM : other country in the relation
+	rivalry = {
+		trigger = {
+			has_rival = FROM
+		}
+		resources = {
+			category = rivalries
+			produces = {
+				influence = 0.5
+			}
+		}
+	}
+	non_aggression_pact = {
+		trigger = {
+			has_non_aggression_pact = FROM
+			NOR = {
+				has_valid_civic = civic_peacekeepers
+			}
+		}
+		resources = {
+			category = non_aggression_pacts
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	migration_pact = {
+		trigger = {
+			has_diplo_migration_treaty = FROM
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = {
+						has_federation_perk = diplomacy_upkeep_1
+					}
+					federation = {
+						any_member = {
+							is_same_value = FROM
+						}
+					}
+				}
+			}
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = {
+						has_federation_law = free_migration_yes
+					}
+					federation = {
+						any_member = {
+							is_same_value = FROM
+						}
+					}
+				}
+			}
+		}
+		resources = {
+			category = migration_pacts
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	research_agreement = {
+		trigger = {
+			has_research_agreement = FROM
+			NOR = {
+				has_valid_civic = civic_peacekeepers
+			}
+			NOT = {
+				AND = {
+					has_federation = yes
+					federation = {
+						has_federation_perk = diplomacy_upkeep_1
+					}
+					federation = {
+						any_member = {
+							is_same_value = FROM
+						}
+					}
+				}
+			}
+		}
+		resources = {
+			category = research_agreements
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	commercial_pact = {
+		trigger = {
+			has_commercial_pact = FROM
+			NOR = {
+				has_ascension_perk = ap_universal_transactions
+				has_valid_civic = civic_globalism
+			}
+		}
+		resources = {
+			category = commercial_pacts
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	defensive_pact = {
+		trigger = {
+			has_defensive_pact = FROM
+			NOR = {
+				has_valid_civic = civic_xeno_militarist
+				has_valid_civic = civic_liberator
+				has_tradition = tr_isolated_unilateral_diplomacy
+			}
+		}
+		resources = {
+			category = defensive_pacts
+			upkeep = {
+				influence = 1
+			}
+		}
+	}
+	guarantee = {
+		trigger = {
+			is_guaranteeing = FROM
+			NOR = {
+				has_valid_civic = civic_xeno_militarist
+				has_valid_civic = civic_liberator
+			}
+		}
+		resources = {
+			category = guarantees
+			upkeep = {
+				influence = 0.5
+			}
+		}
+	}
+	improving_relations = {
+		trigger = {
+			is_improving_relations_with = FROM
+			OR = {
+				has_policy_flag = diplo_stance_isolationist
+				has_policy_flag = diplo_stance_belligerent
+				has_policy_flag = diplo_stance_supremacist
+			}
+		}
+		resources = {
+			category = envoy_costs
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	harming_relations = {
+		trigger = {
+			is_harming_relations_with = FROM
+			OR = {
+				has_policy_flag = diplo_stance_isolationist
+				has_policy_flag = diplo_stance_cooperative
+			}
+		}
+		resources = {
+			category = envoy_costs
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	diplo_stance_closed_borders = {
+		trigger = {
+			has_policy_flag = diplo_stance_mercantile
+			has_closed_borders = FROM
+			NOT = {
+				has_rival = FROM
+			}
+		}
+		resources = {
+			category = diplo_closed_borders
+			upkeep = {
+				influence = 0.25
+			}
+		}
+	}
+	embassy = {
+		trigger = {
+			has_active_tradition = tr_diplomacy_diplomatic_networking
+			has_embassy = from
+		}
+		resources = {
+			category = diplomatic_networking
+			produces = {
+				unity = 3
+			}
+		}
+	}
+	embassy = {
+		trigger = {
+			has_valid_civic = civic_altruism
+			has_embassy = from
+		}
+		resources = {
+			category = diplomatic_networking
+			produces = {
+				unity = 10
+			}
+		}
+	}
+}

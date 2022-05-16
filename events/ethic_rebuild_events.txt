@@ -1,0 +1,357 @@
+
+namespace = immortal_ruler
+
+country_event = {
+	id = immortal_ruler.1
+	title = "immortal_ruler.1.name"
+	picture = GFX_evt_alien_propaganda
+	show_sound = event_celebration
+	desc = "immortal_ruler.1.desc"
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+	}
+
+	immediate = {
+		FROMFROM = {
+			leader = { save_event_target_as = ruler }
+			solar_system = { save_event_target_as = system }
+			leader = { add_trait = trait_ruler_immortal }
+		}
+		
+		set_country_flag = flag_immortal_ruler
+	}
+
+}
+
+
+
+
+namespace = unity_patrons
+
+country_event = {
+	id = unity_patrons.1
+	hide_window = yes
+	is_triggered_only = yes
+	location = ROOT 
+	
+	trigger = {
+		has_valid_civic = civic_peacekeepers
+	}	
+
+	immediate = { 
+	
+		add_modifier = {
+			modifier = "unity_patrons"
+			days = 3650
+		}
+	
+	}
+	
+}
+
+
+namespace = glorious_fleet
+
+# This = owner of fleet 1 (combatant)
+# From = owner of fleet 2 (destroyed)
+# FromFrom = fleet 1
+# FromFromFrom = fleet 2
+
+country_event = {
+	id = glorious_fleet.0
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_valid_civic = civic_naval_traditions
+		not = { has_country_flag = glorious_fleet }
+		not = { has_country_flag = unglorious_fleet }
+	}	
+
+	immediate = { 	
+		add_modifier = {
+			modifier = "glorious_fleet"
+			days = 30
+		}
+		set_timed_country_flag = {
+			flag = glorious_fleet
+			days = 30 
+		}		
+	}
+	
+}
+
+
+# This = owner of fleet 1 (destroyed)
+# From = owner of fleet 2 (combatant)
+# FromFrom = fleet 1
+# FromFromFrom = fleet 2
+
+country_event = {
+	id = glorious_fleet.1
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_valid_civic = civic_naval_traditions
+		not = { has_country_flag = glorious_fleet }
+		not = { has_country_flag = unglorious_fleet }
+	}	
+
+	immediate = { 	
+		add_modifier = {
+			modifier = "unglorious_fleet"
+			days = 30
+		}
+		set_timed_country_flag = {
+			flag = unglorious_fleet
+			days = 30 
+		}		
+	}
+	
+}
+
+
+
+namespace = voice_planet
+
+planet_event = {
+	id = voice_planet.1	
+	hide_window = yes
+	is_triggered_only = yes
+	location = ROOT 
+
+	immediate = {
+			
+			if = {
+				limit = {
+					has_modifier = "dangerous_wildlife"
+				}
+				remove_modifier = "dangerous_wildlife"
+			}				
+					
+			if = {
+				limit = {
+					has_modifier = "bleak_planet"
+				}
+				remove_modifier = "bleak_planet"
+			}	
+			
+			if = {
+				limit = {
+					has_modifier = "hazardous_weather"
+				}
+				remove_modifier = "hazardous_weather"
+			}	
+
+			if = {
+				limit = {
+					has_modifier = "wild_storms"
+				}
+				remove_modifier = "wild_storms"
+			}			
+	
+	}
+	
+}
+
+
+
+planet_event = {
+	id = voice_planet.2	
+	hide_window = yes
+	is_triggered_only = yes
+	location = ROOT 
+
+	immediate = {		
+					
+	
+
+
+			if = {
+				limit = {
+					has_modifier = "unstable_tectonics"
+				}
+				remove_modifier = "unstable_tectonics"
+			}
+
+			if = {
+				limit = {
+					has_modifier = "weak_magnetic_field"
+				}
+				remove_modifier = "weak_magnetic_field"
+			}
+
+			if = {
+				limit = {
+					has_modifier = "tidal_locked"
+				}
+				remove_modifier = "tidal_locked"
+			}
+
+
+
+			if = {
+				limit = {
+					has_modifier = "irradiated_planet"
+				}
+				remove_modifier = "irradiated_planet"
+			}
+			
+
+
+			if = {
+				limit = {
+					has_modifier = "damaged_ecology"
+				}
+				remove_modifier = "damaged_ecology"
+			}			
+
+			if = {
+				limit = {
+					has_modifier = "wasteland_radiation"
+				}
+				remove_modifier = "wasteland_radiation"
+			}
+			
+				
+			if = {
+				limit = {
+					has_modifier = "abandoned_terraforming"
+				}
+				remove_modifier = "abandoned_terraforming"
+			}	
+
+		
+	
+	}
+	
+}
+
+
+
+
+
+
+namespace = observation
+
+# Societal Shift towards Individualist
+country_event = {
+	id = observation.0001
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = primitive
+		NOT = { has_ethic = ethic_fanatic_capitalism }
+		capital_scope = {
+			has_observation_outpost = yes
+			observation_outpost = { has_mission = native_indoctrination }
+			observation_outpost_owner = { 
+				OR = {
+					has_ethic = ethic_fanatic_capitalism
+					has_ethic = ethic_capitalism
+				}
+			}
+			any_owned_pop = {
+				has_ethic = ethic_capitalism
+			}		
+			OR = {
+				root = { NOT = { has_ethic = ethic_capitalism } }
+				count_pops = {
+					limit = { has_ethic = ethic_capitalism }
+					count > 1
+				}				
+			}				
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		shift_ethic = "ethic_capitalism"
+		capital_scope = {
+			observation_outpost_owner = { country_event = { id = observation.0002 } }
+		}
+	}
+}
+
+country_event = {
+	id = observation.0002
+	title = "observation.0002.name"
+	desc = "observation.0002.desc"
+	picture = GFX_evt_medieval_alien_civilization
+	show_sound = event_primitive_civilization
+	location = from
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.0002.a"
+	}
+}
+
+
+
+# Societal Shift towards Collectivism
+country_event = {
+	id = observation.1001
+	hide_window = yes
+	
+	trigger = {
+		is_country_type = primitive
+		NOT = { has_ethic = ethic_fanatic_socialism }
+		capital_scope = {
+			has_observation_outpost = yes
+			observation_outpost = { has_mission = native_indoctrination }
+			observation_outpost_owner = { 
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_ethic = ethic_socialism
+				}
+			}
+			any_owned_pop = {
+				has_ethic = ethic_socialism
+			}		
+			OR = {
+				root = { NOT = { has_ethic = ethic_socialism } }
+				count_pops = {
+					limit = { has_ethic = ethic_socialism }
+					count > 1
+				}				
+			}				
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+	}
+	
+	immediate = {
+		shift_ethic = "ethic_socialism"
+		capital_scope = {
+			observation_outpost_owner = { country_event = { id = observation.1002 } }
+		}
+	}
+}
+
+country_event = {
+	id = observation.1002
+	title = "observation.0002.name"
+	desc = "observation.1002.desc"
+	picture = GFX_evt_medieval_alien_civilization
+	show_sound = event_primitive_civilization
+	location = from
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.0002.a"
+	}
+}
+
+
+

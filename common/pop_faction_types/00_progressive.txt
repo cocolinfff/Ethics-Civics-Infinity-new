@@ -1,0 +1,524 @@
+##############################
+# 工会派系
+##############################
+progressive = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = ethic_egalitarian
+	unique = yes
+	support_multiplier = 1
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.75
+		}
+	}
+	is_potential = {
+		years_passed > 1
+		has_encountered_other_species = yes
+		NOT = {
+			has_ethic = ethic_gestalt_consciousness
+		}
+		NOT = { has_country_flag = suppress_vanilla_factions }
+		NOR = {
+		    has_valid_civic = civic_network_of_the_mind
+		    has_valid_civic = civic_network_of_the_mind_machine
+		    has_valid_civic = civic_network_of_the_mind_true_hive
+		}
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_pre_triggers = {
+		is_being_purged = no
+	}
+	can_join_faction = {
+		is_shackled_robot = no
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+		}
+	}
+	attraction = {
+		base = 150
+		modifier = {
+			factor = 1.25
+			exists = from
+			from = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = from
+			from = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		# Should really check for citizenship instead
+		modifier = {
+			factor = 0.25
+			NOT = {
+				is_same_species = owner_species
+			}
+		}
+	}
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0
+			leader_class = ruler
+			owner = {
+				has_authority = auth_imperial
+			}
+		}
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+	demand = {
+		title = "FACTION_OUTRAGED_GC"
+		unfulfilled_title = "FACTION_OUTRAGED_GC"
+		desc = "FACTION_OUTRAGED_GC_DESC"
+		fulfilled_effect = -20
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = faction_egalitarian_outraged_gc
+			}
+		}
+		trigger = {
+			owner = {
+				has_country_flag = faction_egalitarian_outraged_gc
+			}
+		}
+	}
+	#无奴隶制
+	demand = {
+		title = "PROGRESSIVE_NO_SLAVERY"
+		unfulfilled_title = "PROGRESSIVE_SLAVERY"
+		desc = "PROGRESSIVE_NO_SLAVERY_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -15
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = slavery_not_allowed
+					has_policy_flag = slavery_allowed
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					has_policy_flag = slavery_allowed
+				}
+			}
+		}
+	}
+	#言论自由
+	demand = {
+		title = "PROGRESSIVE_FREE_MEDIA"
+		unfulfilled_title = "NO_PROGRESSIVE_FREE_MEDIA"
+		desc = "PROGRESSIVE_FREE_MEDIA_DESC"
+		fulfilled_effect = 10
+		potential = {
+		}
+		trigger = {
+			exists = owner
+			owner = {
+				has_policy_flag = freedom_of_speech
+			}
+		}
+	}
+	#思想控制
+	demand = {
+		title = "NO_THOUGHT_CONTROL"
+		unfulfilled_title = "THOUGHT_CONTROL"
+		desc = "NO_THOUGHT_CONTROL_DESC"
+		unfulfilled_effect = -15
+		potential = {
+			exists = owner
+			owner = {
+				exists = owner
+				OR = {
+					has_edict = edict_tracking_implants
+					has_edict = edict_enhanced_surveillance
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					has_edict = edict_tracking_implants
+					has_edict = edict_thought_enforcement
+				}
+			}
+		}
+	}
+	#民主政治
+	demand = {
+		title = "DEMOCRATIC_RIGHTS"
+		unfulfilled_title = "NO_DEMOCRATIC_RIGHTS"
+		desc = "DEMOCRATIC_RIGHTS_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -15
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_direct_democratic
+					has_authority = auth_democratic
+				}
+			}
+		}
+	}
+	#社会福利
+	demand = {
+		title = "SOCIAL_WELFARE"
+		unfulfilled_title = "NO_SOCIAL_WELFARE"
+		desc = "SOCIAL_WELFARE_DESC"
+		fulfilled_effect = 10
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			owner = {
+				OR = {
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_good
+						}
+					}
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_shared_burden
+						}
+					}
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_utopian
+						}
+					}
+				}
+			}
+		}
+	}
+	#社会不公
+	demand = {
+		title = "SOCIAL_SECURITY"
+		unfulfilled_title = "NO_SOCIAL_SECURITY"
+		desc = "SOCIAL_SECURITY_DESC"
+		unfulfilled_effect = -15
+		fulfilled_effect = 0.001
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_stratified
+						}
+					}
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_academic_privilege
+						}
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_stratified
+						}
+					}
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_academic_privilege
+						}
+					}
+				}
+			}
+		}
+	}
+	#自由社会
+	demand = {
+		title = "FREE_SOCIETY"
+		unfulfilled_title = "NO_FREE_SOCIETY"
+		desc = "FREE_SOCIETY_DESC"
+		fulfilled_effect = 15
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_anarchism
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_anarchism
+				}
+			}
+		}
+	}
+	#合作外交
+	demand = {
+		title = "COOPERATIVE_DIPLO_STANCE"
+		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
+		desc = "COOPERATIVE_DIPLO_STANCE_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				is_homicidal = no
+				is_country_type = default
+				has_policy_flag = diplo_stance_cooperative
+			}
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = diplo_stance_cooperative
+			}
+		}
+	}
+	on_create = {
+		pop_faction_event = {
+			id = factions.1
+		}
+	}
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_egalitarian
+			}
+			remove_modifier = promoted_egalitarian
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_egalitarian
+			}
+			remove_modifier = suppressed_egalitarian
+		}
+	}
+	actions = {
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+			cost = {
+				unity = 5000
+			}
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = {
+							is_subject_type = dominion
+						}
+					}
+				}
+			}
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = {
+							has_modifier = embraced_faction_timer
+						}
+					}
+				}
+				support > 0.1
+				parameter:empire = {
+					NOT = {
+						has_ethic = "ethic_fanatic_egalitarian"
+					}
+				}
+			}
+			effect = {
+				add_modifier = {
+					modifier = embraced_faction
+					days = 3600
+				}
+				parameter:empire = {
+					shift_ethic = ethic_egalitarian
+					hidden_effect = {
+						add_modifier = {
+							modifier = embraced_faction_timer
+							days = 3600
+						}
+						every_pop_faction = {
+							limit = {
+								NOT = {
+									is_same_value = root
+								}
+							}
+							add_modifier = {
+								modifier = embraced_another_faction
+								days = 3600
+							}
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default
+								has_communications = prev
+							}
+							country_event = {
+								id = factions.2000
+							}
+						}
+					}
+				}
+			}
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.5
+					owner = {
+						has_ethic = ethic_egalitarian
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						has_valid_civic = civic_fanatic_purifiers
+					}
+				}
+				modifier = {
+					factor = 0
+					NOT = {
+						owner = {
+							exists = ruler
+							ruler = {
+								leader_of_faction = progressive
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}
+					}
+				}
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_egalitarian
+						has_modifier = promoted_egalitarian
+					}
+				}
+			}
+			effect = {
+				parameter:empire = {
+					add_modifier = {
+						modifier = promoted_egalitarian
+						days = -1
+					}
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = promoted_egalitarian
+				}
+			}
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_egalitarian
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_egalitarian
+						has_modifier = promoted_egalitarian
+					}
+				}
+			}
+			effect = {
+				add_modifier = {
+					modifier = suppressed_faction
+					days = -1
+				}
+				parameter:empire = {
+					add_modifier = {
+						modifier = suppressed_egalitarian
+						days = -1
+					}
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = suppressed_egalitarian
+				}
+			}
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_egalitarian
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+	}
+}

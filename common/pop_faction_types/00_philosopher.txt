@@ -1,0 +1,663 @@
+##############################
+# 哲学家派系
+##############################
+
+philosopher = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = ethic_pacifist
+	unique = yes
+	support_multiplier = 1
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.75
+		}
+	}
+	is_potential = {
+		years_passed > 1
+		has_encountered_other_species = yes
+		NOT = {
+			has_ethic = ethic_gestalt_consciousness
+		}
+		NOT = { has_country_flag = suppress_vanilla_factions }
+		NOR = {
+		    has_valid_civic = civic_network_of_the_mind
+		    has_valid_civic = civic_network_of_the_mind_machine
+		    has_valid_civic = civic_network_of_the_mind_true_hive
+		}
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_pre_triggers = {
+		OR = {
+			is_enslaved = no
+			has_slavery_type = { country = owner type = slavery_indentured }
+		}
+		is_being_purged = no
+	}
+	can_join_faction = {
+		is_shackled_robot = no
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+		}
+	}
+	attraction = {
+		base = 100
+		modifier = {
+			factor = 1.25
+			exists = from
+			from = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = from
+			from = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_fanatic_pacifist
+			}
+		}
+		# Should really check for citizenship instead
+		modifier = {
+			factor = 1.25
+			NOT = {
+				is_same_species = owner_species
+			}
+		}
+	}
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0
+			OR = {
+				leader_class = admiral
+				leader_class = general
+			}
+		}
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+	
+	#防御姿态
+	demand = {
+		title = "PROSPERITY_PHILOSOPHY"
+		unfulfilled_title = "PROSPERITY_NO_PHILOSOPHY"
+		desc = "PROSPERITY_PHILOSOPHY_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				any_relation = {
+					has_communications = root.owner
+					is_country_type = default
+					NOT = {
+						exists = overlord
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = no_wars
+			}
+		}
+	}
+	
+	
+	#维持和平
+	demand = {
+		title = "PROSPERITY_PEACE"
+		unfulfilled_title = "PROSPERITY_NO_PEACE"
+		desc = "PROSPERITY_PEACE_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			owner = {
+				is_at_war = no
+			}
+		}
+	}
+	
+	
+	#非暴力
+	demand = {
+		title = "PROSPERITY_NOT_AGGRESSOR"
+		unfulfilled_title = "PROSPERITY_AGGRESSOR"
+		desc = "PROSPERITY_NOT_AGGRESSOR_DESC"
+		unfulfilled_effect = -30
+		fulfilled_effect = 0.001
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+			}
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					has_country_flag = entered_war_as_attacker
+					any_war = {
+						is_war_participant = {
+							who = prev
+							side = attackers
+						}
+					}
+				}
+			}
+		}
+	}
+	
+
+    #环保法案
+	demand = {
+		title = "ENVIRONMENTAL_PROTECTION_ACT"
+		unfulfilled_title = "NO_ENVIRONMENTAL_PROTECTION_ACT"
+		desc = "ENVIRONMENTAL_PROTECTION_ACT_DESC"
+		
+		unfulfilled_effect = -5
+		fulfilled_effect = 10
+		
+		potential = {
+			exists = owner
+		}
+		
+		trigger = {
+		    exists = owner
+			owner = {
+				has_policy_flag = industrial_efficiency
+			}
+		}
+	}	
+	
+
+
+	
+	#自然和谐
+	demand = {
+		title = "DEVELOPED_ENVIRONMENTALISM"
+		unfulfilled_title = "NO_DEVELOPED_ENVIRONMENTALISM"
+		desc = "DEVELOPED_ENVIRONMENTALISM_DESC"
+
+		fulfilled_effect = 15
+
+		potential = { 
+			exists = owner
+
+		}
+
+		trigger = {
+			owner = {
+			    OR = {
+				    has_valid_civic = civic_environmentalist
+					has_valid_civic = civic_environmentalist_corporate
+					has_valid_civic = civic_keepers_harmony
+				}
+			}
+		}
+	}
+
+	
+    #污浊之地
+	demand = {
+		title = "TRADITIONALIST_NO_TOMB_WORLDS"
+		unfulfilled_title = "TRADITIONALIST_TOMB_WORLDS"
+		desc = "TRADITIONALIST_NO_TOMB_WORLDS_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+			owner = {
+				has_surveyed_class = pc_nuked
+				NOR = {
+					has_origin = origin_post_apocalyptic
+					has_country_flag = worm_tomb_ending
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					any_owned_planet = {
+						is_planet_class = pc_nuked
+						is_terraforming = no
+					}
+				}
+			}
+		}
+	}
+
+    #和谐之道
+	demand = {
+		title = "TRADITIONALIST_GAIA_WORLDS"
+		unfulfilled_title = "TRADITIONALIST_NO_GAIA_WORLDS"
+		desc = "TRADITIONALIST_GAIA_WORLDS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+			    OR = {
+				    has_surveyed_class = pc_gaia
+				    has_surveyed_class = pc_nuked
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_planet_within_border = {
+					OR = {
+					    is_planet_class = pc_gaia
+					    AND = { 
+						    is_planet_class = pc_nuked
+						    is_terraforming = yes
+					    }
+					}
+				}
+			}
+		}
+	}
+	
+	
+	#自然共生
+	demand = {
+		title = "NATURAL_SYMBIOTIC"
+		unfulfilled_title = "NATURAL_SYMBIOTIC"
+		desc = "NATURAL_SYMBIOTIC_DESC"
+
+		fulfilled_effect = 20
+
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_mountain_range
+				has_technology = tech_volcano
+				has_technology = tech_dangerous_wildlife
+				has_technology = tech_dense_jungle
+				has_technology = tech_quicksand_basin
+				has_technology = tech_noxious_swamp
+				has_technology = tech_massive_glacier
+				has_technology = tech_toxic_kelp
+				has_technology = tech_deep_sinkhole
+			}
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {
+					has_deposit = d_massive_glacier
+					has_deposit = d_noxious_swamp
+					has_deposit = d_quicksand_basin
+					has_deposit = d_deep_sinkhole
+					has_deposit = d_toxic_kelp
+					has_deposit = d_dense_jungle
+					has_deposit = d_active_volcano
+					has_deposit = d_mountain_range
+					has_deposit = d_dangerous_wildlife_blocker
+				}
+			}
+		}
+	}	
+	
+	#自然共存
+	demand = {
+		title = "ECOSYSTEM_DIVERSITY"
+		unfulfilled_title = "ECOSYSTEM_DIVERSITY"
+		desc = "ECOSYSTEM_DIVERSITY_DESC"
+
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = { is_planet_class = pc_ocean }
+				any_owned_planet = { is_planet_class = pc_continental }
+				any_owned_planet = { is_planet_class = pc_tropical }
+				any_owned_planet = { is_planet_class = pc_alpine }
+				any_owned_planet = { is_planet_class = pc_arctic }
+				any_owned_planet = { is_planet_class = pc_tundra }
+				any_owned_planet = { is_planet_class = pc_arid }
+				any_owned_planet = { is_planet_class = pc_desert }
+				any_owned_planet = { is_planet_class = pc_savannah }
+			}
+		}
+	}	
+	
+	
+	#自然之美
+	demand = {
+		title = "PROTECTED_NATURE"
+		unfulfilled_title = "NO_PROTECTED_NATURE"
+		desc = "PROTECTED_NATURE_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {			
+				 OR = {
+					   has_modifier = "lush_planet"
+					   has_modifier = "natural_beauty"
+					   has_deposit = d_wandering_forests
+					   has_deposit = d_migrating_forest_reserve
+					   has_deposit = d_migrating_forests
+				        }
+					
+				}
+			}
+		}
+	}			
+
+
+    #独特生物
+	demand = {
+		title = "UNIQUE_LIFERORMS"
+		unfulfilled_title = "NO_UNIQUE_LIFERORMS"
+		desc = "UNIQUE_LIFERORMS_DESC"
+
+		fulfilled_effect = 15
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				any_owned_planet = {
+					has_modifier = "titanic_life"
+					has_deposit = d_titanic_life_blocker
+					has_deposit = d_alien_pets_deposit					
+				}
+			}
+		}
+	}		
+	
+	
+	
+
+
+	#自然哲学
+	demand = {
+		title = "ECO_ASCENSION_2"
+		unfulfilled_title = "ECO_NO_ASCENSION_2"
+		desc = "ECO_ASCENSION_2_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_climate_restoration
+			}
+		}
+
+		trigger = {
+			owner = {		
+					has_ascension_perk = ap_world_shaper					
+			}
+		}
+	}		
+	
+
+
+
+
+
+	
+	on_create = {
+		pop_faction_event = { id = factions.1 }
+	}
+
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_pacifist
+			}
+			remove_modifier = promoted_pacifist
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_pacifist
+			}
+			remove_modifier = suppressed_pacifist
+		}
+	}
+	actions = {
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+			cost = {
+				unity = 5000
+			}
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = {
+							is_subject_type = dominion
+						}
+					}
+				}
+			}
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = {
+							has_modifier = embraced_faction_timer
+						}
+					}
+				}
+				support > 0.1
+				parameter:empire = {
+					NOT = {
+						has_ethic = "ethic_fanatic_pacifist"
+					}
+				}
+			}
+			effect = {
+				add_modifier = {
+					modifier = embraced_faction
+					days = 3600
+				}
+				parameter:empire = {
+					shift_ethic = ethic_pacifist
+					hidden_effect = {
+						add_modifier = {
+							modifier = embraced_faction_timer
+							days = 3600
+						}
+						every_pop_faction = {
+							limit = {
+								NOT = {
+									is_same_value = root
+								}
+							}
+							add_modifier = {
+								modifier = embraced_another_faction
+								days = 3600
+							}
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default
+								has_communications = prev
+							}
+							country_event = {
+								id = factions.2000
+							}
+						}
+					}
+				}
+			}
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.5
+					owner = {
+						has_ethic = ethic_pacifist
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						has_valid_civic = civic_fanatic_purifiers
+					}
+				}
+				modifier = {
+					factor = 0
+					NOT = {
+						owner = {
+							exists = ruler
+							ruler = {
+								leader_of_faction = prosperity
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}
+					}
+				}
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_ethic = ethic_pacifist
+						has_ethic = ethic_fanatic_pacifist
+					}
+				}
+			}
+			effect = {
+				parameter:empire = {
+					add_modifier = {
+						modifier = promoted_pacifist
+						days = -1
+					}
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = promoted_pacifist
+				}
+			}
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_pacifist
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_pacifist
+						has_modifier = promoted_pacifist
+					}
+				}
+			}
+			effect = {
+				add_modifier = {
+					modifier = suppressed_faction
+					days = -1
+				}
+				parameter:empire = {
+					add_modifier = {
+						modifier = suppressed_pacifist
+						days = -1
+					}
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = suppressed_pacifist
+				}
+			}
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_pacifist
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+	}
+}

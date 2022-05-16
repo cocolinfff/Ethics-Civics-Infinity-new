@@ -1,0 +1,269 @@
+namespace = revolution_op
+
+#建立义军据点-阶段1
+espionage_operation_event = {
+	id = revolution_op.1
+	title = revolution_op.1.name
+	desc = {
+		text = revolution_op.1.desc
+	}
+	picture = {
+		picture = GFX_evt_acquire_asset
+	}
+	show_sound = event_spymaster
+	espionage_operation = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = ACKNOWLEDGED
+	}
+
+	after = {
+	}
+}
+
+#建立义军据点-阶段2
+espionage_operation_event = {
+	id = revolution_op.2
+	title = revolution_op.2.name
+	desc = {
+		text = revolution_op.2.1.desc
+	}
+	picture = {
+		picture = GFX_evt_acquire_asset
+	}
+	show_sound = event_default
+	espionage_operation = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = ACKNOWLEDGED
+	}
+
+	after = {
+	}
+}
+
+#建立义军据点-阶段3
+espionage_operation_event = {
+	id = revolution_op.3
+	title = revolution_op.3.name
+	desc = {
+		text = revolution_op.3.desc
+	}
+	picture = GFX_evt_operative_chase
+	show_sound = event_spymaster
+	espionage_operation = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		target = {
+			random_owned_planet = {
+				limit = {
+					NOR = {
+						has_modifier = guerrilla_warzone
+				        has_planet_flag = flag_suppress_insurgents
+					}
+				}
+				save_event_target_as = revolution_planet_1
+				set_planet_flag = revolution_planet_1
+			}
+			random_owned_planet = {
+				limit = {
+					NOR = {
+						has_modifier = guerrilla_warzone
+						has_planet_flag = revolution_planet_1
+				        has_planet_flag = flag_suppress_insurgents
+					}
+				}
+				save_event_target_as = revolution_planet_2
+				set_planet_flag = revolution_planet_2
+			}
+			random_owned_planet = {
+				limit = {
+					NOR = { 
+						has_modifier = guerrilla_warzone
+				        has_planet_flag = revolution_planet_1
+				        has_planet_flag = revolution_planet_2
+				        has_planet_flag = flag_suppress_insurgents
+					}
+				}
+				save_event_target_as = revolution_planet_3
+				set_planet_flag = revolution_planet_3
+			}
+		}
+		target = {
+			save_event_target_as = op_target
+		}
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = revolution_op.3.a.name
+		trigger = {
+			target = {
+				any_owned_planet = {
+					has_planet_flag = revolution_planet_1
+				}
+			}
+		}
+		event_target:revolution_planet_1 = {
+			add_modifier = { modifier = "guerrilla_warzone" days = -1 }
+			set_planet_flag = revolution_branch
+			save_event_target_as = branch_planet
+			planet_event = { id = galactic_rebels.5 days = 360 random = 1080 }
+		}	
+		owner = {
+		    country_event = { id = revolution_op.4 }
+		}
+		target = {
+			country_event = { id = revolution_op.5 }
+		}
+		set_espionage_operation_progress_locked = no
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 10
+				event_target:revolution_planet_1 = {
+					has_upgraded_capital = yes
+				}
+			}
+		}
+	}
+	option = {
+		name = revolution_op.3.b.name
+		trigger = {
+			target = {
+				any_owned_planet = {
+					has_planet_flag = revolution_planet_2
+				}
+			}
+		}
+		event_target:revolution_planet_2 = {
+			add_modifier = { modifier = "guerrilla_warzone" days = -1 }
+			set_planet_flag = revolution_branch
+			save_event_target_as = branch_planet
+			planet_event = { id = galactic_rebels.5 days = 360 random = 1080 }
+		}
+		owner = {
+		    country_event = { id = revolution_op.4 }
+		}
+		target = {
+			country_event = { id = revolution_op.5 }
+		}
+		set_espionage_operation_progress_locked = no
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 10
+				event_target:revolution_planet_2 = {
+					has_upgraded_capital = yes
+				}
+			}
+		}
+	}
+	option = {
+		name = revolution_op.3.c.name
+		trigger = {
+			target = {
+				any_owned_planet = {
+					has_planet_flag = revolution_planet_3
+				}
+			}
+		}
+		event_target:revolution_planet_3 = {
+			add_modifier = { modifier = "guerrilla_warzone" days = -1 }
+			set_planet_flag = revolution_branch
+			save_event_target_as = branch_planet
+			planet_event = { id = galactic_rebels.5 days = 360 random = 1080 }
+		}
+		owner = {
+		    country_event = { id = revolution_op.4 }
+		}
+		target = {
+			country_event = { id = revolution_op.5 }
+		}
+		set_espionage_operation_progress_locked = no
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 10
+				event_target:revolution_planet_3 = {
+					has_upgraded_capital = yes
+				}
+			}
+		}
+	}
+	option = {
+		name = revolution_op.3.d.name
+		destroy_espionage_operation = this
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+#成功（义军）
+country_event = {
+	id = revolution_op.4
+	title = revolution_op.4.name
+	desc =  revolution_op.4.desc
+
+	picture = GFX_evt_pirates_attacking_cargo
+	location = event_target:branch_planet
+	show_sound = event_space_battle
+
+	is_triggered_only = yes
+
+
+
+	option = {
+		name = EXCELLENT
+		
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -10 }
+		}
+	}
+
+	after = {
+		destroy_espionage_operation = from
+	}
+}
+
+#成功（目标）
+country_event = {
+	id = revolution_op.5
+	title = revolution_op.5.name
+
+	desc = revolution_op.5.desc
+
+	picture = GFX_evt_pirates_attacking_cargo
+	show_sound = event_space_battle
+	location = event_target:branch_planet
+
+	is_triggered_only = yes
+
+	immediate = {
+		every_owned_planet = {
+			remove_planet_flag = revolution_planet_1
+			remove_planet_flag = revolution_planet_2
+			remove_planet_flag = revolution_planet_3
+		}
+	}
+
+	option = {
+		name = revolution_op.5.a
+	}
+
+}

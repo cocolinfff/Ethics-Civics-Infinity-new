@@ -1,0 +1,86 @@
+
+@diff_t0 = 4
+@diff_t1 = 5
+@diff_t2 = 6
+@diff_t3 = 7
+@diff_t4 = 8
+@diff_t5 = 9
+@diff_t6 = 10
+@diff_t7 = 11
+@diff_t8 = 12
+@diff_t9 = 13
+
+### 建立根据地
+operation_revolution_underground = {
+	target = none
+	categories = { op_cat_subterfuge op_cat_military }
+	picture = GFX_evt_galactic_empire
+	desc = operation_revolution_underground_desc
+	stages = 3
+
+	resources = {
+		category = operations
+		cost = {
+			energy = 1000
+		}
+		upkeep = {
+			energy = 5
+		}
+	}
+
+	spy_power_cost = 35
+	potential = {
+		OR = {
+			AND = {
+				target = { is_at_war_with = root }
+				root.owner = {
+					has_tradition = tr_revolution_adopt
+				}
+			}
+			root.owner = {
+				has_tradition = tr_revolution_finish
+			}
+		}
+	}
+	allow = {
+		target = { 
+			OR = {
+				has_ethic = ethic_fanatic_authoritarian
+				AND = {
+					has_ethic = ethic_authoritarian
+					NOT = { has_ethic = ethic_fanatic_socialism }
+				}
+				AND = {
+					has_ethic = ethic_fanatic_capitalism
+					NOT = { has_ethic = ethic_fanatic_egalitarian }
+				}
+				has_civic = civic_fanatic_purifiers
+			}
+		}
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t2
+		icon = GFX_espionage_chapter_icon_motion
+		event = revolution_op.1
+	}
+	stage = {
+		difficulty = @diff_t4
+		icon = GFX_espionage_chapter_icon_surveillance
+		event = revolution_op.2
+	}
+	stage = {
+		difficulty = @diff_t3
+		icon = GFX_espionage_chapter_icon_success
+		event = revolution_op.3
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = {
+			RANDOM_EVENTS = operation_random_events_generic
+		}
+	}
+	on_create = { }
+}

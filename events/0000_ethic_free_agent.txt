@@ -1,0 +1,178 @@
+namespace = observation
+
+# 反叛特工（原版）
+planet_event = {
+	id = observation.3100
+	hide_window = yes
+	
+	trigger = {
+		has_observation_outpost = yes
+		observation_outpost = { 
+			has_mission = covert_infiltration
+			mission_progress > 0.2
+		}
+		observation_outpost_owner = {
+			NOR = {
+				has_country_flag = observation_rogue_agent
+				has_ethic = ethic_gestalt_consciousness
+			}
+			NOR = {
+			    has_civic = civic_shared_burden
+			    AND = {
+			    	has_ethic = ethic_fanatic_xenophile
+			        NOR = {
+			    	    has_ethic = ethic_authoritarian
+			    	    has_ethic = ethic_fanatic_authoritarian
+			    	}
+			    }
+			    AND = {
+			    	has_ethic = ethic_fanatic_egalitarian
+			        NOR = {
+			    	    has_ethic = ethic_xenophobe
+			    	    has_ethic = ethic_fanatic_xenophobe
+			    	}
+			    }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+	}
+	
+	immediate = {
+		observation_outpost_owner = {
+			set_country_flag = observation_rogue_agent
+			root = { set_planet_flag = rogue_agent_planet@prev }
+			country_event = { id = observation.3101 }
+		}
+	}
+}
+
+# 反叛特工（整活）
+planet_event = {
+	id = observation.3120
+	hide_window = yes
+	
+	trigger = {
+		has_observation_outpost = yes
+		observation_outpost = { 
+			has_mission = covert_infiltration
+			mission_progress > 0.6
+		}
+		observation_outpost_owner = {
+			NOR = {
+				has_country_flag = observation_rogue_agent
+				has_ethic = ethic_gestalt_consciousness
+			}
+			OR = {
+			    has_civic = civic_shared_burden
+			    AND = {
+			    	has_ethic = ethic_fanatic_xenophile
+			        NOR = {
+			    	    has_ethic = ethic_authoritarian
+			    	    has_ethic = ethic_fanatic_authoritarian
+			    	}
+			    }
+			    AND = {
+			    	has_ethic = ethic_fanatic_egalitarian
+			        NOR = {
+			    	    has_ethic = ethic_xenophobe
+			    	    has_ethic = ethic_fanatic_xenophobe
+			    	}
+			    }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+	}
+	
+	immediate = {
+		observation_outpost_owner = {
+			set_country_flag = observation_rogue_agent
+			root = { set_planet_flag = rogue_agent_planet@prev }
+			country_event = { id = observation.3121 }
+		}
+	}
+}
+
+country_event = {
+	id = observation.3121
+	title = "observation.3101.name"
+	desc = "observation.3101.desc"
+	picture = GFX_evt_smugglers_in_bar
+	show_sound = event_conversation
+	location = FROM
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		country_event = {
+			id = observation.3123
+			days = 180
+		}
+	}
+	
+	option = {
+		name = "observation.3101.a"
+		tooltip = {
+			FROM = {
+				observation_outpost = { add_mission_progress = -0.2 }
+			}
+		}
+	}
+}
+
+# Incoming Transmission
+country_event = {
+	id = observation.3123
+	title = "observation.3103.name"
+	desc = "observation.3103.desc"
+	picture = GFX_evt_satellite_in_orbit
+	show_sound = event_radio_chatter
+	location = FROM
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "ONSCREEN"
+		country_event = { id = observation.3124 }
+	}
+}
+
+# Transmission
+country_event = {
+	id = observation.3124
+	title = "TRANSMISSION"
+	desc = "observation.3104.desc"
+	
+	diplomatic = yes
+	
+	picture_event_data = {
+		room = no_video_feed_room
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "observation.3124.a"
+		response_text = "observation.3124.a.response"
+		is_dialog_only = yes
+	}
+	option = {
+		name = "observation.3124.b"
+		response_text = "observation.3124.b.response"
+		is_dialog_only = yes
+	}
+	option = {
+		name = "observation.3104.c"
+		response_text = "observation.3124.c.response"
+		hidden_effect = {
+			FROM = {
+			    observation_outpost = { add_mission_progress = 0.4 }
+		    }
+		}
+	}
+}
