@@ -1,6 +1,8 @@
-version="3.4.2"
+version="2.8.*"
+picture="thumbnail.png"
 tags={
-	"Balance"
+	"Overhaul"
 }
-name="ECI!"
+name="Ethics and Civics : Infinity"
 supported_version="3.4.2"
+remote_file_id="2280945168"
