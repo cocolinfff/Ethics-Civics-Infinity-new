@@ -121,19 +121,20 @@ wg_galactic_revolution_liberation_from_the_empire = {
 	on_accept = {
 		hidden_effect = {
 			from = {
+				copy_ethos_and_authority = root
 				if = {
 					limit = {
 						has_civic = civic_galactic_sovereign
 					}
 					force_remove_civic = civic_galactic_sovereign
 				}
-				else_if = {
+				if = {
 					limit = {
 						has_civic = civic_galactic_sovereign_megacorp
 					}
 					force_remove_civic = civic_galactic_sovereign_megacorp
 				}
-				else_if = {
+				if = {
 					limit = {
 						has_civic = civic_galactic_sovereign_people
 					}
@@ -142,33 +143,37 @@ wg_galactic_revolution_liberation_from_the_empire = {
 			}
 			if = {
 				limit = {
-					from = { has_civic = civic_criminal_heritage }
+					from = { has_authority = auth_corporate }
 				}
 				from = {
-					force_remove_civic = civic_criminal_heritage
+					if = {
+						limit = {
+							from = { has_civic = civic_criminal_heritage }
+						}
+						from = {
+							force_remove_civic = civic_criminal_heritage
+						}
+					}
 				}
 			}
-			else = {
-				limit = {
-					root = { has_civic = civic_underworld_society }
-				}
-				from = {
-					force_remove_civic = civic_underworld_society
-				}
-			}	
 			from = {
 				add_threat = {
 					who = root
 					amount = 0.5
 				}
 			}
-			from = { copy_ethos_and_authority = root }
 			from = { add_modifier = { modifier = recently_liberated days = 3600 } }	
 		    from = { add_modifier = { modifier = mod_revolutionary_propaganda days = 3600 } }	
 			add_opinion_modifier = { modifier = opinion_we_liberated who = from }	
 			from = { add_opinion_modifier = { modifier = opinion_liberated_us who = root } }
 			end_rivalry = from
 			from = { end_rivalry = root }
+			every_system_within_border = {
+				limit = {
+					from = { has_claim = prev }
+				}
+				remove_claims = { who = from }
+			}
 			every_country = {
 				limit = {
 					OR = {
@@ -182,6 +187,14 @@ wg_galactic_revolution_liberation_from_the_empire = {
 				}
 				end_rivalry = from
 				from = { end_rivalry = prev }
+				add_opinion_modifier = { modifier = opinion_we_liberated who = from }
+				from = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
+				every_system_within_border = {
+					limit = {
+						from = { has_claim = prev }
+					}
+					remove_claims = { who = from }
+				}
 			}
 			every_country = {
 				limit = {
@@ -226,6 +239,7 @@ wg_galactic_revolution_liberation_from_the_empire = {
 			if = {
 				limit = {
 					root = { has_civic = civic_shared_burden }
+					from = { NOT = { has_civic = civic_shared_burden } }
 				}
 				from = {
 					change_government = {
@@ -233,9 +247,10 @@ wg_galactic_revolution_liberation_from_the_empire = {
 					}
 				}
 			}
-			else = {
+			if = {
 				limit = {
 					root = { has_civic = civic_socialistic }
+					from = { NOT = { has_civic = civic_socialistic } }
 				}
 				from = {
 					change_government = {

@@ -1,0 +1,870 @@
+#root = planet
+
+# PD Hab
+col_dome = {
+	icon = GFX_colony_type_habitat
+
+	potential = {
+		OR = {
+		is_planet_class = pc_pd_barren_cold_hab
+		is_planet_class = pc_pd_barren_hab
+		is_planet_class = pc_pd_frozen_hab
+		is_planet_class = pc_pd_gas_giant_hab
+		is_planet_class = pc_pd_hothouse_hab
+		is_planet_class = pc_pd_toxic_hab
+		is_planet_class = pc_pd_molten_hab
+		is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+
+	weight_modifier = {
+		base = 500
+	}
+}
+
+# Habitat Energy
+col_dome_energy = {
+	icon = GFX_colony_type_habitat_energy
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+		exists = owner
+	}
+	planet_modifier = {
+		planet_district_hab_energy_build_speed_mult = 0.25
+		planet_technician_produces_mult = 0.1
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_technician_energy_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_technician_energy_produces_add = 0.5
+	}
+
+	weight_modifier = {
+		base = 200
+		modifier = {
+			factor = 2
+			owner = { has_monthly_income = { resource = energy value < 0 } }
+		}
+		modifier = {
+			factor = 3
+			num_districts = { type = district_pdhab_energy value >= 4 }
+		}
+	}
+}
+
+# Habitat Cultural
+col_dome_leisure = {
+	icon = GFX_colony_type_habitat_leisure
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+		exists = owner
+		owner = { 
+			OR = {
+				is_gestalt = no 
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+	}
+	planet_modifier = {
+		planet_district_hab_cultural_build_speed_mult = 0.25
+		pop_happiness = 0.10
+	}
+	weight_modifier = {
+		base = 200
+		modifier = {
+			factor = 2
+			has_designation = col_dome_leisure
+		}
+		modifier = {
+			factor = 3
+			num_districts = { type = district_pdhab_cultural value >= 4 }
+		}
+	}
+}
+
+# Habitat Trade
+col_dome_trade = {
+	icon = GFX_colony_type_habitat_trade
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+		exists = owner
+		owner = { is_gestalt = no }
+	}
+	planet_modifier = {
+		planet_district_hab_commercial_build_speed_mult = 0.25
+		trade_value_mult = 0.20
+	}
+	weight_modifier = {
+		base = 500
+		modifier = {
+			factor = 0
+			owner = { has_ethic = ethic_gestalt_consciousness }
+		}
+		modifier = {
+			factor = 2
+			owner = { has_monthly_income = { resource = energy value < 0 } }
+		}
+		modifier = {
+			factor = 0.1
+			has_planet_flag = energy_habitat 
+		}
+		modifier = {
+			factor = 2
+			has_designation = col_dome_trade
+		}
+		modifier = {
+			factor = 3
+			num_districts = { type = district_pdhab_commercial value >= 4 }
+		}
+	}
+}
+
+# Habitat Research
+col_dome_research = {
+	icon = GFX_colony_type_habitat_research
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+	planet_modifier = {
+		planet_district_hab_science_build_speed_mult = 0.25
+		planet_researchers_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_researchers_physics_research_produces_add = 1
+		planet_researchers_society_research_produces_add = 1
+		planet_researchers_engineering_research_produces_add = 1
+		planet_researchers_energy_upkeep_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_researchers_physics_research_produces_add = 0.5
+		planet_researchers_society_research_produces_add = 0.5
+		planet_researchers_engineering_research_produces_add = 0.5
+		planet_researchers_energy_upkeep_add = 0.5
+	}
+
+	weight_modifier = {
+		base = 500
+		modifier = {
+			factor = 2
+			OR = {
+				owner = { has_monthly_income = { resource = physics_research value < 100 } }
+				owner = { has_monthly_income = { resource = society_research value < 100 } }
+				owner = { has_monthly_income = { resource = engineering_research value < 100 } }
+			}
+		}
+		modifier = {
+			factor = 2
+			has_designation = col_dome_research
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				num_districts = { type = district_pdhab_science value >= 4 }
+				num_buildings = { type = building_research_lab_1 value >= 4 }
+				num_buildings = { type = building_research_lab_2 value >= 4 }
+				num_buildings = { type = building_research_lab_3 value >= 4 }
+			}
+		}
+	}
+}
+
+# Habitat Mining
+col_dome_mining = {
+	icon = GFX_colony_type_habitat_mining
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+	planet_modifier = {
+		planet_district_hab_mining_build_speed_mult = 0.25
+		planet_miners_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_miners_minerals_produces_add = 1.5
+		planet_miners_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_miners_minerals_produces_add = 0.75
+		planet_miners_energy_upkeep_add = 0.25
+	}
+
+	weight_modifier = {
+		base = 5000 
+		modifier = {
+			factor = 2
+			owner = { has_monthly_income = { resource = minerals value < 0 } }
+		}
+		modifier = {
+			factor = 2
+			has_designation = col_dome_mining
+		}
+		modifier = {
+			factor = 3
+			num_districts = { type = district_pdhab_mining value >= 4 }
+		}
+	}
+}
+
+# Habitat Fortress
+col_dome_fortress = {
+	icon = GFX_colony_type_habitat_fortress
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+	planet_modifier = {
+		planet_building_stronghold_build_speed_mult = 0.25
+		planet_orbital_bombardment_damage = -0.10
+		army_defense_damage_mult = 0.20
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				is_gestalt = no
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		job_conscript_per_pop = 0.05
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				is_gestalt = no
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		job_conscript_per_pop = 0.03
+	}
+
+	weight_modifier = {
+		base = 500
+		modifier = {
+			factor = 2
+			has_designation = col_dome_fortress
+		}
+		modifier = {
+			factor = 3
+			num_buildings = { type = building_stronghold value >= 8 }
+		}
+
+	}
+}
+
+# Habitat Industrial
+col_dome_industrial = {
+	icon = GFX_colony_type_industrial
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+	planet_modifier = {
+		planet_district_hab_industrial_build_speed_mult = 0.25
+		planet_metallurgists_upkeep_mult = -0.1
+		planet_artisans_upkeep_mult = -0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 1
+		planet_artisans_consumer_goods_produces_add = 1.5
+		planet_metallurgists_energy_upkeep_add = 1
+		planet_artisans_energy_upkeep_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.5
+		planet_artisans_consumer_goods_produces_add = 0.75
+		planet_metallurgists_energy_upkeep_add = 0.5
+		planet_artisans_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_artisans_produces_mult = 0.05
+			planet_metallurgists_produces_mult = 0.05
+		}
+	}
+
+	weight_modifier = {
+		base = 600
+		modifier = {
+			factor = 3
+			AND = {
+				OR = {
+					has_building = building_factory_1
+					has_building = building_factory_2
+					has_building = building_factory_3
+				}
+				OR = {
+					has_building = building_foundry_1
+					has_building = building_foundry_2
+					has_building = building_foundry_3
+				}
+			}
+		}
+		modifier = {
+			factor = 3
+			has_designation = col_dome_industrial
+		}
+		modifier = {
+			factor = 0
+			num_districts = { type = district_pdhab_industrial value = 0 }
+		}
+	}
+}
+
+# Habitat Foundry
+col_dome_foundry = {
+	icon = GFX_colony_type_habitat_foundry
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+	planet_modifier = {
+		custom_tooltip = col_habitat_foundry_custom
+		planet_district_hab_industrial_build_speed_mult = 0.25
+		planet_metallurgists_upkeep_mult = -0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 1
+		planet_metallurgists_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.5
+		planet_metallurgists_energy_upkeep_add = 0.25
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_metallurgists_produces_mult = 0.05
+		}
+	}
+	weight_modifier = {
+		base = 500
+		modifier = {
+			factor = 2
+			owner = { has_monthly_income = { resource = alloys value < 10 } }
+		}
+		modifier = {
+			factor = 2
+			has_designation = col_dome_foundry
+		} 
+		modifier = {
+			factor = 3
+			OR = {
+				num_buildings = { type = building_foundry_1 value >= 4 }
+				num_buildings = { type = building_foundry_2 value >= 4 }
+				num_buildings = { type = building_foundry_3 value >= 4 }
+			}
+		}
+	}
+}
+
+# Habitat Factory
+col_dome_factory = {
+	icon = GFX_colony_type_habitat_factory
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+		exists = owner
+		OR = {
+			owner = { is_regular_empire = yes }
+			owner = { has_civic = civic_machine_servitor }
+		}
+	}
+	planet_modifier = {
+		custom_tooltip = col_habitat_factory_custom
+		planet_district_hab_industrial_build_speed_mult = 0.25
+		planet_artisans_upkeep_mult = -0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 1.5
+		planet_artisans_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 0.5
+		planet_artisans_energy_upkeep_add = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_artisans_produces_mult = 0.05
+		}
+	}
+	weight_modifier = {
+		base = 500
+		modifier = {
+			factor = 2
+			owner = { has_monthly_income = { resource = consumer_goods value < 5 } }
+		}
+		modifier = {
+			factor = 2
+			has_designation = col_dome_factory
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				num_buildings = { type = building_factory_1 value >= 4 }
+				num_buildings = { type = building_factory_2 value >= 4 }
+				num_buildings = { type = building_factory_3 value >= 4 }
+			}
+		}
+	}
+}
+
+# Habitat Refinery
+col_dome_refinery = {
+	icon = GFX_colony_type_habitat_refinery
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+	}
+	planet_modifier = {
+		planet_building_refinery_build_speed_mult = 0.25
+		planet_building_chemical_plant_build_speed_mult = 0.25
+		planet_building_crystal_plant_build_speed_mult = 0.25
+		planet_refiners_produces_mult = 0.1
+		planet_translucers_produces_mult = 0.1
+		planet_chemists_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_jobs_rare_crystals_produces_mult = 0.1
+		planet_jobs_exotic_gases_produces_mult = 0.1
+		planet_jobs_volatile_motes_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_jobs_rare_crystals_produces_mult = 0.05
+		planet_jobs_exotic_gases_produces_mult = 0.05
+		planet_jobs_volatile_motes_produces_mult = 0.05
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_refiners_produces_mult = 0.05
+			planet_translucers_produces_mult = 0.05
+			planet_chemists_produces_mult = 0.05
+		}
+	}
+
+	weight_modifier = {
+		base = 500
+			modifier = {
+				factor = 2
+				OR = {
+					owner = { has_monthly_income = { resource = volatile_motes value < 0 } }
+					owner = { has_monthly_income = { resource = exotic_gases value < 0 } }
+					owner = { has_monthly_income = { resource = rare_crystals value < 0 } }
+				}
+			}
+			modifier = {
+				factor = 2
+				has_designation = col_dome_refinery
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					num_buildings = { type = building_refinery value >= 4 }
+					num_buildings = { type = building_chemical_plant value >= 4 }
+					num_buildings = { type = building_crystal_plant value >= 4 }
+				}
+			}
+	}
+}
+
+# Habitat Food
+col_dome_food = {
+	icon = GFX_colony_type_habitat_food
+
+	potential = {
+		OR = {
+			is_planet_class = pc_pd_barren_cold_hab
+			is_planet_class = pc_pd_barren_hab
+			is_planet_class = pc_pd_frozen_hab
+			is_planet_class = pc_pd_gas_giant_hab
+			is_planet_class = pc_pd_hothouse_hab
+			is_planet_class = pc_pd_toxic_hab
+			is_planet_class = pc_pd_molten_hab
+			is_planet_class = pc_pd_asteroid_hab
+		}
+		exists = owner
+	}
+	planet_modifier = {
+		planet_farmers_produces_mult = 0.2
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				OR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_farmers_food_produces_add = 1.5
+		planet_farmers_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_planned
+				NOR = {
+					has_ethic = ethic_fanatic_socialism
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+					has_active_tradition = tr_future_economy
+				}
+			}
+		}
+		planet_farmers_food_produces_add = 0.75
+		planet_farmers_energy_upkeep_add = 0.25
+	}
+
+	weight_modifier = {
+		base = 200
+		modifier = {
+			factor = 2
+			owner = { has_monthly_income = { resource = food value < 0 } }
+		}
+		modifier = {
+			factor = 3
+			num_districts = { type = district_pdhab_food value >= 4 }
+		}
+	}
+}
