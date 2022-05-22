@@ -1,57 +1,4 @@
 
-refresh_subject_count_loyalty_penalty = {
-	every_subject = {
-		erase_modifier = { MOD = divided_patronage }
-	}
-	if = {
-		limit = {
-			NOR = {
-				has_civic = civic_feudal_realm
-				has_civic = civic_coalition_government
-				has_civic = civic_aristocratic_elite
-				has_civic = civic_franchising
-				has_origin = origin_secondary_hegemon
-				has_ascension_perk = ap_shared_destiny
-			}
-			subjects > 1
-		}
-		set_variable = { which = subjects_minus_one value = trigger:subjects }
-		subtract_variable = { which = subjects_minus_one value = 1 }
-		every_subject = {
-			add_modifier = {
-				modifier = divided_patronage
-				multiplier = PREV.subjects_minus_one
-			}
-		}
-		clear_variable = subjects_minus_one
-	}
-}
-
-add_ethics_compatibility_modifier = {
-	set_variable = {
-		which = ethics_compatibility_factor
-		value = 0
-	}
-	if = { limit = { is_pacifist = yes }		compare_and_modify_ethics_factor = { SAME = pacifist OPP = militarist } }
-	if = { limit = { is_militarist = yes }		compare_and_modify_ethics_factor = { SAME = militarist OPP = pacifist } }
-	if = { limit = { is_egalitarian = yes }		compare_and_modify_ethics_factor = { SAME = egalitarian OPP = authoritarian } }
-	if = { limit = { is_authoritarian = yes }	compare_and_modify_ethics_factor = { SAME = authoritarian OPP = egalitarian } }
-	if = { limit = { is_xenophile = yes }		compare_and_modify_ethics_factor = { SAME = xenophile OPP = xenophobe } }
-	if = { limit = { is_xenophobe = yes }		compare_and_modify_ethics_factor = { SAME = xenophobe OPP = xenophile } }
-	if = { limit = { is_materialist = yes }		compare_and_modify_ethics_factor = { SAME = materialist OPP = spiritualist } }
-	if = { limit = { is_spiritualist = yes }	compare_and_modify_ethics_factor = { SAME = spiritualist OPP = materialist } }
-	if = { limit = { is_socialism = yes }		compare_and_modify_ethics_factor = { SAME = socialism OPP = capitalism } }
-	if = { limit = { is_capitalism = yes }	compare_and_modify_ethics_factor = { SAME = capitalism OPP = socialism } }
-	if = {
-		limit = { NOT = { check_variable = { which = ethics_compatibility_factor value = 0 } } }
-		add_modifier = {
-			modifier = overlord_ethics_compatibility
-			multiplier = ethics_compatibility_factor
-		}
-	}
-	clear_variable = ethics_compatibility_factor
-}
-
 generate_start_pops = {
 	if = {
 		limit = {
@@ -574,6 +521,292 @@ generate_start_pops = {
 					}	
 				}
 			}
+		}
+	}
+}
+
+#红色起源
+red_origin_start_effect = {
+	# Main Backup
+	if = { # Backup if the main system hasn't already been initialized
+		limit = {
+			NOT = { exists = event_target:origin_red_homeland_country }
+		}
+		# Find a random system, hopefully close to a player with the origin
+		random_system = {
+			limit = {
+				has_owner = no
+				has_special_star_flag_trigger = no
+			}
+			weights = {
+				base = 1
+				modifier = {
+					factor = 100
+					closest_system = {
+						use_bypasses = no
+						min_steps = 2
+						max_steps = 4
+						limit = {
+							has_owner = yes
+							owner = {
+								has_origin = origin_red_satellite
+							}
+						}
+					}
+				}
+			}
+			# Start Spawning Systems
+			set_spawn_system_batch = begin
+			red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_init }
+			# Main Empire
+			event_target:origin_red_homeland.solar_system = {
+				red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_2_init }
+				red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_3_init }
+			}
+			# Vassals
+			event_target:red_homeland_2.solar_system = { red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_4_init } }
+			if = {
+				limit = {
+					NOT = {
+						galaxy_size = tiny
+					}
+				}
+				event_target:red_homeland_2.solar_system = { red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_5_init } }
+			}
+			if = {
+				limit = {
+					NOR = {
+						galaxy_size = tiny
+						galaxy_size = small
+					}
+				}
+				event_target:red_homeland_3.solar_system = { red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_6_init } }
+			}
+			if = {
+				limit = {
+					NOR = {
+						galaxy_size = tiny
+						galaxy_size = small
+						galaxy_size = medium
+					}
+				}
+				event_target:red_homeland_3.solar_system = { red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_7_init } }
+			}
+			set_spawn_system_batch = end
+
+			# Set up hyperlanes if they are missing
+			red_origin_start_hyperlane_effect = {
+				ORIGINAL_STAR_SYSTEM = event_target:red_homeland_2.solar_system
+				SECOND_STAR_SYSTEM = event_target:origin_red_homeland.solar_system
+			}
+			red_origin_start_hyperlane_effect = {
+				ORIGINAL_STAR_SYSTEM = event_target:red_homeland_3.solar_system
+				SECOND_STAR_SYSTEM = event_target:origin_red_homeland.solar_system
+			}
+			red_origin_start_hyperlane_effect = {
+				ORIGINAL_STAR_SYSTEM = event_target:red_homeland_4.solar_system
+				SECOND_STAR_SYSTEM = event_target:red_homeland_2.solar_system
+			}
+			if = {
+				limit = {
+					exists = event_target:red_homeland_5
+				}
+				red_origin_start_hyperlane_effect = {
+					ORIGINAL_STAR_SYSTEM = event_target:red_homeland_5.solar_system
+					SECOND_STAR_SYSTEM = event_target:red_homeland_2.solar_system
+				}
+			}
+			if = {
+				limit = {
+					exists = event_target:red_homeland_6
+				}
+				red_origin_start_hyperlane_effect = {
+					ORIGINAL_STAR_SYSTEM = event_target:red_homeland_6.solar_system
+					SECOND_STAR_SYSTEM = event_target:red_homeland_3.solar_system
+				}
+			}
+			if = {
+				limit = {
+					exists = event_target:red_homeland_7
+				}
+				red_origin_start_hyperlane_effect = {
+					ORIGINAL_STAR_SYSTEM = event_target:red_homeland_7.solar_system
+					SECOND_STAR_SYSTEM = event_target:red_homeland_3.solar_system
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = { # Backup if any of the other main empire systems are missing
+			OR = {
+				NOT = { any_system = { has_star_flag = soviet_union_system_2_flag } }
+				NOT = { any_system = { has_star_flag = soviet_union_system_3_flag } }
+			}
+		}
+		event_target:origin_red_homeland.solar_system = {
+			red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_2_init }
+			red_origin_start_spawn_effect = { INITIALIZER = soviet_union_system_3_init }
+			red_origin_start_hyperlane_effect = {
+				ORIGINAL_STAR_SYSTEM = event_target:red_homeland_2.solar_system
+				SECOND_STAR_SYSTEM = event_target:origin_red_homeland.solar_system
+			}
+			red_origin_start_hyperlane_effect = {
+				ORIGINAL_STAR_SYSTEM = event_target:red_homeland_3.solar_system
+				SECOND_STAR_SYSTEM = event_target:origin_red_homeland.solar_system
+			}
+		}
+	}
+
+	# Vassal Backup
+	if = { # Backup for vassal 1
+		limit = {
+			any_system = { has_star_flag = soviet_union_system_2_flag }
+			NOT = { any_system = { has_star_flag = soviet_union_system_4_flag } }
+		}
+		red_origin_vassal_backup_effect = {
+			SYSTEM_FLAG = soviet_union_system_2_flag
+			INITIALIZER = soviet_union_system_4_init
+			ORIGINAL_STAR_SYSTEM = event_target:red_homeland_4.solar_system
+		}
+	}
+	if = { # Backup for vassal 2
+		limit = {
+			any_system = { has_star_flag = soviet_union_system_2_flag }
+			NOR = {
+				galaxy_size = tiny
+				any_system = { has_star_flag = soviet_union_system_5_flag }
+			}
+		}
+		red_origin_vassal_backup_effect = {
+			SYSTEM_FLAG = soviet_union_system_2_flag
+			INITIALIZER = soviet_union_system_5_init
+			ORIGINAL_STAR_SYSTEM = event_target:red_homeland_5.solar_system
+		}
+	}
+	if = { # Backup for vassal 3
+		limit = {
+			any_system = { has_star_flag = soviet_union_system_3_flag }
+			NOR = {
+				galaxy_size = tiny
+				galaxy_size = small
+				any_system = { has_star_flag = soviet_union_system_6_flag }
+			}
+		}
+		red_origin_vassal_backup_effect = {
+			SYSTEM_FLAG = soviet_union_system_3_flag
+			INITIALIZER = soviet_union_system_6_init
+			ORIGINAL_STAR_SYSTEM = event_target:red_homeland_6.solar_system
+		}
+	}
+	if = { # Backup for vassal 4
+		limit = {
+			any_system = { has_star_flag = soviet_union_system_3_flag }
+			NOR = {
+				galaxy_size = tiny
+				galaxy_size = small
+				galaxy_size = medium
+				any_system = { has_star_flag = soviet_union_system_7_flag }
+			}
+		}
+		red_origin_vassal_backup_effect = {
+			SYSTEM_FLAG = soviet_union_system_3_flag
+			INITIALIZER = soviet_union_system_7_init
+			ORIGINAL_STAR_SYSTEM = event_target:red_homeland_7.solar_system
+		}
+	}
+
+	# Modifier to reduce influence
+	event_target:origin_red_homeland_country = {
+		add_modifier = {
+			modifier = imperial_vassal_ai_modifier
+			days = -1
+		}
+	}
+
+	# Rival Country
+	if = {
+		limit = {
+			OR = {
+				AND = {
+					is_multiplayer = yes
+					NOT = {
+						count_country = {
+							count >= 2
+							limit = {
+								is_ai = no
+								has_origin = origin_red_satellite
+							}
+						}
+					}
+				}
+				is_multiplayer = no
+			}
+		}
+		random_country = {
+			limit = {
+				is_ai = yes
+				has_origin = origin_red_satellite
+			}
+			set_country_flag = origin_red_satellite_rival_country
+		}
+	}
+
+	# Startup event for vassals
+	every_playable_country = {
+		limit = { has_origin = origin_red_satellite }
+		country_event = { id = red_origin.5700 }
+		if = {
+			limit = {
+				is_ai = no
+			}
+			country_event = {
+				id = red_origin.5703
+				days = 1
+			}
+		}
+		else = {
+			country_event = { id = red_origin.5710 }
+		}
+	}
+}
+
+red_origin_start_hyperlane_effect = {
+	if = {
+		limit = {
+			NOT = {
+				$ORIGINAL_STAR_SYSTEM$ = {
+					has_hyperlane_to = $SECOND_STAR_SYSTEM$
+				}
+			}
+		}
+		add_hyperlane = {
+			from = $ORIGINAL_STAR_SYSTEM$
+			to = $SECOND_STAR_SYSTEM$
+		}
+	}
+}
+
+red_origin_start_spawn_effect = {
+	spawn_system = {
+		min_distance = 10
+		max_distance = 30
+		max_jumps = 0
+		hyperlane = yes
+		initializer = $INITIALIZER$
+	}
+}
+
+red_origin_vassal_backup_effect = {
+	random_system = {
+		limit = {
+			has_star_flag = $SYSTEM_FLAG$
+		}
+		save_event_target_as = this_system
+
+		red_origin_start_spawn_effect = { INITIALIZER = $INITIALIZER$ }
+		red_origin_start_hyperlane_effect = {
+			ORIGINAL_STAR_SYSTEM = $ORIGINAL_STAR_SYSTEM$
+			SECOND_STAR_SYSTEM = event_target:this_system
 		}
 	}
 }

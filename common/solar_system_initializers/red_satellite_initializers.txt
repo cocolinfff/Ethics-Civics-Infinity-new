@@ -1,1351 +1,12 @@
 # Game will first pick an initializer using usage_odds, but only use it if it passes the spawn_chance check
 # Even if it fails the spawn_chance check it will still count towards the initializer's max_instances
 
-###############
-# ENCLAVES
-###############
-
-# NB: Mercenary Enclave is spawned by event, rather than a solar system initializer
-
-# SALVAGER ENCLAVE
-#Primary system
-salvager_enclave_init_01 = {
-	class = "rl_standard_stars"
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 150
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	spawn_chance = 100 #Guaranteed, assuming usage_odds passes
-	#scaled_spawn_chance = 8	# scales by galaxy size (1000 stars = 10x base)
-
-	flags = {
-		salvager_enclave_system
-		enclave
-	}
-
-	asteroid_belt = {
-		type = rocky_asteroid_belt
-		radius = 85
-	}
-
-	asteroid_belt = {
-		type = rocky_asteroid_belt
-		radius = 195
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 20 max = 30 }
-		has_ring = no
-		init_effect = {
-			prevent_anomaly = yes
-		}
-	}
-
-	change_orbit = 50
-
-	planet = {
-		count = 1
-		class = pc_barren
-		size = 16
-		orbit_angle = 270
-		init_effect = {
-			prevent_anomaly = yes
-		}
-	}
-
-	change_orbit = 40
-
-	planet = {
-		count = 1
-		class = rl_unhabitable_planets
-		orbit_angle = 80
-		size = 20
-
-		init_effect = {
-			prevent_anomaly = yes
-			set_planet_flag = salvager_enclave_planet
-			clear_deposits = yes
-			add_deposit = d_minerals_4
-			if = {
-				limit = {
-					NOT = { exists = event_target:salvager_enclave_country }
-				}
-				save_global_event_target_as = salvager_enclave_planet
-				create_species = {
-					homeworld = this
-					name = random
-					class = SALVAGER
-					namelist = MAM4
-					portrait = random
-					traits = {
-						ideal_planet_class = pc_habitat
-						trait = random_traits
-					}
-				}
-				last_created_species = {
-					save_event_target_as = salvager_enclave_species
-				}
-				create_salvager_enclave_country = yes
-				solar_system = {
-					save_global_event_target_as = salvager_enclave_system
-				}
-			}
-		}
-	}
-
-	change_orbit = 35
-
-	planet = {
-		count = 2
-		class = pc_asteroid
-		orbit_angle = { min = 90 max = 270 }
-		init_effect = {
-			clear_deposits = yes
-			add_deposit = d_alloys_1
-			create_ambient_object = {
-				type = small_debris_object
-			}
-		}
-	}
-
-	init_effect = {
-		if = {
-			limit = { is_inside_nebula = no }
-			create_nebula = {
-				radius = 25
-				effect = {
-					set_star_flag = salvager_nebula
-				}
-			}
-		}
-	}
-}
-
-#Prolog system
-salvager_enclave_init_02 = {
-	class = "rl_standard_stars"
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 100
-		}
-		#Should ideally be near the primary system
-		modifier = {
-			has_overlord_dlc = yes
-			any_neighbor_system = { has_star_flag = salvager_enclave_system }
-			add = 50
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	#spawn_chance = 100 #Guaranteed, assuming usage_odds passes
-	scaled_spawn_chance = 16	# scales by galaxy size (1000 stars = 10x base)
-
-	flags = {
-		salvager_enclave_system
-		enclave
-	}
-
-	asteroid_belt = {
-		type = rocky_asteroid_belt
-		radius = 125
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 25 max = 35 }
-		has_ring = no
-		init_effect = {
-			prevent_anomaly = yes
-		}
-	}
-
-	change_orbit = 45
-
-	planet = {
-		count = 1
-		class = rl_unhabitable_planets
-		size = 14
-		orbit_angle = { min = 110 max = 160}
-	}
-
-	change_orbit = 20
-
-	planet = {
-		count = 3
-		class = pc_asteroid
-		orbit_angle = { min = 90 max = 270 }
-	}
-
-	change_orbit = 15
-
-	planet = {
-		count = 1
-		class = pc_barren
-		orbit_angle = 80
-		size = 20
-
-		init_effect = {
-			prevent_anomaly = yes
-			set_planet_flag = salvager_enclave_planet
-			clear_deposits = yes
-			add_deposit = d_minerals_4
-			if = {
-				limit = {
-					NOT = { exists = event_target:salvager_enclave_country }
-				}
-				save_global_event_target_as = salvager_enclave_planet
-				create_species = {
-					homeworld = this
-					name = random
-					class = SALVAGER
-					namelist = MAM1
-					portrait = random
-					traits = {
-						ideal_planet_class = pc_habitat
-						trait = random_traits
-					}
-				}
-				last_created_species = {
-					save_event_target_as = salvager_enclave_species
-				}
-				create_salvager_enclave_country = yes
-				solar_system = {
-					save_global_event_target_as = salvager_enclave_system
-				}
-			}
-		}
-	}
-
-	change_orbit = 90
-
-	planet = {
-		count = 1
-		class = pc_gas_giant
-		size = 25
-		orbit_angle = { min = 110 max = 160 }
-		has_ring = yes
-
-		moon = {
-			count = 2
-			class = rl_unhabitable_planets
-			orbit_distance = { min = 20 max = 28 }
-			orbit_angle = 44
-			size = { min = 6 max = 9 }
-		}
-
-		moon = {
-			class = pc_nuked
-			orbit_distance = 28
-			orbit_angle = 30
-			size = 14
-			init_effect = {
-				create_ambient_object = {
-					type = enclave_salvager_starbase_ruined
-					entity_offset = { min = 30 max = 50 }
-					entity_offset_height = { min = -10 max = -30 }
-					location = this
-				}
-			}
-		}
-	}
-
-	init_effect = { }
-}
-
-# Salvager Enclave 3
-salvager_enclave_init_03 = {
-	class = "sc_black_hole"
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 100
-		}
-		#Should ideally be near the primary system
-		modifier = {
-			has_overlord_dlc = yes
-			any_neighbor_system = { has_star_flag = salvager_enclave_system }
-			add = 50
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	#spawn_chance = 100 #Guaranteed, assuming usage_odds passes
-	scaled_spawn_chance = 12 # scales by galaxy size (1000 stars = 10x base)
-
-	flags = {
-		salvager_enclave_system
-		enclave
-	}
-
-	planet = {
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 25 max = 35 }
-		has_ring = no
-		init_effect = {
-			prevent_anomaly = yes
-
-			create_ambient_object = {
-				type = ruined_quantum_catapult_object
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-				}
-			}
-
-			create_ambient_object = {
-				type = "large_debris_object"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 35
-					angle = 20
-				}
-			}
-			create_ambient_object = {
-				type = "large_debris_object"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 35
-					angle = 95
-				}
-			}
-			create_ambient_object = {
-				type = "large_debris_object"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 35
-					angle = 205
-				}
-			}
-		}
-	}
-
-	asteroid_belt = {
-		type = rocky_asteroid_belt
-		radius = 55
-	}
-
-	asteroid_belt = {
-		type = rocky_asteroid_belt
-		radius = 155
-	}
-
-	change_orbit = 65
-
-	planet = {
-		class = pc_broken
-		size = 14
-
-		init_effect = {
-			prevent_anomaly = yes
-
-			set_planet_flag = salvager_enclave_planet
-			clear_deposits = yes
-			if = {
-				limit = {
-					NOT = { exists = event_target:salvager_enclave_country }
-				}
-				save_global_event_target_as = salvager_enclave_planet
-				create_species = {
-					homeworld = this
-					name = random
-					class = SALVAGER
-					namelist = MAM1
-					portrait = random
-					traits = {
-						ideal_planet_class = pc_habitat
-						trait = random_traits
-					}
-				}
-				last_created_species = {
-					save_event_target_as = salvager_enclave_species
-				}
-				create_salvager_enclave_country = yes
-				solar_system = {
-					save_global_event_target_as = salvager_enclave_system
-				}
-			}
-		}
-	}
-
-	change_orbit = 35
-
-	planet = {
-		count = 3
-		class = pc_asteroid
-		orbit_angle = { min = 90 max = 270 }
-
-		init_effect = {
-			prevent_anomaly = yes
-		}
-	}
-
-	change_orbit = 35
-
-	planet = {
-		class = pc_broken
-		size = 14
-
-		init_effect = {
-			prevent_anomaly = yes
-
-			create_ambient_object = {
-				type = "large_debris_object"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 35
-					angle = 20
-				}
-			}
-			create_ambient_object = {
-				type = "medium_debris_01_object"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 35
-					angle = 120
-				}
-			}
-		}
-	}
-
-	change_orbit = 15
-
-	planet = {
-		class = pc_broken
-		size = 14
-
-		init_effect = {
-			prevent_anomaly = yes
-
-			create_ambient_object = {
-				type = enclave_salvager_starbase_ruined
-				entity_offset = { min = 30 max = 50 }
-				entity_offset_height = { min = -10 max = -30 }
-				location = this
-			}
-		}
-	}
-
-	init_effect = {
-		
-	}
-}
-
-# SHROUDWALKER ENCLAVE 1
-
-shroudwalker_enclave_init_01 = {
-	class = "rl_standard_stars"
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 150
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	spawn_chance = 100 #Guaranteed, assuming usage_odds passes
-	#scaled_spawn_chance = 8	# scales by galaxy size (1000 stars = 10x base)
-
-	flags = {
-		shroudwalker_enclave_system
-		enclave
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 20 max = 30 }
-		has_ring = no
-
-		init_effect = {
-			prevent_anomaly = yes
-			clear_deposits = yes
-			create_ambient_object = {
-				type = "nebula_L10_entity"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 0
-					angle = random
-				}
-			}
-		}
-	}
-
-	change_orbit = 45
-
-	planet = {
-		count = 1
-		orbit_distance = 100
-		class = pc_shrouded
-		orbit_angle = { min = 90 max = 270 }
-		size = 25
-		has_ring = yes
-
-		init_effect = {
-			set_planet_flag = shroudwalker_enclave_planet
-			save_event_target_as = shroudwalker_enclave_planet
-			clear_deposits = yes
-			prevent_anomaly = yes
-			if = {
-				limit = {
-					NOT = {
-						exists = event_target:shroudwalker_enclave_country
-					}
-				}
-				create_species = {
-					homeworld = this
-					name = random
-					class = SHROUDWALKER
-					namelist = NECROID1
-					portrait = random
-					traits = {
-						ideal_planet_class = pc_habitat
-						trait = trait_psionic
-						trait = random_traits
-					}
-				}
-				last_created_species = {
-					save_event_target_as = shroudwalker_enclave_species
-				}
-				create_shroudwalker_enclave_country = yes
-				solar_system = {
-					save_global_event_target_as = shroudwalker_enclave_system
-				}
-			}
-			else = {
-				event_target:shroudwalker_enclave_country = {
-					create_shroudwalker_enclave_starbase = yes
-				}
-			}
-			add_deposit = d_zro_deposit_5
-		}
-	}
-
-	init_effect = {
-		if = {
-			limit = {
-				exists = event_target:shroudwalker_enclave_country
-			}
-			spawn_natural_wormhole = {
-				bypass_type = shroud_tunnel
-				random_pos = no
-				orbit_angle = 360
-				orbit_distance = 15
-			}
-			set_star_flag = shroud_tunnel_nexus
-			save_global_event_target_as = shroud_tunnel_nexus
-		}
-	}
-}
-
-#SHROUDWALKER ENCLAVE 2
-shroudwalker_enclave_init_02 = {
-	class = "rl_standard_stars"
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 150
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	#spawn_chance = 100 #Guaranteed, assuming usage_odds passes
-	scaled_spawn_chance = 16	# scales by galaxy size (1000 stars = 10x base)
-	
-	flags = {
-		shroudwalker_enclave_system
-		enclave
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 125
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 10 max = 20 }
-		has_ring = no
-	}
-
-	change_orbit = 30
-
-	planet = {
-		count = 1
-		orbit_distance = 50
-		class = pc_shrouded
-		orbit_angle = { min = 90 max = 270 }
-		size = 30
-		has_ring = no
-
-		init_effect = {
-			set_planet_flag = shroudwalker_enclave_planet
-			save_event_target_as = shroudwalker_enclave_planet
-			clear_deposits = yes
-			prevent_anomaly = yes
-			create_ambient_object = {
-				type = "nebula_L8_entity"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 0
-					angle = random
-				}
-			}
-			if = {
-				limit = {
-					NOT = {
-						exists = event_target:shroudwalker_enclave_country
-					}
-				}
-				create_species = {
-					homeworld = this
-					name = random
-					class = SHROUDWALKER
-					namelist = LITHOID1
-					portrait = random
-					traits = {
-						ideal_planet_class = pc_habitat
-						trait = trait_psionic
-						trait = random_traits
-					}
-				}
-				last_created_species = {
-					save_event_target_as = shroudwalker_enclave_species
-				}
-				create_shroudwalker_enclave_country = yes
-				solar_system = {
-					save_global_event_target_as = shroudwalker_enclave_system
-					set_star_flag = shroudwalker_enclave_system
-				}
-			}
-			else = {
-				event_target:shroudwalker_enclave_country = {
-					create_shroudwalker_enclave_starbase = yes
-				}
-			}
-			add_deposit = d_zro_deposit_5
-		}
-	}
-
-	init_effect = {
-		if = {
-			limit = {
-				exists = event_target:shroudwalker_enclave_country
-				NOT = {
-					any_system = {
-						OR = {
-							has_star_flag = shroudwalker_enclave_system
-							has_star_flag = shroud_tunnel_nexus
-						}
-					}
-				}
-			}
-			spawn_natural_wormhole = {
-				bypass_type = shroud_tunnel
-				random_pos = no
-				orbit_angle = 360
-				orbit_distance = 15
-			}
-			set_star_flag = shroud_tunnel_nexus
-			save_global_event_target_as = shroud_tunnel_nexus
-		}
-	}
-}
-
-#SHROUDWALKER ENCLAVE 3
-shroudwalker_enclave_init_03 = {
-	class = "sc_a"
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 150
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	#spawn_chance = 100 #Guaranteed, assuming usage_odds passes
-	scaled_spawn_chance = 12	# scales by galaxy size (1000 stars = 10x base)
-	
-	flags = {
-		shroudwalker_enclave_system
-		enclave
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 30
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 105
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 155
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 1
-		size = { min = 10 max = 20 }
-		has_ring = no
-	}
-
-	change_orbit = 30
-
-	planet = {
-		count = 5
-		class = pc_rare_crystal_asteroid
-
-		init_effect = {
-
-		}
-	}
-
-	change_orbit = 30
-
-	planet = {
-		class = pc_shrouded
-		orbit_angle = { min = 90 max = 270 }
-		size = 30
-		has_ring = no
-
-		init_effect = {
-			set_planet_flag = shroudwalker_enclave_planet
-			save_event_target_as = shroudwalker_enclave_planet
-			clear_deposits = yes
-			prevent_anomaly = yes
-			create_ambient_object = {
-				type = "nebula_L8_entity"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 0
-					angle = random
-				}
-			}
-			if = {
-				limit = {
-					NOT = {
-						exists = event_target:shroudwalker_enclave_country
-					}
-				}
-				create_species = {
-					homeworld = this
-					name = random
-					class = SHROUDWALKER
-					namelist = LITHOID1
-					portrait = random
-					traits = {
-						ideal_planet_class = pc_habitat
-						trait = trait_psionic
-						trait = random_traits
-					}
-				}
-				last_created_species = {
-					save_event_target_as = shroudwalker_enclave_species
-				}
-				create_shroudwalker_enclave_country = yes
-				solar_system = {
-					save_global_event_target_as = shroudwalker_enclave_system
-					set_star_flag = shroudwalker_enclave_system
-				}
-			}
-			else = {
-				event_target:shroudwalker_enclave_country = {
-					create_shroudwalker_enclave_starbase = yes
-				}
-			}
-			add_deposit = d_zro_deposit_5
-		}
-	}
-
-	init_effect = {
-		if = {
-			limit = {
-				exists = event_target:shroudwalker_enclave_country
-				NOT = {
-					any_system = {
-						OR = {
-							has_star_flag = shroudwalker_enclave_system
-							has_star_flag = shroud_tunnel_nexus
-						}
-					}
-				}
-			}
-			spawn_natural_wormhole = {
-				bypass_type = shroud_tunnel
-				random_pos = no
-				orbit_angle = 360
-				orbit_distance = 15
-			}
-			set_star_flag = shroud_tunnel_nexus
-			save_global_event_target_as = shroud_tunnel_nexus
-		}
-
-		event_target:shroudwalker_enclave_country = {
-			create_fleet = {
-				name = "NAME_Psionic_Avatar"
-				settings = {
-					can_upgrade = no
-					can_change_composition = no
-					can_change_leader = no
-					uses_naval_capacity = no
-					spawn_debris = no
-					is_boss = yes
-				}
-				effect = {
-					set_owner = PREV
-					set_fleet_flag = avatar_fleet
-					create_ship = {
-						name = "NAME_Avatar"
-						design = "NAME_Shroud_Avatar"
-						prefix = no
-						upgradable = no
-					}
-					set_location = last_created_ambient_object
-				}
-			}
-			last_created_fleet = {
-				clear_fleet_actions = this
-				queue_actions = {
-					repeat = { #repeating it creates a visual effect of swooping around the planet
-						find_random_planet = {
-							found_planet = {
-								move_to = this
-								orbit_planet = THIS
-							}
-						}
-						wait = {
-							duration = 15
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-#Broken Shroudwalker System
-broken_shroudwalker_init_01 = {
-	class = "sc_trinary_2"
-
-	usage = misc_system_init
-	usage_odds = {
-		base = 0
-		modifier = {
-			has_overlord_dlc = yes
-			add = 150
-		}
-		modifier = {
-			factor = 0
-			is_fe_cluster = yes
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-	}
-	max_instances = 1
-	spawn_chance = 33
-	
-	flags = {
-		broken_shroudwalker_enclave
-	}
-
-	planet = {
-		name = "NAME_Mesembria"
-		class = star
-		orbit_distance = 0
-		orbit_angle = 0
-		size = 25
-		has_ring = no
-
-		init_effect = {
-			clear_deposits = yes
-			prevent_anomaly = yes
-
-			create_ambient_object = {
-				type = "nebula_L8_entity"
-				location = this
-			}
-			last_created_ambient_object = {
-				set_location = {
-					target = prev
-					distance = 0
-					angle = random
-				}
-			}
-		}
-
-		change_orbit = 20
-
-		planet = {
-			count = 6
-			class = pc_rare_crystal_asteroid
-			orbit_distance = 5
-
-			init_effect = {
-				clear_deposits = yes
-				prevent_anomaly = yes
-			}
-		}
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 20
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 30
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 40
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 50
-	}
-
-	asteroid_belt = {
-		type = crystal_asteroid_belt
-		radius = 65
-	}
-
-	planet = {
-		name = "NAME_Auge"
-		count = 1
-		class = star
-		orbit_distance = 120
-		orbit_angle = 25
-		size = 15
-		has_ring = no
-
-		planet = {
-			name = "NAME_Anatole"
-			orbit_angle = 205
-			class = pc_shrouded
-			orbit_distance = 25
-			size = 8
-
-			init_effect = {
-				clear_deposits = yes
-				prevent_anomaly = yes
-				add_deposit = d_zro_deposit_2
-			}
-		}
-
-		planet = {
-			name = "NAME_Mousika"
-			orbit_angle = 55
-			class = pc_shrouded
-			orbit_distance = 15
-			size = 15
-
-			init_effect = {
-				clear_deposits = yes
-				prevent_anomaly = yes
-				add_deposit = d_zro_deposit_2
-
-				create_ambient_object = {
-					type = enclave_shroudwalker_starbase_ruined
-					entity_offset_height = -15
-					location = this
-				}
-			}
-		}
-
-		init_effect = {
-			clear_deposits = yes
-			prevent_anomaly = yes
-		}
-	}
-
-	planet = {
-		name = "NAME_Dysis"
-		count = 1
-		class = star
-		orbit_distance = 0
-		orbit_angle = 145
-		size = 20
-		has_ring = no
-
-		planet = {
-			name = "NAME_Hesperis"
-			class = pc_shrouded
-			orbit_angle = 135
-			orbit_distance = 25
-			size = 5
-
-			init_effect = {
-				clear_deposits = yes
-				prevent_anomaly = yes
-				add_deposit = d_zro_deposit_2
-			}
-		}
-
-		planet = {
-			name = "NAME_Arktos"
-			class = pc_shrouded
-			orbit_angle = 255
-			orbit_distance = 15
-			size = 12
-
-			init_effect = {
-				clear_deposits = yes
-				prevent_anomaly = yes
-				add_deposit = d_zro_deposit_2
-
-				create_ambient_object = {
-					type = enclave_shroudwalker_starbase_ruined
-					entity_offset_height = -15
-					location = this
-				}
-			}
-		}
-
-		init_effect = {
-			clear_deposits = yes
-			prevent_anomaly = yes
-		}
-	}
-}
-
-#################
-# MEGASTRUCTURES
-#################
-
-# Ruined Quantum Catapult
-quantum_catapult_init_01 = {
-	class = sc_pulsar
-	usage = misc_system_init
-
-	flags = { ruined_catapult_system }
-
-	usage_odds = {
-		base = 100
-		modifier = {
-			factor = 0
-			has_overlord_dlc = no
-		}
-	}
-
-	max_instances = 1
-	scaled_spawn_chance = 4
-
-	planet = {
-		class = star
-		orbit_distance = 0
-		init_effect = {
-			save_event_target_as = quantum_catapult_star
-			clear_deposits = yes
-		}
-	}
-
-	change_orbit = 45
-
-	planet = {
-		count = { min = 1 max = 6 }
-		orbit_distance = 20
-		orbit_angle = { min = 90 max = 270 }
-
-		change_orbit = @base_moon_distance
-
-		moon = {
-			count = { min = 0 max = 1 }
-			orbit_angle = { min = 90 max = 270 }
-			orbit_distance = 5
-		}
-	}
-
-	init_effect = {
-		spawn_megastructure = {
-			type = "quantum_catapult_ruined"
-			planet = event_target:quantum_catapult_star
-
-			init_effect = {
-				create_ambient_object = {
-					type = "large_debris_object"
-					location = this
-				}
-				last_created_ambient_object = {
-					set_location = {
-						target = prev
-						distance = 20
-						angle = 20
-					}
-				}
-				create_ambient_object = {
-					type = "large_debris_object"
-					location = this
-				}
-				last_created_ambient_object = {
-					set_location = {
-						target = prev
-						distance = 20
-						angle = 150
-					}
-				}
-				create_ambient_object = {
-					type = "medium_debris_01_object"
-					location = this
-				}
-				last_created_ambient_object = {
-					set_location = {
-						target = prev
-						distance = 35
-						angle = 90
-					}
-				}
-				create_ambient_object = {
-					type = "medium_debris_02_object"
-					location = this
-				}
-				last_created_ambient_object = {
-					set_location = {
-						target = prev
-						distance = 3
-						angle = 270
-					}
-				}
-			}
-		}
-	}
-}
-
-# Ruined Orbital Ring
-orbital_ring_init_01 = {
-	class = "rl_binary_stars"
-	asteroid_belt = {
-		type = icy_asteroid_belt
-		radius = 145
-	}
-	flags = { ruined_orbital_ring_system }
-
-	usage = misc_system_init
-	usage_odds = {
-		base = 100
-		modifier = {
-			factor = 0
-			has_overlord_dlc = no
-		}
-		modifier = {
-			factor = 0
-			has_star_flag = empire_cluster
-		}
-		modifier = {
-			factor = 0.2
-			closest_system = {
-				has_megastructure = ring_world_ruined
-				distance = {
-					source = prev
-					max_distance <= 200
-				}
-			}
-		}
-	}
-	max_instances = 1
-	scaled_spawn_chance = 8	#by galaxy size
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 30
-		orbit_angle = 0
-		size = { min = 18 max = 30 }
-		has_ring = no
-	}
-
-	planet = {
-		count = 1
-		class = star
-		orbit_distance = 0
-		size = { min = 15 max = 25 }
-		has_ring = no
-	}
-
-	planet = {
-		count = 1
-		class = random_non_colonizable
-		orbit_distance = 45
-		orbit_angle = { min = 90 max = 270 }
-		size = { min = 8 max = 12 }
-		has_ring = no
-	}
-
-	planet = {
-		count = { min = 2 max = 3 }
-		class = pc_asteroid
-		orbit_distance = 15
-		orbit_angle = { min = 90 max = 270 }
-	}
-
-	planet = {
-		count = 1
-		class = random_colonizable
-		orbit_distance = 20
-		orbit_angle = { min = 90 max = 270 }
-		size = { min = 8 max = 14 }
-		has_ring = no
-		flags = { ruined_orbital_ring_planet }
-		init_effect = {			
-			prevent_anomaly = yes
-			save_event_target_as = ruined_orbital_ring_planet
-		}
-	}
-
-	planet = {
-		count = { min = 1 max = 2 }
-		class = pc_ice_asteroid
-		orbit_distance = 20
-		orbit_angle = { min = 90 max = 270 }
-	}
-
-	init_effect = {
-		spawn_megastructure = {
-			type = "orbital_ring_ruined"
-			planet = event_target:ruined_orbital_ring_planet
-
-			init_effect = {
-				create_ambient_object = {
-					type = "medium_debris_01_object"
-					location = this
-				}
-				last_created_ambient_object = {
-					set_location = {
-						target = prev
-						distance = 8
-						angle = 90
-					}
-				}
-				create_ambient_object = {
-					type = "medium_debris_02_object"
-					location = this
-				}
-				last_created_ambient_object = {
-					set_location = {
-						target = prev
-						distance = 3
-						angle = 270
-					}
-				}
-			}
-		}
-	}
-}
-
 ##########
 # ORIGINS
 ##########
 
-# Empire Origin
-overlord_system_init = { # Aix - Empire Capital
+# Red Origin
+soviet_union_system_init = { # Aix - Empire Capital
 	class = "sc_pulsar"
 
 	usage = misc_system_init
@@ -1402,7 +63,7 @@ overlord_system_init = { # Aix - Empire Capital
 					limit = {
 						has_owner = yes
 						owner = {
-							has_origin = origin_imperial_vassal
+							has_origin = origin_red_satellite
 						}
 					}
 					min_steps = 3
@@ -1418,7 +79,7 @@ overlord_system_init = { # Aix - Empire Capital
 					limit = {
 						has_owner = yes
 						owner = {
-							has_origin = origin_imperial_vassal
+							has_origin = origin_red_satellite
 						}
 					}
 					min_steps = 3
@@ -1430,7 +91,7 @@ overlord_system_init = { # Aix - Empire Capital
 	max_instances = 1
 	spawn_chance = 100
 
-	flags = { overlord_empire_flag overlord_system_1_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_1_flag }
 
 	planet = {
 		class = star
@@ -1484,7 +145,7 @@ overlord_system_init = { # Aix - Empire Capital
 	}
 
 	planet = { # Colonizeable Planet
-		name = "NAME_Aix"
+		name = "NAME_Pioneer"
 		class = "pc_gaia"
 		orbit_distance = 20
 		orbit_angle = 150
@@ -1494,7 +155,7 @@ overlord_system_init = { # Aix - Empire Capital
 		modifiers = none
 
 		init_effect = {
-			save_global_event_target_as = origin_imperial_homeland
+			save_global_event_target_as = origin_red_homeland
 			create_species = {
 				name = random
 				class = random_non_machine
@@ -1503,64 +164,64 @@ overlord_system_init = { # Aix - Empire Capital
 				homeworld = this
 			}
 			last_created_species = {
-				save_global_event_target_as = origin_imperial_species
+				save_global_event_target_as = origin_red_species
 			}
 			create_country = {
 				name = {
-					key = "NAME_Imperial_Origin_Empire"
-					variable_string = "[origin_imperial_species.GetAdj]"
+					key = "NAME_Red_Origin_Union"
+					variable_string = "[origin_red_species.GetAdj]"
 				}
-				authority = auth_imperial
+				authority = auth_dictatorial
 				species = last_created_species
 				civics = {
-					civic = "civic_feudal_realm"
-					civic = "civic_nationalistic_zeal"
-					civic = "civic_cutthroat_politics"
+					civic = "civic_socialistic"
+					civic = "civic_coalition_government"
+					civic = "civic_liberator"
 				}
 				ethos = {
-					ethic="ethic_fanatic_authoritarian"
+					ethic="ethic_fanatic_socialism"
 					ethic="ethic_xenophile"
 					ethic="ethic_militarist"
 					ethic="ethic_materialist"
 				}
-				origin = "origin_imperial_vassal_overlord"
+				origin = "origin_red_satellite_overlord"
 
 				effect = {
-					save_global_event_target_as = origin_imperial_homeland_country
+					save_global_event_target_as = origin_red_homeland_country
 
 					every_playable_country = {
 						limit = {
-							has_origin = origin_imperial_vassal
+							has_origin = origin_red_satellite
 						}
-						establish_communications_no_message = event_target:origin_imperial_homeland_country
+						establish_communications_no_message = event_target:origin_red_homeland_country
 					}
 
 					# Fleets
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country
+							set_owner = event_target:origin_red_homeland_country
 							create_ship = {
 								name = random
 								random_existing_design = constructor
 							}
-							set_location = event_target:origin_imperial_homeland_country.capital_star
+							set_location = event_target:origin_red_homeland_country.capital_star
 						}
 					}
 
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country
+							set_owner = event_target:origin_red_homeland_country
 							create_ship = {
 								name = random
 								random_existing_design = science
 							}
-							set_location = event_target:origin_imperial_homeland_country.capital_star
+							set_location = event_target:origin_red_homeland_country.capital_star
 							save_event_target_as = new_science_ship_target
 						}
 					}
 					create_leader = {
 						name = random
-						species = event_target:origin_imperial_homeland_country.species
+						species = event_target:origin_red_homeland_country.species
 						class = scientist
 						skill = 1
 					}
@@ -1572,7 +233,7 @@ overlord_system_init = { # Aix - Empire Capital
 						count = 4
 						create_fleet = {
 							effect = {
-								set_owner = event_target:origin_imperial_homeland_country
+								set_owner = event_target:origin_red_homeland_country
 								while = {
 									count = 10
 									create_ship = {
@@ -1580,7 +241,7 @@ overlord_system_init = { # Aix - Empire Capital
 										design = NAME_Ravager
 									}
 								}
-								set_location = event_target:origin_imperial_homeland_country.capital_star
+								set_location = event_target:origin_red_homeland_country.capital_star
 							}
 						}
 					}
@@ -1600,7 +261,7 @@ overlord_system_init = { # Aix - Empire Capital
 
 					# Robots
 					create_built_robot_species = yes
-					last_created_species = { save_global_event_target_as = origin_imperial_species_robot }
+					last_created_species = { save_global_event_target_as = origin_red_species_robot }
 
 					# Policies
 					set_policy = {
@@ -1610,7 +271,7 @@ overlord_system_init = { # Aix - Empire Capital
 					}
 					set_policy = {
 						policy = war_philosophy
-						option = no_wars
+						option = liberation_wars
 						cooldown = yes
 					}
 					set_policy = {
@@ -1645,8 +306,8 @@ overlord_system_init = { # Aix - Empire Capital
 					}
 				}
 			}
-			set_owner = event_target:origin_imperial_homeland_country
-			set_controller = event_target:origin_imperial_homeland_country
+			set_owner = event_target:origin_red_homeland_country
+			set_controller = event_target:origin_red_homeland_country
 			set_capital = yes
 
 			while = {
@@ -1658,7 +319,7 @@ overlord_system_init = { # Aix - Empire Capital
 			while = {
 				count = 25
 				create_pop = {
-					species = event_target:origin_imperial_species_robot
+					species = event_target:origin_red_species_robot
 				}
 			}
 
@@ -1685,7 +346,7 @@ overlord_system_init = { # Aix - Empire Capital
 			add_building = building_robot_assembly_plant
 			add_building = building_bureaucratic_2
 			add_building = building_research_lab_2
-			add_building = building_paradise_dome
+			add_building = building_communal_housing_large
 			add_building = building_commercial_zone
 			add_building = building_factory_1
 			add_building = building_foundry_2
@@ -1722,7 +383,7 @@ overlord_system_init = { # Aix - Empire Capital
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starhold"
-			owner = event_target:origin_imperial_homeland_country
+			owner = event_target:origin_red_homeland_country
 
 			module = "shipyard"
 			module = "shipyard"
@@ -1739,7 +400,7 @@ overlord_system_init = { # Aix - Empire Capital
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country
+				owner = event_target:origin_red_homeland_country
 			}
 		}
 		every_system_planet = {
@@ -1748,19 +409,19 @@ overlord_system_init = { # Aix - Empire Capital
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country
+				owner = event_target:origin_red_homeland_country
 			}
 		}
 	}
 
 	neighbor_system = {
 		hyperlane_jumps = { min = 1 max = 3 }
-		initializer = "overlord_system_2_init"
+		initializer = "soviet_union_system_2_init"
 	}
 
 	neighbor_system = {
 		hyperlane_jumps = { min = 1 max = 3 }
-		initializer = "overlord_system_3_init"
+		initializer = "soviet_union_system_3_init"
 	}
 
 	neighbor_system = {
@@ -1771,7 +432,7 @@ overlord_system_init = { # Aix - Empire Capital
 				}
 			}
 		}
-		initializer = "overlord_system_4_init"
+		initializer = "soviet_union_system_4_init"
 	}
 
 	neighbor_system = {
@@ -1783,7 +444,7 @@ overlord_system_init = { # Aix - Empire Capital
 				}
 			}
 		}
-		initializer = "overlord_system_5_init"
+		initializer = "soviet_union_system_5_init"
 	}
 
 	neighbor_system = {
@@ -1796,7 +457,7 @@ overlord_system_init = { # Aix - Empire Capital
 				}
 			}
 		}
-		initializer = "overlord_system_6_init"
+		initializer = "soviet_union_system_6_init"
 	}
 
 	neighbor_system = {
@@ -1810,14 +471,14 @@ overlord_system_init = { # Aix - Empire Capital
 				}
 			}
 		}
-		initializer = "overlord_system_7_init"
+		initializer = "soviet_union_system_7_init"
 	}
 }
 
-overlord_system_2_init = { # Empire second system
+soviet_union_system_2_init = { # Empire second system
 	class = "rl_standard_stars"
 
-	flags = { overlord_empire_flag overlord_system_2_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_2_flag }
 
 	planet = {
 		count = 1
@@ -1846,7 +507,7 @@ overlord_system_2_init = { # Empire second system
 
 		init_effect = {
 			save_event_target_as = imperial_homeland_2
-			event_target:origin_imperial_species = {
+			event_target:origin_red_species = {
 				create_species = {
 					is_mod = yes
 					name = this
@@ -1866,8 +527,8 @@ overlord_system_2_init = { # Empire second system
 				save_event_target_as = local_imperial_species
 			}
 
-			set_owner = event_target:origin_imperial_homeland_country
-			set_controller = event_target:origin_imperial_homeland_country
+			set_owner = event_target:origin_red_homeland_country
+			set_controller = event_target:origin_red_homeland_country
 
 			while = {
 				count = 25
@@ -1879,7 +540,7 @@ overlord_system_2_init = { # Empire second system
 			while = {
 				count = 15
 				create_pop = {
-					species = event_target:origin_imperial_species_robot
+					species = event_target:origin_red_species_robot
 				}
 			}
 
@@ -1907,7 +568,7 @@ overlord_system_2_init = { # Empire second system
 			add_building = building_robot_assembly_plant
 			add_building = building_bureaucratic_1
 			add_building = building_research_lab_1
-			add_building = building_paradise_dome
+			add_building = building_communal_housing_large
 			add_building = building_commercial_zone
 			add_building = building_energy_grid
 
@@ -1973,7 +634,7 @@ overlord_system_2_init = { # Empire second system
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starhold"
-			owner = event_target:origin_imperial_homeland_country
+			owner = event_target:origin_red_homeland_country
 
 			module = "shipyard"
 			module = "shipyard"
@@ -1990,7 +651,7 @@ overlord_system_2_init = { # Empire second system
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country
+				owner = event_target:origin_red_homeland_country
 			}
 		}
 		every_system_planet = {
@@ -1999,16 +660,16 @@ overlord_system_2_init = { # Empire second system
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country
+				owner = event_target:origin_red_homeland_country
 			}
 		}
 	}
 }
 
-overlord_system_3_init = { # Empire third system
+soviet_union_system_3_init = { # Empire third system
 	class = "rl_standard_stars"
 
-	flags = { overlord_empire_flag overlord_system_3_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_3_flag }
 
 	planet = {
 		count = 1
@@ -2037,7 +698,7 @@ overlord_system_3_init = { # Empire third system
 
 		init_effect = {
 			save_event_target_as = imperial_homeland_3
-			event_target:origin_imperial_species = {
+			event_target:origin_red_species = {
 				create_species = {
 					is_mod = yes
 					name = this
@@ -2057,8 +718,8 @@ overlord_system_3_init = { # Empire third system
 				save_event_target_as = local_imperial_species
 			}
 
-			set_owner = event_target:origin_imperial_homeland_country
-			set_controller = event_target:origin_imperial_homeland_country
+			set_owner = event_target:origin_red_homeland_country
+			set_controller = event_target:origin_red_homeland_country
 
 			while = {
 				count = 20
@@ -2070,7 +731,7 @@ overlord_system_3_init = { # Empire third system
 			while = {
 				count = 10
 				create_pop = {
-					species = event_target:origin_imperial_species_robot
+					species = event_target:origin_red_species_robot
 				}
 			}
 
@@ -2098,7 +759,7 @@ overlord_system_3_init = { # Empire third system
 			add_building = building_robot_assembly_plant
 			add_building = building_bureaucratic_1
 			add_building = building_research_lab_1
-			add_building = building_paradise_dome
+			add_building = building_communal_housing_large
 			add_building = building_commercial_zone
 
 			validate_planet_buildings_and_districts = yes
@@ -2147,7 +808,7 @@ overlord_system_3_init = { # Empire third system
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starhold"
-			owner = event_target:origin_imperial_homeland_country
+			owner = event_target:origin_red_homeland_country
 
 			module = "shipyard"
 			module = "shipyard"
@@ -2164,7 +825,7 @@ overlord_system_3_init = { # Empire third system
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country
+				owner = event_target:origin_red_homeland_country
 			}
 		}
 		every_system_planet = {
@@ -2173,16 +834,16 @@ overlord_system_3_init = { # Empire third system
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country
+				owner = event_target:origin_red_homeland_country
 			}
 		}
 	}
 }
 
-overlord_system_4_init = { # First vassal
+soviet_union_system_4_init = { # 罗马尼亚
 	class = "rl_standard_stars"
 
-	flags = { overlord_empire_flag overlord_system_4_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_4_flag }
 
 	planet = {
 		count = 1
@@ -2235,30 +896,30 @@ overlord_system_4_init = { # First vassal
 				homeworld = this
 			}
 			last_created_species = {
-				save_event_target_as = origin_imperial_species_2
+				save_event_target_as = origin_red_species_2
 			}
 			create_country = {
 				name = {
-					key = "NAME_Imperial_Origin_Empire_2"
-					variable_string = "[origin_imperial_species_2.GetNamePlural]"
+					key = "NAME_Red_Origin_Republic_1"
+					variable_string = "[origin_red_species_2.GetNamePlural]"
 				}
 				authority = auth_dictatorial
 				species = last_created_species
 				civics = {
-					civic = "civic_cyber_dictatorship"
-					civic = "civic_reeducated_labor"
-					civic = "civic_industrial_economy"
+					civic = "civic_glorious_pioneer"
+					civic = "civic_state_owned_enterprises"
+					civic = "civic_police_state"
 				}
 				ethos = {
+					ethic="ethic_fanatic_socialism"
 					ethic="ethic_fanatic_authoritarian"
-					ethic="ethic_fanatic_materialist"
-					ethic="ethic_socialism"
+					ethic="ethic_xenophile"
 				}
-				origin = "origin_imperial_vassal"
+				origin = "origin_red_satellite"
 
 				effect = {
-					set_country_flag = origin_imperial_vassal_technocrat_country
-					save_global_event_target_as = origin_imperial_homeland_country_2
+					set_country_flag = origin_red_satellite_technocrat_country
+					save_global_event_target_as = origin_red_homeland_country_2
 
 					# Tech
 					give_physics_tech_tier_1_effect = yes
@@ -2267,15 +928,15 @@ overlord_system_4_init = { # First vassal
 
 					# Subjugation
 					set_subject_of = {
-						who = event_target:origin_imperial_homeland_country
+						who = event_target:origin_red_homeland_country
 					}
 
 					# Communication
 					every_playable_country = {
 						limit = {
-							has_origin = origin_imperial_vassal
+							has_origin = origin_red_satellite
 						}
-						establish_communications_no_message = event_target:origin_imperial_homeland_country_2
+						establish_communications_no_message = event_target:origin_red_homeland_country_2
 					}
 
 					# Fleets
@@ -2283,18 +944,18 @@ overlord_system_4_init = { # First vassal
 						count = 2
 						create_fleet = {
 							effect = {
-								set_owner = event_target:origin_imperial_homeland_country_2
+								set_owner = event_target:origin_red_homeland_country_2
 								create_ship = {
 									name = random
 									random_existing_design = science
 								}
-								set_location = event_target:origin_imperial_homeland_country_2.capital_star
+								set_location = event_target:origin_red_homeland_country_2.capital_star
 								save_event_target_as = new_science_ship_target
 							}
 						}
 						create_leader = {
 							name = random
-							species = event_target:origin_imperial_homeland_country_2.species
+							species = event_target:origin_red_homeland_country_2.species
 							class = scientist
 							skill = 1
 						}
@@ -2316,7 +977,7 @@ overlord_system_4_init = { # First vassal
 					}
 					set_policy = {
 						policy = war_philosophy
-						option = no_wars
+						option = liberation_wars
 						cooldown = yes
 					}
 					set_policy = {
@@ -2356,8 +1017,8 @@ overlord_system_4_init = { # First vassal
 					}
 				}
 			}
-			set_owner = event_target:origin_imperial_homeland_country_2
-			set_controller = event_target:origin_imperial_homeland_country_2
+			set_owner = event_target:origin_red_homeland_country_2
+			set_controller = event_target:origin_red_homeland_country_2
 			set_capital = yes
 
 			while = {
@@ -2426,7 +1087,7 @@ overlord_system_4_init = { # First vassal
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starport"
-			owner = event_target:origin_imperial_homeland_country_2
+			owner = event_target:origin_red_homeland_country_2
 
 			module = "shipyard"
 			module = "anchorage"
@@ -2440,7 +1101,7 @@ overlord_system_4_init = { # First vassal
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country_2
+				owner = event_target:origin_red_homeland_country_2
 			}
 		}
 		every_system_planet = {
@@ -2449,16 +1110,16 @@ overlord_system_4_init = { # First vassal
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country_2
+				owner = event_target:origin_red_homeland_country_2
 			}
 		}
 	}
 }
 
-overlord_system_5_init = { # Second vassal
+soviet_union_system_5_init = { # 东德
 	class = "rl_standard_stars"
 
-	flags = { overlord_empire_flag overlord_system_5_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_5_flag }
 
 	planet = {
 		count = 1
@@ -2511,71 +1172,70 @@ overlord_system_5_init = { # Second vassal
 				homeworld = this
 			}
 			last_created_species = {
-				save_event_target_as = origin_imperial_species_3
+				save_event_target_as = origin_red_species_3
 			}
 			create_country = {
 				name = {
-					key = "NAME_Imperial_Origin_Empire_3"
-					variable_string = "[origin_imperial_species_3.GetNamePlural]"
+					key = "NAME_Red_Origin_Republic_2"
+					variable_string = "[origin_red_species_3.GetNamePlural]"
 				}
-				authority = auth_dictatorial
+				authority = auth_oligarchic
 				species = last_created_species
 				civics = {
-					civic = "civic_military_dictatorship"
-					civic = "civic_naval_traditions"
-					civic = "civic_warrior_culture"
+					civic = "civic_socialistic"
+					civic = "civic_idealistic_foundation"
+					civic = "civic_spy_agency"
 				}
 				ethos = {
-					#别改这个，就当满足我的强迫症，群里发的图片无效
+					ethic="ethic_fanatic_socialism"
 					ethic="ethic_fanatic_militarist"
-					ethic="ethic_fanatic_spiritualist"
-					ethic="ethic_authoritarian"
+					ethic="ethic_egalitarian"
 				}
-				origin = "origin_imperial_vassal"
+				origin = "origin_red_satellite"
 
 				effect = {
-					save_global_event_target_as = origin_imperial_homeland_country_3
-					set_country_flag = origin_imperial_vassal_prince_electorate_country
+					save_global_event_target_as = origin_red_homeland_country_3
+					set_country_flag = origin_red_satellite_prince_electorate_country
 
 					# Subjugation
 					set_subject_of = {
-						who = event_target:origin_imperial_homeland_country
+						who = event_target:origin_red_homeland_country
 					}
 
 					# Communication
 					every_playable_country = {
 						limit = {
-							has_origin = origin_imperial_vassal
+							has_origin = origin_red_satellite
 						}
-						establish_communications_no_message = event_target:origin_imperial_homeland_country_3
+						establish_communications_no_message = event_target:origin_red_homeland_country_3
 					}
 
 					# Fleets
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country_3
+							set_owner = event_target:origin_red_homeland_country_3
 							create_ship = {
 								name = random
 								random_existing_design = constructor
 							}
-							set_location = event_target:origin_imperial_homeland_country_3.capital_star
+							set_location = event_target:origin_red_homeland_country_3.capital_star
 						}
 					}
 
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country_3
+							set_owner = event_target:origin_red_homeland_country_3
 							create_ship = {
 								name = random
 								random_existing_design = science
 							}
-							set_location = event_target:origin_imperial_homeland_country_3.capital_star
+							set_location = event_target:origin_red_homeland_country_3.capital_star
 							save_event_target_as = new_science_ship_target
 						}
 					}
 					create_leader = {
 						name = random
-						species = event_target:origin_imperial_homeland_country_3.species
+						species = event_target:origin_red_homeland_country_3.species
 						class = scientist
 						skill = 1
 					}
@@ -2585,7 +1245,7 @@ overlord_system_5_init = { # Second vassal
 
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country_3
+							set_owner = event_target:origin_red_homeland_country_3
 							while = {
 								count = 5
 								create_ship = {
@@ -2597,7 +1257,7 @@ overlord_system_5_init = { # Second vassal
 									design = NAME_Ravager
 								}
 							}
-							set_location = event_target:origin_imperial_homeland_country_3.capital_star
+							set_location = event_target:origin_red_homeland_country_3.capital_star
 						}
 					}
 
@@ -2644,8 +1304,8 @@ overlord_system_5_init = { # Second vassal
 					}
 				}
 			}
-			set_owner = event_target:origin_imperial_homeland_country_3
-			set_controller = event_target:origin_imperial_homeland_country_3
+			set_owner = event_target:origin_red_homeland_country_3
+			set_controller = event_target:origin_red_homeland_country_3
 			set_capital = yes
 
 			while = {
@@ -2682,7 +1342,7 @@ overlord_system_5_init = { # Second vassal
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starport"
-			owner = event_target:origin_imperial_homeland_country_3
+			owner = event_target:origin_red_homeland_country_3
 
 			module = "shipyard"
 			module = "anchorage"
@@ -2696,7 +1356,7 @@ overlord_system_5_init = { # Second vassal
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country_3
+				owner = event_target:origin_red_homeland_country_3
 			}
 		}
 		every_system_planet = {
@@ -2705,16 +1365,16 @@ overlord_system_5_init = { # Second vassal
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country_3
+				owner = event_target:origin_red_homeland_country_3
 			}
 		}
 	}
 }
 
-overlord_system_6_init = { # Third vassal
+soviet_union_system_6_init = { # 波兰
 	class = "rl_standard_stars"
 
-	flags = { overlord_empire_flag overlord_system_6_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_6_flag }
 
 	planet = {
 		count = 1
@@ -2770,70 +1430,70 @@ overlord_system_6_init = { # Third vassal
 				homeworld = this
 			}
 			last_created_species = {
-				save_event_target_as = origin_imperial_species_4
+				save_event_target_as = origin_red_species_4
 			}
 			create_country = {
 				name = {
-					key = "NAME_Imperial_Origin_Empire_4"
-					variable_string = "[origin_imperial_species_4.GetNamePlural]"
+					key = "NAME_Red_Origin_Republic_3"
+					variable_string = "[origin_red_species_4.GetNamePlural]"
 				}
-				authority = auth_dictatorial
+				authority = auth_democratic
 				species = last_created_species
 				civics = {
-					civic = "civic_philosopher_king"
-					civic = "civic_spiritual_seekers"
-					civic = "civic_exalted_priesthood"
+					civic = "civic_peoples_republic"
+					civic = "civic_welfare_state"
+					civic = "civic_shadow_council"
 				}
-				ethos = {	
-					ethic="ethic_fanatic_pacifist"
-					ethic="ethic_fanatic_spiritualist"
-					ethic="ethic_xenophobe"
+				ethos = {
+					ethic="ethic_fanatic_socialism"
+					ethic="ethic_fanatic_xenophile"
+					ethic="ethic_pacifist"
 				}
-				origin = "origin_imperial_vassal"
+				origin = "origin_red_satellite"
 
 				effect = {
-					save_global_event_target_as = origin_imperial_homeland_country_4
-					set_country_flag = origin_imperial_vassal_palatinate_country
+					save_global_event_target_as = origin_red_homeland_country_4
+					set_country_flag = origin_red_satellite_palatinate_country
 
 					# Subjugation
 					set_subject_of = {
-						who = event_target:origin_imperial_homeland_country
+						who = event_target:origin_red_homeland_country
 					}
 
 					# Communication
 					every_playable_country = {
 						limit = {
-							has_origin = origin_imperial_vassal
+							has_origin = origin_red_satellite
 						}
-						establish_communications_no_message = event_target:origin_imperial_homeland_country_4
+						establish_communications_no_message = event_target:origin_red_homeland_country_4
 					}
 
 					# Fleets
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country_4
+							set_owner = event_target:origin_red_homeland_country_4
 							create_ship = {
 								name = random
 								random_existing_design = constructor
 							}
-							set_location = event_target:origin_imperial_homeland_country_4.capital_star
+							set_location = event_target:origin_red_homeland_country_4.capital_star
 						}
 					}
 
 					create_fleet = {
 						effect = {
-							set_owner = event_target:origin_imperial_homeland_country_4
+							set_owner = event_target:origin_red_homeland_country_4
 							create_ship = {
 								name = random
 								random_existing_design = science
 							}
-							set_location = event_target:origin_imperial_homeland_country_4.capital_star
+							set_location = event_target:origin_red_homeland_country_4.capital_star
 							save_event_target_as = new_science_ship_target
 						}
 					}
 					create_leader = {
 						name = random
-						species = event_target:origin_imperial_homeland_country_4.species
+						species = event_target:origin_red_homeland_country_4.species
 						class = scientist
 						skill = 1
 					}
@@ -2849,12 +1509,12 @@ overlord_system_6_init = { # Third vassal
 					# Policies
 					set_policy = {
 						policy = diplomatic_stance
-						option = diplo_stance_isolationist
+						option = diplo_stance_cooperative
 						cooldown = yes
 					}
 					set_policy = {
 						policy = war_philosophy
-						option = no_wars
+						option = liberation_wars
 						cooldown = yes
 					}
 					set_policy = {
@@ -2904,8 +1564,8 @@ overlord_system_6_init = { # Third vassal
 					}
 				}
 			}
-			set_owner = event_target:origin_imperial_homeland_country_4
-			set_controller = event_target:origin_imperial_homeland_country_4
+			set_owner = event_target:origin_red_homeland_country_4
+			set_controller = event_target:origin_red_homeland_country_4
 			set_capital = yes
 
 			while = {
@@ -2950,7 +1610,7 @@ overlord_system_6_init = { # Third vassal
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starport"
-			owner = event_target:origin_imperial_homeland_country_4
+			owner = event_target:origin_red_homeland_country_4
 
 			module = "shipyard"
 			module = "anchorage"
@@ -2964,7 +1624,7 @@ overlord_system_6_init = { # Third vassal
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country_4
+				owner = event_target:origin_red_homeland_country_4
 			}
 		}
 		every_system_planet = {
@@ -2973,16 +1633,16 @@ overlord_system_6_init = { # Third vassal
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country_4
+				owner = event_target:origin_red_homeland_country_4
 			}
 		}
 	}
 }
 
-overlord_system_7_init = { # Fourth vassal
+soviet_union_system_7_init = { # Fourth vassal
 	class = "rl_standard_stars"
 
-	flags = { overlord_empire_flag overlord_system_7_flag }
+	flags = { soviet_union_empire_flag soviet_union_system_7_flag }
 
 	planet = {
 		count = 1
@@ -3038,7 +1698,7 @@ overlord_system_7_init = { # Fourth vassal
 				homeworld = this
 			}
 			last_created_species = {
-				save_event_target_as = origin_imperial_species_5
+				save_event_target_as = origin_red_species_5
 			}
 			if = {
 				limit = {
@@ -3046,25 +1706,25 @@ overlord_system_7_init = { # Fourth vassal
 				}
 				create_country = {
 					name = {
-						key = "NAME_Imperial_Origin_Empire_5"
-						variable_string = "[origin_imperial_species_5.GetAdj]"
+						key = "NAME_Red_Origin_Republic_4"
+						variable_string = "[origin_red_species_5.GetAdj]"
 					}
-					authority = auth_corporate
+					authority = auth_oligarchic
 					species = last_created_species
 					civics = {
-						civic = "civic_ruthless_competition"
-						civic = "civic_industrial_automatation_corporate"
-						civic = "civic_consumerism"
+						civic = "civic_world_cooperative"
+						civic = "civic_labour_unions"
+						civic = "civic_industry_pacesetter"
 					}
 					ethos = {
+						ethic="ethic_socialism"
 						ethic="ethic_fanatic_materialist"
-						ethic="ethic_fanatic_capitalism"
-						ethic="ethic_xenophile"
+						ethic="ethic_fanatic_xenophile"
 					}
-					origin = "origin_imperial_vassal"
+					origin = "origin_red_satellite"
 
 					effect = {
-						save_global_event_target_as = origin_imperial_homeland_country_5
+						save_global_event_target_as = origin_red_homeland_country_5
 					}
 				}
 			}
@@ -3072,7 +1732,7 @@ overlord_system_7_init = { # Fourth vassal
 				create_country = {
 					name = {
 						key = "NAME_Imperial_Origin_Empire_5"
-						variable_string = "[origin_imperial_species_5.GetAdj]"
+						variable_string = "[origin_red_species_5.GetAdj]"
 					}
 					authority = auth_oligarchic
 					species = last_created_species
@@ -3084,44 +1744,44 @@ overlord_system_7_init = { # Fourth vassal
 						ethic = ethic_fanatic_materialist
 						ethic = ethic_xenophile
 					}
-					origin = "origin_imperial_vassal"
+					origin = "origin_red_satellite"
 
 					effect = {
-						save_global_event_target_as = origin_imperial_homeland_country_5
+						save_global_event_target_as = origin_red_homeland_country_5
 					}
 				}
 			}
 
-			event_target:origin_imperial_homeland_country_5 = {
-				set_country_flag = origin_imperial_vassal_league_country
+			event_target:origin_red_homeland_country_5 = {
+				set_country_flag = origin_red_satellite_league_country
 				# Subjugation
 				set_subject_of = {
-					who = event_target:origin_imperial_homeland_country
+					who = event_target:origin_red_homeland_country
 				}
 
 				# Communication
 				every_playable_country = {
 					limit = {
-						has_origin = origin_imperial_vassal
+						has_origin = origin_red_satellite
 					}
-					establish_communications_no_message = event_target:origin_imperial_homeland_country_5
+					establish_communications_no_message = event_target:origin_red_homeland_country_5
 				}
 
 				# Fleets
 				create_fleet = {
 					effect = {
-						set_owner = event_target:origin_imperial_homeland_country_5
+						set_owner = event_target:origin_red_homeland_country_5
 						create_ship = {
 							name = random
 							random_existing_design = science
 						}
-						set_location = event_target:origin_imperial_homeland_country_5.capital_star
+						set_location = event_target:origin_red_homeland_country_5.capital_star
 						save_event_target_as = new_science_ship_target
 					}
 				}
 				create_leader = {
 					name = random
-					species = event_target:origin_imperial_homeland_country_5.species
+					species = event_target:origin_red_homeland_country_5.species
 					class = scientist
 					skill = 1
 				}
@@ -3131,7 +1791,7 @@ overlord_system_7_init = { # Fourth vassal
 
 				create_fleet = {
 					effect = {
-						set_owner = event_target:origin_imperial_homeland_country_5
+						set_owner = event_target:origin_red_homeland_country_5
 						while = {
 							count = 5
 							create_ship = {
@@ -3139,7 +1799,7 @@ overlord_system_7_init = { # Fourth vassal
 								design = NAME_Dagger
 							}
 						}
-						set_location = event_target:origin_imperial_homeland_country_5.capital_star
+						set_location = event_target:origin_red_homeland_country_5.capital_star
 					}
 				}
 
@@ -3186,8 +1846,8 @@ overlord_system_7_init = { # Fourth vassal
 				}
 			}
 			
-			set_owner = event_target:origin_imperial_homeland_country_5
-			set_controller = event_target:origin_imperial_homeland_country_5
+			set_owner = event_target:origin_red_homeland_country_5
+			set_controller = event_target:origin_red_homeland_country_5
 			set_capital = yes
 
 			while = {
@@ -3246,7 +1906,7 @@ overlord_system_7_init = { # Fourth vassal
 	init_effect = {
 		create_starbase = {
 			size = "starbase_starport"
-			owner = event_target:origin_imperial_homeland_country_5
+			owner = event_target:origin_red_homeland_country_5
 
 			module = "shipyard"
 			module = "anchorage"
@@ -3260,7 +1920,7 @@ overlord_system_7_init = { # Fourth vassal
 				has_mining_station = no
 			}
 			create_mining_station = {
-				owner = event_target:origin_imperial_homeland_country_5
+				owner = event_target:origin_red_homeland_country_5
 			}
 		}
 		every_system_planet = {
@@ -3269,7 +1929,7 @@ overlord_system_7_init = { # Fourth vassal
 				has_research_station = no
 			}
 			create_research_station = {
-				owner = event_target:origin_imperial_homeland_country_5
+				owner = event_target:origin_red_homeland_country_5
 			}
 		}
 	}

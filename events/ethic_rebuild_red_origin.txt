@@ -1,0 +1,471 @@
+###############################
+# Pop Faction Events
+# by Maximilian Olbers
+###############################
+
+namespace = red_origin
+
+event = {
+	id = red_origin.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		# Imperial Vassal
+		if = {
+			limit = {
+				any_playable_country = {
+					has_origin = origin_red_satellite
+				}
+			}
+			red_origin_start_effect = yes
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.5700
+
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_red_satellite
+	}
+
+	immediate = {
+		# Have met aliens (their liege)
+		set_country_flag = first_contact_event
+		set_country_flag = Story2 # Already encountered spacefarers
+
+		event_target:origin_red_homeland_country = {
+			every_subject = {
+				establish_communications_no_message = root
+				every_system_within_border = {
+					set_surveyed = {
+						surveyed = yes
+						surveyor = root
+					}
+				}
+			}
+			establish_communications_no_message = root
+			every_system_within_border = {
+				set_surveyed = {
+					surveyed = yes
+					surveyor = root
+				}
+			}
+		}
+		set_subject_of = {
+			who = event_target:origin_red_homeland_country
+		}
+		overlord = {
+			add_opinion_modifier = {
+				modifier = opinion_imperial_vassal_ai_opinion
+				who = root
+			}
+		}
+		random_agreement = {
+			limit = {
+				owner = { is_same_value = root.overlord }
+				target = { is_same_value = root }
+			}
+			set_agreement_terms = {
+				subject_diplomacy = subject_can_do_diplomacy
+				subject_integration = subject_can_not_be_integrated
+				subject_expand = subject_can_expand_with_tithe
+				subject_holdings_limit = subject_holdings_limit_1
+				joins_subject_wars = joins_subject_wars_defensive
+				joins_overlord_wars = joins_overlord_wars_none
+			}
+		}
+	}
+}
+
+# Choose Vassal Specialization & Intro Event Chain
+country_event = {
+	id = red_origin.5703
+	title = TRANSMISSION
+	desc = origin.5703.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	trigger = {
+		has_origin = origin_red_satellite
+		is_ai = no
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = soviet_union_empire }
+	}
+
+	option = {
+		name = origin.5703.a
+		icon = {
+			icon = GFX_option_icon_hostile
+			text = dialog_hostile_overlord
+		}
+		set_country_flag = imperial_fiefdom_harsh_response
+		event_target:soviet_union_empire = {
+			add_opinion_modifier = {
+				who = root
+				modifier = opinion_imperial_vassal_harsh_response_overlord_opinion
+			}
+		}
+	}
+	option = {
+		name = origin.5703.b
+		default_hide_option = yes
+		icon = {
+			icon = GFX_option_icon_isolationist
+			text = dialog_wary_overlord
+		}
+	}
+	option = {
+		name = origin.5703.c
+		icon = {
+			icon = GFX_option_icon_friendly
+			text = dialog_friendly_overlord
+		}
+		set_country_flag = imperial_fiefdom_grateful_response
+		event_target:soviet_union_empire = {
+			add_opinion_modifier = {
+				who = root
+				modifier = opinion_imperial_vassal_grateful_response_overlord_opinion
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.5705
+	title = TRANSMISSION
+	desc = {
+		trigger = {
+			has_country_flag = imperial_fiefdom_harsh_response
+		}
+		text = origin.5705.desc.harsh
+	}
+	desc = {
+		trigger = {
+			has_country_flag = imperial_fiefdom_grateful_response
+		}
+		text = origin.5705.desc.grateful
+	}
+	desc = {
+		trigger = {
+			has_country_flag = imperial_fiefdom_reconsider_response
+		}
+		text = origin.5705.desc.reconsider
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_country_flag = imperial_fiefdom_harsh_response
+				has_country_flag = imperial_fiefdom_grateful_response
+				has_country_flag = imperial_fiefdom_reconsider_response
+			}
+		}
+		text = origin.5705.desc
+	}
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	trigger = {
+		has_origin = origin_red_satellite
+		is_ai = no
+	}
+
+	option = {
+		name = origin.5705.a
+		origin_imperial_fiefdom_bulwark_specialization_effect = yes
+	}
+	option = {
+		name = origin.5705.b
+		hidden_effect = {
+			country_event = { id = red_origin.5706 }
+		}
+	}
+	option = {
+		name = origin.5705.c
+		default_hide_option = yes
+		origin_imperial_fiefdom_scholarium_specialization_effect = yes
+	}
+	option = {
+		name = origin.5705.d
+		hidden_effect = {
+			country_event = { id = red_origin.5707 }
+		}
+	}
+	option = {
+		name = origin.5705.e
+		origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+	}
+	option = {
+		name = origin.5705.f
+		hidden_effect = {
+			country_event = { id = red_origin.5708 }
+		}
+	}
+
+	after = {
+		remove_country_flag = imperial_fiefdom_harsh_response
+		remove_country_flag = imperial_fiefdom_grateful_response
+	}
+}
+
+country_event = { # Learn more about Bulwarks
+	id = red_origin.5706
+	title = TRANSMISSION
+	desc = origin.5706.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	option = {
+		name = origin.5706.a
+		default_hide_option = yes
+		origin_imperial_fiefdom_bulwark_specialization_effect = yes
+	}
+	option = {
+		name = origin.5706.b
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+			set_country_flag = imperial_fiefdom_reconsider_response
+		}
+	}
+}
+
+country_event = { # Learn more about Scholaria
+	id = origin.5707
+	title = TRANSMISSION
+	desc = origin.5707.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	option = {
+		name = origin.5707.a
+		default_hide_option = yes
+		origin_imperial_fiefdom_scholarium_specialization_effect = yes
+	}
+	option = {
+		name = origin.5707.b
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+			set_country_flag = imperial_fiefdom_reconsider_response
+		}
+	}
+}
+
+country_event = { # Learn more about Prospectoria
+	id = red_origin.5708
+	title = TRANSMISSION
+	desc = origin.5708.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	option = {
+		name = origin.5708.a
+		default_hide_option = yes
+		origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+	}
+	option = {
+		name = origin.5708.b
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+			set_country_flag = imperial_fiefdom_reconsider_response
+		}
+	}
+}
+
+# AI Setup
+country_event = {
+	id = red_origin.5710
+	
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_red_satellite
+		is_ai = yes
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = soviet_union_empire }
+
+		if = { # Influence reduction modifier
+			limit = {
+				NOT = { has_country_flag = origin_red_satellite_rival_country }
+			}
+			add_modifier = {
+				modifier = imperial_vassal_ai_modifier
+				days = -1
+			}
+		}
+
+		# Opinion Modifiers
+		add_opinion_modifier = {
+			modifier = opinion_imperial_overlord_ai_opinion
+			who = event_target:soviet_union_empire
+		}
+		event_target:soviet_union_empire = {
+			every_subject = {
+				limit = {
+					is_ai = no
+				}
+				root = {
+					add_opinion_modifier = {
+						modifier = opinion_imperial_vassal_ai_opinion
+						who = prev
+					}
+				}
+			}
+		}
+
+		random_agreement = { # Agreement Terms with Overlord
+			limit = {
+				owner = { is_same_value = root.overlord }
+				target = { is_same_value = root }
+			}
+			set_agreement_terms = { # Generic values everyone gets
+				subject_integration = subject_can_not_be_integrated
+				subject_holdings_limit = subject_holdings_limit_1
+				joins_subject_wars = joins_subject_wars_all
+				joins_overlord_wars = joins_overlord_wars_none
+			}
+			if = { # Rival Country specific
+				limit = {
+					root = { has_country_flag = origin_red_satellite_rival_country }
+				}
+				set_agreement_terms = {
+					subject_diplomacy = subject_can_do_diplomacy
+				}
+			}
+			else = { # Rest
+				set_agreement_terms = {
+					subject_diplomacy = subject_can_not_do_diplomacy
+				}
+				random_list = {
+					1 = {
+						set_agreement_terms = {
+							subject_expand = subject_cannot_expand
+						}
+					}
+					1 = {
+						set_agreement_terms = {
+							subject_expand = subject_can_expand_with_tithe
+						}
+					}
+				}
+			}
+		}
+
+		if = { # Rival Country bonuses
+			limit = {
+				has_country_flag = origin_red_satellite_rival_country
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = random
+						random_existing_design = science
+					}
+					set_location = root.capital_star
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = random
+						random_existing_design = constructor
+					}
+					set_location = root.capital_star
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					while = {
+						count = 3
+						create_ship = {
+							name = random
+							design = NAME_Dagger
+						}
+					}
+					set_location = root.capital_star
+				}
+			}
+			add_resource = { 
+				energy = 2000 
+				food = 1000
+				minerals = 1000
+				influence = 300
+			}
+		}
+
+		# Holding Building
+		capital_scope = {
+			add_holding = {
+				holding = holding_garrison
+				owner = event_target:soviet_union_empire
+			}
+		}
+	}
+}
