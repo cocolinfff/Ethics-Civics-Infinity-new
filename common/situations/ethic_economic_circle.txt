@@ -1,0 +1,239 @@
+situation_economic_circle = {
+    picture = GFX_evt_dark_alley
+    category = positive
+    desc=ethic_economic_circle_desc
+    on_start = {
+	}
+	on_abort = {
+	}
+    start_value = 1
+    stages = {
+        circle_1 = {
+            icon = GFX_situation_stage_1
+            icon_background = GFX_situation_stage_frame_blue
+			end = 10
+			modifier = {
+				trade_value_mult = 0.10
+                pop_happiness = 0.05
+                job_merchant_per_pop=0.02
+			}
+        }
+        circle_2 = {
+            icon = GFX_situation_stage_2
+            icon_background = GFX_situation_stage_frame_green
+            end = 40
+            modifier = {
+                trade_value_mult = 0.75
+                planet_crime_mult = 0.10
+                planet_stability_add = -5
+                diplo_weight_economy_mult = 0.25
+                job_merchant_per_pop=0.05
+            }
+        }
+        circle_3 = {
+            icon = GFX_situation_stage_3
+            icon_background = GFX_situation_stage_frame_green
+            end = 90
+            modifier = {
+                trade_value_mult = 0.50
+                planet_crime_mult = 0.10
+                planet_crime_add = 10
+                planet_stability_add = -10 
+                planet_jobs_produces_mult = -0.05
+                job_merchant_per_pop=0.07
+            }
+        }
+        circle_4 = {
+            icon = GFX_situation_stage_4
+            icon_background = GFX_situation_stage_frame_red
+            end = 100
+            modifier = {
+                trade_value_mult = -1.75
+                planet_crime_mult = 0.50
+                planet_crime_add = 50
+                planet_stability_add = -30 
+                planet_jobs_produces_mult = -0.50
+                job_merchant_per_pop=-0.20
+                country_unity_produces_mult=-0.50
+                pop_cat_slave_happiness=-0.60
+                pop_cat_worker_happiness=-0.40
+                pop_cat_specialist_happiness=-0.20
+            }
+        }
+    }
+        on_monthly = {
+	    	random_events = {
+	    		100 = 0
+	    		5 = economic_circle.1
+                5 = economic_circle.2
+                1 = economic_circle.3
+	    	}
+	    }
+
+        monthly_progress = {
+            base = 0
+######################思潮
+            modifier = {
+                desc = ethic_is_capitalism
+                add = 0.8
+                exists = owner
+                owner = {
+                    OR = {
+                        has_ethic=ethic_capitalism
+                        has_ethic=ethic_fanatic_capitalism
+                    }
+                    NOT = {has_valid_civic=civic_characteristic_socialism}
+                }
+            } #资基础0.8
+            modifier = {
+                desc = ethic_is_capitalism_desc
+                add = 0.6
+                owner = {
+                    has_policy_flag=reform_and_opening_up
+                }
+            } #改开基础0.6
+############################地方权力
+            modifier = {
+                desc = ethic_full_dece_desc
+                add=0.2
+                owner = {
+                    has_policy_flag = full_decentralization
+                }
+            } #完全放权 0.1
+            modifier = {
+                desc = ethic_high_dece_desc
+                add=0.1
+                owner = {
+                    has_policy_flag = high_decentralization
+                }
+            } #高度放权 0.05
+            modifier = {
+                desc = ethic_partial_dece_desc
+                add=0
+                owner = {
+                    has_policy_flag = partial_decentralization
+                }
+            } #部分放权 0
+            modifier = {
+                desc = ethic_concen_power_desc
+                add=-0.05
+                owner = {
+                    has_policy_flag = centralized_state
+                }
+            } #中央集权 -0.025
+            modifier = {
+                desc = ethic_centralized_desc
+                add=-0.10
+                owner = {
+                    has_policy_flag = concentration_of_power
+                }
+            } #高度集权 -0.05
+            modifier = {
+                desc = ethic_exce_central_desc
+                add=-0.15
+                owner = {
+                    has_policy_flag = excessive_centralization
+                }
+            } #完全集权 -0.1
+############################突变
+            modifier = {
+                desc = ethic_expand_recently_desc
+                add = -5
+                owner = {
+                    has_country_flag = ethic_expand_recently
+                }
+            } #每殖民一个星球-5，但是要加一个月检em
+            modifier = {
+                desc = ethic_economic_win_a_war_desc
+                add = -50
+                owner = {
+                    has_country_flag = ethic_economic_win_a_war
+                }
+            } #某些情况下战胜-50*1个月
+            modifier = {
+                desc = ethic_economic_lose_a_war_desc
+                add = 50
+                owner = {
+                    has_country_flag = ethic_economic_lose_a_war
+                }
+            } #某些情况下战败-50*1个月
+            modifier = {
+                desc = ethic_freedom_desc
+                add = 0.05
+                owner = {
+                    has_global_flag = ETHIC_FREEDOM
+                }
+            } #自由经济！
+            modifier = {
+                desc = ethic_slow_desc
+                add = -0.01
+                owner = {
+                    has_global_flag = ETHIC_SLOW
+                }
+            } #受控经济！
+            modifier = {
+                desc = ethic_slow_desc
+                add = -0.3
+                owner = {
+                    has_global_flag = ETHIC_STOP
+                }
+            } #受控经济！
+#############################法令
+            modifier = {
+                desc = ethic_free_trade_act_desc
+                add = 0.01
+                owner = {
+                    has_edict = free_trade_act
+                }
+            }
+            modifier = {
+                desc = ethic_consumerist_propaganda_desc
+                add = 0.03
+                owner = {
+                    has_edict = consumerist_propaganda
+                }
+            }
+        }
+        approach = {
+            name = ethic_accelerate_economic
+            icon = GFX_situation_approach_this_is_fine
+		    icon_background = GFX_situation_approach_bg_green
+            default = yes
+            modifier = {
+                pop_cat_ruler_happiness=0.10
+                trade_value_mult=0.20
+            }
+            hidden_effect={
+                set_global_flag=ETHIC_FREEDOM
+            }
+            resource={
+                energy=1
+            }
+        }
+        approach = {
+            name = ethic_slow_economic
+            icon = GFX_situation_approach_this_is_fine
+		    icon_background = GFX_situation_approach_bg_yellow
+            modifier = {
+                trade_value_mult=-0.20
+                edicts_unity_upkeep_mult=0.20
+            }
+            hidden_effect={
+                set_global_flag=ETHIC_SLOW
+            }
+        }
+        approach = {
+            name = ethic_stop_economic
+            icon = GFX_situation_approach_this_is_fine
+		    icon_background = GFX_situation_approach_bg_red
+            modifier = {
+                trade_value_mult=-0.50
+                pop_happiness=-0.20
+                planet_crime_add=20
+            }
+            hidden_effect={
+                set_global_flag=ETHIC_STOP
+            }
+        }
+       
+}
