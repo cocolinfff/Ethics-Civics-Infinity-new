@@ -897,7 +897,6 @@ country_event = {
 					}
 					set_owner = event_target:current_splinter
 				}
-				starbase = { set_owner = event_target:current_splinter }
 				every_neighbor_system = {
 					limit = {
 						exists = owner
@@ -910,30 +909,35 @@ country_event = {
 						}
 					}
 					starbase = { set_owner = event_target:current_splinter }
-					every_fleet_in_system = {
-						limit = { is_owned_by = root.owner }
-						set_mia = yes
-					}
-					every_neighbor_system = {
-						limit = {
-							exists = owner
-							owner = { is_same_value = root.owner }
-							exists = starbase
-							NOT = {
-								any_system_planet = {
-									is_colony = yes
-								}
-								any_neighbor_system = {
-									any_system_planet = {
-										is_colony = yes
+				}
+				event_target:current_splinter = {
+					while = {
+						count = 3
+						every_system_within_border = {
+							every_neighbor_system = {
+								limit = {
+									exists = owner
+									owner = { is_same_value = root.owner }
+									exists = starbase
+									NOR = {
+										any_system_planet = {
+											is_colony = yes
+										}
+										any_neighbor_system = {
+											any_system_planet = {
+												is_colony = yes
+												owner = {
+													OR = {
+														is_same_value = root
+														has_country_flag = origin_red_satellite_ex_union
+													}
+												}
+											}
+										}
 									}
 								}
+								starbase = { set_owner = event_target:current_splinter }
 							}
-						}
-						starbase = { set_owner = event_target:current_splinter }
-						every_fleet_in_system = {
-							limit = { is_owned_by = root.owner }
-							set_mia = yes
 						}
 					}
 				}
