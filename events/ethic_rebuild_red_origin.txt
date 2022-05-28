@@ -76,7 +76,7 @@ country_event = {
 				subject_expand = subject_can_expand_with_tithe
 				subject_holdings_limit = subject_holdings_limit_1
 				joins_subject_wars = joins_subject_wars_defensive
-				joins_union_wars = joins_union_wars_none
+				joins_overlord_wars = joins_overlord_wars_none
 			}
 		}
 	}
@@ -392,7 +392,7 @@ country_event = {
 				subject_integration = subject_can_not_be_integrated
 				subject_holdings_limit = subject_holdings_limit_1
 				joins_subject_wars = joins_subject_wars_all
-				joins_union_wars = joins_union_wars_none
+				joins_overlord_wars = joins_overlord_wars_none
 			}
 			if = { # Rival Country specific
 				limit = {
@@ -485,7 +485,7 @@ country_event = { # Overlord
 	is_triggered_only = yes
 
 	trigger = {
-		has_origin = origin_red_satellite_union
+		has_origin = origin_red_satellite_overlord
 		years_passed >= 5
 	}
 
@@ -506,7 +506,7 @@ country_event = { # Overlord version
 	is_triggered_only = yes
 
 	trigger = {
-		has_origin = origin_red_satellite_union
+		has_origin = origin_red_satellite_overlord
 	}
 
 	immediate = {
@@ -775,15 +775,14 @@ country_event = {
 			country_event = { id = red_origin.1989 }
 		}
 		while = { # iterate through all splintering worlds
-			limit = { any_owned_planet = { is_capital = no NOT = { has_planet_flag = soviet_union_planet } } }
+			limit = { any_owned_planet = { is_capital = no } }
 			random_system_within_border = { # we want a country per colonized system
 				limit = {
 					is_capital_system = no
-					NOT = { has_star_flag = soviet_union_empire_flag }
-					any_system_planet = { is_colony = yes NOT = { has_planet_flag = soviet_union_planet } }
+					any_system_planet = { is_colony = yes }
 				}
 				random_system_planet = {
-					limit = { is_colony = yes NOT = { has_planet_flag = soviet_union_planet } }
+					limit = { is_colony = yes }
 					create_country = {
 						name = random
 						type = default
@@ -924,34 +923,17 @@ country_event = {
 								any_system_planet = {
 									is_colony = yes
 								}
+								any_neighbor_system = {
+									any_system_planet = {
+										is_colony = yes
+									}
+								}
 							}
 						}
 						starbase = { set_owner = event_target:current_splinter }
 						every_fleet_in_system = {
 							limit = { is_owned_by = root.owner }
 							set_mia = yes
-						}
-						every_neighbor_system = {
-							limit = {
-								exists = owner
-								owner = { is_same_value = root.owner }
-								exists = starbase
-								NOR = {
-									any_system_planet = {
-										is_colony = yes
-									}
-									any_neighbor_system = {
-										any_system_planet = {
-											is_colony = yes
-										}
-									}
-								}
-							}
-							starbase = { set_owner = event_target:current_splinter }
-							every_fleet_in_system = {
-								limit = { is_owned_by = root.owner }
-								set_mia = yes
-							}
 						}
 					}
 				}
