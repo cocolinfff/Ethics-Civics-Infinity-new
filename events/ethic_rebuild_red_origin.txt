@@ -486,7 +486,7 @@ country_event = { # Overlord
 
 	trigger = {
 		has_origin = origin_red_satellite_overlord
-		years_passed >= 5
+		years_passed >= 10
 	}
 
 	immediate = {
@@ -613,7 +613,7 @@ country_event = {
 			}
 		}
 		start_situation = {
-			type = situation_road_to_collapse
+			type = situation_road_to_dissolution
 			target = capital_scope
 		}
 	}
@@ -665,7 +665,7 @@ country_event = {
 			}
 		}
 		start_situation = {
-			type = situation_road_to_collapse
+			type = situation_road_to_dissolution
 			target = capital_scope
 		}
 	}
@@ -717,9 +717,10 @@ country_event = {
 			}
 		}
 		start_situation = {
-			type = situation_road_to_collapse
+			type = situation_road_to_dissolution
 			target = capital_scope
 		}
+		
 	}
 }
 
@@ -774,11 +775,46 @@ country_event = {
 			set_subject_of = { who = none }
 			country_event = { id = red_origin.1989 }
 		}
+		export_trigger_value_to_variable = { trigger = count_owned_planet variable = splintering_worlds }
+		divide_variable = { which = splintering_worlds value = 2 }
+		floor_variable = splintering_worlds
 		while = { # iterate through all splintering worlds
-			limit = { any_owned_planet = { is_capital = no } }
+			limit = {
+				any_owned_planet = {
+					is_capital = no
+					OR = {
+						check_variable = {
+							which = splintering_worlds
+							value >= 2
+						}
+						NOT = { has_star_flag = soviet_union_planet_2 }
+					}
+					OR = {
+						check_variable = {
+							which = splintering_worlds
+							value >= 3
+						}
+						NOT = { has_star_flag = soviet_union_planet_3 }
+					}
+				}
+			}
 			random_system_within_border = { # we want a country per colonized system
 				limit = {
 					is_capital_system = no
+					OR = {
+						check_variable = {
+							which = splintering_worlds
+							value >= 2
+						}
+						NOT = { has_star_flag = soviet_union_system_2_flag }
+					}
+					OR = {
+						check_variable = {
+							which = splintering_worlds
+							value >= 3
+						}
+						NOT = { has_star_flag = soviet_union_system_3_flag }
+					}
 					any_system_planet = { is_colony = yes }
 				}
 				random_system_planet = {
@@ -829,8 +865,8 @@ country_event = {
 							}
 
 							# Give them a fleet of their own
-							create_fleet_from_naval_cap = 0.4
 							create_fleet_from_naval_cap = 0.3
+							create_fleet_from_naval_cap = 0.2
 							create_fleet_from_naval_cap = 0.1
 
 							# Give them some starting resources
@@ -1020,5 +1056,26 @@ country_event = {
 	option = {
 		name = red_origin.1989.b
 		custom_tooltip = red_origin.1989.tooltip
+	}
+}
+
+country_event = {
+	id = red_origin.6010
+	title = red_origin.6010.name
+	desc = red_origin.6010.desc
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	option = { #开启改革路线
+		name = red_origin.6010.a
+		custom_tooltip = red_origin.6010.a.tooltip
+		start_situation = {
+			type = situation_road_to_independent
+			target = capital_scope
+		}
+	}
+	option = { #暂且观望
+		name = red_origin.6010.b
+		custom_tooltip = red_origin.6010.b.tooltip
 	}
 }

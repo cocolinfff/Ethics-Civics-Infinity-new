@@ -1,5 +1,5 @@
 
-situation_road_to_collapse = {
+situation_road_to_dissolution = {
 	picture = GFX_evt_alien_propaganda
 	category = negative
 
@@ -30,16 +30,7 @@ situation_road_to_collapse = {
 	}
 
 	abort_trigger = {
-		NOT = {
-			owner = { #otherwise, that event flips ownership, which immediately invalidates the Situation
-				has_active_event = { unrest.4200 }
-			}
-		}
-		OR = {
-			NOT = { exists = target.owner }
-			target.owner = { NOT = { is_same_value = root.owner } }
-			target.controller = { NOT = { is_same_value = root.owner } }
-		}
+
 	}
 
 	start_value = 0
@@ -50,34 +41,52 @@ situation_road_to_collapse = {
 			icon_background = GFX_situation_stage_frame_red
 			modifier = {
 				planet_jobs_produces_mult = -0.05
-				planet_jobs_unity_produces_mult = -0.2
+				planet_jobs_food_produces_mult = -0.05
+				planet_jobs_consumer_goods_produces_mult = -0.05
+				country_unity_produces_mult = -0.2
 				pop_happiness = -0.05
 			}
-			end = 30
+			end = 40
 		}
 		revolt_severity_2 = {
 			icon = GFX_situation_stage_2
 			icon_background = GFX_situation_stage_frame_red
-			#附属国寻求改革和独立
+			#官僚主义成灾
 			on_first_enter = {
+				#成员国收到事件开启独立化
+				every_subject = {
+					country_event = {
+						id = red_origin.6010
+					}
+				}
 			}
 			modifier = {
 				planet_jobs_produces_mult = -0.1
-				planet_jobs_unity_produces_mult = -0.5
+				planet_jobs_food_produces_mult = -0.1
+				planet_jobs_consumer_goods_produces_mult = -0.1
+				country_unity_produces_mult = -0.35
 				pop_happiness = -0.1
 			}
-			end = 60
+			end = 70
 		}
 		revolt_severity_3 = {
 			icon = GFX_situation_stage_3
 			icon_background = GFX_situation_stage_frame_red
 			#抗议兴起
 			on_first_enter = {
+				#在成员国引爆自由化浪潮局势
+				every_subject = {
+					country_event = {
+						id = red_origin.6020
+					}
+				}
 			}
 			modifier = {
 				planet_jobs_produces_mult = -0.15
-				planet_jobs_unity_produces_mult = -0.95
-				pop_happiness = -0.2
+				planet_jobs_food_produces_mult = -0.25
+				planet_jobs_consumer_goods_produces_mult = -0.25
+				country_unity_produces_mult = -0.5
+				pop_happiness = -0.25
 			}
 			end = 90
 		}
@@ -86,10 +95,21 @@ situation_road_to_collapse = {
 			icon_background = GFX_situation_stage_frame_red
 			#八一九与波罗的海国家独立
 			on_first_enter = {
+				#最后警告……
+				#如果玩家已经解决自由化浪潮，可以下场干涉联盟内战
+				#打不过也可以作壁上观
+				#如果还没解决，准备换思潮吧
+				every_subject = {
+					country_event = {
+						id = red_origin.6030
+					}
+				}
 			}
 			modifier = {
 				planet_jobs_produces_mult = -0.35
-				planet_jobs_unity_produces_mult = -1.45
+				planet_jobs_food_produces_mult = -0.5
+				planet_jobs_consumer_goods_produces_mult = -0.5
+				planet_jobs_unity_produces_mult = -0.95
 				pop_happiness = -0.5
 				planet_stability_add = -50
 			}
@@ -120,42 +140,28 @@ situation_road_to_collapse = {
 	monthly_progress = {
 		base = 0
 		complex_trigger_modifier = {
-			desc = STRING_UNHAPPY_1
-			trigger = count_owned_pop
+			desc = STRING_UNHAPPY_FACTION
+			trigger = count_pop_faction
 			trigger_scope = owner
 			parameters = {
 				limit = {
-					happiness < 50
-					happiness > 25
+					faction_approval < 0.4
 				}
 			}
 			mode = add
-			mult = 0.001
+			mult = 0.1
 		}
 		complex_trigger_modifier = {
-			desc = STRING_UNHAPPY_2
-			trigger = count_owned_pop
+			desc = STRING_ANGRY_FACTION_2
+			trigger = count_pop_faction
 			trigger_scope = owner
 			parameters = {
 				limit = {
-					happiness < 25
-					happiness > 0
+					faction_approval < 0.2
 				}
 			}
 			mode = add
-			mult = 0.002
-		}
-		complex_trigger_modifier = {
-			desc = STRING_UNHAPPY_3
-			trigger = count_owned_pop
-			trigger_scope = owner
-			parameters = {
-				limit = {
-					happiness = 0
-				}
-			}
-			mode = add
-			mult = 0.005
+			mult = 0.1
 		}
 		complex_trigger_modifier = {
 			desc = STRING_UNEMPLOYMENT
@@ -226,6 +232,556 @@ situation_road_to_collapse = {
 			desc = STRING_REBELLIOUS_PLANETS_IN_COUNTRY
 			mode = add
 			mult = 0.1
+		}
+	}
+}
+
+situation_road_to_independent = {
+	picture = GFX_evt_alien_propaganda
+	category = positive
+	desc = {
+		text = situation_road_to_independent_desc
+		trigger = {
+			always = yes
+		}
+	}
+
+	fail_icon = GFX_situation_outcome_negative
+	fail_icon_frame = GFX_situation_outcome_frame_red
+	complete_icon = GFX_situation_outcome_meh
+	complete_icon_frame = GFX_situation_outcome_frame_green
+
+	on_start = {
+		
+	}
+
+	on_progress_complete = {
+		owner = {
+			country_event = {
+				id = red_origin.1991
+			}
+		}
+		destroy_situation = this
+	}
+
+	on_fail = {
+		
+	}
+
+	on_abort = {
+		
+	}
+
+	abort_trigger = {
+		owner = {
+			is_subject = no
+		}
+	}
+
+	start_value = 15
+
+	stages = {
+		road_to_independent_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			modifier = {
+				monthly_loyalty = -1
+			}
+			end = 25
+		}
+		road_to_independent_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_blue
+			modifier = {
+				monthly_loyalty = -1.5
+				pop_ethics_shift_speed_mult = 0.5
+			}
+			end = 50
+		}
+		road_to_independent_3 = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_blue
+			on_first_enter = {
+			}
+			modifier = {
+				monthly_loyalty = -2
+				pop_ethics_shift_speed_mult = 1
+			}
+			end = 75
+		}
+		road_to_independent_4 = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_blue
+			on_first_enter = {
+			}
+			modifier = {
+				monthly_loyalty = -2.5
+				country_base_influence_produces_add = 1
+			}
+			end = 100
+		}
+	}
+
+	#静观其变
+	approach = {
+		name = approach_revolt_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 2
+		}
+	}
+
+	#强化民族主义
+	approach = {
+		name = approach_encourage_nationalism
+		icon = GFX_situation_approach_fist
+		icon_background = GFX_situation_approach_bg_red
+		on_select = {
+			custom_tooltip = approach_encourage_nationalism_tooltip
+		}
+		modifier = {
+			pop_ethic_militarist_attraction_mult = 0.5
+			pop_ethic_xenophobe_attraction_mult = 0.5
+			starbase_shipyard_build_speed_mult = 0.33
+			starbase_shipyard_build_cost_mult = -0.1
+			ships_upkeep_mult = -0.1
+			envoy_improve_relations_mult = -0.33
+		}		
+
+		ai_weight = {
+			base = 2
+		}
+	}
+
+	#鼓励思想自由
+	approach = {
+		name = approach_free_thought
+		icon = GFX_situation_approach_influence
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = approach_free_thought_tooltip
+		}
+		modifier = {
+			pop_ethic_egalitarian_attraction_mult = 1
+			pop_ethics_shift_speed_mult = 3
+			all_technology_research_speed = 0.15
+			country_society_tech_research_speed = 0.3
+			planet_stability_add = -10
+		}		
+
+		ai_weight = {
+			base = 2
+		}
+	}
+
+	#放宽经济管制
+	approach = {
+		name = approach_deregulation_of_the_economy
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = approach_deregulation_of_the_economy_tooltip
+		}
+		modifier = {
+			pop_ethic_capitalism_attraction_mult = 1
+			trade_value_mult = 0.25
+			envoy_improve_relations_mult = 0.33
+			planet_jobs_consumer_goods_produces_mult = 0.15
+			planet_crime_add = 25
+		}
+		ai_weight = {
+			base = 2
+		}
+	}
+
+	on_monthly = {
+		random_events = {
+			100 = 0
+		}
+	}
+
+	#Note: if you alter this, you should consider whether to alter potential_revolt_situation_monthly_progress_estimation too
+	monthly_progress = {
+		base = 0
+		#相对力量
+		modifier = {
+			add = 1
+			desc = RELATIVE_POWER_FLEET
+			owner = {
+				relative_power = { who = overlord category = fleet value = inferior }
+			}
+		}
+		modifier = {
+			add = 1
+			desc = RELATIVE_POWER_ECONOMY
+			owner = {
+				relative_power = { who = overlord category = economy value = inferior }
+			}
+		}
+		modifier = {
+			add = 1
+			desc = RELATIVE_POWER_TECHNOLOGY
+			owner = {
+				relative_power = { who = economy category = technology value = inferior }
+			}
+		}
+
+		modifier = {
+			add = 4
+			desc = RELATIVE_POWER_FLEET
+			owner = {
+				relative_power = { who = overlord category = fleet value = equivalent }
+			}
+		}
+		modifier = {
+			add = 4
+			desc = RELATIVE_POWER_ECONOMY
+			owner = {
+				relative_power = { who = overlord category = economy value = equivalent }
+			}
+		}
+		modifier = {
+			add = 4
+			desc = RELATIVE_POWER_TECHNOLOGY
+			owner = {
+				relative_power = { who = economy category = technology value = equivalent }
+			}
+		}
+
+		modifier = {
+			add = 9
+			desc = RELATIVE_POWER_FLEET
+			owner = {
+				relative_power = { who = overlord category = fleet value = superior }
+			}
+		}
+		modifier = {
+			add = 9
+			desc = RELATIVE_POWER_ECONOMY
+			owner = {
+				relative_power = { who = overlord category = economy value = superior }
+			}
+		}
+		modifier = {
+			add = 9
+			desc = RELATIVE_POWER_TECHNOLOGY
+			owner = {
+				relative_power = { who = economy category = technology value = superior }
+			}
+		}
+
+		modifier = {
+			add = 16
+			desc = RELATIVE_POWER_FLEET
+			owner = {
+				relative_power = { who = overlord category = fleet value = superior }
+			}
+		}
+		modifier = {
+			add = 16
+			desc = RELATIVE_POWER_ECONOMY
+			owner = {
+				relative_power = { who = overlord category = economy value = superior }
+			}
+		}
+		modifier = {
+			add = 16
+			desc = RELATIVE_POWER_TECHNOLOGY
+			owner = {
+				relative_power = { who = economy category = technology value = superior }
+			}
+		}
+
+		#外部合作
+		complex_trigger_modifier = {
+			desc = STRING_MIGRATION_TREATY
+			trigger = count_playable_country
+			potential = {
+				
+			}
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_diplo_migration_treaty = root.owner
+					NOR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = add
+			mult = 0.25
+		}
+		complex_trigger_modifier = {
+			desc = STRING_RESEARCH_AGREEMENT
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_research_agreement = root.owner
+					NOR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = add
+			mult = 0.25
+		}
+		complex_trigger_modifier = {
+			desc = STRING_COMMERCIAL_PACT
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_commercial_pact = owner
+					NOR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = add
+			mult = 0.25
+		}
+		complex_trigger_modifier = {
+			desc = STRING_DEFENSIVE_PACT
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_defensive_pact = owner
+					NOR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = add
+			mult = 1
+		}
+		#华约内部条约
+		complex_trigger_modifier = {
+			desc = STRING_MIGRATION_TREATY_INSIDE
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_diplo_migration_treaty = root.owner
+					OR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = subtract
+			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_RESEARCH_AGREEMENT_INSIDE
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_research_agreement = root.owner
+					OR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = subtract
+			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_COMMERCIAL_PACT_INSIDE
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_commercial_pact = root.owner
+					OR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = subtract
+			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_DEFENSIVE_PACT_INSIDE
+			trigger = count_playable_country
+			trigger_scope = no_scope
+			parameters = {
+				limit = {
+					has_defensive_pact = root.owner
+					OR = {
+						is_same_value = root.owner.overlord
+						AND = {
+							is_subject = yes
+							overlord = { is_same_value = root.owner.overlord }
+						}
+						is_in_federation_with = root.owner.overlord
+					}
+				}
+			}
+			mode = subtract
+			mult = 0.4
+		}
+
+		#支持政府的派系
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_SUPPORT_1
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval >= 0.6
+					faction_approval < 0.8	
+					support >= 0.1
+				}
+			}
+			mode = add
+			mult = 0.5
+		}
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_SUPPORT_2
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval >= 0.6
+					faction_approval < 0.8	
+					support < 0.1
+				}
+			}
+			mode = add
+			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_SUPPORT_3
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval >= 0.8	
+					support >= 0.1
+				}
+			}
+			mode = add
+			mult = 1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_SUPPORT_4
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval >= 0.8
+					support < 0.1
+				}
+			}
+			mode = add
+			mult = 0.2
+		}
+
+		#反对政府的派系
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_1
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval >= 0.2
+					faction_approval < 0.4	
+					support >= 0.1
+				}
+			}
+			mode = subtract
+			mult = 0.5
+		}
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_2
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval >= 0.2
+					faction_approval < 0.4	
+					support < 0.1
+				}
+			}
+			mode = subtract
+			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_3
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval < 0.2	
+					support >= 0.1
+				}
+			}
+			mode = subtract
+			mult = 1
+		}
+		complex_trigger_modifier = {
+			desc = STRING_FACTION_4
+			trigger = count_pop_faction
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					faction_approval < 0.2	
+					support < 0.1
+				}
+			}
+			mode = subtract
+			mult = 0.2
+		}
+
+		#近期接纳派系
+		modifier = {
+			add = 5
+			desc = STRING_FACTION_SUPPORT_5
+			owner = {
+				has_modifier = embraced_faction_timer
+			}
 		}
 	}
 }
