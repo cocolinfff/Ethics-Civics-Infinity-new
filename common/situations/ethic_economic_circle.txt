@@ -6,7 +6,11 @@ situation_economic_circle = {
 	}
 	on_abort = {
 	}
-    start_value = 1
+    on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+    start_value = 0
     stages = {
         circle_1 = {
             icon = GFX_situation_stage_1
@@ -136,10 +140,22 @@ situation_economic_circle = {
                     }
                     NOT = {has_valid_civic=civic_characteristic_socialism}
                 }
-            } #资基础0.5
+            } #资基础0.6
             modifier = {
                 desc = ethic_economic_government
-                add = 0.6
+                add = 0.3
+                exists = owner
+                owner = {
+                    NOR = {
+                        has_ethic=ethic_capitalism
+                        has_ethic=ethic_fanatic_capitalism
+                    }
+                    NOT = {has_valid_civic=civic_characteristic_socialism}
+                }
+            } #其他基础0.3
+            modifier = {
+                desc = ethic_economic_government
+                add = 0.5
                 owner = {
                     has_policy_flag=reform_and_opening_up
                 }
@@ -289,11 +305,12 @@ situation_economic_circle = {
                 }
             } #重整经济！
             modifier = {
+                desc = ethic_stop_desc
                 add = -5
                 owner = {
-                    has_country_flag = ETHIC_STOP_USE
+                    has_country_flag = ETHIC_DESTROY
                 }
-            } #关闭
+            } #关闭经济周期
 #############################法令
             modifier = {
                 desc = ethic_economic_edicts_desc
@@ -383,18 +400,20 @@ situation_economic_circle = {
                 job_merchant_per_pop=-0.03
 			}
             on_select={
+                #destroy_situation = this
                 hidden_effect={
-                    destroy_situation = this
-                    onwer={
+                    owner={
                          remove_country_flag =ETHIC_FREEDOM
                          remove_country_flag =ETHIC_SLOW
-                         remove_country_flag=ETHIC_STOP
-                         set_country_flag=ETHIC_STOP_USE
+                         remove_country_flag =ETHIC_STOP
+                         set_country_flag=ETHIC_DESTROY
                     }
                     remove_global_flag=ETHIC_ECONOMIC_CRISIS
+                    set_global_flag=ETHIC_NOT_START_ECONOMIC_CRISIS
                 }
             }
         }
+
         on_progress_complete={
             hidden_effect={
                 situation_event={
