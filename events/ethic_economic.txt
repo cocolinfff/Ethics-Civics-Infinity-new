@@ -2,7 +2,7 @@ namespace=ethic_economic
 #开启经济周期
 country_event = {
     id=ethic_economic.0
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
@@ -10,7 +10,7 @@ country_event = {
     immediate={
         if={
             limit={
-                NOT={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+                NOT={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
                 NOR={
                     has_authority=auth_hive_mind
                     has_authority=auth_machine_intelligence
@@ -18,13 +18,9 @@ country_event = {
                 }
             }
             owner = {
-                set_global_flag = ETHIC_ECONOMIC_CRISIS
+                set_global_flag = ETHIC_ECONOMIC_CRISIS_SITU
 			    start_situation = {
 			    	type = situation_economic_circle
-			    	target = root
-			    	effect = {
-			    		save_event_target_as = new_situation
-			    	}
 			    }
             }
         }
@@ -33,12 +29,18 @@ country_event = {
 #事件_总控制
 situation_event = {
     id=ethic_economic.1
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
+        if ={
+            limit={
+                has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU
+            }
+        }
+        else = {destroy_situation = this}
         if={
             limit = {
                 has_country_flag=ETHIC_ECONOMIC_STAGE_1
@@ -76,7 +78,7 @@ situation_event = {
 #每年维持经济周期
 country_event = {
     id=ethic_economic.2
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
@@ -85,7 +87,7 @@ country_event = {
         if={
             limit={
                 AND={
-                    has_global_flag=ETHIC_ECONOMIC_CRISIS
+                    has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU
                     has_global_flag=ETHIC_NOT_START_ECONOMIC_CRISIS
                 }
                 
@@ -109,17 +111,31 @@ country_event = {
     }
 }
 
+country_event={
+    id = ethic_economic.3
+    is_triggered_only=yes
+    hide_window=yes
+    immediate={
+        every_situation = {
+            limit = {
+                is_situation_type = situation_economic_circle
+                NOT={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
+            }
+            destroy_situation=this
+        }
+    }
+}
 #事件_新建殖民
 country_event = {
     id=ethic_economic.11
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
             set_timed_country_flag={
                 flag=ETHIC_COLONY_RECENTLY
                 days=300
@@ -131,14 +147,14 @@ country_event = {
 #事件_战胜
 country_event = {
     id=ethic_economic.12
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
             set_timed_country_flag={
                 flag=ETHIC_WIN_WAR
                 days=30
@@ -150,14 +166,14 @@ country_event = {
 #事件_战败
 country_event = {
     id=ethic_economic.13
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
             set_timed_country_flag={
                 flag=ETHIC_LOSE_WAR
                 days=30
@@ -170,14 +186,14 @@ country_event = {
 #1阶段
 country_event = {
     id=ethic_economic.101
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
         }
     }
 }
@@ -185,14 +201,14 @@ country_event = {
 #2阶段
 country_event = {
     id=ethic_economic.101
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
         }
     }
 }
@@ -200,14 +216,14 @@ country_event = {
 #3阶段
 country_event = {
     id=ethic_economic.101
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
         }
     }
 }
@@ -215,14 +231,14 @@ country_event = {
 #4阶段
 country_event = {
     id=ethic_economic.101
-    triggered_only=yes
+    is_triggered_only=yes
     hide_window=yes
     trigger = {
         is_ai = no
     }
     immediate={
         if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS}
+            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
         }
         country_event={
             ethic_economic.4000
@@ -233,7 +249,7 @@ country_event = {
 #4阶段文本介绍
 country_event = {
     id=ethic_economic.4000
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4000.title
     desc=ethic_economic.4001.desc
     picture = GFX_evt_assembly_fight
@@ -246,7 +262,7 @@ country_event = {
 #应对：福利化补贴
 country_event = {
     id=ethic_economic.4001
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4001.title
     desc=ethic_economic.40001.desc
     trigger = {
@@ -275,7 +291,7 @@ country_event = {
 #应对：威权派上台->国家资本主义
 country_event = {
     id=ethic_economic.4002
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4002.title
     desc=ethic_economic.40002.desc
     trigger = {
@@ -298,7 +314,7 @@ country_event = {
 #应对：黑线
 country_event = {
     id=ethic_economic.4003
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4003.title
     desc=ethic_economic.4003.desc
     trigger = {
@@ -321,7 +337,7 @@ country_event = {
 #应对：红线
 country_event = {
     id=ethic_economic.4004
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4004.title
     desc=ethic_economic.4004.desc
     trigger = {
@@ -344,7 +360,7 @@ country_event = {
 #事件：食物被倾倒
 country_event = {
     id=ethic_economic.4100
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4100.title
     desc=ethic_economic.4100.desc
     trigger = {
@@ -361,7 +377,7 @@ country_event = {
 #事件：食人
 country_event = {
     id=ethic_economic.4101
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4101.title
     desc=ethic_economic.4101.desc
     trigger = {
@@ -378,7 +394,7 @@ country_event = {
 #事件：民众请求救济
 country_event = {
     id=ethic_economic.4102
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4102.title
     desc=ethic_economic.4102.desc
     trigger = {
@@ -395,7 +411,7 @@ country_event = {
 #事件：民众游行
 country_event = {
     id=ethic_economic.4103
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4103.title
     desc=ethic_economic.4103.desc
     trigger = {
@@ -412,7 +428,7 @@ country_event = {
 #事件：跳楼
 country_event = {
     id=ethic_economic.4104
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4104.title
     desc=ethic_economic.4104.desc
     trigger = {
@@ -430,7 +446,7 @@ country_event = {
 #事件：罪犯
 country_event = {
     id=ethic_economic.4104
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4104.title
     desc=ethic_economic.4104.desc
     trigger = {
@@ -447,7 +463,7 @@ country_event = {
 #事件：统治者被暗杀
 country_event = {
     id=ethic_economic.4105
-    triggered_only=yes
+    is_triggered_only=yes
     title=ethic_economic.4105.title
     desc=ethic_economic.4105.desc
     trigger = {
