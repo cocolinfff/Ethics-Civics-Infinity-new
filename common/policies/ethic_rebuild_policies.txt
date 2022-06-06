@@ -1986,7 +1986,7 @@ trade_policy = {
 			}
 		}
 	}
-	# 贸易联盟：财富投资
+	# 合作贸易联盟
 	option = {
 		name = "trade_policy_trade_league"
 		potential = {
@@ -2005,41 +2005,15 @@ trade_policy = {
 		}
 		modifier = {
 		    job_mogul_per_pop = 0.02
-		    job_merchant_per_pop = 0.03
+		    job_merchant_per_pop = 0.04
 			pop_ethic_capitalism_attraction_mult = 0.25
 		}
 		AI_weight = {
 			factor = 99999
 		}
 	}
-	# 贸易联盟：科技投资
-	option = {
-		name = "trade_policy_trade_league_innovation"
-		potential = {
-			OR = {
-				AND = {
-					has_federation = yes
-					federation = {
-						has_federation_perk = trade_federation_passive
-					}
-				}
-				has_government = gov_anarchocapitalism
-			}
-		}
-		policy_flags = {
-			trade_conversion_trade_league_innovation
-		}
-		modifier = {
-			pop_ethic_capitalism_attraction_mult = 0.1
-			country_physics_tech_research_speed = 0.05
-			country_engineering_tech_research_speed = 0.05
-			country_society_tech_research_speed = 0.05
-		}
-		AI_weight = {
-			factor = 99999
-		}
-	}
-	# 民族经济
+	
+	# 民族经济学
 	option = {
 		name = "trade_policy_national_economy"
 		potential = {
@@ -2055,12 +2029,14 @@ trade_policy = {
 			trade_conversion_national_economy
 		}
 		modifier = {
+			country_unity_produces_mult=0.1
+			pop_ethic_xenophobe_attraction_mult=0.25
 		}
 		AI_weight = {
 			factor = 9999
 		}
 	}
-	# 财富创造
+	# 自行调节
 	option = {
 		name = "trade_policy_default"
 		potential = {
@@ -2123,9 +2099,9 @@ trade_policy = {
 			}
 		}
 	}
-	# 农业补贴
+	# 基础投资
 	option = {
-		name = "trade_policy_growth"
+		name = "trade_policy_infrastructure"
 		potential = {
 			OR = {
 				has_federation = no
@@ -2147,10 +2123,10 @@ trade_policy = {
 			}
 		}
 		policy_flags = {
-			trade_conversion_growth
+			trade_conversion_infrastructure
 		}
 		modifier = {
-			planet_district_farming_build_speed_mult = 0.2
+			planet_building_build_speed_mult=0.2
 		}
 		valid = {
 		}
@@ -2166,9 +2142,9 @@ trade_policy = {
 			}
 		}
 	}
-	# 矿业补贴
+	# 工业投资
 	option = {
-		name = "trade_policy_mining"
+		name = "trade_policy_factory"
 		potential = {
 			OR = {
 				has_federation = no
@@ -2190,10 +2166,11 @@ trade_policy = {
 			}
 		}
 		policy_flags = {
-			trade_conversion_mining
+			trade_conversion_factory
 		}
 		modifier = {
-			planet_district_mining_build_speed_mult = 0.2
+			planet_building_build_speed_mult=0.1
+			planet_structures_cost_mult=-0.1
 		}
 		valid = {
 		}
@@ -2205,7 +2182,71 @@ trade_policy = {
 			}
 		}
 	}
-	# 轻工业补贴
+	# 文化经济
+	option = {
+		name = "trade_policy_culture"
+		potential = {
+			NOT = { has_valid_civic = civic_industry_commerce_assembly_line }
+			OR = {
+				has_federation = no
+				AND = {
+					has_federation = yes
+					federation = {
+						NOT = {
+							has_federation_perk = trade_federation_passive
+						}
+					}
+				}
+			}
+			OR = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+				AND = {
+					has_active_tradition = tr_future_economy_ges
+					has_technology = tech_ascension_theory
+				}
+			}
+		}
+		policy_flags = {
+			trade_conversion_culture
+		}
+		valid = {
+			NOR = {
+				has_valid_civic = civic_network_of_the_mind
+				has_valid_civic = civic_network_of_the_mind_machine
+				has_valid_civic = civic_network_of_the_mind_true_hive
+			}
+		}
+		modifier = {
+			country_unity_produces_mult=0.05
+			planet_research_produces_mult=0.05
+		}
+		AI_weight = {
+			factor = 5
+			modifier = {
+				factor = 10
+				has_ethic = ethic_fanatic_pacifist
+			}
+			modifier = {
+				factor = 0.1
+				owner = {
+					has_monthly_income = {
+						resource = consumer_goods
+						value > 16
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				owner = {
+					has_monthly_income = {
+						resource = consumer_goods
+						value < 0
+					}
+				}
+			}
+		}
+	}
+	# 消费升级
 	option = {
 		name = "trade_policy_consumer_goods"
 		potential = {
@@ -2240,8 +2281,8 @@ trade_policy = {
 			}
 		}
 		modifier = {
-			planet_amenities_mult = 0.15
-			pop_citizen_happiness = 0.05
+			pop_citizen_happiness = 0.1
+			pop_amenities_usage_mult = 0.15
 		}
 		AI_weight = {
 			factor = 5
@@ -2304,8 +2345,8 @@ trade_policy = {
 			}
 		}
 		modifier = {
-			planet_amenities_mult = 0.25
 			pop_citizen_happiness = 0.1
+			pop_amenities_usage_mult = 0.15
 		}
 		AI_weight = {
 			factor = 5
@@ -2328,7 +2369,7 @@ trade_policy = {
 			}
 		}
 	}
-	# 重工业补贴
+	# 重工业革新
 	option = {
 		name = "trade_policy_alloys"
 		potential = {
@@ -2362,9 +2403,10 @@ trade_policy = {
 			}
 		}
 		modifier = {
-			planet_jobs_rare_crystals_produces_mult = 0.05
-			planet_jobs_exotic_gases_produces_mult = 0.05
-			planet_jobs_volatile_motes_produces_mult = 0.05
+			planet_jobs_alloys_produces_mult=0.2
+			planet_jobs_minerals_produces_mult=0.2
+			pop_environment_tolerance = -0.05
+			
 		}
 		AI_weight = {
 			factor = 3
@@ -2378,7 +2420,7 @@ trade_policy = {
 			}
 		}
 	}
-	# 文化补贴
+	# 创新经济学
 	option = {
 		name = "trade_policy_unity"
 		policy_flags = {
@@ -2408,8 +2450,8 @@ trade_policy = {
 			has_tradition = tr_mercantile_adaptive_economic_policies
 		}
 		modifier = {
-			pop_government_ethic_attraction = 0.3
-			planet_jobs_unity_produces_mult = 0.1
+			planet_research_produces_mult=0.2
+			country_unity_produces_mult=0.1
 		}
 		AI_weight = {
 			factor = 3
@@ -2419,7 +2461,7 @@ trade_policy = {
 			}
 		}
 	}
-	# 鼓励创新
+	# 供给侧改革
 	option = {
 		name = "trade_policy_innovation"
 		potential = {
@@ -2453,8 +2495,65 @@ trade_policy = {
 			}
 		}
 		modifier = {
-			country_physics_tech_research_speed = 0.05
-			country_engineering_tech_research_speed = 0.05
+			planet_structures_upkeep_mult=-0.2
+			planet_max_buildings_add=1
+		}
+		AI_weight = {
+			factor = 3
+			modifier = {
+				factor = 5
+				has_ethic = ethic_materialist
+			}
+			modifier = {
+				factor = 10
+				has_ethic = ethic_fanatic_materialist
+			}
+			modifier = {
+				factor = 20
+				has_valid_civic = civic_industrial_automatation
+			}
+			modifier = {
+				factor = 20
+				has_valid_civic = civic_industrial_automatation_corporate
+			}
+		}
+	}
+	# 平庸富国论
+	option = {
+		name = "trade_policy_normal"
+		potential = {
+			OR = {
+				has_federation = no
+				AND = {
+					has_federation = yes
+					federation = {
+						NOT = {
+							has_federation_perk = trade_federation_passive
+						}
+					}
+				}
+			}
+			OR = {
+				NOT = { has_ethic = ethic_gestalt_consciousness }
+				AND = {
+					has_active_tradition = tr_future_economy_ges
+					has_technology = tech_ascension_theory
+				}
+			}
+		}
+		policy_flags = {
+			trade_conversion_normal
+		}
+		valid = {
+			has_tradition = tr_mercantile_adaptive_economic_policies
+			NOR = {
+				has_ethic = "ethic_fanatic_spiritualist"
+				has_valid_civic = civic_ultimate_collective
+			}
+		}
+		modifier = {
+			pop_government_ethic_attraction=0.5
+			pop_ethic_capitalism_attraction_mult=0.5
 		}
 		AI_weight = {
 			factor = 3
