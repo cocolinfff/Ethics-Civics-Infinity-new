@@ -1,0 +1,183 @@
+## 民布瘾犯了111
+# 希望闲得无聊看注释的人都能拿这个时间听听列托夫的歌
+# 如果粉红都能变成真民布，赛里斯就有救了
+# @阿道夫·希特勒 你背叛了民族社会主义，操你妈
+## 发病结束
+
+wg_nazbol_national_liberation = {
+	casus_belli = cb_nazbol_revolution
+
+	hide_if_no_cb = no
+	release_occupied_systems_on_status_quo = yes
+
+	allowed_peace_offers = {
+		status_quo
+		surrender
+		demand_surrender
+	}
+
+	surrender_acceptance = -100
+
+	war_exhaustion = 0.5
+
+	potential = {
+		has_ascension_perk = ap_become_the_crisis
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = cannot_subjugate_empire_member
+			NAND = {
+				has_galactic_emperor = yes
+				is_galactic_community_member = no
+				from = { is_galactic_community_member = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_custodian"
+			from = { is_galactic_custodian = no }
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_emperor"
+			from = { is_galactic_emperor = no }
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_btc"
+			from = { has_been_declared_crisis = no }
+		}
+	}
+
+	on_accept = {
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
+		}
+		if = {
+			limit = { from = { has_been_declared_crisis = no } }
+			from = {
+				set_subject_of = {
+					who = root
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+		}
+	}
+
+	on_status_quo = {
+		if = {
+			limit = {
+				exists = last_created_country
+				last_created_country = {
+					has_country_flag = released_empire
+				}
+			}
+
+			last_created_country = {
+				set_subject_of = {
+					who = root
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+
+			if = {
+				limit = {
+					root = { has_authority = auth_corporate }
+					last_created_country = { has_authority = auth_corporate }
+				}
+				last_created_country = {
+					if = {
+						limit = {
+							has_technology = tech_galactic_administration
+						}
+						change_government = {
+							authority = auth_oligarchic
+							cooldown = no
+							remove_invalid_civics = yes
+							civics = {
+								civic = civic_merchant_guilds
+								civic = random
+								civic = random
+								civic = random
+							}
+						}
+					}
+					else = {
+						change_government = {
+							authority = auth_oligarchic
+							cooldown = no
+							remove_invalid_civics = yes
+							civics = {
+								civic = civic_merchant_guilds
+								civic = random
+								civic = random
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 10
+		modifier = {
+			factor = 0
+			has_ai_personality_behaviour = wants_tribute
+		}
+	}
+}
+
+wg_nazbol_class_struggle = {
+	casus_belli = cb_nazbol_revolution
+	hide_if_no_cb = yes
+	total_war = yes
+	destroy_starbases = yes
+	set_defender_wargoal = wg_end_threat_crisis
+
+	galactic_empire_joins_defender = {
+		from = { is_galactic_emperor = yes }
+		imperial_authority >= 100
+	}
+
+	allowed_peace_offers = {
+		status_quo
+	}
+
+	surrender_acceptance = -1000
+
+	war_exhaustion = 0.5
+
+	potential = {
+		always = yes
+	}
+
+	possible = {
+		always = yes
+	}
+
+	ai_weight = {
+		weight = 100
+	}
+}
