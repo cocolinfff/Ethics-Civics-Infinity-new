@@ -1,133 +1,512 @@
 namespace=ethic_economic 
-#开启经济周期
-country_event = {
-    id=ethic_economic.0
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
+
+country_event = { # 市场经济系统自动开关（年检）
+    id = ethic_economic.0
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = { # AI不发生，节约算力并保护AI
         is_ai = no
     }
     immediate={
-        if={
-            limit={
-                NOT={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-                NOR={
+        if = {
+            limit = {
+                NOR = {
                     has_authority=auth_hive_mind
                     has_authority=auth_machine_intelligence
                     has_government=gov_parting_consciousness
                 }
+				AND = { # 更多思潮下只有市场经济政策才触发机制
+					has_global_flag = cultural_overhaul_active
+					OR = {
+						has_policy_flag = economic_stance_market
+						has_policy_flag = economic_stance_mixed
+					}
+				}
             }
-            owner = {
-                set_global_flag = ETHIC_ECONOMIC_CRISIS_SITU
-			    start_situation = {
-			    	type = situation_economic_circle
-			    }
-            }
+			if = {
+				limit = { NOT = { has_country_flag = ETHIC_MARKET_ECONOMY } }
+				set_country_flag = ETHIC_MARKET_ECONOMY
+				start_situation = { type = situation_economic_circle }
+			}
+			if={
+				limit={ NOT = { is_variable_set = rec_effect_expand } }
+				owner = { set_variable = { which = rec_effect_expand value = 0 } }
+			}
         }
+		else = {
+            remove_country_flag = ETHIC_MARKET_ECONOMY
+			every_situation = {
+				limit = { is_situation_type = situation_economic_circle }
+				destroy_situation = this
+			}
+		}
     }
 }
-#事件_总控制
-situation_event = {
-    id=ethic_economic.1
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
+
+situation_event = { # 市场经济月度计算协调
+    id = ethic_economic.1
+    is_triggered_only = yes
+    hide_window = yes
+    #trigger = {
+    #    is_ai = no
+    #}
+    immediate = {
+	
+		situation_event = { id = ethic_economic.2 days = 1 } # 计算危机阈值
+		if = { # 计算危机增长 - 无危机时
+			limit = { NOT = { has_situation_flag = economic_crisis } }
+			situation_event = { id = ethic_economic.30 days = 2 }
+		}
+		else = { # 计算危机增长 - 有危机时
+			situation_event = { id = ethic_economic.31 days = 2 }
+		}
+		situation_event = { id = ethic_economic.4 days = 3 } # 计算危机积累
+		situation_event = { id = ethic_economic.5 days = 4 } # 判断经济效果
+		
     }
-    immediate={
-        if ={
+}
+
+situation_event = { # 计算危机阈值
+    id = ethic_economic.2
+    is_triggered_only = yes
+    hide_window = yes
+    #trigger = {
+    #    is_ai = no
+    #}
+    immediate = {
+		
+		set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
+		
+		if = { # 货币宽松 +40阈值
+			limit = { has_situation_flag = economic_loose }
+			change_variable = { which = rec_crisis_threshold value = 40 }
+		}
+		if = { # 抑制通胀 -20阈值
+			limit = { has_situation_flag = economic_deinflaction }
+			change_variable = { which = rec_crisis_threshold value = -20 }
+		}
+		if = { # 额外印钞 +40阈值
+			limit = { has_situation_flag = economic_extra_printing }
+			change_variable = { which = rec_crisis_threshold value = 40 }
+		}
+		
+        if = { # 更多思潮内容
+            limit = { has_global_flag = cultural_overhaul_active }
+			if = { # 奴役暴君/奴隶行会/种姓制度/契约资产/死人上班 -40阈值
+				limit={
+					#NOT = { has_situation_flag = economic_crisis }
+					owner = {
+						OR = {
+							has_valid_civic = civic_reeducated_labor
+							has_valid_civic = civic_slaver_guilds
+							has_valid_civic = civic_divine_order
+							has_valid_civic = civic_permanent_employment
+							has_valid_civic = civic_indentured_assets
+						}
+					}
+				}
+				change_variable = { which = rec_crisis_threshold value = -40 }
+			}
+			if = { # 创新型经济/创新基金 +40阈值
+				limit={
+					#NOT = { has_situation_flag = economic_crisis }
+					owner = {
+						OR = {
+							has_valid_civic = civic_industrial_automatation
+							has_valid_civic = civic_industrial_automatation_corporate
+						}
+					}
+				}
+				change_variable = { which = rec_crisis_threshold value = 40 }
+			}
+			if = { # 房地产市场 +120阈值
+				limit={
+					NOT = { has_situation_flag = economic_crisis }
+					owner = { has_valid_civic = civic_real_estate_market }
+				}
+				change_variable = { which = rec_crisis_threshold value = 120 }
+			}
+        }
+		
+		multiply_variable = { which = rec_crisis_threshold value = 100 }
+		round_variable = rec_crisis_threshold
+		divide_variable = { which = rec_crisis_threshold value = 100 }
+		
+    }
+}
+
+situation_event = { # 计算危机增长-无危机时
+    id = ethic_economic.30
+    is_triggered_only = yes
+    hide_window = yes
+    #trigger = {
+    #    is_ai = no
+    #}
+    immediate = {
+	
+		set_variable = { which = rec_crisis_add value = 1 } # 初始化增长
+		
+        if = { # 更多思潮内容
             limit={
-                has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU
-            }
+				has_global_flag = cultural_overhaul_active
+			}
+			if = { # 三倍利润 +0.8增长
+				limit={
+					owner = { has_valid_civic = civic_triple_the_profit }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.8 }
+			}
+			if = { # 奢侈消费主义 +0.3增长
+				limit={
+					owner = { has_valid_civic = civic_consumerism }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.3 }
+			}
+			if = { # 福报 +0.3增长
+				limit={
+					owner = { has_edict = blessings }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.3 }
+			}
+			if = { # 资本狂热 +0.2增长
+				limit={
+					owner = { has_valid_civic = civic_corpus }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.2 }
+			}
+			if = { # 行业标兵 +0.2增长
+				limit={
+					owner = { has_valid_civic = civic_industry_pacesetter }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.2 }
+			}
+			if = { # 超节奏生活 +0.2增长
+				limit={
+					owner = { has_valid_civic = civic_super_fast_paced_life }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.2 }
+			}
+			if = { # 无休之季 +0.2增长
+				limit={
+					owner = { has_valid_civic = civic_eternal_jihad }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.2 }
+			}
+			if = { # 消费主义宣传 +0.2增长
+				limit={
+					owner = { has_edict = consumerist_propaganda }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.2 }
+			}
+			if = { # 金融精英/金融投资 +0.1增长
+				limit={
+					owner = {
+						OR = {
+							has_valid_civic = civic_merchant_guilds
+							has_valid_civic = civic_financial_investment
+						}
+					}
+				}
+			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 互联网市场 +0.1增长
+				limit={
+					owner = { has_valid_civic = civic_internet_market }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 绩效考核 +0.1增长
+				limit={
+					owner = { has_valid_civic = civic_performance_appraisal }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 学术资源商业化 +0.1增长
+				limit={
+					owner = { has_edict = commercializing_academic_resources }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 赎罪卷 +0.1增长
+				limit={
+					owner = { has_edict = enhanced_surveillance }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 弹性工龄 +0.1增长
+				limit={
+					owner = { has_edict = the_flexible_seniority_act }
+				}
+			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 工人合作社 -0.1增长
+				limit={
+					owner = { has_valid_civic = civic_world_cooperative }
+				}
+			   change_variable = { which = rec_crisis_add value = -0.1 }
+			}
+			if = { # 钓鱼佬/珊瑚礁 -0.1增长
+				limit={
+					owner = {
+						OR = {
+							has_valid_civic = civic_anglers
+							has_valid_civic = civic_anglers_socialism
+							has_valid_civic = civic_anglers_lithoid
+						}
+					}
+				}
+			   change_variable = { which = rec_crisis_add value = -0.1 }
+			}
+			if = { # 极简主义/禁欲主义 -0.1增长
+				limit={
+					owner = {
+						OR = {
+							has_valid_civic = civic_functional_architecture
+							has_valid_civic = civic_asceticism
+						}
+					}
+				}
+			   change_variable = { which = rec_crisis_add value = -0.1 }
+			}
         }
-        else = {destroy_situation = this}
-        if={
-            limit = {
-                has_country_flag=ETHIC_ECONOMIC_STAGE_1
-            }
-            random_events={
-
-            }
-        }
-        else_if={
-            limit = {
-                has_country_flag=ETHIC_ECONOMIC_STAGE_2
-            }
-            random_events={
-
-            }
-        }
-        else_if={
-            limit = {
-                has_country_flag=ETHIC_ECONOMIC_STAGE_3
-            }
-            random_events={
-
-            }
-        }
-        else_if={
-            limit = {
-                has_country_flag=ETHIC_ECONOMIC_STAGE_4
-            }
-            random_events={
-
-            }
-        }
-    }
-}
-#每年维持经济周期
-country_event = {
-    id=ethic_economic.2
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
-    }
-    immediate={
-        if={
+        if = { # 福利国家 *0.9增长
             limit={
-                AND={
-                    has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU
-                    has_global_flag=ETHIC_NOT_START_ECONOMIC_CRISIS
-                }
-                
-                NOR={
-                    has_authority=auth_hive_mind
-                    has_authority=auth_machine_intelligence
-                    has_government=gov_parting_consciousness
-                }
-            }
-            owner = {
-                remove_global_flag=ETHIC_NOT_START_ECONOMIC_CRISIS
-			    start_situation = {
-			    	type = situation_economic_circle
-			    	target = root
-			    	effect = {
-			    		save_event_target_as = new_situation
-			    	}
-			    }
-            }
+                exists = owner
+				owner = { has_valid_civic = civic_welfare_state }
+			}
+            multiply_variable = { which = rec_crisis_add value = 0.9 }
         }
+        if = { # 生产社群/分产主义 *0.9增长
+            limit={
+				has_global_flag = cultural_overhaul_active
+                exists = owner
+                owner = {
+                    OR = {
+                        has_valid_civic = civic_production_community
+                        has_valid_civic = civic_distributism
+                    }
+                }
+			}
+            multiply_variable = { which = rec_crisis_add value = 0.9 }
+        }
+        if = { # 工人宪法 *0.9增长
+            limit={
+				has_global_flag = cultural_overhaul_active
+                exists = owner
+				owner = { has_valid_civic = civic_peoples_republic }
+			}
+            multiply_variable = { which = rec_crisis_add value = 0.9 }
+        }
+        if = { # 国有企业 *0.85增长
+            limit={
+				has_global_flag = cultural_overhaul_active
+                exists = owner
+				owner = { has_valid_civic = civic_state_owned_enterprises }
+			}
+            multiply_variable = { which = rec_crisis_add value = 0.85 }
+        }
+        if = { # 社会主义 *0.85增长
+            limit={
+				has_global_flag = cultural_overhaul_active
+                exists = owner
+                owner = {
+                    OR = {
+                        has_ethic = ethic_socialism
+                        has_ethic = ethic_fanatic_socialism
+                    }
+                }
+			}
+            multiply_variable = { which = rec_crisis_add value = 0.85 }
+        }
+		
+		multiply_variable = { which = rec_crisis_add value = 100 }
+		round_variable = rec_crisis_add
+		divide_variable = { which = rec_crisis_add value = 100 }
+		
+    }
+}
+situation_event = { # 计算危机增长-有危机时
+    id = ethic_economic.31
+    is_triggered_only = yes
+    hide_window = yes
+    #trigger = {
+    #    is_ai = no
+    #}
+    immediate = {
+	
+		set_variable = { which = rec_crisis_add value = 1 } # 初始化增长
+        multiply_variable = { which = rec_crisis_add value = value:crisis_decline }
+		set_variable = { which = rec_crisis_decline_natural value = rec_crisis_add }
+		
+		multiply_variable = { which = rec_crisis_add value = 100 }
+		round_variable = rec_crisis_add
+		divide_variable = { which = rec_crisis_add value = 100 }
+		
     }
 }
 
-country_event={
-    id = ethic_economic.3
-    is_triggered_only=yes
-    hide_window=yes
-    immediate={
-        every_situation = {
-            limit = {
-                is_situation_type = situation_economic_circle
-                NOT={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-            }
-            destroy_situation=this
-        }
+situation_event = { # 计算危机积累
+    id = ethic_economic.4
+    is_triggered_only = yes
+    hide_window = yes
+    #trigger = {
+    #    is_ai = no
+    #}
+    immediate = {
+	
+		change_variable = { which = rec_crisis_accumulated value = rec_crisis_add }
+		set_variable = { which = rec_crisis_percentage value = value:crisis_percentage }
+
+		if = { # 计算扩张和提升的效应
+			limit = { NOT = { check_variable = { which = rec_effect_expand value = 0 } } }
+			change_variable = { which = rec_crisis_accumulated value = value:effect_expand }
+			set_variable = { which = rec_effect_expand value = 0 }
+		}
+
+		multiply_variable = { which = rec_crisis_accumulated value = 100 }
+		round_variable = rec_crisis_accumulated
+		divide_variable = { which = rec_crisis_accumulated value = 100 }
     }
 }
-#事件_新建殖民
-country_event = {
-    id=ethic_economic.11
+
+situation_event = { # 判断危机效果
+    id = ethic_economic.5
+    is_triggered_only = yes
+    hide_window = yes
+    #trigger = {
+    #    is_ai = no
+    #}
+    immediate = {
+	
+		if = { # 有危机时
+			limit = { has_situation_flag = economic_crisis }
+			if = { # 危机积累小于10，结束危机
+				limit = { check_variable = { which = rec_crisis_accumulated value < 10 } }
+				remove_situation_flag = economic_crisis
+				situation_event = { id = ethic_economic_crisis.10 days = 25 }
+			}
+			if = { # 经济状况回正，结束危机
+				limit = {
+					situation_progress > 30
+					situation_monthly_progress > 0
+				}
+				remove_situation_flag = economic_crisis
+				situation_event = { id = ethic_economic_crisis.11 days = 25 }
+			}
+		}
+		else_if = { # 危机积累超过危机阈值，爆发危机
+			limit = { check_variable = { which = rec_crisis_accumulated value > rec_crisis_threshold } }
+			set_situation_flag = economic_crisis
+			situation_event = { id = ethic_economic_crisis.0 days = 25 }
+		}
+
+		if = { # 危机积累60%以下，低危机
+			limit = { check_variable = { which = rec_crisis_percentage value < 0.6 } }
+			if = {
+				limit = { NOT = { has_situation_flag = economic_crisis_distance_low } }
+				set_situation_flag = economic_crisis_distance_low
+				remove_situation_flag = economic_crisis_distance_middle
+				remove_situation_flag = economic_crisis_distance_high
+			}
+		}
+		else_if = { # 危机积累80%以下，中危机
+			limit = { check_variable = { which = rec_crisis_percentage value < 0.8 } }
+			if = {
+				limit = { NOT = { has_situation_flag = economic_crisis_distance_middle } }
+				remove_situation_flag = economic_crisis_distance_low
+				set_situation_flag = economic_crisis_distance_middle
+				remove_situation_flag = economic_crisis_distance_high
+			}
+		}
+		else = { # 危机积累80%以上，高危机
+			if = {
+				limit = { NOT = { has_situation_flag = economic_crisis_distance_high } }
+				remove_situation_flag = economic_crisis_distance_low
+				remove_situation_flag = economic_crisis_distance_middle
+				set_situation_flag = economic_crisis_distance_high
+			}
+		}
+
+    }
+}
+
+# 事件-经济运转
+situation_event = { # 事件-低危-新兴产业
+    id = ethic_economic.101
+    is_triggered_only = yes
+    hide_window = no
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+
+situation_event = { # 事件-中危-股市繁荣
+    id = ethic_economic.101
+    is_triggered_only = yes
+    hide_window = no
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+
+situation_event = { # 事件-高危机-个别行业发生危机
+    id = ethic_economic.141
+    is_triggered_only = yes
+    hide_window = no
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+
+situation_event = { # 事件-高危机-大规模印钞
+    id = ethic_economic.142
+    is_triggered_only = yes
+    hide_window = no
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+
+situation_event = { # 事件-危机-企业破产
+    id = ethic_economic.151
+    is_triggered_only = yes
+    hide_window = no
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+
+situation_event = { # 事件-危机-自杀潮
+    id = ethic_economic.151
+    is_triggered_only = yes
+    hide_window = no
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+
+#--------
+
+country_event = { # 殖民
+    id = ethic_economic.11
     is_triggered_only=yes
     hide_window=yes
     trigger = {
@@ -477,3 +856,27 @@ country_event = {
     }
 }
 
+
+planet_event = { # 扩张效应-征服星球带来的危机稀释
+    id = ethic_economic.90
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = {
+        is_ai = no
+    }
+    immediate={
+		owner = { change_variable = { which = rec_effect_expand value = trigger:count_pops } }
+    }
+}
+
+planet_event = { # 提升效应-提升物种带来的危机稀释
+    id = ethic_economic.91
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = {
+        is_ai = no
+    }
+    immediate={
+		owner = { change_variable = { which = rec_effect_expand value = 3 } }
+    }
+}
