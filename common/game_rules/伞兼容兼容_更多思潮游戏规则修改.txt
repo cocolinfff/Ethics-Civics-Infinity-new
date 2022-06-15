@@ -404,6 +404,11 @@ can_build_branch_offices = {
 					}
 				}
 			}
+			# 失控女仆	=|外派服务飞升|
+			AND = {
+				has_global_flag = flag_rogue_maid_mod_activated
+				has_ascension_perk = ap_expactriate_service
+			}
 		}
 	}
 }
@@ -478,6 +483,11 @@ can_support_branch_offices = {
 					has_civic = civic_galactic_sovereign_megacorp
 					has_civic = civic_galactic_sovereign_people
 				}
+			}
+			# 兼容失控女仆，移至can_build_branch_office_on_planet判断
+			AND = {
+				has_global_flag = flag_rogue_maid_mod_activated	# |失控女仆激活|
+				always = yes
 			}
 
 			## 禁止所有|企业政府|	############
@@ -560,6 +570,11 @@ can_build_branch_office_on_planet = {
 					AND = {
 						exists = event_target:elizabeth_leader
 						has_country_flag = azur_lane_leader_elizabeth
+					}
+					# 失控女仆
+					AND = {
+						has_global_flag = flag_rogue_maid_mod_activated
+						has_ascension_perk = ap_expactriate_service
 					}
 				}
 			}
@@ -772,6 +787,136 @@ can_build_branch_office_on_planet = {
 			NOR = {
 				root = { has_policy_flag = reform_and_opening_up }
 				owner = { is_same_value = root }
+			}
+		}
+	}
+	### 失控女仆
+	if = {
+		limit = { has_global_flag = flag_rogue_maid_mod_activated }
+		custom_tooltip = { # 对方禁止AI
+			fail_text = BRANCH_OFFICE_MAID_AI_OUTLAWED
+			exists = owner
+			OR = {
+				root = { NOT = { has_ascension_perk = ap_expactriate_service } }
+				if = {
+					limit = { root = { has_civic = civic_machine_servitor } }
+					owner = { NOT = { has_policy_flag = ai_outlawed } }
+				}
+				owner = { is_galactic_community_member = yes }
+				owner = {
+					is_subject = yes
+					overlord = { is_same_value = root }
+				}
+			}
+		}
+		custom_tooltip = { # 对方禁止AI（共同体提示）
+			fail_text = BRANCH_OFFICE_MAID_AI_OUTLAWED_WITH_COMMUNITY
+			exists = owner
+			OR = {
+				root = { NOT = { has_ascension_perk = ap_expactriate_service } }
+				if = {
+					limit = { root = { has_civic = civic_machine_servitor } }
+					owner = { NOT = { has_policy_flag = ai_outlawed } }
+				}
+				is_galactic_community_formed = no
+				owner = { is_galactic_community_member = no }
+				owner = {
+					is_subject = yes
+					overlord = { is_same_value = root }
+				}
+				root = { is_galactic_emperor = yes }
+			}
+		}
+		custom_tooltip = { # 未建立大使馆
+			fail_text = BRANCH_OFFICE_MAID_NO_EMBASSY
+			exists = owner
+			OR = {
+				root = { NOT = { has_ascension_perk = ap_expactriate_service } }
+				root = { has_embassy = prev.owner }
+			}
+		}
+		custom_tooltip = { # 好感不足
+			fail_text = BRANCH_OFFICE_MAID_NOT_ENOUGH_FRIENDLY
+			exists = owner
+			OR = {
+				root = { NOT = { has_ascension_perk = ap_expactriate_service } }
+				owner = {
+					NOR = {
+						is_unfriendly_to = root
+						is_rival = root
+						is_hostile_to = root
+						is_threatened_to = root
+					}
+				}
+				AND = {
+					root = {
+						OR = {
+							is_galactic_custodian = yes
+							is_galactic_emperor = yes
+						}
+					}
+					owner = { is_galactic_community_member = yes }
+				}
+			}
+		}
+	}
+	if = { #【！】 |禁止_巨企| 失控女仆兼容
+		limit = { has_global_flag = flag_rogue_maid_mod_activated }
+		custom_tooltip = {  ##_|禁止_巨企| +AAR		/ETCPM/hiveDLC/MCA/驴岛/wsg		/gsf/azl/SOFE	/Ecar
+			fail_text = BRANCH_OFFICE_NOT_ON_MEGACORP_PLANET
+			owner = { #scope切换到owner
+				OR = {
+					## 特殊允许|企业政府|	############
+					# AAR
+					is_subject_type = AAR_SBJ_subsidiary
+					# Ecar
+					AND = {
+						has_global_flag = ideological_revolution	# |Ecar激活|
+						OR = {
+							has_tradition = tr_future_economy
+							has_civic = civic_world_cooperative
+							has_valid_civic = civic_criminal_heritage
+							has_civic = civic_galactic_megacorp
+							has_civic = civic_galactic_sovereign
+							has_civic = civic_galactic_sovereign_megacorp
+							has_civic = civic_galactic_sovereign_people
+						}
+					}
+		
+					## 禁止所有|企业政府|	############
+					NOR = {
+						has_authority = auth_corporate
+						has_civic = civic_galactic_sovereign_megacorp
+						
+						#_|巨企国家|	ETCPM/hiveDLC/MCA/驴岛/wsg
+						# ETCPM
+						has_authority = auth_private
+						# hiveDLC
+						has_valid_civic = civic_mutualistic_behavior
+						has_valid_civic = civic_machine_trading
+						# MCA
+						has_authority = auth_corporate_fiefdom
+						has_authority = auth_cooperative
+						# 驴岛
+						has_civic = civic_business_union
+						# wsg
+						has_authority = auth_warshipgirls
+						
+						AND = {
+							has_authority = auth_shenhai
+							OR = {
+								has_country_flag = pantsu_shop_origin
+								has_civic = civic_sh_criminal_syndicate
+							}
+						}
+						# gsf
+						has_civic = civic_gk
+						# azl
+						has_authority = auth_azur_lane_1
+						# SOFE
+						has_valid_civic = civic_sofe_inner_strength
+					}
+				}
 			}
 		}
 	}
