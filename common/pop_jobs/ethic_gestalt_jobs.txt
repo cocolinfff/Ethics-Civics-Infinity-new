@@ -188,6 +188,12 @@ replicator = {
 	planet_modifier = {
 		planet_pop_assembly_add = 1
 	}
+	# 失控女仆兼容
+	triggered_planet_modifier = {
+		potential = { has_global_flag = flag_rogue_maid_mod_activated }
+		planet_pop_assembly_add = 1
+		mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
+	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -204,10 +210,30 @@ replicator = {
 		
 		category = planet_pop_assemblers
 		upkeep = {
-			trigger = {
-				always = yes
-			}
 			alloys = 1
+		}
+		# 失控女仆兼容
+		upkeep = {
+			trigger = { has_global_flag = flag_rogue_maid_mod_activated }
+			alloys = 1
+			mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
+		}
+		upkeep = { # 组装妹抖消费消费品
+			trigger = {
+				has_global_flag = flag_rogue_maid_mod_activated
+				planet = { assembling_species = { has_trait = trait_machine_maid } }
+			}
+			consumer_goods = 1
+			mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
+		}
+		upkeep = { # 不产出消费品的国家组装妹抖消费矿物
+			trigger = {
+				has_global_flag = flag_rogue_maid_mod_activated
+				planet = { assembling_species = { has_trait = trait_machine_maid } }
+				owner = { country_uses_consumer_goods = no }
+			}
+			consumer_goods = -1
+			minerals = 2.5
 		}
 	}
 	weight = {
@@ -222,6 +248,13 @@ replicator = {
 					is_country_type = ai_empire
 				}
 			}
+		}
+		weight = @spawner_drone_job_weight
+		mult = 10
+		modifier = { # 失控女仆兼容
+			factor = 2
+			has_global_flag = flag_rogue_maid_mod_activated
+			is_maid_in_love = yes
 		}
 	}
 }
@@ -272,6 +305,18 @@ coordinator = {
 		}
 		modifier = {
 			planet_crime_no_happiness_add = -2
+		}
+	}
+	triggered_planet_modifier = { # 失控女仆兼容
+		potential = {
+			exists = owner
+			owner = {
+				has_edict = an_supply_coordination_network
+			}
+		}
+		modifier = {
+			planet_buildings_upkeep_mult = -0.05
+			planet_districts_upkeep_mult = -0.05
 		}
 	}
 	weight = {
@@ -390,6 +435,20 @@ synapse_drone = {
 		}
 		modifier = {
 			planet_amenities_no_happiness_add = 2
+		}
+	}
+	# 失控女仆兼容
+	triggered_planet_modifier = {
+		potential = {
+			has_global_flag = flag_rogue_maid_mod_activated
+			exists = owner
+			owner = {
+				has_edict = an_interactive_synaptic_clusters
+			}
+		}
+		modifier = {
+			planet_buildings_upkeep_mult = -0.05
+			planet_districts_upkeep_mult = -0.05
 		}
 	}
 	weight = {
@@ -593,6 +652,11 @@ artisan_drone = {
 		produces = {
 			consumer_goods = 10
 		}
+		produces = {
+			trigger = { owner = { has_valid_civic = civic_machine_crafters } }
+			consumer_goods = 1
+			engineering_research = 1.5
+		}
 		upkeep = {
 			minerals = 10
 		}
@@ -604,6 +668,92 @@ artisan_drone = {
 				}
 			}
 			energy = 1
+		}
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+					exists = owner.overlord
+					owner.overlord = { is_gestalt = no }
+				}
+			}
+			consumer_goods = @requisitorium_consumer_goods_reduction
+		}
+		# 侍从附庸专精三级特化perk：1产出2维护移交给宗主
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_subject = yes
+					any_agreement = {
+						has_active_specialization = specialist_servitor
+						specialist_tier >= 3
+					}
+				}
+			}
+			consumer_goods = -1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_subject = yes
+					any_agreement = {
+						has_active_specialization = specialist_servitor
+						specialist_tier >= 3
+					}
+				}
+			}
+			minerals = -2
+		}
+	}
+	overlord_resources = {
+		category = planet_requisitioned_consumer_goods
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+					exists = owner.overlord
+					owner.overlord = { is_gestalt = no }
+				}
+			}
+			consumer_goods = @requisitorium_consumer_goods_overlord
+		}
+
+		# 侍从附庸专精三级特化perk：1产出2维护移交给宗主
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_subject = yes
+					any_agreement = {
+						has_active_specialization = specialist_servitor
+						specialist_tier >= 3
+					}
+				}
+			}
+			consumer_goods = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_subject = yes
+					any_agreement = {
+						has_active_specialization = specialist_servitor
+						specialist_tier >= 3
+					}
+				}
+			}
+			minerals = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			trigger = { owner = { has_valid_civic = civic_machine_crafters } }
+		}
+		modifier = {
+			planet_amenities_no_happiness_add = 2
 		}
 	}
 	weight = {
@@ -1195,6 +1345,19 @@ agri_drone = {
 			}
 			food = -1
 		}
+		
+		#合成之爱食物产量调整，防止负电
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_machine_syntheticLove
+				}
+			}
+			food = 4
+		}
+		
+		
 		upkeep = {
 			trigger = {
 				exists = owner
@@ -1696,6 +1859,12 @@ chronicle_drone = {
 			energy = 1
 			minerals = 2
 		}
+	}
+	#失控女仆mod
+	triggered_planet_modifier = {
+		potential = { has_global_flag = flag_rogue_maid_mod_activated }
+		planet_stability_add = 2
+		mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
 	}
 	weight = {
 		weight = @complex_drone_job_weight

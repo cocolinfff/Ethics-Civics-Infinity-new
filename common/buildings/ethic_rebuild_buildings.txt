@@ -740,7 +740,7 @@ building_citadel_of_faith = {
 			}
 		}
 		modifier = {
-			job_fe_augur_add = 1
+			job_re_augur_add = 1
 		}
 	}
 
@@ -1636,10 +1636,166 @@ building_colliseum = {
 	}
 }
 
+#星球网络节点
+building_planet_network_node = {
+	base_buildtime = @b1_time
+	category = government
+	potential = {
+		exists = owner
+		owner = {
+			has_valid_civic = civic_OGAS
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			is_hive_empire = yes
+		}
+	}
+
+	planet_modifier = {
+		job_democratic_politician_add = 2
+	}
+
+	#一级首都
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_building = building_colony_shelter
+				has_building = building_hab_capital
+			}
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.01
+		}
+	}
+
+	#二级首都
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_building = building_capital
+				has_building = building_hab_major_capital
+				has_building = building_resort_capital
+			}
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.03
+		}
+	}
+	
+	#三级首都
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_building = building_major_capital
+				has_building = building_hab_system_capital
+				has_building = building_resort_major_capital
+			}
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.05
+		}
+	}
+	
+	#四级首都
+	triggered_planet_modifier = {
+		potential = {
+			has_building = building_system_capital
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.07
+		}
+	}
+	
+	#帝国首都
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_building = building_imperial_capital
+				has_building = building_hab_imperial_capital
+			}
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.1
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 500
+		}
+		upkeep = {
+			energy = 2
+		}
+		upkeep = {
+			trigger = {
+				OR = {
+					has_building = building_capital
+					has_building = building_hab_major_capital
+					has_building = building_resort_capital
+				}
+			}
+			energy = 2
+		}
+		upkeep = {
+			trigger = {
+				OR = {
+					has_building = building_major_capital
+					has_building = building_hab_system_capital
+					has_building = building_resort_major_capital
+				}
+			}
+			energy = 2
+		}
+		upkeep = {
+			trigger = {
+				has_building = building_system_capital
+			}
+			energy = 2
+		}
+		upkeep = {
+			trigger = {
+				OR = {
+					has_building = building_imperial_capital
+					has_building = building_hab_imperial_capital
+				}
+			}
+			energy = 2
+		}
+	}
+
+	upgrades = {
+		building_planetary_management_center
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_technology = tech_sapient_ai }
+			}
+		}
+		text = job_democratic_politician_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_technology = tech_sapient_ai
+			}
+		}
+		text = job_researcher_effect_desc
+	}
+	ai_weight = {
+		weight = 5000
+	}
+}
+
 #星球管理中枢
 building_planetary_management_center = {
-	base_buildtime = 480
-	base_cap_amount = 1
+	base_buildtime = @b2_time
+	can_build = no
 	category = government
 	potential = {
 		exists = owner
@@ -1655,7 +1811,11 @@ building_planetary_management_center = {
 	}
 	
 	country_modifier = {
-		country_admin_cap_add = 10
+		country_admin_cap_add = 20
+	}
+	
+	planet_modifier = {
+		job_researcher_add = 2
 	}
 
 	#一级首都
@@ -1667,8 +1827,7 @@ building_planetary_management_center = {
 			}
 		}
 		modifier = {
-			planet_structures_upkeep_mult = -0.05
-		    empire_size_colonies_mult = -0.1
+			planet_jobs_unity_produces_mult = 0.01
 		}
 	}
 
@@ -1682,8 +1841,7 @@ building_planetary_management_center = {
 			}
 		}
 		modifier = {
-			planet_structures_upkeep_mult = -0.1
-		    empire_size_colonies_mult = -0.2
+			planet_jobs_unity_produces_mult = 0.05
 		}
 	}
 	
@@ -1697,8 +1855,7 @@ building_planetary_management_center = {
 			}
 		}
 		modifier = {
-			planet_structures_upkeep_mult = -0.15
-		    empire_size_colonies_mult = -0.3
+			planet_jobs_unity_produces_mult = 0.07
 		}
 	}
 	
@@ -1708,8 +1865,7 @@ building_planetary_management_center = {
 			has_building = building_system_capital
 		}
 		modifier = {
-			planet_structures_upkeep_mult = -0.2
-		    empire_size_colonies_mult = -0.4
+			planet_jobs_unity_produces_mult = 0.15
 		}
 	}
 	
@@ -1722,8 +1878,7 @@ building_planetary_management_center = {
 			}
 		}
 		modifier = {
-			planet_structures_upkeep_mult = -0.25
-		    empire_size_colonies_mult = -0.5
+			planet_jobs_unity_produces_mult = 0.2
 		}
 	}
 
@@ -1733,7 +1888,7 @@ building_planetary_management_center = {
 			minerals = 1000
 		}
 		produces = {
-			unity = 10
+			unity = 5
 		}
 		produces = {
 			trigger = {
@@ -1752,26 +1907,26 @@ building_planetary_management_center = {
 					has_building = building_hab_system_capital
 					has_building = building_resort_major_capital
 				}
+			}
+			unity = 15
+		}
+		produces = {
+			trigger = {
+				has_building = building_system_capital
 			}
 			unity = 20
 		}
 		produces = {
 			trigger = {
-				has_building = building_system_capital
-			}
-			unity = 30
-		}
-		produces = {
-			trigger = {
 				OR = {
 					has_building = building_imperial_capital
 					has_building = building_hab_imperial_capital
 				}
 			}
-			unity = 40
+			unity = 25
 		}
 		upkeep = {
-			energy = 2
+			energy = 4
 		}
 		upkeep = {
 			trigger = {
@@ -1781,7 +1936,7 @@ building_planetary_management_center = {
 					has_building = building_resort_capital
 				}
 			}
-			energy = 2
+			energy = 3
 		}
 		upkeep = {
 			trigger = {
@@ -1791,13 +1946,13 @@ building_planetary_management_center = {
 					has_building = building_resort_major_capital
 				}
 			}
-			energy = 2
+			energy = 3
 		}
 		upkeep = {
 			trigger = {
 				has_building = building_system_capital
 			}
-			energy = 2
+			energy = 3
 		}
 		upkeep = {
 			trigger = {
@@ -1806,8 +1961,16 @@ building_planetary_management_center = {
 					has_building = building_hab_imperial_capital
 				}
 			}
-			energy = 2
+			energy = 3
 		}
+	}
+
+	prerequisites = {
+		"tech_sapient_ai"
+	}
+
+	triggered_desc = {
+		text = job_researcher_effect_desc
 	}
 	ai_weight = {
 		weight = 5000
@@ -2796,6 +2959,75 @@ building_sacred_nexus = {
 	}
 }
 
+#灵能军团
+building_psi_corps = {
+	base_buildtime = @b2_time
+
+	category = government
+
+	base_cap_amount = 1
+
+	potential = {
+		host_has_dlc = "Utopia"
+		owner = { 
+			OR = {
+				has_ascension_perk = ap_mind_over_matter
+				has_origin = origin_shroudwalker_apprentice
+			}
+		}
+		NOT = { has_modifier = resort_colony }
+		NOT = { has_modifier = slave_colony }
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+		buildings_simple_allow = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		NOT = {
+			owner = { 
+				OR = {
+					has_ascension_perk = ap_mind_over_matter 
+					has_origin = origin_shroudwalker_apprentice
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		job_telepath_add = 2
+		planet_stability_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}	
+		}
+		modifier = {
+			job_re_augur_add = 2
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 500
+		}
+		upkeep = {
+			energy = @b2_upkeep
+		}
+	}
+
+	triggered_desc = {
+		text = job_telepath_effect_desc
+	}
+}
+
 #拜金教神龛
 building_nuumismatic_shrine = {
 	base_buildtime = 180
@@ -3209,7 +3441,10 @@ building_bureaucratic_1 = {
 						}
 					}
 					NOR = {
-						has_valid_civic = civic_democracy_and_clean_government
+						AND = {
+							has_valid_civic = civic_democracy_and_clean_government
+							has_valid_civic = civic_OGAS
+						}
 						has_valid_civic = civic_triple_the_profit
 					}
 				}
@@ -3233,7 +3468,7 @@ building_bureaucratic_1 = {
 	convert_to = {
 		building_hive_node
 		building_uplink_node
-		building_planetary_management_center
+		building_planet_network_node
 		building_temple
 	}
 
@@ -3896,6 +4131,19 @@ building_energy_grid = {
 			job_fe_acolyte_generator_add = 1
 		}
 	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}
+		}
+		modifier = {
+			job_technician_add = -1
+			job_re_acolyte_generator_add = 1
+		}
+	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -4066,6 +4314,19 @@ building_energy_nexus = {
 			job_fe_acolyte_generator_add = 2
 		}
 	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}
+		}
+		modifier = {
+			job_technician_add = -2
+			job_re_acolyte_generator_add = 2
+		}
+	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -4230,6 +4491,766 @@ building_energy_nexus = {
 				type = produces
 			}
 		}
+	}
+}
+
+#食物加工厂
+building_food_processing_facility = {
+	base_buildtime = @b1_time
+	base_cap_amount = 1
+	category = resource
+
+	potential = {
+		exists = owner
+		NOR = {
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+		}
+
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			has_any_farming_district_or_buildings = yes
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_ai = yes
+				country_uses_food = no
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			AND = {
+				owner = {
+					is_ai = yes
+				}	
+				has_any_farming_district_or_buildings = no
+			}
+		}
+	}
+
+	planet_modifier = {
+		planet_farmers_food_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_fallen_empire_spiritualist = no
+				OR = {
+					is_anglers_empire = no
+					AND = {
+						is_anglers_empire = yes
+						NOT = { PREV = { planet = { is_wet = yes } } }
+					}
+				}
+			}
+		}
+		modifier = {
+			job_farmer_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		modifier = {
+			job_fe_acolyte_farm_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}
+		}
+		modifier = {
+			job_farmer_add = -1
+			job_re_acolyte_farm_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			job_agri_drone_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_fallen_empire_spiritualist = no
+				is_anglers_empire = yes
+				PREV = { planet = { is_wet = yes } }
+			}
+		}
+		modifier = {
+			job_angler_add = 1
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		text = job_agri_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+				is_fallen_empire_spiritualist = no
+			}
+		}
+		text = job_farmer_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		text = job_fe_acolyte_farm_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_fallen_empire_spiritualist = no
+				is_anglers_empire = yes
+				PREV = { planet = { is_wet = yes } }
+			}
+		}
+		text = job_aqu_angler_effect_desc
+	}
+
+	upgrades = {
+		building_food_processing_center
+	}
+
+	prerequisites = {
+		"tech_food_processing_1"
+	}
+}
+
+#食物处理中心
+building_food_processing_center = {
+	base_buildtime = @b2_time
+	can_build = no
+	category = resource
+
+	allow = {
+		exists = owner
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		OR = {
+			AND = {
+				exists = owner
+				OR = {
+					owner = {
+						is_ai = yes
+						country_uses_food = no
+					}
+					AND = {
+						owner = {
+							is_ai = yes
+						}
+						has_any_farming_district_or_buildings = no
+					}
+				}
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			buildings_no_motes = yes
+		}
+	}
+
+	planet_modifier = {
+		planet_farmers_food_produces_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_fallen_empire_spiritualist = no
+				OR = {
+					is_anglers_empire = no
+					AND = {
+						is_anglers_empire = yes
+						NOT = { PREV = { planet = { is_wet = yes } } }
+					}
+				}
+			}
+		}
+		modifier = {
+			job_farmer_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		modifier = {
+			job_fe_acolyte_farm_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}
+		}
+		modifier = {
+			job_farmer_add = -2
+			job_re_acolyte_farm_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			job_agri_drone_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_fallen_empire_spiritualist = no
+				is_anglers_empire = yes
+				PREV = { planet = { is_wet = yes } }
+			}
+		}
+		modifier = {
+			job_angler_add = 2
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			volatile_motes = @b2_rare_cost
+		}
+		upkeep = {
+			energy = 2
+			volatile_motes = @b2_rare_upkeep
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		text = job_agri_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+				is_fallen_empire_spiritualist = no
+			}
+		}
+		text = job_farmer_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		text = job_fe_acolyte_farm_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_fallen_empire_spiritualist = no
+				is_anglers_empire = yes
+				PREV = { planet = { is_wet = yes } }
+			}
+		}
+		text = job_aqu_angler_effect_desc
+	}
+
+	prerequisites = {
+		"tech_food_processing_2"
+	}
+}
+
+#矿物处理站
+building_mineral_purification_plant = {
+
+	desc = {
+		trigger = { NOT = { is_planet_class = pc_shattered_ring_habitable } }
+		text = building_mineral_purification_plant_desc
+	}
+
+	desc = {
+		trigger = { is_planet_class = pc_shattered_ring_habitable }
+		text = building_scrap_processing_plant_desc
+	}
+
+	base_buildtime = @b1_time
+	base_cap_amount = 1
+	category = resource
+
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = {
+					is_ai = yes
+				}
+				has_any_mining_district = no
+			}
+		}
+	}
+
+	potential = {
+		NOT = { has_modifier = resort_colony }
+
+		NOR = { # Ringworlds don't have mines
+			is_planet_class = pc_ringworld_habitable
+			is_planet_class = pc_cybrex
+		}
+		OR = { # Habitats only have mines if they're built on an appropriate deposit
+			NOT = { is_planet_class = pc_habitat }
+			has_planet_flag = mining_habitat
+		}
+		OR = {
+			owner = {
+				is_ai = no
+			}
+			has_any_mining_district = yes
+		}
+	}
+
+	planet_modifier = {
+		planet_miners_minerals_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_fallen_empire_spiritualist = no
+			}
+		}
+		modifier = {
+			job_miner_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		modifier = {
+			job_fe_acolyte_mine_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}
+		}
+		modifier = {
+			job_miner_add = -1
+			job_re_acolyte_mine_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			job_mining_drone_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		modifier = {
+			job_scrap_miner_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			job_scrap_miner_drone_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_robot_empire = yes
+			}
+			NOR = {
+				is_planet_class = pc_habitat
+				is_planet_class = pc_machine
+				is_planet_class = pc_hive
+				is_planet_class = pc_city
+				is_planet_class = pc_shattered_ring_habitable
+			}
+		}
+		modifier = {
+			district_mining_max = 2
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 200
+		}
+		cost = {
+			trigger = {
+				owner = {
+					is_robot_empire = yes
+				}
+			}
+			minerals = 100
+			alloys = 100
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	prerequisites = {
+		tech_mineral_purification_1
+	}
+
+	upgrades = {
+		building_mineral_purification_hub
+	}
+
+	triggered_desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		text = job_mining_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = {
+				is_gestalt = no
+				is_fallen_empire_spiritualist = no
+			}
+		}
+		text = job_miner_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		text = job_fe_acolyte_mine_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		text = job_scrap_miner_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		text = job_scrap_miner_effect_desc
+	}
+}
+
+#矿物处理中心
+building_mineral_purification_hub = {
+
+	desc = {
+		trigger = { NOT = { is_planet_class = pc_shattered_ring_habitable } }
+		text = building_mineral_purification_hub_desc
+	}
+
+	desc = {
+		trigger = { is_planet_class = pc_shattered_ring_habitable }
+		text = building_scrap_processing_hub_desc
+	}
+
+	base_buildtime = @b2_time
+	can_build = no
+	category = resource
+
+	allow = {
+		has_upgraded_capital = yes
+		NOT = { has_modifier = resort_colony }
+	}
+
+	destroy_trigger = {
+		OR = {
+			OR = {
+				has_modifier = resort_colony
+				buildings_no_motes = yes
+			}
+
+			AND = {
+				exists = owner
+				owner = {
+					is_ai = yes
+				}
+				has_any_mining_district = no
+			}
+		}
+	}
+
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_planet_class = pc_shattered_ring_habitable
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 1
+			planet_miners_alloys_produces_add = 0.5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_zarqlanism_idea
+			}
+		}
+		modifier = {
+			job_miner_add = -2
+			job_re_acolyte_mine_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_fallen_empire_spiritualist = no
+			}
+		}
+		modifier = {
+			job_miner_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		modifier = {
+			job_fe_acolyte_mine_add = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			job_mining_drone_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		modifier = {
+			job_scrap_miner_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		modifier = {
+			job_scrap_miner_drone_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_robot_empire = yes
+			}
+			NOR = {
+				is_planet_class = pc_habitat
+				is_planet_class = pc_machine
+				is_planet_class = pc_hive
+				is_planet_class = pc_city
+				is_planet_class = pc_shattered_ring_habitable
+			}
+		}
+		modifier = {
+			district_mining_max = 4
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			volatile_motes = @b2_rare_cost
+		}
+		cost = {
+			trigger = {
+				owner = {
+					is_robot_empire = yes
+				}
+			}
+			minerals = 300
+			alloys = 150
+		}
+		upkeep = {
+			energy = 2
+			volatile_motes = @b2_rare_upkeep
+		}
+	}
+
+	prerequisites = {
+		tech_mineral_purification_2
+	}
+
+	triggered_desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		text = job_mining_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = {
+				is_gestalt = no
+				is_fallen_empire_spiritualist = no
+			}
+		}
+		text = job_miner_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+			exists = owner
+			owner = { is_fallen_empire_spiritualist = yes }
+		}
+		text = job_fe_acolyte_mine_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_gestalt = yes }
+		}
+		text = job_scrap_miner_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			is_planet_class = pc_shattered_ring_habitable
+			exists = owner
+			owner = { is_regular_empire = yes }
+		}
+		text = job_scrap_miner_effect_desc
 	}
 }
 
