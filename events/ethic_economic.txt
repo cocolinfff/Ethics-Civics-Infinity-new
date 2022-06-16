@@ -11,6 +11,7 @@ country_event = { # 市场经济系统自动开关（年检）
         if = {
             limit = {
                 NOR = {
+					has_country_flag = economic_crisis_close
                     has_authority=auth_hive_mind
                     has_authority=auth_machine_intelligence
                     has_government=gov_parting_consciousness
@@ -27,6 +28,10 @@ country_event = { # 市场经济系统自动开关（年检）
 				limit = { NOT = { has_country_flag = ETHIC_MARKET_ECONOMY } }
 				set_country_flag = ETHIC_MARKET_ECONOMY
 				start_situation = { type = situation_economic_circle }
+				every_situation = {
+					limit = { is_situation_type = situation_economic_circle }
+					situation_event = { id = ethic_economic.10 }
+				}
 			}
 			if={
 				limit={ NOT = { is_variable_set = rec_effect_expand } }
@@ -65,6 +70,26 @@ situation_event = { # 市场经济月度计算协调
 		
     }
 }
+situation_event = { # 经济周期系统介绍
+    id = ethic_economic.10
+    is_triggered_only = yes
+    hide_window = no
+	title = ethic_economic.10.name
+	desc = ethic_economic.10.desc
+	picture = GFX_evt_city_ruins
+	option = { name = ethic_economic_show_accumulated }
+	option = {
+		name = ethic_economic_not_show_accumulated
+		hidden_effect = { owner = { set_country_flag = economic_crisis_unshow } }
+	}
+	option = {
+		name = ethic_economic_close_crisis
+		hidden_effect = {
+			owner = { set_country_flag = economic_crisis_close }
+			destroy_situation = this # 立刻关闭机制
+		}
+	}
+}
 
 situation_event = { # 计算危机阈值
     id = ethic_economic.2
@@ -78,11 +103,11 @@ situation_event = { # 计算危机阈值
 		set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
 		
 		if = { # 货币宽松 +40阈值
-			limit = { has_situation_flag = economic_loose }
+			limit = { rec_approach_is_inflaction = yes }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
 		if = { # 抑制通胀 -20阈值
-			limit = { has_situation_flag = economic_deinflaction }
+			limit = { rec_approach_is_deinflaction = yes }
 			change_variable = { which = rec_crisis_threshold value = -20 }
 		}
 		if = { # 额外印钞 +40阈值
@@ -238,6 +263,12 @@ situation_event = { # 计算危机增长-无危机时
 					owner = { has_edict = the_flexible_seniority_act }
 				}
 			   change_variable = { which = rec_crisis_add value = 0.1 }
+			}
+			if = { # 限制商品经济 -0.1增长
+				limit={
+					rec_approach_is_control = yes
+				}
+			   change_variable = { which = rec_crisis_add value = -0.1 }
 			}
 			if = { # 工人合作社 -0.1增长
 				limit={
@@ -434,7 +465,7 @@ situation_event = { # 判断危机效果
 situation_event = { # 事件-低危-新兴产业
     id = ethic_economic.101
     is_triggered_only = yes
-    hide_window = no
+    hide_window = yes
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -446,7 +477,7 @@ situation_event = { # 事件-低危-新兴产业
 situation_event = { # 事件-中危-股市繁荣
     id = ethic_economic.101
     is_triggered_only = yes
-    hide_window = no
+    hide_window = yes
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -458,7 +489,7 @@ situation_event = { # 事件-中危-股市繁荣
 situation_event = { # 事件-高危机-个别行业发生危机
     id = ethic_economic.141
     is_triggered_only = yes
-    hide_window = no
+    hide_window = yes
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -470,7 +501,7 @@ situation_event = { # 事件-高危机-个别行业发生危机
 situation_event = { # 事件-高危机-大规模印钞
     id = ethic_economic.142
     is_triggered_only = yes
-    hide_window = no
+    hide_window = yes
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -482,7 +513,7 @@ situation_event = { # 事件-高危机-大规模印钞
 situation_event = { # 事件-危机-企业破产
     id = ethic_economic.151
     is_triggered_only = yes
-    hide_window = no
+    hide_window = yes
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -494,7 +525,7 @@ situation_event = { # 事件-危机-企业破产
 situation_event = { # 事件-危机-自杀潮
     id = ethic_economic.151
     is_triggered_only = yes
-    hide_window = no
+    hide_window = yes
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
