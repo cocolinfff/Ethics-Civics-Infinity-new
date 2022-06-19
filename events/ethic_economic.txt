@@ -31,6 +31,7 @@ country_event = { # 市场经济系统自动开关（年检）
 				every_situation = {
 					limit = { is_situation_type = situation_economic_circle }
 					situation_event = { id = ethic_economic.10 }
+					add_situation_progress = 5
 				}
 				owner = {
 					set_variable = { which = rec_crisis_add value = 0 } # 初始化危机累积增加
@@ -61,14 +62,14 @@ country_event = { # 市场经济系统自动开关（年检）
 # 位于 ethic_economic_crisis.txt
 # 神秘bug之11不存在，12hide_window没生效
 
-situation_event = { # 计算情况改善-总结 1号
+situation_event = { # 缓冲事件
 	id = ethic_economic.114514
     is_triggered_only = yes
     hide_window = yes
     immediate = {
     }
 }
-situation_event = { # 计算情况改善-总结 1号
+situation_event = { # 缓冲事件
 	id = ethic_economic.1919
     is_triggered_only = yes
     hide_window = yes
@@ -99,12 +100,31 @@ situation_event = { # 计算情况改善-国策基础 6号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_civic value = 0 } # 初始化危机累积增加 - 国策基础
-		if = { # 三倍利润 +0.5增长
+		set_variable = { which = rec_situation_add_civic value = 0 } # 初始化经济情况改善 - 国策基础
+		# 政策
+		if = { # 自由市场 +1.0增长
+			limit={
+				owner = { has_policy_flag = economic_stance_market }
+			}
+			change_variable = { which = rec_situation_add_civic value = 1 }
+		}
+		if = { # 受控市场 +0.8增长
+			limit={
+				owner = { has_policy_flag = economic_stance_mixed }
+			}
+			change_variable = { which = rec_situation_add_civic value = 0.8 }
+		}
+		if = { # 投资市场 +0.2增长
+			limit={
+				owner = { has_policy_flag = trade_policy_default }
+			}
+			change_variable = { which = rec_situation_add_civic value = 0.2 }
+		}
+		if = { # 三倍利润 +2.0增长
 			limit={
 				owner = { has_valid_civic = civic_triple_the_profit }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.5 }
+			change_variable = { which = rec_situation_add_civic value = 2 }
 		}
 		if = { # 金融精英/金融投资 +0.3增长
 			limit={
@@ -172,9 +192,14 @@ situation_event = { # 计算情况改善-国策基础 6号
 			}
 		   change_variable = { which = rec_situation_add_civic value = 0.1 }
 		}
-		if = { # 无情工业化 +0.1增长
+		if = { # 无情工业化/工业复合体 +0.1增长
 			limit={
-				owner = { has_valid_civic = civic_industrial_economy }
+				owner = {
+					OR = {
+						has_valid_civic = civic_industrial_economy
+						has_valid_civic = civic_industrial_economy_corporate
+					}
+				}
 			}
 			change_variable = { which = rec_situation_add_civic value = 0.1 }
 		}
@@ -250,12 +275,12 @@ situation_event = { # 计算情况改善-国策基础 6号
 		situation_event = { id = ethic_economic.13 days = 5 }
     }
 }
-situation_event = { # 计算情况改善-政策乘数 11号
+situation_event = { # 计算情况改善-国策乘数 11号
     id = ethic_economic.13
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_mult_civic value = 1 } # 初始化危机累积增加 - 国策乘数
+		set_variable = { which = rec_situation_mult_civic value = 1 } # 初始化经济情况改善 - 国策乘数
 		situation_event = { id = ethic_economic.14 days = 5 }
     }
 }
@@ -264,7 +289,7 @@ situation_event = { # 计算情况改善-法令基础 16号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_edict value = 0 } # 初始化危机累积增加 - 法令基础
+		set_variable = { which = rec_situation_add_edict value = 0 } # 初始化经济情况改善 - 法令基础
 		if = { # 福报 +0.2增长
 			limit={
 				owner = { has_edict = blessings }
@@ -303,7 +328,7 @@ situation_event = { # 计算情况改善-法令乘数 21号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_mult_edict value = 1 } # 初始化危机累积增加 - 法令乘数
+		set_variable = { which = rec_situation_mult_edict value = 1 } # 初始化经济状态改善 - 法令乘数
 		situation_event = { id = ethic_economic.16 days = 5 }
     }
 }
@@ -312,7 +337,9 @@ situation_event = { # 计算情况改善-其它 26号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_approach value = 0 } # 初始化危机累积增加 - 措施
+		set_variable = { which = rec_situation_add_market value = 0 } # 初始化经济状态改善 - 市场
+		set_variable = { which = rec_situation_add_approach value = 0 } # 初始化经济状态改善 - 措施
+		
 		if = { # 经济刺激项目 +0.5增长
 			limit={
 				rec_approach_is_stimulation = yes
@@ -357,16 +384,24 @@ situation_event = { # 计算危机阈值 2号
 		
 		set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
 		
+		if = { # 经济过热 +80阈值
+			limit={ situation_progress > 90 }
+			change_variable = { which = rec_crisis_threshold value = 80 }
+		}
 		if = { # 货币宽松 +40阈值
 			limit = { rec_approach_is_inflaction = yes }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
-		if = { # 抑制通胀 -20阈值
+		else_if = { # 抑制通胀 -20阈值
 			limit = { rec_approach_is_deinflaction = yes }
 			change_variable = { which = rec_crisis_threshold value = -20 }
 		}
-		if = { # 额外印钞 +40阈值
-			limit = { has_situation_flag = economic_extra_printing }
+		if = { # 发放代金券 +40阈值 暂时没做
+			limit = { has_edict = economic_distribute_tickets }
+			change_variable = { which = rec_crisis_threshold value = 40 }
+		}
+		if = { # 额外印钞 +40阈值 暂时没做
+			limit = { has_edict = economic_extra_printing }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
 		
@@ -420,7 +455,7 @@ situation_event = { # 计算危机增长-有危机时 3号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_crisis_add value = 1 } # 初始化增长
-        multiply_variable = { which = rec_crisis_add value = value:crisis_decline }
+        multiply_variable = { which = rec_crisis_add value = value:crisis_crisis_decline }
 		set_variable = { which = rec_crisis_decline_natural value = rec_crisis_add }
 		
 		multiply_variable = { which = rec_crisis_add value = 100 }
@@ -456,11 +491,11 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_crisis_add_civic value = 0 } # 初始化危机累积增加 - 国策基础
-		if = { # 三倍利润 +0.8增长
+		if = { # 三倍利润 +2.5增长
 			limit={
 				owner = { has_valid_civic = civic_triple_the_profit }
 			}
-			change_variable = { which = rec_crisis_add_civic value = 0.8 }
+			change_variable = { which = rec_crisis_add_civic value = 2.5 }
 		}
 		if = { # 奢侈消费主义 +0.3增长
 			limit={
@@ -514,6 +549,12 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
 				owner = { has_valid_civic = civic_performance_appraisal }
 			}
 			change_variable = { which = rec_crisis_add_civic value = 0.1 }
+		}
+		if = { # 受控市场 -0.1增长
+			limit={
+				owner = { has_policy_flag = economic_stance_mixed }
+			}
+			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
 		if = { # 工人合作社 -0.1增长
 			limit={
@@ -632,12 +673,12 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = 0.1 }
 		}
-		if = { # 弹性工龄 +0.1增长
-			limit={
-				owner = { has_edict = the_flexible_seniority_act }
-			}
-			change_variable = { which = rec_crisis_add_edict value = 0.1 }
-		}
+		#if = { # 弹性工龄 +0.1增长
+		#	limit={
+		#		owner = { has_edict = the_flexible_seniority_act }
+		#	}
+		#	change_variable = { which = rec_crisis_add_edict value = 0.1 }
+		#}
 		situation_event = { id = ethic_economic.35 days = 5 }
     }
 }
@@ -655,7 +696,14 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
+		set_variable = { which = rec_crisis_add_market value = 0 } # 初始化经济状态改善 - 市场
 		set_variable = { which = rec_crisis_add_approach value = 0 } # 初始化危机累积增加 - 措施
+		if = { # 经济过热 -1.0增长
+			limit={
+				situation_progress > 90
+			}
+			change_variable = { which = rec_crisis_add_market value = -1.0 }
+		}
 		if = { # 控制商品经济 -0.2增长
 			limit={
 				rec_approach_is_control = yes
@@ -759,11 +807,26 @@ situation_event = { # 判断危机效果 5号
     }
 }
 
-# 事件-经济运转
-situation_event = { # 事件-低危-新兴产业
+# 繁荣事件 - 通用
+situation_event = { # 事件-转向实体经济
+    id = ethic_economic.100
+    is_triggered_only = yes
+    hide_window = yes
+	title = ethic_economic.101.name
+	desc = ethic_economic.101.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+situation_event = { # 事件-转向虚拟经济
     id = ethic_economic.101
     is_triggered_only = yes
     hide_window = yes
+	title = ethic_economic.101.name
+	desc = ethic_economic.101.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -771,11 +834,12 @@ situation_event = { # 事件-低危-新兴产业
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
-
-situation_event = { # 事件-中危-股市繁荣
-    id = ethic_economic.101
+situation_event = { # 事件-工人：提高工资
+    id = ethic_economic.102
     is_triggered_only = yes
     hide_window = yes
+	title = ethic_economic.102.name
+	desc = ethic_economic.102.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -783,11 +847,12 @@ situation_event = { # 事件-中危-股市繁荣
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
-
-situation_event = { # 事件-高危机-个别行业发生危机
-    id = ethic_economic.141
+situation_event = { # 事件-工人：降低工时
+    id = ethic_economic.103
     is_triggered_only = yes
     hide_window = yes
+	title = ethic_economic.103.name
+	desc = ethic_economic.103.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -796,22 +861,23 @@ situation_event = { # 事件-高危机-个别行业发生危机
     }
 }
 
-situation_event = { # 事件-高危机-大规模印钞
-    id = ethic_economic.142
+# 繁荣事件 - 早期
+situation_event = { # 事件-新兴产业
+    id = ethic_economic.110
     is_triggered_only = yes
-    hide_window = yes
+	title = ethic_economic.110.name
+	desc = ethic_economic.110.desc
     trigger = {
-        NOT = { has_situation_flag = economy_new_goods }
     }
     immediate={
-		hidden_effect = { set_situation_flag = economy_new_goods }
+		hidden_effect = { set_situation_flag = economy_new_industrial }
     }
 }
-
-situation_event = { # 事件-危机-企业破产
-    id = ethic_economic.151
+situation_event = { # 事件-产业繁荣：能源
+    id = ethic_economic.111
     is_triggered_only = yes
-    hide_window = yes
+	title = ethic_economic.111.name
+	desc = ethic_economic.111.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -819,11 +885,59 @@ situation_event = { # 事件-危机-企业破产
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
-
-situation_event = { # 事件-危机-自杀潮
-    id = ethic_economic.151
+situation_event = { # 事件-产业繁荣：采矿
+    id = ethic_economic.112
     is_triggered_only = yes
-    hide_window = yes
+	title = ethic_economic.112.name
+	desc = ethic_economic.112.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+situation_event = { # 事件-产业繁荣：农业
+    id = ethic_economic.113
+    is_triggered_only = yes
+	title = ethic_economic.113.name
+	desc = ethic_economic.113.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+situation_event = { # 事件-产业繁荣：轻工业
+    id = ethic_economic.114
+    is_triggered_only = yes
+	title = ethic_economic.114.name
+	desc = ethic_economic.114.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+situation_event = { # 事件-产业繁荣：重工业
+    id = ethic_economic.115
+    is_triggered_only = yes
+	title = ethic_economic.115.name
+	desc = ethic_economic.115.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+situation_event = { # 事件-产业繁荣：服务业
+    id = ethic_economic.116
+    is_triggered_only = yes
+	title = ethic_economic.116.name
+	desc = ethic_economic.116.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
@@ -832,356 +946,31 @@ situation_event = { # 事件-危机-自杀潮
     }
 }
 
-#--------
-
-country_event = { # 殖民
-    id = ethic_economic.10001
-    is_triggered_only=yes
-    hide_window=yes
+# 繁荣事件 - 中期
+situation_event = { # 事件-超前消费
+    id = ethic_economic.120
+    is_triggered_only = yes
+	title = ethic_economic.120.name
+	desc = ethic_economic.120.desc
     trigger = {
-        is_ai = no
+        NOT = { has_situation_flag = economy_new_goods }
     }
     immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-            set_timed_country_flag={
-                flag=ETHIC_COLONY_RECENTLY
-                days=300
-            }
-        }
+		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
 
-#事件_战胜
-country_event = {
-    id=ethic_economic.10002
-    is_triggered_only=yes
-    hide_window=yes
+# 繁荣事件 - 后期
+situation_event = { # 事件-企业破产
+    id = ethic_economic.130
+    is_triggered_only = yes
+	title = ethic_economic.130.name
+	desc = ethic_economic.130.desc
     trigger = {
-        is_ai = no
+        NOT = { has_situation_flag = economy_new_goods }
     }
     immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-            set_timed_country_flag={
-                flag=ETHIC_WIN_WAR
-                days=30
-            }
-        }
-    }
-}
-
-#事件_战败
-country_event = {
-    id=ethic_economic.10003
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
-    }
-    immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-            set_timed_country_flag={
-                flag=ETHIC_LOSE_WAR
-                days=30
-            }
-        }
-    }
-}
-
-
-#1阶段
-country_event = {
-    id=ethic_economic.101
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
-    }
-    immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-        }
-    }
-}
-
-#2阶段
-country_event = {
-    id=ethic_economic.101
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
-    }
-    immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-        }
-    }
-}
-
-#3阶段
-country_event = {
-    id=ethic_economic.101
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
-    }
-    immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-        }
-    }
-}
-
-#4阶段
-country_event = {
-    id=ethic_economic.101
-    is_triggered_only=yes
-    hide_window=yes
-    trigger = {
-        is_ai = no
-    }
-    immediate={
-        if={
-            limit={has_global_flag=ETHIC_ECONOMIC_CRISIS_SITU}
-        }
-        country_event={
-            ethic_economic.4000
-        }
-    }
-}
-
-#4阶段文本介绍
-country_event = {
-    id=ethic_economic.4000
-    is_triggered_only=yes
-    title=ethic_economic.4000.title
-    desc=ethic_economic.4001.desc
-    picture = GFX_evt_assembly_fight
-    trigger = {
-        is_ai = no
-    }
-    option = {name = ethic_economic.4000.a}
-}
-
-#应对：福利化补贴
-country_event = {
-    id=ethic_economic.4001
-    is_triggered_only=yes
-    title=ethic_economic.4001.title
-    desc=ethic_economic.40001.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4001.a
-        hidden_effect = {
-            add_modifier={
-                modifier = ethic_economic_welfare_way
-                days = 1800
-            }
-        }
-    }
-    option={
-        name = ethic_economic.4001.b
-        hidden_effect = {
-            add_modifier={
-                modifier = ethic_economic_no_welfare_way
-                days = 1800
-            }
-        }
-    }
-}
-
-#应对：威权派上台->国家资本主义
-country_event = {
-    id=ethic_economic.4002
-    is_triggered_only=yes
-    title=ethic_economic.4002.title
-    desc=ethic_economic.40002.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4002.a
-        hidden_effect = {
-
-        }
-    }
-    option={
-        name = ethic_economic.4002.b
-        hidden_effect = {
-
-        }
-    }
-}
-
-#应对：黑线
-country_event = {
-    id=ethic_economic.4003
-    is_triggered_only=yes
-    title=ethic_economic.4003.title
-    desc=ethic_economic.4003.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4003.a
-        hidden_effect = {
-            
-        }
-    }
-    option={
-        name = ethic_economic.4003.b
-        hidden_effect = {
- 
-        }
-    }
-}
-
-#应对：红线
-country_event = {
-    id=ethic_economic.4004
-    is_triggered_only=yes
-    title=ethic_economic.4004.title
-    desc=ethic_economic.4004.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4004.a
-        hidden_effect = {
-            
-        }
-    }
-    option={
-        name = ethic_economic.4004.b
-        hidden_effect = {
- 
-        }
-    }
-}
-
-#事件：食物被倾倒
-country_event = {
-    id=ethic_economic.4100
-    is_triggered_only=yes
-    title=ethic_economic.4100.title
-    desc=ethic_economic.4100.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4100.a
-        hidden_effect = {
-            
-        }
-    }
-}
-
-#事件：食人
-country_event = {
-    id=ethic_economic.4101
-    is_triggered_only=yes
-    title=ethic_economic.4101.title
-    desc=ethic_economic.4101.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4101.a
-        hidden_effect = {
-            
-        }
-    }
-}
-
-#事件：民众请求救济
-country_event = {
-    id=ethic_economic.4102
-    is_triggered_only=yes
-    title=ethic_economic.4102.title
-    desc=ethic_economic.4102.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4102.a
-        hidden_effect = {
-            
-        }
-    }
-}
-
-#事件：民众游行
-country_event = {
-    id=ethic_economic.4103
-    is_triggered_only=yes
-    title=ethic_economic.4103.title
-    desc=ethic_economic.4103.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4103.a
-        hidden_effect = {
-            
-        }
-    }
-}
-
-#事件：跳楼
-country_event = {
-    id=ethic_economic.4104
-    is_triggered_only=yes
-    title=ethic_economic.4104.title
-    desc=ethic_economic.4104.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4104.a
-        hidden_effect = {
-            
-        }
-    }
-}
-
-
-#事件：罪犯
-country_event = {
-    id=ethic_economic.4104
-    is_triggered_only=yes
-    title=ethic_economic.4104.title
-    desc=ethic_economic.4104.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4104.a
-        hidden_effect = {
-            
-        }
-    }
-}
-
-#事件：统治者被暗杀
-country_event = {
-    id=ethic_economic.4105
-    is_triggered_only=yes
-    title=ethic_economic.4105.title
-    desc=ethic_economic.4105.desc
-    trigger = {
-        is_ai = no
-    }
-    option={
-        name = ethic_economic.4105.a
-        hidden_effect = {
-            
-        }
+		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
 

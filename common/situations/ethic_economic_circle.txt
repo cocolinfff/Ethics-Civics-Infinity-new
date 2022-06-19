@@ -45,6 +45,7 @@ situation_economic_circle = {
                 job_mogul_per_pop = 0.05
                 job_merchant_per_pop = -0.10
                 job_clerk_per_pop = -0.20
+				pop_demotion_time_mult = -0.50
 				
 				pop_government_ethic_attraction = -0.35
 				pop_ethic_socialism_attraction_mult = 0.15
@@ -80,6 +81,7 @@ situation_economic_circle = {
                 job_mogul_per_pop = 0.03
                 job_merchant_per_pop = -0.05
                 job_clerk_per_pop = -0.10
+				pop_demotion_time_mult = -0.25
 				
 				pop_government_ethic_attraction = -0.15
 				pop_ethic_socialism_attraction_mult = 0.05
@@ -136,6 +138,7 @@ situation_economic_circle = {
             modifier = {
                 trade_value_mult = 0.15
                 planet_jobs_produces_mult = 0.10
+				planet_building_build_speed_mult = 0.15
 				
                 planet_crime_mult = 0.05
 				
@@ -170,6 +173,7 @@ situation_economic_circle = {
             modifier = {
                 trade_value_mult = 0.45
                 planet_jobs_produces_mult = 0.15
+				planet_building_build_speed_mult = 0.35
 				
                 pop_happiness = 0.10
                 pop_cat_worker_happiness = 0.05
@@ -201,6 +205,7 @@ situation_economic_circle = {
             modifier = {
                 trade_value_mult = 0.75
                 planet_jobs_produces_mult = -0.10
+				planet_building_build_speed_mult = 0.15
 				
                 pop_happiness = 0.15
                 pop_cat_worker_happiness = 0.10
@@ -214,57 +219,42 @@ situation_economic_circle = {
             }
         }
     }
-        on_monthly = {
-	    	events = {
-                ethic_economic.1 # 统一经济机制检测
-            }
-	    }
+    on_monthly = {
+		events = {
+            ethic_economic.1 # 统一经济机制检测
+        }
+	}
 
         monthly_progress = {
             base = 0
-			
-			#无经济危机时
-            modifier = {
-                desc = ethic_economic_market_free
-                add = 1.0
-				NOT = { has_situation_flag = economic_crisis }
-				owner = { has_policy_flag = economic_stance_market }
-            } # 政策-经济模式-市场经济 +1.0
-            modifier = {
-                desc = ethic_economic_market_control
-                add = 0.8
-				#NOT = { has_situation_flag = economic_crisis }
-				owner = { has_policy_flag = economic_stance_mixed }
-            } # 政策-经济模式-监管经济 +0.8
-            modifier = {
-                desc = ethic_economic_trade_free
-                add = 0.2
-				NOT = { has_situation_flag = economic_crisis }
-				owner = { has_policy_flag = trade_policy_default }
-            } # 政策-贸易-放任自由 +0.2
 			
             modifier = {
                 desc = economic_factor_civics
                 add = rec_situation_add_civic
 				NOT = { has_situation_flag = economic_crisis }
-            } # 政治因素
+            } # 体制因素
+            modifier = {
+                desc = economic_factor_market
+                add = rec_situation_add_market
+				NOT = { has_situation_flag = economic_crisis }
+            } # 市场因素
             modifier = {
                 desc = economic_factor_edicts
                 add = rec_situation_add_edict
 				NOT = { has_situation_flag = economic_crisis }
             } # 法令因素
+            modifier = {
+                desc = economic_factor_approach
+                add = rec_situation_add_approach
+            } # 措施因素
 			
 			# 经济危机时
             modifier = {
                 desc = ethic_economic_crisis
-                add = value:crisis_decline
+                add = value:crisis_situation_decline
                 has_situation_flag = economic_crisis
             } # 经济危机 -2.0
 			
-            modifier = { # 措施因素
-                desc = economic_factor_approach
-                add = rec_situation_add_approach
-            }
 			
 			# 危机距离
             modifier = {
@@ -478,13 +468,11 @@ situation_economic_circle = {
 			}
         }
 
-        on_progress_complete={
-            hidden_effect={
-                situation_event={
-                    unity_deficit.110
-                }
+    on_progress_complete={
+        hidden_effect={
+            situation_event={
+                #unity_deficit.110
             }
-        }
-        
-       
+		}
+    }
 }

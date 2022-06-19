@@ -7,6 +7,7 @@ clerk = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_residence
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -14,6 +15,7 @@ clerk = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_clerk
 		produces = {
@@ -59,7 +61,23 @@ clerk = {
 			unity = 0.25
 		}
 	}
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 0.5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	planet_modifier = {
+		trade_value_mult = 0.01
+	}
 
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_planet_flag = has_franchise_headquarters
+			}
+		}
+		trade_value_mult = -0.01
+	}
 	triggered_country_modifier = {
 		potential = {
 			exists = owner
@@ -74,9 +92,7 @@ clerk = {
 			country_admin_cap_add = 1
 		}
 	}
-
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -88,30 +104,15 @@ clerk = {
 			country_admin_cap_add = 0.5
 		}
 	}
-
-	planet_modifier = {
-		planet_amenities_add = 0.5
-		trade_value_mult = 0.01
-	}
-
 	triggered_planet_modifier = {
 		potential = {
-			planet = {
-				has_planet_flag = has_franchise_headquarters
+			exists = owner
+			owner = {
+				has_valid_civic = civic_business_reporting_administration
 			}
 		}
-		trade_value_mult = -0.01
-	}
-
-	overlord_resources = {
-		category = planet_corporate_franchising_meddling
-		produces = {
-			trigger = {
-				planet = {
-					has_planet_flag = has_franchise_headquarters
-				}
-			}
-			unity = 0.25
+		modifier = {
+			planet_jobs_worker_produces_mult = 0.01
 		}
 	}
 	triggered_planet_modifier = {
@@ -121,10 +122,8 @@ clerk = {
 				has_valid_civic = civic_business_reporting_administration
 			}
 		}
-		modifier = {
-			trade_value_add = 1
-			planet_jobs_worker_produces_mult = 0.01
-		}
+		trade_value_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -164,43 +163,15 @@ clerk = {
 		}
 		modifier = {
 			ethic_capitalism_attraction_mult = 0.05
-			trade_value_add = 1
 		}
 	}
 	triggered_planet_modifier = {
 		potential = {
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
+			exists = owner
+			owner = { has_tradition = tr_mercantile_trickle_up_economics }
 		}
-		modifier = {
-			planet_amenities_add = 0.4
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			planet_amenities_add = -0.4
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_thrifty
-		}
-		modifier = {
-			trade_value_add = 0.5
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_nuumismatic_administration
-		}
-		modifier = {
-			trade_value_add = 0.5
-		}
+		trade_value_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -210,15 +181,39 @@ clerk = {
 				}
 			}
 		}
-		modifier = {
-			trade_value_add = 0.5
-			planet_amenities_add = 0.5
+		trade_value_add = 0.5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_consumerism
+				}
+			}
+		}
+		planet_amenities_add = 0.5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	overlord_resources = {
+		category = planet_corporate_franchising_meddling
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_franchise_headquarters
+				}
+			}
+			unity = 0.25
 		}
 	}
+
 	weight = {
 		weight = @clerk_job_weight
+		#mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 		modifier = {
-			factor = @specialist_job_weight
+			factor = 12.5
 			is_enslaved = yes
 			can_take_servant_job = no
 			owner = {
@@ -243,26 +238,17 @@ clerk = {
 			can_take_servant_job = no
 		}
 		modifier = {
-			factor = 1.5
+			factor = 10
 			OR = {
-				has_trait = trait_thrifty
-				has_trait = trait_nuumismatic_administration
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
 			}
+			can_take_servant_job = no
+			can_fill_specialist_job = no
 		}
 		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_repugnant
 		}
 		modifier = {
 			factor = 0.5
@@ -287,6 +273,7 @@ technician = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_energy_grid
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -294,6 +281,7 @@ technician = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_technician
 		produces = {
@@ -317,15 +305,6 @@ technician = {
 				}
 			}
 			physics_research = 0.25
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_edict = capacity_subsidies
-				}
-			}
-			energy = 0.5
 		}
 		produces = {
 			trigger = {
@@ -357,20 +336,7 @@ technician = {
 		}
 	}
 
-	overlord_resources = {
-		category = planet_requisitioned_energy
-		produces = {
-			trigger = {
-				planet = {
-					has_planet_flag = has_energy_requisitorium
-				}
-			}
-			energy = @requisitorium_energy_overlord
-		}
-	}
-
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -392,23 +358,36 @@ technician = {
 			trade_value_add = 1
 		}
 	}
+
+	overlord_resources = {
+		category = planet_requisitioned_energy
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_energy_requisitorium
+				}
+			}
+			energy = @requisitorium_energy_overlord
+		}
+	}
+
 	weight = {
 		weight = @worker_job_weight
 		modifier = {
-			factor = 2
+			factor = 100
 			OR = {
-				has_trait = trait_robot_superconductive
-				has_trait = trait_ingenious
-				has_trait = trait_nuumismatic_administration
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
 			}
+			can_take_servant_job = no
+			can_fill_specialist_job = no
 		}
 		modifier = {
 			factor = 8
 			is_enslaved = yes
 			can_take_servant_job = no
-			NOR = {
+			OR = {
 				has_trait = trait_syncretic_proles
-				has_trait = trait_nuumismatic_administration
 				has_trait = trait_robot_superconductive
 				has_trait = trait_ingenious
 			}
@@ -425,84 +404,21 @@ technician = {
 			factor = 0.25
 			can_take_servant_job = yes
 		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 4
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.3
-			has_trait = trait_psionic
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_latent_psionic
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_presapient_earthbound
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_void_dweller_1
-		}
-		#modifier = {
-		#	factor = 500
-		#	planet = {
-		#		owner = {
-		#			is_megacorp = yes
-		#		}
-		#	}
-		#}
 		# low income modifier
 		modifier = {
-			factor = 1.2
-			OR = {
-				is_unemployed = yes
-				has_job = "technician"
-			}
+			factor = 250
 			exists = planet
 			planet = {
 				has_available_jobs = "technician"
 			}
+			exists = owner
 			owner = {
+				is_ai = yes
 				has_monthly_income = {
 					resource = energy
-					value < 0
+					value < 20
 				}
 			}
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -513,6 +429,7 @@ miner = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_mineral_purification_plant
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -520,6 +437,7 @@ miner = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_miners
 		produces = {
@@ -562,15 +480,6 @@ miner = {
 			}
 			sr_zro = 0.1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_edict = mining_subsidies
-				}
-			}
-			energy = 0.5
-		}
 		produces = {
 			trigger = {
 				planet = {
@@ -600,6 +509,19 @@ miner = {
 			unity = 0.25
 		}
 	}
+	
+	triggered_country_modifier = { # 共产主义社会
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_shared_burden
+				has_ascension_perk = ap_future_society
+			}
+		}
+		modifier = {
+			country_admin_cap_add = 0.5
+		}
+	}
 
 	overlord_resources = {
 		category = planet_requisitioned_minerals
@@ -612,33 +534,14 @@ miner = {
 			minerals = @requisitorium_minerals_overlord
 		}
 	}
-
-	# 共产主义社会
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_shared_burden
-				has_ascension_perk = ap_future_society
-			}
-		}
-		modifier = {
-			country_admin_cap_add = 0.5
-		}
-	}
+	
 	weight = {
 		weight = @worker_job_weight
-		modifier = {
-			factor = 3
-			OR = {
-				has_trait = trait_industrious
-				has_trait = trait_robot_power_drills
-			}
-		}
 		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 3
@@ -647,9 +550,7 @@ miner = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				has_technology = tech_droid_workers
-			}
+			owner = { has_technology = tech_droid_workers }
 		}
 		modifier = {
 			factor = 200
@@ -658,78 +559,28 @@ miner = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				NOT = {
-					has_technology = tech_droid_workers
-				}
-			}
+			owner = { NOT = { has_technology = tech_droid_workers } }
 		}
 		modifier = {
 			factor = 0.25
 			can_take_servant_job = yes
 		}
-		modifier = {
-			factor = 2
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 1.4
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_void_dweller_1
-		}
+
 		# low income modifier
 		modifier = {
 			factor = 1.1
-			OR = {
-				is_unemployed = yes
-				has_job = "miner"
-			}
 			exists = planet
 			planet = {
 				has_available_jobs = "miner"
 			}
+			exists = owner
 			owner = {
+				is_ai = yes
 				has_monthly_income = {
 					resource = minerals
-					value < 30
+					value < 0
 				}
 			}
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -740,6 +591,7 @@ crystal_miner = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_crystal_mines
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -747,6 +599,7 @@ crystal_miner = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_miners
 		produces = {
@@ -769,15 +622,6 @@ crystal_miner = {
 			}
 			sr_zro = 0.1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_edict = mining_subsidies
-				}
-			}
-			energy = 0.5
-		}
 		
 		#社会主义
 		produces = {
@@ -800,8 +644,7 @@ crystal_miner = {
 		}
 	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -813,12 +656,14 @@ crystal_miner = {
 			country_admin_cap_add = 0.5
 		}
 	}
+	
 	weight = {
-		weight = @specialist_job_weight		# Important job
+		weight = @specialist_job_weight # Important job
 		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 2
@@ -827,9 +672,7 @@ crystal_miner = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				has_technology = tech_droid_workers
-			}
+			owner = { has_technology = tech_droid_workers }
 		}
 		modifier = {
 			factor = 200
@@ -838,56 +681,11 @@ crystal_miner = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				NOT = {
-					has_technology = tech_droid_workers
-				}
-			}
+			owner = { NOT = { has_technology = tech_droid_workers } }
 		}
 		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 2
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.1
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 3
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_void_dweller_1
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -898,6 +696,7 @@ gas_extractor = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_gas_extractors
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -905,6 +704,7 @@ gas_extractor = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_miners
 		produces = {
@@ -927,15 +727,6 @@ gas_extractor = {
 			}
 			sr_zro = 0.1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_edict = mining_subsidies
-				}
-			}
-			energy = 0.5
-		}
 		
 		#社会主义
 		produces = {
@@ -958,8 +749,7 @@ gas_extractor = {
 		}
 	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -971,12 +761,14 @@ gas_extractor = {
 			country_admin_cap_add = 0.5
 		}
 	}
+	
 	weight = {
-		weight = @specialist_job_weight		# Important job
+		weight = @specialist_job_weight # Important job
 		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 2
@@ -985,9 +777,7 @@ gas_extractor = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				has_technology = tech_droid_workers
-			}
+			owner = { has_technology = tech_droid_workers }
 		}
 		modifier = {
 			factor = 200
@@ -996,56 +786,11 @@ gas_extractor = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				NOT = {
-					has_technology = tech_droid_workers
-				}
-			}
+			owner = { NOT = { has_technology = tech_droid_workers } }
 		}
 		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 2
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.1
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 3
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_void_dweller_1
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -1056,6 +801,7 @@ mote_harvester = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_mote_harvesting_traps
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -1063,6 +809,7 @@ mote_harvester = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_miners
 		produces = {
@@ -1085,15 +832,6 @@ mote_harvester = {
 			}
 			sr_zro = 0.1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_edict = mining_subsidies
-				}
-			}
-			energy = 0.5
-		}
 		
 		#社会主义
 		produces = {
@@ -1116,8 +854,7 @@ mote_harvester = {
 		}
 	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -1129,12 +866,14 @@ mote_harvester = {
 			country_admin_cap_add = 0.5
 		}
 	}
+
 	weight = {
-		weight = @specialist_job_weight		# Important job
+		weight = @specialist_job_weight # Important job
 		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 2
@@ -1143,9 +882,7 @@ mote_harvester = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				has_technology = tech_droid_workers
-			}
+			owner = { has_technology = tech_droid_workers }
 		}
 		modifier = {
 			factor = 200
@@ -1154,56 +891,11 @@ mote_harvester = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				NOT = {
-					has_technology = tech_droid_workers
-				}
-			}
+			owner = { NOT = { has_technology = tech_droid_workers } }
 		}
 		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 2
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.1
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 3
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_void_dweller_1
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -1214,6 +906,7 @@ farmer = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_food_processing_facility
 	clothes_texture_index = 2
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -1221,6 +914,7 @@ farmer = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_farmers
 		produces = {
@@ -1252,15 +946,6 @@ farmer = {
 			}
 			sr_zro = 0.1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_edict = farming_subsidies
-				}
-			}
-			energy = 0.5
-		}
 		produces = {
 			trigger = {
 				planet = {
@@ -1291,18 +976,6 @@ farmer = {
 		}
 	}
 
-	overlord_resources = {
-		category = planet_requisitioned_food
-		produces = {
-			trigger = {
-				planet = {
-					has_planet_flag = has_produce_requisitorium
-				}
-			}
-			food = @requisitorium_food_overlord
-		}
-	}
-
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -1313,37 +986,9 @@ farmer = {
 		modifier = {
 			planet_amenities_add = 2
 		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_agrarian_idyll
-			}
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			planet_amenities_add = 0.4
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_agrarian_idyll
-			}
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			planet_amenities_add = -0.4
-		}
-	}
-
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -1355,25 +1000,30 @@ farmer = {
 			country_admin_cap_add = 0.5
 		}
 	}
+
+	overlord_resources = {
+		category = planet_requisitioned_food
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_produce_requisitorium
+				}
+			}
+			food = @requisitorium_food_overlord
+		}
+	}
+	
 	weight = {
 		weight = @worker_job_weight
 		modifier = {
-			factor = 3
-			OR = {
-				has_trait = trait_robot_harvesters
-				has_trait = trait_agrarian
-			}
-		}
-		modifier = {
 			factor = 1.1
-			owner = {
-				has_valid_civic = civic_agrarian_idyll
-			}
+			owner = { has_valid_civic = civic_agrarian_idyll }
 		}
 		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 3
@@ -1382,9 +1032,7 @@ farmer = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				has_technology = tech_droid_workers
-			}
+			owner = { has_technology = tech_droid_workers }
 		}
 		modifier = {
 			factor = 200
@@ -1393,93 +1041,37 @@ farmer = {
 				is_shackled_robot = yes
 			}
 			can_take_servant_job = no
-			owner = {
-				NOT = {
-					has_technology = tech_droid_workers
-				}
-			}
+			owner = { NOT = { has_technology = tech_droid_workers } }
 		}
 		modifier = {
 			factor = 0.25
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 2
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 1.4
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 1.5
-			owner = {
-				has_valid_civic = civic_agrarian_idyll
-			}
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			factor = 0.5
-			owner = {
-				has_valid_civic = civic_agrarian_idyll
-			}
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_void_dweller_1
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_valid_civic = civic_agrarian_idyll }
 		}
 		# low income modifier
 		modifier = {
 			factor = 1.2
-			OR = {
-				is_unemployed = yes
-				has_job = farmer
-			}
 			exists = planet
 			planet = {
 				has_available_jobs = farmer
 			}
+			exists = owner
 			owner = {
+				is_ai = yes
 				has_monthly_income = {
 					resource = food
-					value < 0
+					value < 10
 				}
 			}
 		}
+
 		modifier = {
 			factor = 0.5
 			has_trait = trait_lithoid
+
 			owner = {
 				is_lithoid_empire = yes
 				has_monthly_income = {
@@ -1487,10 +1079,6 @@ farmer = {
 					value >= 0
 				}
 			}
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -1501,6 +1089,7 @@ preacher = {
 	condition_string = WORKER_JOB_TRIGGER
 	building_icon = building_temple_of_prosperity
 	clothes_texture_index = 3
+
 	icon = priest
 	possible_pre_triggers = {
 		has_owner = yes
@@ -1509,6 +1098,7 @@ preacher = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_priests
 		produces = {
@@ -1526,48 +1116,16 @@ preacher = {
 			society_research = 0.25
 		}
 	}
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = { always = yes }
 		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	planet_modifier = {
 		trade_value_mult = 0.03
 	}
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			planet_amenities_add = 0.6
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			planet_amenities_add = -0.6
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_thrifty
-		}
-		modifier = {
-			trade_value_add = 0.5
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_nuumismatic_administration
-		}
-		modifier = {
-			trade_value_add = 0.5
-		}
-	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -1579,57 +1137,17 @@ preacher = {
 			country_admin_cap_add = 0.5
 		}
 	}
+	
 	weight = {
-		weight = @specialist_job_weight		# Important job
+		weight = @specialist_job_weight # Important job
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
-			NOT = {
-				has_trait = trait_mechanical
-			}
-		}
-		modifier = {
-			factor = 2
-			owner = {
-				or = {
-					has_valid_civic = civic_imperial_cult
-					has_valid_civic = civic_divine_council
-					has_valid_civic = civic_spiritual_democracy
-				}
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_thrifty
-				has_trait = trait_nuumismatic_administration
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
+			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
 			factor = 1.2
 			has_ethic = ethic_spiritualist
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_quarrelsome
 		}
 		modifier = {
 			factor = 0.1
@@ -1638,40 +1156,7 @@ preacher = {
 		modifier = {
 			factor = 0.1
 			has_ethic = ethic_materialist
-			NOT = {
-				has_job = preacher
-			}
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.025
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_brainslug
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_presapient_natural_intellectuals
-		}
-		modifier = {
-			factor = 1.05
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 0.01
-			has_trait = trait_nerve_stapled
+			NOT = { has_job = preacher }
 		}
 	}
 }
@@ -1683,6 +1168,7 @@ mortal_initiate = {
 	building_icon = building_sacrificial_temple_1
 	clothes_texture_index = 3
 	icon = mortal_initiate
+
 	possible_pre_triggers = {
 		has_owner = yes
 		is_sapient = yes
@@ -1691,9 +1177,11 @@ mortal_initiate = {
 		is_being_assimilated = no
 	}
 	possible_precalc = can_fill_worker_job
+
 	resources = {
 		category = planet_culture_workers
 		produces = {
+			unity = 2
 			society_research = 1
 		}
 		produces = {
@@ -1708,11 +1196,13 @@ mortal_initiate = {
 			society_research = 0.25
 		}
 	}
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -1724,53 +1214,17 @@ mortal_initiate = {
 			country_admin_cap_add = 0.5
 		}
 	}
+	
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
-			NOT = {
-				has_trait = trait_mechanical
-			}
-		}
-		modifier = {
-			factor = 2
-			owner = {
-				has_civic = civic_exalted_priesthood
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_thrifty
-				has_trait = trait_nuumismatic_administration
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robot_domestic_protocols
-				has_trait = trait_charismatic
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_repugnant
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
+			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
 			factor = 1.2
 			has_ethic = ethic_spiritualist
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_quarrelsome
 		}
 		modifier = {
 			factor = 0.1
@@ -1779,21 +1233,13 @@ mortal_initiate = {
 		modifier = {
 			factor = 0.1
 			has_ethic = ethic_materialist
-			NOT = {
-				has_job = preacher
+			NOT = { has_job = mortal_initiate }
+		}
+		modifier = {
+			factor = 2
+			owner = {
+				has_civic = civic_exalted_priesthood
 			}
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_presapient_natural_intellectuals
-		}
-		modifier = {
-			factor = 0.01
-			has_trait = trait_nerve_stapled
 		}
 	}
 }
@@ -1811,7 +1257,6 @@ scrap_miner = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_worker_job
 
 	resources = {
@@ -1853,8 +1298,7 @@ scrap_miner = {
 		}
 	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -1870,16 +1314,10 @@ scrap_miner = {
 	weight = {
 		weight = @worker_job_weight
 		modifier = {
-			factor = 3
-			OR = {
-				has_trait = trait_industrious
-				has_trait = trait_robot_power_drills
-			}
-		}
-		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 3
@@ -1903,55 +1341,12 @@ scrap_miner = {
 			factor = 0.25
 			can_take_servant_job = yes
 		}
-		modifier = {
-			factor = 2
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 1.4
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_nerve_stapled
-		}
-
 		# low income modifier
 		modifier = {
 			factor = 1.1
-
-			#OR = {
-			#	is_unemployed = yes
-			#	has_job = "miner"
-			#}
 			exists = planet
 			planet = {
-				has_available_jobs = "miner"
+				has_available_jobs = "scrap_miner"
 			}
 			exists = owner
 			owner = {
@@ -1961,10 +1356,6 @@ scrap_miner = {
 					value < 0
 				}
 			}
-		}
-		modifier = {
-			factor = 0.75
-			has_trait = trait_necrophage
 		}
 	}
 }
@@ -1982,7 +1373,6 @@ angler = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_worker_job
 	possible = {
 		hidden_trigger = { exists = owner }
@@ -2044,6 +1434,43 @@ angler = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_anglers_socialism
+			}
+		}
+		modifier = {
+			planet_amenities_add = 2
+		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				NOT = {
+					has_valid_civic = civic_anglers_socialism
+				}
+			}
+		}
+		modifier = {
+			trade_value_add = 2
+		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_country_modifier = { # 共产主义社会
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_shared_burden
+				has_ascension_perk = ap_future_society
+			}
+		}
+		modifier = {
+			country_admin_cap_add = 0.5
+		}
+	}
+	
 	overlord_resources = {
 		category = planet_requisitioned_food
 		produces = {
@@ -2056,8 +1483,16 @@ angler = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
+	weight = {
+		weight = @worker_job_weight
+		modifier = { #限制条件的sv mult
+			factor = 5
+			owner = {
+				has_valid_civic = civic_anglers_socialism
+			}
+		}
+		modifier = { #限制条件的sv mult
+			factor = 5
 			owner = {
 				NOT = {
 					has_valid_civic = civic_anglers_socialism
@@ -2065,83 +1500,14 @@ angler = {
 			}
 		}
 		modifier = {
-			trade_value_add = 0.5
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_anglers_socialism
-			}
-		}
-		modifier = {
-			planet_amenities_add = 2
-		}
-	}
-	
-
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_thrifty
-		}
-		modifier = {
-			trade_value_add = 0.5
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			has_trait = trait_nuumismatic_administration
-		}
-		modifier = {
-			trade_value_add = 0.2
-		}
-	}
-
-	# 共产主义社会
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_shared_burden
-				has_ascension_perk = ap_future_society
-			}
-		}
-		modifier = {
-			country_admin_cap_add = 0.5
-		}
-	}
-
-	weight = {
-		weight = @worker_job_weight
-		modifier = {
-			factor = 3
-			has_trait = trait_agrarian
-		}
-		modifier = {
 			factor = 10
 			is_enslaved = yes
 			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
 		}
 		modifier = {
 			factor = 0.25
 			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_syncretic_proles
-		}
-		modifier = {
-			factor = 1.4
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
 		}
 	}
 }
@@ -2159,7 +1525,6 @@ ranger = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_worker_job
 
 	resources = {
@@ -2168,9 +1533,15 @@ ranger = {
 			society_research = 2
 		}
 	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
 
-	# 共产主义社会
-	triggered_country_modifier = {
+	triggered_country_modifier = { # 共产主义社会
 		potential = {
 			exists = owner
 			owner = {
@@ -2183,16 +1554,10 @@ ranger = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 3
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
 	weight = {
 		weight = @worker_job_weight
+		mult = value:job_weights_modifier|JOB|ranger|RESOURCE|society_research|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 		modifier = {
 			factor = 1.5
 			has_job = ranger

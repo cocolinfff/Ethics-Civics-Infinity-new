@@ -79,157 +79,44 @@ situation_event = { # 经济危机：暂时结束
 	}
 }
 
-# 事件集-经济危机
-country_event = {
-	id = ethic_economic_crisis.1
-	hide_window = yes
-
-	is_triggered_only = yes
-
-	immediate = {
-		if = {
-			limit = {
-				NOT = { has_country_flag = ethic_economic_crisis }
-				OR = {
-					AND = {
-						years_passed < 20
-						trade_income > 50
-					}
-					AND = {
-						years_passed > 20
-						years_passed < 40
-						trade_income > 200
-					}
-					AND = {
-						years_passed > 40
-						years_passed < 75
-						trade_income > 500
-					}
-					AND = {
-						years_passed > 75
-						years_passed < 120
-						trade_income > 1000
-					}
-					AND = {
-						years_passed > 120
-						trade_income > 1500
-					}
-				}
-			}
-			country_event = { id = ethic_economic_crisis.2 }
-		}
-		else_if = {
-			limit = {
-				has_country_flag = ethic_economic_crisis
-			}
-			country_event = { id = ethic_economic_crisis.20 }
+# 危机事件 - 通用
+situation_event = { # 事件-区划废弃
+    id = ethic_economic_crisis.100
+    is_triggered_only = yes
+	title = ethic_economic_crisis.100.name
+	desc = ethic_economic_crisis.100.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+	option = {
+		name = ethic_economic_laissez_fair
+		owner = {
+			random_planet = { destroy_district = random }
+			destroy_situation = this # 立刻关闭机制
 		}
 	}
 }
-
-# 事件集-临近危机
-country_event = {
-	id = ethic_economic_crisis.2
-	title = "ethic_economic_crisis.2.name"
-	desc = "ethic_economic_crisis.2.desc"
-	picture = GFX_evt_financial_instruments
-	show_sound = event_galactic_market
-
-	is_triggered_only = yes
-
-	immediate = {
-		#最初波及到的产品
-		hidden_effect = {
-			random_list = {
-				#影响能源
-				1 = {
-					modifier = {
-						factor = 0
-						limit = { has_monthly_income = { resource = energy value > 75 }
-						}
-					}
-					set_timed_country_flag = { flag = economic_crisis_10_01 days = 1980 }
-				}
-				#影响矿物
-				1 = {
-					modifier = {
-						factor = 0
-						limit = { has_monthly_income = { resource = minerals value > 75 }
-						}
-					}
-					set_timed_country_flag = { flag = economic_crisis_10_02 days = 1980 }
-				}
-				#影响食物
-				1 = {
-					modifier = {
-						factor = 0
-						limit = { has_monthly_income = { resource = food value > 75 }
-						}
-					}
-					set_timed_country_flag = { flag = economic_crisis_10_03 days = 1980 }
-				}
-				#影响合金
-				1 = {
-					modifier = {
-						factor = 0
-						limit = { has_monthly_income = { resource = alloys value > 35 }
-						}
-					}
-					set_timed_country_flag = { flag = economic_crisis_10_04 days = 1980 }
-				}
-				#影响消费品
-				1 = {
-					modifier = {
-						factor = 0
-						limit = { has_monthly_income = { resource = consumer_goods value > 50 }
-						}
-					}
-					set_timed_country_flag = { flag = economic_crisis_10_05 days = 1980 }
-				}
-			}
-		}
-	}
-
-	option = {
-		name = ethic_economic_crisis.2.a
-		add_modifier = { modifier = economic_crisis_prosperity days = 180 }
-		hidden_effect = {
-			random_list = {
-				3 = {
-					modifier = {
-						factor = 0
-					}
-					country_event = { id = ethic_economic_crisis.10 days = 180 }
-				}
-				7 = { }
-			}
-		}
-	}
-
-	option = {
-		name = ethic_economic_crisis.2.b
-		trigger = {
-			has_policy_flag = economic_stance_planned
-			NOT = { has_ethic = ethic_fanatic_egalitarian }
-		}
-		add_modifier = { modifier = economic_crisis_steady days = 360 }
-		every_owned_planet = {
-			limit = {
-				hidden_trigger = {
-					OR = {
-						colony_type = col_city
-						colony_type = col_habitat_trade
-						colony_type = col_ring_trade
-						colony_type = col_ecu_mix
-						is_capital = yes
-					}
-				}
-			}
-			custom_tooltip = is_trade_planet
-			add_modifier = {
-				modifier = "capitalism_unrest"
-				days = 360
-			}
-		}
-	}
+situation_event = { # 事件-建筑废弃
+    id = ethic_economic_crisis.101
+    is_triggered_only = yes
+	title = ethic_economic_crisis.101.name
+	desc = ethic_economic_crisis.101.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
+}
+situation_event = { # 事件-饥荒
+    id = ethic_economic_crisis.102
+    is_triggered_only = yes
+	title = ethic_economic_crisis.102.name
+	desc = ethic_economic_crisis.102.desc
+    trigger = {
+        NOT = { has_situation_flag = economy_new_goods }
+    }
+    immediate={
+		hidden_effect = { set_situation_flag = economy_new_goods }
+    }
 }
