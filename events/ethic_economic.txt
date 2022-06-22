@@ -473,6 +473,7 @@ situation_event = { # 计算危机增长-无危机时-总结 3号
 		
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_civic }
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_edict }
+		change_variable = { which = rec_crisis_add value = rec_crisis_add_market }
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_approach }
 		
 		multiply_variable = { which = rec_crisis_add value = rec_crisis_mult_civic }
@@ -731,7 +732,7 @@ situation_event = { # 计算危机积累 4号
 			limit = { owner = { is_at_war = yes } }
 			change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
 		}
-		change_variable = { which = rec_crisis_accumulated value = rec_crisis_add_war }
+		change_variable = { which = rec_crisis_add value = rec_crisis_add_war }
 		set_variable = { which = owner.rec_pop_expand_0 value = owner.rec_pop_expand_1 }
 		set_variable = { which = owner.rec_pop_expand_1 value = owner.rec_pop_expand_2 }
 		set_variable = { which = owner.rec_pop_expand_2 value = 0 } # 3月缓冲
@@ -807,6 +808,33 @@ situation_event = { # 判断危机效果 5号
     }
 }
 
+# 事件集
+# 产业繁荣：中控事件
+# 产业繁荣：新兴产业
+# 产业繁荣：食物
+# 产业繁荣：能源
+# 产业繁荣：采矿
+# 产业繁荣：轻工业
+# 产业繁荣：重工业
+# 产业繁荣：服务业
+# 劳资关系：中控事件
+# 劳资关系：提高工资
+# 劳资关系：降低工资
+# 劳资关系：延长工时
+# 劳资关系：缩短工时
+# 股市：中控事件
+# 股市：空前牛市
+# 股市：牛市
+# 股市：熊市
+# 股市：空前熊市
+# 垄断：寡头兴起
+# 垄断：广泛垄断
+# 垄断：中小企业破产
+# 转向实体经济
+# 转向虚拟经济
+# 超前消费
+# 企业破产
+
 # 繁荣事件 - 通用
 situation_event = { # 事件-转向实体经济
     id = ethic_economic.100
@@ -860,6 +888,8 @@ situation_event = { # 事件-工人：降低工时
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
+# 降低工资
+# 提高工时
 
 # 繁荣事件 - 早期
 situation_event = { # 事件-新兴产业
@@ -958,6 +988,7 @@ situation_event = { # 事件-超前消费
     immediate={
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
+	#走向垄断
 }
 
 # 繁荣事件 - 后期
@@ -999,7 +1030,47 @@ planet_event = { # 提升效应-提升物种带来的危机稀释
     }
 }
 
-planet_event = { # 战争效应-战争赔款的危机稀释
+planet_event = { # 开拓效应-征服者私有化协议开始
+    id = ethic_economic.92
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = {
+		has_edict = explorer_privitization
+    }
+    immediate={
+		owner = { change_variable = { which = rec_pop_expand_0 value = 3 } }
+    }
+}
+planet_event = { # 开拓效应-征服者私有化协议过程
+    id = ethic_economic.92
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = {
+		owner = { has_edict = explorer_privitization }
+    }
+    immediate = {
+		add_modifier = {
+			modifier = pm_explorer_privitized
+			years = 1
+			clear_on_owner_change = yes
+		}
+		planet_event = { id = ethic_economic.920 days = 30 }
+    }
+}
+planet_event = { # 开拓效应-征服者私有化协议过程
+    id = ethic_economic.920
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
+		if = {
+			limit = { has_planet_modifier = pm_explorer_privitized }
+			owner = { change_variable = { which = rec_pop_expand_0 value = 1 } }
+			planet_event = { id = ethic_economic.920 days = 30 }
+		}
+    }
+}
+
+event = { # 战争效应-战争赔款的危机稀释
     id = ethic_economic.95
     is_triggered_only = yes
     hide_window = yes
