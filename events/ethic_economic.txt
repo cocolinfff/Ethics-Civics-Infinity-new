@@ -1,6 +1,6 @@
 namespace=ethic_economic 
 
-country_event = { # 市场经济系统自动开关（年检）
+country_event = { # 市场经济系统自动开关（月检）
     id = ethic_economic.0
     is_triggered_only = yes
     hide_window = yes
@@ -50,9 +50,10 @@ country_event = { # 市场经济系统自动开关（年检）
         }
 		else = {
             remove_country_flag = ETHIC_MARKET_ECONOMY
-			any_situation = {
+			every_situation = {
 				limit = { is_situation_type = situation_economic_circle }
-				destroy_situation = this
+				#destroy_situation = this
+				add_situation_progress = -100
 			}
 		}
     }
@@ -290,6 +291,18 @@ situation_event = { # 计算情况改善-法令基础 16号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_situation_add_edict value = 0 } # 初始化经济情况改善 - 法令基础
+		if = { # 发放消费券 +0.3增长
+			limit = {
+				owner = { has_edict = economic_consumer_coupon }
+			}
+			change_variable = { which = rec_situation_add_edict value = 0.3 }
+		}
+		if = { # 通胀 +0.2增长
+			limit = {
+				owner = { has_edict = economic_inflaction }
+			}
+			change_variable = { which = rec_situation_add_edict value = 0.2 }
+		}
 		if = { # 福报 +0.2增长
 			limit={
 				owner = { has_edict = blessings }
@@ -320,6 +333,13 @@ situation_event = { # 计算情况改善-法令基础 16号
 			}
 			change_variable = { which = rec_situation_add_edict value = 0.1 }
 		}
+		if = { # 反通胀 -0.2增长
+			limit = {
+				owner = { has_edict = economic_deinflaction }
+			}
+			change_variable = { which = rec_situation_add_edict value = -0.2 }
+		}
+		
 		situation_event = { id = ethic_economic.15 days = 5 }
     }
 }
@@ -389,11 +409,11 @@ situation_event = { # 计算危机阈值 2号
 			change_variable = { which = rec_crisis_threshold value = 80 }
 		}
 		if = { # 货币宽松 +40阈值
-			limit = { rec_approach_is_inflaction = yes }
+			limit = { owner = { has_edict = economic_inflaction } }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
 		else_if = { # 抑制通胀 -20阈值
-			limit = { rec_approach_is_deinflaction = yes }
+			limit = { owner = { has_edict = economic_deinflaction } }
 			change_variable = { which = rec_crisis_threshold value = -20 }
 		}
 		if = { # 发放代金券 +40阈值 暂时没做
@@ -674,6 +694,12 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = 0.1 }
 		}
+		if = { # 发放消费券 -0.4增长
+			limit = {
+				owner = { has_edict = economic_consumer_coupon }
+			}
+			change_variable = { which = rec_crisis_add_edict value = -0.4 }
+		}
 		#if = { # 弹性工龄 +0.1增长
 		#	limit={
 		#		owner = { has_edict = the_flexible_seniority_act }
@@ -809,31 +835,31 @@ situation_event = { # 判断危机效果 5号
 }
 
 # 事件集
-# 产业繁荣：中控事件
-# 产业繁荣：新兴产业
-# 产业繁荣：食物
-# 产业繁荣：能源
-# 产业繁荣：采矿
-# 产业繁荣：轻工业
-# 产业繁荣：重工业
-# 产业繁荣：服务业
-# 劳资关系：中控事件
-# 劳资关系：提高工资
-# 劳资关系：降低工资
-# 劳资关系：延长工时
-# 劳资关系：缩短工时
-# 股市：中控事件
-# 股市：空前牛市
-# 股市：牛市
-# 股市：熊市
-# 股市：空前熊市
-# 垄断：寡头兴起
-# 垄断：广泛垄断
-# 垄断：中小企业破产
-# 转向实体经济
-# 转向虚拟经济
-# 超前消费
-# 企业破产
+# 产业繁荣：中控事件 100
+# 产业繁荣：新兴产业 101
+# 产业繁荣：食物 102
+# 产业繁荣：能源 103
+# 产业繁荣：采矿 104
+# 产业繁荣：轻工业 105
+# 产业繁荣：重工业 106
+# 产业繁荣：服务业 107
+# 劳资关系：中控事件 110
+# 劳资关系：提高工资 111
+# 劳资关系：降低工资 112
+# 劳资关系：延长工时 113
+# 劳资关系：缩短工时 114
+# 股市：中控事件 120
+# 股市：空前牛市 121
+# 股市：牛市 122
+# 股市：熊市 123
+# 股市：空前熊市 124
+# 垄断：寡头兴起 130
+# 垄断：广泛垄断 131
+# 垄断：中小企业破产 132
+# 转向实体经济 1901
+# 转向虚拟经济 1902
+# 超前消费 191
+# 企业破产 192
 
 # 繁荣事件 - 通用
 situation_event = { # 事件-转向实体经济
@@ -888,10 +914,6 @@ situation_event = { # 事件-工人：降低工时
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
-# 降低工资
-# 提高工时
-
-# 繁荣事件 - 早期
 situation_event = { # 事件-新兴产业
     id = ethic_economic.110
     is_triggered_only = yes
@@ -976,7 +998,6 @@ situation_event = { # 事件-产业繁荣：服务业
     }
 }
 
-# 繁荣事件 - 中期
 situation_event = { # 事件-超前消费
     id = ethic_economic.120
     is_triggered_only = yes
@@ -991,18 +1012,45 @@ situation_event = { # 事件-超前消费
 	#走向垄断
 }
 
-# 繁荣事件 - 后期
 situation_event = { # 事件-企业破产
-    id = ethic_economic.130
+    id = ethic_economic.192
     is_triggered_only = yes
-	title = ethic_economic.130.name
-	desc = ethic_economic.130.desc
+	title = ethic_economic.192.name
+	desc = ethic_economic.192.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
     immediate={
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
+	option = {
+		name = ethic_economic.192.a
+		icon = {
+			icon = GFX_ethic_capitalism
+			text = ethic_any_capitalism
+		}
+	}
+	option = {
+		name = ethic_economic.192.b
+		icon = {
+			icon = GFX_ethic_egalitarian
+			text = ethic_any_egalitarian
+		}
+	}
+	option = {
+		name = ethic_economic.192.c
+		icon = {
+			icon = GFX_ethic_authoritarian
+			text = ethic_any_authoritarian
+		}
+	}
+	option = {
+		name = ethic_economic.192.d
+		icon = {
+			icon = GFX_civic_anarchy
+			text = civic_anarchy
+		}
+	}
 }
 
 
