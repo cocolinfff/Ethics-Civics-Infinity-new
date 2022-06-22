@@ -9,28 +9,43 @@
 # 星球决议
 # 以工代赈计划-建筑速度
 
-# 扩大印钞
-edict_expand_printing = {
+@Edict1Cost = 10
+@Edict2Cost = 20
+@Edict3Cost = 30
+@Edict4Cost = 40
+
+@campaignCost = 15
+
+@ambitionDuration = -1
+@ambitionCost = 75
+@ambitionUpkeep = 75
+
+@EdictPerpetual = -1
+
+# 扩大印钞 - 扩大通胀
+economic_inflaction = {
 	length = @EdictPerpetual
 	icon = "GFX_edict_type_policy"
 
 	resources = {
 		category = edicts
 		upkeep = {
-			unity = @Edict2Cost
+			energy = @Edict1Cost
 			multiplier = value:edict_size_effect
 		}
 	}
 
+	effect = {
+		custom_tooltip = edict_economic_inflaction_tooltip
+	}
 	modifier = {
-        trade_value_mult = -0.15
+        trade_value_mult = -0.10
         planet_jobs_produces_mult = 0.10
         pop_happiness = -0.15
 	}
 
 	potential = {
 		has_country_flag = ETHIC_MARKET_ECONOMY
-		always = no
 	}
 	possible = {
 		any_situation = {
@@ -42,31 +57,99 @@ edict_expand_printing = {
 	ai_weight = {
 		weight = 1
 		modifier = {
-			factor = 3
-			NOR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_valid_civic = civic_exalted_priesthood
-				has_valid_civic = civic_divine_council
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+			factor = 2
+			check_variable = { which = rec_crisis_percentage value > 0.7 }
 		}
 		modifier = {
-			factor = 8
-			OR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_valid_civic = civic_exalted_priesthood
-				has_valid_civic = civic_divine_council
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+			factor = 2
+			rec_approach_is_inflaction = yes
+			check_variable = { which = rec_crisis_percentage value < 0.7 }
+		}
+		modifier = {
+			factor = 0
+			has_situation_flag = economic_crisis
+		}
+	}
+}
+# 抑制通胀 - 抑制通胀
+economic_deinflaction = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = @Edict3Cost
+			multiplier = value:edict_size_effect
+		}
+	}
+
+	effect = {
+		custom_tooltip = edict_economic_deinflaction_tooltip
+	}
+	modifier = {
+        trade_value_mult = 0.10
+        planet_jobs_produces_mult = -0.05
+        pop_happiness = 0.10
+	}
+
+	potential = {
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+	possible = {
+		any_situation = {
+			limit = { is_situation_type = situation_economic_circle }
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 0
+			has_situation_flag = economic_crisis
 		}
 	}
 }
 
-explorer_privitization = {
+# 发放消费券
+economic_consumer_coupon = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = @Edict1Cost
+			multiplier = value:edict_size_effect
+		}
+	}
+
+	effect = {
+		custom_tooltip = edict_economic_consumer_coupon_tooltip
+	}
+	modifier = {
+		pop_category_workers_consumer_goods_upkeep_add = 0.5
+		pop_category_specialists_consumer_goods_upkeep_add = 1.0
+        pop_happiness = 0.10
+	}
+
+	potential = {
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+	possible = {
+		any_situation = {
+			limit = { is_situation_type = situation_economic_circle }
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+explorer_privitization = { # 开拓者私有化协议
 	length = @EdictPerpetual
 	icon = "GFX_edict_type_policy"
 
@@ -78,8 +161,10 @@ explorer_privitization = {
 		}
 	}
 
-	modifier = {
+	effect = {
 		custom_tooltip = edict_explorer_privitization_tooltip
+	}
+	modifier = {
 		first_contact_speed_mult = 0.2
         planet_colony_development_speed_mult = 0.2
 	}
@@ -94,7 +179,7 @@ explorer_privitization = {
 	ai_weight = {
 		weight = 1
 		modifier = {
-			factor = 3
+			factor = 2
 			years_passed < 50
 		}
 	}
