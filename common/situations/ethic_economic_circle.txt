@@ -7,6 +7,7 @@ situation_economic_circle = {
     on_start = {
 	}
 	on_abort = {
+		hidden_effect = { destroy_situation = this }
 	}
     on_fail = {
 		#custom_tooltip = deficit_situation_finish_tooltip
@@ -22,7 +23,7 @@ situation_economic_circle = {
             on_first_enter = {
 				situation_event = { id = ethic_economic.101 }
 			}
-            hidden_effect={
+            hidden_effect = {
                 owner={
                     set_country_flag=ETHIC_ECONOMIC_STAGE_1
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_2
@@ -58,7 +59,7 @@ situation_economic_circle = {
             on_first_enter = {
 				situation_event = { id = ethic_economic.102 }
 			}
-            hidden_effect={
+            hidden_effect = {
                 owner={
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_1
                     set_country_flag=ETHIC_ECONOMIC_STAGE_2
@@ -94,7 +95,7 @@ situation_economic_circle = {
             on_first_enter = {
 				situation_event = { id = ethic_economic.103 }
 			}
-            hidden_effect={
+            hidden_effect = {
                 owner={
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_1
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_2
@@ -113,6 +114,7 @@ situation_economic_circle = {
                 country_unity_produces_mult = -0.10
                 pop_happiness = -0.05
 				
+                job_mogul_per_pop = 0.03
                 job_clerk_per_pop = -0.05
 				
 				pop_government_ethic_attraction = -0.05
@@ -125,7 +127,7 @@ situation_economic_circle = {
             on_first_enter = {
 				situation_event = { id = ethic_economic.104 }
 			}
-            hidden_effect={
+            hidden_effect = {
                 owner={
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_1
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_2
@@ -160,7 +162,7 @@ situation_economic_circle = {
             on_first_enter = {
 				situation_event = { id = ethic_economic.104 }
 			}
-            hidden_effect={
+            hidden_effect = {
                 owner={
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_1
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_2
@@ -192,7 +194,7 @@ situation_economic_circle = {
             on_first_enter = {
 				situation_event = { id = ethic_economic.104 }
 			}
-            hidden_effect={
+            hidden_effect = {
                 owner={
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_1
                     remove_country_flag=ETHIC_ECONOMIC_STAGE_2
@@ -323,7 +325,14 @@ situation_economic_circle = {
 #               }
 #           } #某些情况下战败-50*1个月
         }
-		
+
+# 经济措施
+# 自由放任
+# 打击过热(非社会主义)
+# 控制商品经济(社会主义)
+# 发起经济刺激
+# 控制面板
+
         approach = { # 自由放任 0
             name = ethic_economic_free
             icon = GFX_situation_approach_this_is_fine
@@ -342,55 +351,6 @@ situation_economic_circle = {
 			ai_weight = {
 				weight = 5
 			}
-        }
-		
-        approach = { # 货币宽松 10
-            name = ethic_economic_inflaction
-            icon = GFX_situation_approach_this_is_fine
-		    icon_background = GFX_situation_approach_bg_red
-            modifier = {
-                trade_value_mult = -0.15
-                planet_jobs_produces_mult = 0.10
-                pop_happiness = -0.15
-            }
-            on_select = {
-                custom_tooltip = ethic_economic_inflaction_tooltip
-                hidden_effect = {
-                    rec_approach_set_inflaction = yes
-                }
-            }
-			ai_weight = {
-				weight = 1
-				modifier = {
-					factor = 10
-					check_variable = { which = rec_crisis_percentage value > 0.7 }
-				}
-				modifier = {
-					factor = 10
-					rec_approach_is_inflaction = yes
-					check_variable = { which = rec_crisis_percentage value < 0.7 }
-				}
-				modifier = {
-					factor = 0
-					has_situation_flag = economic_crisis
-				}
-			}
-        }
-        approach = { # 打击通胀 11
-            name = ethic_economic_deinflaction
-            icon = GFX_situation_approach_this_is_fine
-		    icon_background = GFX_situation_approach_bg_green
-            modifier = {
-                trade_value_mult = 0.10
-                planet_jobs_produces_mult = -0.15
-                pop_happiness = 0.10
-            }
-            on_select={
-                custom_tooltip = ethic_economic_deinflaction_tooltip
-                hidden_effect = {
-                    rec_approach_set_deinflaction = yes
-                }
-            }
         }
 		
         approach = { # 打击市场过热 20
@@ -467,9 +427,22 @@ situation_economic_circle = {
 				}
 			}
         }
+		
+        approach = { # 启动控制面板 99
+            name = ethic_economic_control_panel
+            icon = GFX_situation_approach_this_is_fine
+		    icon_background = GFX_situation_approach_bg_yellow
+            on_select={
+                situation_event = { id = ethic_economic.10 }
+				set_situation_approach = ethic_economic_free
+            }
+			ai_weight = {
+				weight = 0
+			}
+        }
 
     on_progress_complete={
-        hidden_effect={
+        hidden_effect = {
             situation_event={
                 #unity_deficit.110
             }

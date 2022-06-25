@@ -1,6 +1,6 @@
 namespace=ethic_economic 
 
-country_event = { # 市场经济系统自动开关（年检）
+country_event = { # 市场经济系统自动开关（月检）
     id = ethic_economic.0
     is_triggered_only = yes
     hide_window = yes
@@ -50,9 +50,10 @@ country_event = { # 市场经济系统自动开关（年检）
         }
 		else = {
             remove_country_flag = ETHIC_MARKET_ECONOMY
-			any_situation = {
+			every_situation = {
 				limit = { is_situation_type = situation_economic_circle }
-				destroy_situation = this
+				#destroy_situation = this
+				add_situation_progress = -100
 			}
 		}
     }
@@ -264,10 +265,7 @@ situation_event = { # 计算情况改善-国策基础 6号
 		if = { # 极简主义/禁欲主义 -0.1增长
 			limit={
 				owner = {
-					OR = {
-						has_valid_civic = civic_functional_architecture
-						has_valid_civic = civic_asceticism
-					}
+					has_valid_civic = civic_asceticism
 				}
 			}
 			change_variable = { which = rec_situation_add_civic value = -0.1 }
@@ -290,6 +288,18 @@ situation_event = { # 计算情况改善-法令基础 16号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_situation_add_edict value = 0 } # 初始化经济情况改善 - 法令基础
+		if = { # 发放消费券 +0.3增长
+			limit = {
+				owner = { has_edict = economic_consumer_coupon }
+			}
+			change_variable = { which = rec_situation_add_edict value = 0.3 }
+		}
+		if = { # 通胀 +0.2增长
+			limit = {
+				owner = { has_edict = economic_inflaction }
+			}
+			change_variable = { which = rec_situation_add_edict value = 0.2 }
+		}
 		if = { # 福报 +0.2增长
 			limit={
 				owner = { has_edict = blessings }
@@ -320,6 +330,13 @@ situation_event = { # 计算情况改善-法令基础 16号
 			}
 			change_variable = { which = rec_situation_add_edict value = 0.1 }
 		}
+		if = { # 反通胀 -0.2增长
+			limit = {
+				owner = { has_edict = economic_deinflaction }
+			}
+			change_variable = { which = rec_situation_add_edict value = -0.2 }
+		}
+		
 		situation_event = { id = ethic_economic.15 days = 5 }
     }
 }
@@ -389,11 +406,11 @@ situation_event = { # 计算危机阈值 2号
 			change_variable = { which = rec_crisis_threshold value = 80 }
 		}
 		if = { # 货币宽松 +40阈值
-			limit = { rec_approach_is_inflaction = yes }
+			limit = { owner = { has_edict = economic_inflaction } }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
 		else_if = { # 抑制通胀 -20阈值
-			limit = { rec_approach_is_deinflaction = yes }
+			limit = { owner = { has_edict = economic_deinflaction } }
 			change_variable = { which = rec_crisis_threshold value = -20 }
 		}
 		if = { # 发放代金券 +40阈值 暂时没做
@@ -473,6 +490,7 @@ situation_event = { # 计算危机增长-无危机时-总结 3号
 		
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_civic }
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_edict }
+		change_variable = { which = rec_crisis_add value = rec_crisis_add_market }
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_approach }
 		
 		multiply_variable = { which = rec_crisis_add value = rec_crisis_mult_civic }
@@ -574,13 +592,10 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
-		if = { # 极简主义/禁欲主义 -0.1增长
+		if = { # 禁欲主义 -0.1增长
 			limit={
 				owner = {
-					OR = {
-						has_valid_civic = civic_functional_architecture
-						has_valid_civic = civic_asceticism
-					}
+					has_valid_civic = civic_asceticism
 				}
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
@@ -673,6 +688,12 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = 0.1 }
 		}
+		if = { # 发放消费券 -0.4增长
+			limit = {
+				owner = { has_edict = economic_consumer_coupon }
+			}
+			change_variable = { which = rec_crisis_add_edict value = -0.4 }
+		}
 		#if = { # 弹性工龄 +0.1增长
 		#	limit={
 		#		owner = { has_edict = the_flexible_seniority_act }
@@ -731,7 +752,7 @@ situation_event = { # 计算危机积累 4号
 			limit = { owner = { is_at_war = yes } }
 			change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
 		}
-		change_variable = { which = rec_crisis_accumulated value = rec_crisis_add_war }
+		change_variable = { which = rec_crisis_add value = rec_crisis_add_war }
 		set_variable = { which = owner.rec_pop_expand_0 value = owner.rec_pop_expand_1 }
 		set_variable = { which = owner.rec_pop_expand_1 value = owner.rec_pop_expand_2 }
 		set_variable = { which = owner.rec_pop_expand_2 value = 0 } # 3月缓冲
@@ -807,6 +828,33 @@ situation_event = { # 判断危机效果 5号
     }
 }
 
+# 事件集
+# 产业繁荣：中控事件 100
+# 产业繁荣：新兴产业 101
+# 产业繁荣：食物 102
+# 产业繁荣：能源 103
+# 产业繁荣：采矿 104
+# 产业繁荣：轻工业 105
+# 产业繁荣：重工业 106
+# 产业繁荣：服务业 107
+# 劳资关系：中控事件 110
+# 劳资关系：提高工资 111
+# 劳资关系：降低工资 112
+# 劳资关系：延长工时 113
+# 劳资关系：缩短工时 114
+# 股市：中控事件 120
+# 股市：空前牛市 121
+# 股市：牛市 122
+# 股市：熊市 123
+# 股市：空前熊市 124
+# 垄断：寡头兴起 130
+# 垄断：广泛垄断 131
+# 垄断：中小企业破产 132
+# 转向实体经济 1901
+# 转向虚拟经济 1902
+# 超前消费 191
+# 企业破产 192
+
 # 繁荣事件 - 通用
 situation_event = { # 事件-转向实体经济
     id = ethic_economic.100
@@ -860,8 +908,6 @@ situation_event = { # 事件-工人：降低工时
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
 }
-
-# 繁荣事件 - 早期
 situation_event = { # 事件-新兴产业
     id = ethic_economic.110
     is_triggered_only = yes
@@ -946,7 +992,6 @@ situation_event = { # 事件-产业繁荣：服务业
     }
 }
 
-# 繁荣事件 - 中期
 situation_event = { # 事件-超前消费
     id = ethic_economic.120
     is_triggered_only = yes
@@ -958,20 +1003,48 @@ situation_event = { # 事件-超前消费
     immediate={
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
+	#走向垄断
 }
 
-# 繁荣事件 - 后期
 situation_event = { # 事件-企业破产
-    id = ethic_economic.130
+    id = ethic_economic.192
     is_triggered_only = yes
-	title = ethic_economic.130.name
-	desc = ethic_economic.130.desc
+	title = ethic_economic.192.name
+	desc = ethic_economic.192.desc
     trigger = {
         NOT = { has_situation_flag = economy_new_goods }
     }
     immediate={
 		hidden_effect = { set_situation_flag = economy_new_goods }
     }
+	option = {
+		name = ethic_economic.192.a
+		icon = {
+			icon = GFX_ethic_capitalism
+			text = ethic_any_capitalism
+		}
+	}
+	option = {
+		name = ethic_economic.192.b
+		icon = {
+			icon = GFX_ethic_egalitarian
+			text = ethic_any_egalitarian
+		}
+	}
+	option = {
+		name = ethic_economic.192.c
+		icon = {
+			icon = GFX_ethic_authoritarian
+			text = ethic_any_authoritarian
+		}
+	}
+	option = {
+		name = ethic_economic.192.d
+		icon = {
+			icon = GFX_civic_anarchy
+			text = civic_anarchy
+		}
+	}
 }
 
 
@@ -999,7 +1072,47 @@ planet_event = { # 提升效应-提升物种带来的危机稀释
     }
 }
 
-planet_event = { # 战争效应-战争赔款的危机稀释
+planet_event = { # 开拓效应-征服者私有化协议开始
+    id = ethic_economic.92
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = {
+		has_edict = explorer_privitization
+    }
+    immediate={
+		owner = { change_variable = { which = rec_pop_expand_0 value = 3 } }
+    }
+}
+planet_event = { # 开拓效应-征服者私有化协议过程
+    id = ethic_economic.92
+    is_triggered_only = yes
+    hide_window = yes
+    trigger = {
+		owner = { has_edict = explorer_privitization }
+    }
+    immediate = {
+		add_modifier = {
+			modifier = pm_explorer_privitized
+			years = 1
+			clear_on_owner_change = yes
+		}
+		planet_event = { id = ethic_economic.920 days = 30 }
+    }
+}
+planet_event = { # 开拓效应-征服者私有化协议过程
+    id = ethic_economic.920
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
+		if = {
+			limit = { has_planet_modifier = pm_explorer_privitized }
+			owner = { change_variable = { which = rec_pop_expand_0 value = 1 } }
+			planet_event = { id = ethic_economic.920 days = 30 }
+		}
+    }
+}
+
+event = { # 战争效应-战争赔款的危机稀释
     id = ethic_economic.95
     is_triggered_only = yes
     hide_window = yes
