@@ -1,0 +1,162 @@
+
+situation_unity_deficit = {
+	picture = GFX_evt_dark_alley
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				unity = @bailout_basic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	start_value = 15
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				planet_stability_add = -10
+				planet_crime_per_pop = 0.1
+				diplo_weight_economy_mult = -0.1
+				pop_government_ethic_attraction = -0.1
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				planet_stability_add = -20
+				planet_crime_per_pop = 0.2
+				diplo_weight_economy_mult = -0.2
+				pop_government_ethic_attraction = -0.25
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				planet_stability_add = -30
+				planet_crime_per_pop = 0.3
+				diplo_weight_economy_mult = -0.33
+				pop_government_ethic_attraction = -0.5
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			on_first_enter = {
+				situation_event = { id = unity_deficit.100 }
+			}
+			modifier = {
+				planet_stability_add = -50
+				planet_crime_per_pop = 0.5
+				diplo_weight_economy_mult = -0.5
+				pop_government_ethic_attraction = -1
+			}
+		}
+	}
+
+	on_progress_complete = {
+		custom_tooltip = end_unity_deficit_effect_tooltip
+		hidden_effect = {
+			owner = {
+				add_resource = {
+					unity = 10
+					mult = trigger:empire_size
+				}
+			}
+			if = {
+				limit = {
+					owner = {
+						has_origin = origin_red_satellite_overlord
+					}
+				}
+				owner = { 
+					country_event = {
+						id = red_origin.1991
+					}
+				}
+			}
+			else = {
+				situation_event = { id = unity_deficit.110 }
+			}
+			
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|unity|
+			desc = string_expenditures_greater_than_income_unity
+			owner = { has_actual_deficit = { RESOURCE = unity } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_unity
+			owner = {
+				resource_income_compare = {
+					resource = unity
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_unity
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = unity }
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_laissez_faire_criminal
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_red
+		modifier = {
+			planet_crime_mult = 1.00
+			planet_bureaucrats_produces_mult = 0.25
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}

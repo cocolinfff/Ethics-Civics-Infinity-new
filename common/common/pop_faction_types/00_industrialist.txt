@@ -1,0 +1,521 @@
+##############################
+# 实业家派系
+##############################
+
+industrialist = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = ethic_capitalism
+	unique = yes
+	support_multiplier = 1
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.75
+		}
+	}
+	is_potential = {
+		years_passed > 1
+		has_encountered_other_species = yes
+		NOT = {
+			has_ethic = ethic_gestalt_consciousness
+		}
+		NOT = { has_country_flag = suppress_vanilla_factions }
+		NOR = {
+		    has_valid_civic = civic_network_of_the_mind
+		    has_valid_civic = civic_network_of_the_mind_machine
+		    has_valid_civic = civic_network_of_the_mind_true_hive
+		}
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_faction = {
+		OR = {
+			is_enslaved = no
+			has_slavery_type = { country = owner type = slavery_indentured }
+		}
+		is_shackled_robot = no
+		is_being_purged = no
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+		}
+	}
+	can_join_pre_triggers = {
+		OR = {
+			is_enslaved = no
+			has_slavery_type = { country = owner type = slavery_indentured }
+		}
+		is_being_purged = no
+	}
+	attraction = {
+		base = 150
+		modifier = {
+			factor = 1.5
+			exists = from
+			from = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+			from = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_capitalism
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			exists = from
+			from = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = from
+			from = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 0.25
+			NOT = {
+				is_same_species = owner_species
+			}
+		}
+	}
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+
+		
+	
+    
+	#消费者利益
+	demand = {
+		title = "CONSUMER_MARKETS"
+		unfulfilled_title = "CONSUMER_MARKETS"
+		desc = "CONSUMER_MARKETS_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner			
+		}
+
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = trade_conversion_consumer_goods
+				}
+			}
+		}
+	}
+	#国库充盈（原版）
+	demand = {
+		title = "PROSPERITY_LIQUIDITY"
+		unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
+		desc = "PROSPERITY_LIQUIDITY_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+		potential = {
+			# TODO get a reasonable trigger for counting colonies?
+			exists = owner
+			owner = {
+				any_owned_planet = {
+					NOT = {
+						is_same_value = root.capital_scope
+					}
+					root = {
+						owner = {
+							any_owned_planet = {
+								NOR = {
+									is_same_value = prevprevprev
+									is_same_value = root.owner.capital_scope
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				resource_stockpile_compare = {
+					resource = energy
+					value >= 5000
+				}
+			}
+		}
+	}
+	#激进工业化
+	demand = {
+		title = "RADICAL_INDUSTRIALIZATION"
+		unfulfilled_title = "NO_RADICAL_INDUSTRIALIZATION"
+		desc = "RADICAL_INDUSTRIALIZATION_DESC"
+		fulfilled_effect = 10
+		potential = {
+			exists = owner
+			owner = {
+			    OR = {
+				    has_valid_civic = civic_industrial_economy
+				    has_valid_civic = civic_industrial_economy_corporate
+				}
+			}
+		}
+		trigger = {
+			owner = {
+			    OR = {
+				    has_valid_civic = civic_industrial_economy
+				    has_valid_civic = civic_industrial_economy_corporate
+				}
+			}
+		}
+	}
+	#企业游说
+	demand = {
+		title = "ALLOWED_LOBBY"
+		unfulfilled_title = "NO_ALLOWED_LOBBY"
+		desc = "ALLOWED_LOBBY_DESC"
+		fulfilled_effect = 15
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_merchant_guilds
+					has_valid_civic = civic_state_monopoly
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_valid_civic = civic_merchant_guilds
+					has_valid_civic = civic_state_monopoly
+				}
+			}
+		}
+	}
+	#物竞天择
+	demand = {
+		title = "PROGRESSIVE_NO_WELFARE"
+		unfulfilled_title = "NO_PROGRESSIVE_NO_WELFARE"
+		desc = "PROGRESSIVE_NO_WELFARE_DESC"
+		unfulfilled_effect = -15
+		fulfilled_effect = 0.001
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_good
+						}
+					}
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_shared_burden
+						}
+					}
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_utopian
+						}
+					}
+				}
+			}
+		}
+	}
+	#自由市场
+	demand = {
+		title = "FREE_MARKET_ECONOMY"
+		unfulfilled_title = "NO_FREE_MARKET_ECONOMY"
+		desc = "FREE_MARKET_ECONOMY_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -5
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_policy_flag = economic_stance_market
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = economic_stance_market
+				}
+			}
+		}
+	}
+	#计划经济
+	demand = {
+		title = "NO_PLANNED_ECONOMY"
+		unfulfilled_title = "PLANNED_ECONOMY"
+		desc = "NO_PLANNED_ECONOMY_DESC"
+		unfulfilled_effect = -15
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = economic_stance_planned
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					has_policy_flag = economic_stance_planned
+				}
+			}
+		}
+	}
+	#工业化星球
+	demand = {
+		title = "INDUSTRY_ASCENSION_2"
+		unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
+		desc = "INDUSTRY_ASCENSION_2_DESC"
+
+		fulfilled_effect = 10
+
+		potential = {
+			exists = owner
+			owner = {
+				years_passed > 50
+				has_technology = tech_mega_engineering
+			}
+		}
+
+		trigger = {
+			owner = {
+				has_ascension_perk = ap_master_builders
+			}
+		}
+	}	
+
+	
+
+
+	
+	on_create = {
+		pop_faction_event = { id = factions.1 }
+	}
+
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_pacifist
+			}
+			remove_modifier = promoted_pacifist
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_pacifist
+			}
+			remove_modifier = suppressed_pacifist
+		}
+	}
+	
+	actions = {
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+			
+			cost = {
+				unity = 5000
+			}
+			
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = { is_subject_type = dominion }
+					}
+				}
+			}
+			
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = { has_modifier = embraced_faction_timer }
+					}
+				}
+				support > 0.10
+				parameter:empire = {
+					NOT = { has_ethic = "ethic_fanatic_industrial" }
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				parameter:empire = {
+					shift_ethic = ethic_industrial
+					hidden_effect = {
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
+						every_pop_faction = {
+							limit = { NOT = { is_same_value = root } }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default			
+								has_communications = prev
+							}
+							country_event = { id = factions.2000 }
+						}
+					}				
+				}				
+			}
+			
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.50
+					owner = {
+						has_ethic = ethic_industrial
+					}
+				}
+				modifier = {
+					factor = 0
+					NOT = { 
+						owner = {
+							exists = ruler
+							ruler = {
+								leader_of_faction = manufacturers
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}					
+					}
+				}				
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					NOR = { 
+						has_modifier = suppressed_pacifist
+						has_modifier = promoted_pacifist 
+					}				
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					add_modifier = { modifier = promoted_pacifist days = -1 }
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					has_modifier = promoted_pacifist
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_pacifist
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}		
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					NOR = { 
+						has_modifier = suppressed_pacifist
+						has_modifier = promoted_pacifist 
+					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_pacifist days = -1 }
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					has_modifier = suppressed_pacifist
+				}
+			}
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_pacifist
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}	
+	}
+}

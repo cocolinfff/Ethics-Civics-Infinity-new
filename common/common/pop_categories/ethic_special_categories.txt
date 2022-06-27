@@ -1,0 +1,119 @@
+bio_trophy = {
+	rank = 0
+	clothes_texture_index = 1
+
+	change_job_threshold = 1.25
+
+	assign_to_pop = {
+		has_citizenship_type = { type = citizenship_organic_trophy }
+	}
+	weight = {
+		weight = 5
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = yes
+	}
+
+	resettlement_cost = {
+		energy = 100
+		unity = 25
+	}
+
+	pop_modifier = {
+		pop_political_power = 10
+		pop_housing_usage_base = 1
+		pop_amenities_usage_no_happiness_base = 1
+		species_empire_size_mult = -0.4 # 顺便兼容失控女仆
+	}
+
+	triggered_pop_modifier = { # 失控女仆兼容
+		potential = {
+			has_global_flag = flag_rogue_maid_mod_activated
+			exists = owner
+			owner = { has_edict = expanded_breeding_program_servitor }
+		}
+		species_empire_size_mult = 0.05
+	}
+	
+	resources = {
+		category = pop_category_bio_trophy
+
+		# Biological Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				is_phototrophic = no
+				is_lithoid = no
+			}
+			food = @living_standard_food_normal
+		}
+		upkeep = {
+			trigger = {
+				is_phototrophic = yes
+			}
+			food = @living_standard_phototrophic_normal
+		}
+		upkeep = {
+			trigger = {
+				has_phototrophic_energy_upkeep = yes
+			}
+			energy = @living_standard_phototrophic_normal
+		}
+
+		# Lithoid Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				is_lithoid = yes
+			}
+			minerals = @living_standard_food_normal
+		}
+
+		# Resource Production
+		produces = {
+			trigger = {
+				is_lithoid = yes
+				has_trait = trait_lithoid_scintillating
+			}
+			rare_crystals = @lithoid_trait_resource_production
+		}
+
+		produces = {
+			trigger = {
+				is_lithoid = yes
+				has_trait = trait_lithoid_gaseous_byproducts
+			}
+			exotic_gases = @lithoid_trait_resource_production
+		}
+
+		produces = {
+			trigger = {
+				is_lithoid = yes
+				has_trait = trait_lithoid_volatile_excretions
+			}
+			volatile_motes = @lithoid_trait_resource_production
+		}
+	}
+
+	unemployment_penalties = {
+		pop_happiness = -0.40
+	}
+	triggered_pop_modifier = {
+		potential = {
+			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
+			is_unemployed = yes
+			NOR = {
+				has_very_high_living_standard_type = yes
+				has_high_living_standard_type = yes
+				has_shared_burden_living_standard_type = yes
+			}
+			owner = {
+				is_galactic_community_member = yes
+			}
+		}
+
+		pop_happiness = 0.10
+	}
+}
