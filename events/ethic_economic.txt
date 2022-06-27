@@ -506,8 +506,27 @@ situation_event = { # 计算危机增长-有危机时 3号
 			which = rec_crisis_add_market
 			value = 0.01
 		}
-		set_variable = { which = rec_crisis_decline_natural value = rec_crisis_add }
-        set_variable = { which = rec_crisis_add value = rec_crisis_decline_natural }
+		
+		if = { # 受控市场 -0.1增长
+			limit={
+				owner = { has_policy_flag = economic_stance_mixed }
+			}
+			change_variable = { which = rec_crisis_add_civic value = -0.1 }
+		}
+		if = { # 钓鱼佬/珊瑚礁 -0.1增长
+			limit={
+				owner = {
+					OR = {
+						has_valid_civic = civic_anglers
+						has_valid_civic = civic_anglers_lithoid
+					}
+				}
+			}
+			change_variable = { which = rec_crisis_add_civic value = -0.1 }
+		}
+		
+        set_variable = { which = rec_crisis_add value = rec_crisis_add_market }
+        change_variable = { which = rec_crisis_add value = rec_crisis_add_civic }
 		
 		round_variable_to_closest = {
 			which = rec_crisis_add
