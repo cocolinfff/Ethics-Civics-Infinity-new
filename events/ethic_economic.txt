@@ -46,6 +46,20 @@ country_event = { # 市场经济系统自动开关（月检）
 					set_variable = { which = rec_pop_expand_0 value = 0 } # 初始化人口扩张数因子
 					set_variable = { which = rec_pop_expand_1 value = 0 }
 					set_variable = { which = rec_pop_expand_2 value = 0 }
+					
+					if = { # 市场革命 - 开局给12年
+						limit = { years_passed < 1 }
+						add_modifier = {
+							modifier = cm_market_revolution
+							years = 12
+						}
+					}
+					else = { # 一般8年
+						add_modifier = {
+							modifier = cm_market_revolution
+							years = 8
+						}
+					}
 				}
 			}
 			else = { # 已激活经济周期系统
@@ -492,9 +506,7 @@ situation_event = { # 计算危机增长-有危机时 3号
             multiply_variable = { which = rec_crisis_add_market value = -2 }
 		}
 		else_if = { # 经济危机市场效应
-			limit={
-				situation_progress < 10
-			}
+			limit = { situation_progress < 10 }
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_1 }
             multiply_variable = { which = rec_crisis_add_market value = -2 }
 		}
@@ -502,15 +514,17 @@ situation_event = { # 计算危机增长-有危机时 3号
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_4 }
             multiply_variable = { which = rec_crisis_add_market value = -2 }
 		} # 初始化增长
+		if = { # 市场变革
+			limit = { owner = { has_modifier = cm_market_revolution } }
+			change_variable = { which = rec_crisis_add_market value = value:crisis_decline_market_revolution }
+		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
 			value = 0.01
 		}
 		
 		if = { # 受控市场 -0.1增长
-			limit={
-				owner = { has_policy_flag = economic_stance_mixed }
-			}
+			limit={ owner = { has_policy_flag = economic_stance_mixed } }
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
 		if = { # 钓鱼佬/珊瑚礁 -0.1增长
@@ -701,7 +715,7 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
 		set_variable = { which = rec_crisis_add_market value = 0 } # 初始化经济状态改善 - 市场
 		set_variable = { which = rec_crisis_add_approach value = 0 } # 初始化危机累积增加 - 措施
 		if = { # 一般条件市场效应
-			limit={
+			limit = {
 				situation_progress > 10
 				situation_progress < 70
 			}
@@ -709,7 +723,7 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
             multiply_variable = { which = rec_crisis_add_market value = -1 }
 		}
 		else_if = { # 高度繁荣市场效应
-			limit={
+			limit = {
 				situation_progress > 70
 				situation_progress < 90
 			}
@@ -717,15 +731,17 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
             multiply_variable = { which = rec_crisis_add_market value = -1 }
 		}
 		else_if = { # 经济危机市场效应
-			limit={
-				situation_progress < 10
-			}
+			limit = { situation_progress < 10 }
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_1 }
             multiply_variable = { which = rec_crisis_add_market value = -1 }
 		}
 		else = { # 经济过热市场效应
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_4 }
             multiply_variable = { which = rec_crisis_add_market value = -1 }
+		}
+		if = { # 市场变革
+			limit = { owner = { has_modifier = cm_market_revolution } }
+			change_variable = { which = rec_crisis_add_market value = value:crisis_decline_market_revolution }
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
