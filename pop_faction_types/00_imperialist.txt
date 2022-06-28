@@ -1,0 +1,712 @@
+##############################
+# 霸权家派系
+##############################
+imperialist = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = ethic_militarist
+	unique = yes
+	support_multiplier = 1
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.75
+		}
+	}
+	is_potential = {
+		years_passed > 1
+		has_encountered_other_species = yes
+		NOT = {
+			has_ethic = ethic_gestalt_consciousness
+		}
+		NOT = { has_country_flag = suppress_vanilla_factions }
+		NOR = {
+		    has_valid_civic = civic_network_of_the_mind
+		    has_valid_civic = civic_network_of_the_mind_machine
+		    has_valid_civic = civic_network_of_the_mind_true_hive
+		}
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_pre_triggers = {
+		OR = {
+			is_enslaved = no
+			has_slavery_type = { country = owner type = slavery_indentured }
+		}
+		is_being_purged = no
+	}
+	can_join_faction = {
+		is_shackled_robot = no
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+		}
+	}
+	attraction = {
+		base = 100
+		modifier = {
+			factor = 1.25
+			exists = from
+			from = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = from
+			from = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			has_citizenship_rights = yes
+		}
+	}
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+	demand = {
+		title = "FACTION_OUTRAGED_GC"
+		unfulfilled_title = "FACTION_OUTRAGED_GC"
+		desc = "FACTION_OUTRAGED_GC_DESC"
+		fulfilled_effect = -20
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = faction_militarist_outraged_gc
+			}
+		}
+		trigger = {
+			owner = {
+				has_country_flag = faction_militarist_outraged_gc
+			}
+		}
+	}
+	#侵略性外交
+	demand = {
+		title = "IMPERIALIST_PHILOSOPHY"
+		unfulfilled_title = "IMPERIALIST_NO_PHILOSOPHY"
+		desc = "IMPERIALIST_PHILOSOPHY_DESC"
+		unfulfilled_effect = -30
+		fulfilled_effect = 0.001
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_valid_civic = civic_xeno_militarist
+				}
+				any_relation = {
+					has_communications = root.owner
+					is_country_type = default
+					NOT = {
+						exists = overlord
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = unrestricted_wars
+				}
+			}
+		}
+	}
+	#银河解放者
+	demand = {
+		title = "LIBERATION_PHILOSOPHY"
+		unfulfilled_title = "LIBERATION_NO_PHILOSOPHY"
+		desc = "LIBERATION_PHILOSOPHY_DESC"
+		fulfilled_effect = 20
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_xeno_militarist
+					has_valid_civic = civic_liberator
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = liberation_wars
+				}
+			}
+		}
+	}
+	#防守联盟
+	demand = {
+		title = "IMPERIALIST_DEFENSIVE_PACTS"
+		unfulfilled_title = "NO_IMPERIALIST_DEFENSIVE_PACTS"
+		desc = "IMPERIALIST_DEFENSIVE_PACTS_DESC"
+		fulfilled_effect = 20
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				has_valid_civic = civic_xeno_militarist
+			}
+		}
+		trigger = {
+			owner = {
+				count_country = {
+					count > 1
+					limit = {
+						exists = this
+						root.owner = {
+							has_defensive_pact = prev
+						}
+					}
+				}
+			}
+		}
+	}
+	#征服
+	demand = {
+		title = "IMPERIALIST_CONQUEST"
+		unfulfilled_title = "IMPERIALIST_NO_CONQUEST"
+		desc = "IMPERIALIST_CONQUEST_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				any_relation = {
+					has_communications = root.owner
+					is_country_type = default
+					NOT = {
+						exists = overlord
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				has_country_flag = imperialist_conquest_timed_flag
+			}
+		}
+	}
+	#近邻宿敌
+	demand = {
+		title = "IMPERIALIST_RIVALS1"
+		unfulfilled_title = "IMPERIALIST_FEW_RIVALS1"
+		desc = "IMPERIALIST_RIVALS_DESC1"
+		fulfilled_effect = 5
+		unfulfilled_effect = -5
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				NOR = {
+					has_valid_civic = civic_fanatic_purifiers
+					has_ethic = ethic_fanatic_xenophile
+				}
+				count_rival_country = {
+					count < 2
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				any_rival_country = {
+					exists = this
+				}
+			}
+		}
+	}
+	#邻国皆敌
+	demand = {
+		title = "IMPERIALIST_RIVALS2"
+		unfulfilled_title = "IMPERIALIST_FEW_RIVALS2"
+		desc = "IMPERIALIST_RIVALS_DESC2"
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				NOR = {
+					has_valid_civic = civic_fanatic_purifiers
+					has_valid_civic = civic_xeno_militarist
+					has_ethic = ethic_fanatic_xenophile
+				}
+				count_rival_country = {
+					count > 1
+				}
+				count_rival_country = {
+					count < 3
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				count_rival_country = {
+					count > 1
+				}
+			}
+		}
+	}
+	#星海天罚
+	demand = {
+		title = "IMPERIALIST_RIVALS3"
+		unfulfilled_title = "IMPERIALIST_FEW_RIVALS3"
+		desc = "IMPERIALIST_RIVALS_DESC3"
+		fulfilled_effect = 15
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				NOR = {
+					has_valid_civic = civic_fanatic_purifiers
+					has_ethic = ethic_xenophile
+					has_valid_civic = ethic_xenophile
+				}
+				count_rival_country = {
+					count > 2
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				count_rival_country = {
+					count > 2
+				}
+			}
+		}
+	}
+	#帝国霸权
+	demand = {
+		title = "IMPERIALIST_OVERLORD"		#Imperial Hegemony
+		unfulfilled_title = "IMPERIALIST_NOT_OVERLORD"
+		desc = "IMPERIALIST_OVERLORD_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				num_communications > 2
+				NOT = {
+					has_valid_civic = civic_fanatic_purifiers
+				}
+			}
+		}
+		trigger = {
+			OR = {
+				owner = {
+					is_overlord = yes
+				}
+				owner = {
+					has_federation = yes
+					federation = {
+						has_federation_type = hegemony_federation
+					}
+					is_federation_leader = yes
+				}
+			}
+		}
+	}
+	#屈居人下
+	demand = {
+		title = "IMPERIALIST_UNDERLING"
+		unfulfilled_title = "IMPERIALIST_NOT_UNDERLING"
+		desc = "IMPERIALIST_UNDERLING_DESC"
+		unfulfilled_effect = -25
+		fulfilled_effect = 0.001
+		potential = {
+			exists = owner
+			owner = {
+				is_subject = yes
+			}
+		}
+		trigger = {
+			owner = {
+				is_subject = yes
+			}
+		}
+	}
+	#利维坦杀手
+	demand = {
+		title = "IMPERIALIST_SLAYER"
+		unfulfilled_title = "IMPRERIALIST_NOT_SLAYER"
+		desc = "IMPERIALIST_SLAYER_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				host_has_dlc = "Leviathans Story Pack"
+				any_country = {
+					OR = {
+						is_country_type = guardian
+						is_country_type = guardian_dragon
+						is_country_type = guardian_stellarite
+						is_country_type = guardian_wraith						#
+						is_country_type = guardian_hiver
+						is_country_type = guardian_horror
+						is_country_type = guardian_fortress
+						is_country_type = guardian_dreadnought
+						is_country_type = guardian_sphere
+						is_country_type = guardian_scavenger_bot
+						is_country_type = guardian_elderly_tiyanki
+						is_country_type = guardian_hatchling
+					}
+					has_communications = prev
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				has_country_flag = killed_guardian
+			}
+		}
+	}
+	#文物的军用
+	demand = {
+		title = "IMPERIALIST_MILITARY_APPLICATIONS"
+		unfulfilled_title = "IMPERIALIST_NO_MILITARY_APPLICATIONS"
+		desc = "IMPERIALIST_MILITARY_APPLICATIONS_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				host_has_dlc = "Ancient Relics Story Pack"
+				has_technology = tech_arcane_deciphering
+				OR = {
+					has_modifier = artifact_find_military_application_army
+					has_modifier = artifact_find_military_application_shield_damage
+					has_modifier = artifact_find_military_application_armor_damage
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_modifier = artifact_find_military_application_army
+					has_modifier = artifact_find_military_application_shield_damage
+					has_modifier = artifact_find_military_application_armor_damage
+				}
+			}
+		}
+	}
+	#浪费文物
+	demand = {
+		title = "IMPERIALIST_PEACEFUL_APPLICATIONS"
+		unfulfilled_title = "IMPERIALIST_NO_PEACEFUL_APPLICATIONS"
+		desc = "IMPERIALIST_PEACEFUL_APPLICATIONS_DESC"
+		unfulfilled_effect = -5
+		fulfilled_effect = 0.001
+		potential = {
+			exists = owner
+			owner = {
+				host_has_dlc = "Ancient Relics Story Pack"
+				has_technology = tech_arcane_deciphering
+				OR = {
+					has_modifier = artifact_find_peaceful_application_happy_bios
+					has_modifier = artifact_find_peaceful_application_consumer_goods
+					has_modifier = artifact_find_peaceful_application_amenities
+					has_modifier = artifact_find_peaceful_application_leader_improvement
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				NOR = {
+					has_modifier = artifact_find_peaceful_application_happy_bios
+					has_modifier = artifact_find_peaceful_application_consumer_goods
+					has_modifier = artifact_find_peaceful_application_amenities
+					has_modifier = artifact_find_peaceful_application_leader_improvement
+				}
+			}
+		}
+	}
+	#强硬外交
+	demand = {
+		title = "STRONG_DIPLO_STANCE"
+		unfulfilled_title = "STRONG_DIPLO_STANCE"
+		desc = "STRONG_DIPLO_STANCE_DESC"
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+		potential = {
+			exists = owner
+			owner = {
+				is_homicidal = no
+				is_country_type = default
+				OR = {
+					has_policy_flag = diplo_stance_belligerent
+					has_policy_flag = diplo_stance_supremacist
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = diplo_stance_belligerent
+					has_policy_flag = diplo_stance_supremacist
+				}
+			}
+		}
+	}
+	#软弱外交
+	demand = {
+		title = "WEAK_DIPLO_STANCE"
+		unfulfilled_title = "WEAK_DIPLO_STANCE"
+		desc = "WEAK_DIPLO_STANCE_DESC"
+		fulfilled_effect = 0.01
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				is_homicidal = no
+				is_country_type = default
+				has_policy_flag = diplo_stance_cooperative
+			}
+		}
+		trigger = {
+			owner = {
+				NOT = {
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+		}
+	}
+	on_create = {
+		pop_faction_event = {
+			id = factions.1
+		}
+	}
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_militarist
+			}
+			remove_modifier = promoted_militarist
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_militarist
+			}
+			remove_modifier = suppressed_militarist
+		}
+	}
+	actions = {
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+			cost = {
+				unity = 5000
+			}
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = {
+							is_subject_type = dominion
+						}
+					}
+				}
+			}
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = {
+							has_modifier = embraced_faction_timer
+						}
+					}
+				}
+				support > 0.1
+				parameter:empire = {
+					NOT = {
+						has_ethic = "ethic_fanatic_militarist"
+					}
+				}
+			}
+			effect = {
+				add_modifier = {
+					modifier = embraced_faction
+					days = 3600
+				}
+				parameter:empire = {
+					shift_ethic = ethic_militarist
+					hidden_effect = {
+						add_modifier = {
+							modifier = embraced_faction_timer
+							days = 3600
+						}
+						every_pop_faction = {
+							limit = {
+								NOT = {
+									is_same_value = root
+								}
+							}
+							add_modifier = {
+								modifier = embraced_another_faction
+								days = 3600
+							}
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default
+								has_communications = prev
+							}
+							country_event = {
+								id = factions.2000
+							}
+						}
+					}
+				}
+			}
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.5
+					owner = {
+						has_ethic = ethic_militarist
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						has_valid_civic = civic_fanatic_purifiers
+					}
+				}
+				modifier = {
+					factor = 0
+					NOT = {
+						owner = {
+							exists = ruler
+							ruler = {
+								leader_of_faction = imperialist
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}
+					}
+				}
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_militarist
+						has_modifier = promoted_militarist
+					}
+				}
+			}
+			effect = {
+				parameter:empire = {
+					add_modifier = {
+						modifier = promoted_militarist
+						days = -1
+					}
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = promoted_militarist
+				}
+			}
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_militarist
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_militarist
+						has_modifier = promoted_militarist
+					}
+				}
+			}
+			effect = {
+				add_modifier = {
+					modifier = suppressed_faction
+					days = -1
+				}
+				parameter:empire = {
+					add_modifier = {
+						modifier = suppressed_militarist
+						days = -1
+					}
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = suppressed_militarist
+				}
+			}
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_militarist
+				}
+			}
+			ai_weight = {
+				base = 0
+			}
+		}
+	}
+}
