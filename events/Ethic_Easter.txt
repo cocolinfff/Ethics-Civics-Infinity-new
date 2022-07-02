@@ -9,7 +9,7 @@ country_event = {
     }
     immediate ={
         capital_scope = {
-            planet_event = { id = ethic_easter.1 days = 360 }
+            planet_event = { id = ethic_easter.1 days= 360 }
         }
     }
 }
@@ -20,23 +20,35 @@ planet_event = {
 	desc = ethic_easter.1.desc
 	picture = GFX_evt_satellite_in_orbit
     is_triggered_only = yes 
-    immediate = {
-    }
+    trigger = {
+		is_capital = yes
+		owner = {
+			NOT = { has_country_flag = ethic_huazhang }
+		}
+	}
 
 	option = {
 		name = ethic_easter.1.a
-        effect = {
-            country_event = { id = ethic_easter.2 days = 720 }
-        }
+		enable_special_project = {
+			name = "STARDUST_PROJECT"
+			location = this
+			owner = root
+		}
 	}
 }
 
-country_event = {
+ship_event = {
     id = ethic_easter.2
 	title = ethic_easter.2.name
 	desc = ethic_easter.2.desc
 	picture = GFX_evt_ghost_ship
     is_triggered_only = yes
+    trigger = {
+		owner = {
+			is_ai = no
+			NOT = { has_country_flag = ethic_huazhang }
+		}
+	}
 
 	option = {
 		trigger = {
@@ -44,12 +56,13 @@ country_event = {
 				NOR = {
                     has_valid_civic = civic_fanatic_purifiers
                     has_valid_civic = civic_hive_devouring_swarm
-                    has_valid_civic = civic_machine_terminator
 				}
 			}
 		}
 		name = ethic_easter.2.a
-        country_event = { id = ethic_easter.3 days = 1 }
+		root.owner = {
+			country_event = { id = ethic_easter.3 days = 1 }
+		}
 	}
 
 	option = {
@@ -61,7 +74,9 @@ country_event = {
 			}
 		}
 		name = ethic_easter.2.b
-        country_event = { id = ethic_easter.4 days = 1 }
+		root.owner = {
+			country_event = { id = ethic_easter.4 days = 1 }
+		}
 	}
 
 	option = {
@@ -73,7 +88,9 @@ country_event = {
 			}
 		}
 		name = ethic_easter.2.c
-        country_event = { id = ethic_easter.4 days = 1 }
+		root.owner = {
+			country_event = { id = ethic_easter.4 days = 1 }
+		}
 	}
 }
 
@@ -83,7 +100,14 @@ country_event = {
     diplomatic = yes
     desc = ethic_easter.3.desc
     title = ethic_easter.3.name
-    trigger = { NOT = { has_country_flag = ethic_huazhang } }
+    trigger = {
+		is_ai = no
+		NOR = {
+			has_valid_civic = civic_fanatic_purifiers
+			has_valid_civic = civic_hive_devouring_swarm
+		}
+		NOT = { has_country_flag = ethic_huazhang }
+	}
     picture_event_data = {
 		portrait = stardust_huazhang
 		room = "ethic_spaceship_room"
@@ -127,8 +151,10 @@ country_event = {
 				NOR = {
 					is_hive_empire = yes
 					is_machine_empire = yes
-                    has_valid_civic = civic_shared_burden
-                    has_valid_civic = civic_socialistic
+					AND = {
+						has_ethic = ethic_fanatic_socialism
+						NOT = { has_ethic = ethic_fanatic_authoritarian }
+					}
 				}
 			}
 		}
@@ -136,17 +162,15 @@ country_event = {
 		response_text = ethic_easter.3.b.response
 		is_dialog_only = yes
 	}
-	option = {#同甘共苦
+	option = {#社会主义
 		trigger = {
             owner = {
-                OR = {
-                    has_valid_civic = civic_shared_burden
-                    has_valid_civic = civic_socialistic
-				}
+				has_ethic = ethic_fanatic_socialism
+				NOT = { has_ethic = ethic_fanatic_authoritarian }
             }
         }
-		name = ethic_easter.3.b.shared_burden
-		response_text = ethic_easter.3.b.shared_burden.response
+		name = ethic_easter.3.b.socialism
+		response_text = ethic_easter.3.b.socialism.response
 		is_dialog_only = yes
 	}
 	option = {#蜂群
@@ -173,7 +197,6 @@ country_event = {
 	option = {#失控机仆
 		trigger = {
             owner = {
-                is_machine_empire = yes
                 OR = {
                     has_valid_civic = civic_machine_servitor
                     has_valid_civic = civic_machine_liberator
@@ -249,11 +272,28 @@ country_event = {
 				NOR = {
 					is_hive_empire = yes
 					is_machine_empire = yes
+					is_capitalism = yes
+					is_authoritarian = yes
+					is_xenophobe = yes
 				}
 			}
 		}
 		name = ethic_easter.3.e
 		response_text = ethic_easter.3.e.response
+		is_dialog_only = yes
+	}
+	option = {#反动派
+		trigger = {
+			owner = {
+				OR = {
+					is_capitalism = yes
+					is_authoritarian = yes
+					is_xenophobe = yes
+				}
+			}
+		}
+		name = ethic_easter.3.e
+		response_text = ethic_easter.3.e.capitalism.response
 		is_dialog_only = yes
 	}
 	option = {#蜂群
@@ -280,7 +320,6 @@ country_event = {
 	option = {#失控机仆
 		trigger = {
             owner = {
-                is_machine_empire = yes
                 OR = {
                     has_valid_civic = civic_machine_servitor
                     has_valid_civic = civic_machine_liberator
@@ -292,12 +331,21 @@ country_event = {
 		is_dialog_only = yes
 	}
 
+	##################################################################
 	option = {#关闭通讯
-    trigger = { owner = { NOT = { has_valid_civic = civic_machine_terminator } } }
+        trigger = {
+			owner = {
+				NOR = {
+					has_valid_civic = civic_machine_terminator
+				}
+			}
+		}
 		name = ethic_easter.3.f
 		response_text = ethic_easter.3.f.response
         hidden_effect = {
             set_country_flag = ethic_huazhang
+			add_modifier = { modifier = "red_dawn_database" days = -1 }
+
 	        create_species = {
 		        name = "NAME_red_dawn"
 		        class = red_dawn
@@ -320,7 +368,7 @@ country_event = {
 		        species = event_target:huazhang_species
 		        name = "PRESCRIPTED_ruler_name_humans4"
 		        event_leader = yes
-                skill = 3
+                skill = 5
                 gender = indeterminable
                 set_age = 20
                 traits = {
@@ -332,6 +380,7 @@ country_event = {
         }
 	}
 
+	##################################################################
 	option = {#铁灭
 		trigger = { owner = { has_valid_civic = civic_machine_terminator } }
 		name = ethic_easter.3.g
@@ -347,12 +396,13 @@ country_event = {
 	picture = GFX_evt_ghost_ship
     is_triggered_only = yes
     trigger = {
-        OR = {
-            has_valid_civic = civic_fanatic_purifiers
-            has_valid_civic = civic_hive_devouring_swarm
-        }
-        NOT = { has_country_flag = ethic_huazhang }
-    }
+		is_ai = no
+		OR = {
+			has_valid_civic = civic_fanatic_purifiers
+			has_valid_civic = civic_hive_devouring_swarm
+		}
+		NOT = { has_country_flag = ethic_huazhang }
+	}
 
 	option = {
 		name = ethic_easter.4.a
