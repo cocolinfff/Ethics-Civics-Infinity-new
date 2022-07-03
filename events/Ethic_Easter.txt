@@ -9,155 +9,415 @@ country_event = {
     }
     immediate ={
         capital_scope = {
-            planet_event = { id = ethic_easter.3 days= 360 }
+            planet_event = { id = ethic_easter.1 days= 360 }
         }
     }
 }
 
 planet_event = {
-    id = ethic_easter.3
-    hide_window = yes
+    id = ethic_easter.1
+	title = ethic_easter.1.name
+	desc = ethic_easter.1.desc
+	picture = GFX_evt_satellite_in_orbit
     is_triggered_only = yes 
-    immediate = {
-        create_archaeological_site = abandoned_hospital
-    }
+    trigger = {
+		is_capital = yes
+		owner = {
+			NOT = { has_country_flag = ethic_huazhang }
+		}
+	}
+
+	option = {
+		name = ethic_easter.1.a
+		enable_special_project = {
+			name = "STARDUST_PROJECT"
+			location = this
+			owner = root
+		}
+	}
 }
 
-country_event={
-    id=ethic_easter.1
+ship_event = {
+    id = ethic_easter.2
+	title = ethic_easter.2.name
+	desc = ethic_easter.2.desc
+	picture = GFX_evt_ghost_ship
+    is_triggered_only = yes
+    trigger = {
+		owner = {
+			is_ai = no
+			NOT = { has_country_flag = ethic_huazhang }
+		}
+	}
+
+	option = {
+		trigger = {
+			owner = {
+				NOR = {
+                    has_valid_civic = civic_fanatic_purifiers
+                    has_valid_civic = civic_hive_devouring_swarm
+				}
+			}
+		}
+		name = ethic_easter.2.a
+		root.owner = {
+			country_event = { id = ethic_easter.3 days = 1 }
+		}
+	}
+
+	option = {
+		trigger = {
+			owner = {
+				OR = {
+                    has_valid_civic = civic_fanatic_purifiers
+				}
+			}
+		}
+		name = ethic_easter.2.b
+		root.owner = {
+			country_event = { id = ethic_easter.4 days = 1 }
+		}
+	}
+
+	option = {
+		trigger = {
+			owner = {
+				OR = {
+                    has_valid_civic = civic_hive_devouring_swarm
+				}
+			}
+		}
+		name = ethic_easter.2.c
+		root.owner = {
+			country_event = { id = ethic_easter.4 days = 1 }
+		}
+	}
+}
+
+country_event = {
+    id = ethic_easter.3
     is_triggered_only = yes 
     diplomatic = yes
-    desc=ethic_easter.1.desc
-    title=ethic_easter.1.name
-    trigger = { NOT = { has_country_flag = ethic_huazhang } }
+    desc = ethic_easter.3.desc
+    title = ethic_easter.3.name
+    trigger = {
+		is_ai = no
+		NOR = {
+			has_valid_civic = civic_fanatic_purifiers
+			has_valid_civic = civic_hive_devouring_swarm
+		}
+		NOT = { has_country_flag = ethic_huazhang }
+	}
     picture_event_data = {
-		portrait = root.species
+		portrait = stardust_huazhang
 		room = "ethic_spaceship_room"
 	}
-    option = {
-        name = ehtic_easter.1.a
-        hidden_effect={
-            set_country_flag=ethic_huazhang
-            create_species = {
-			    name = random
-			    class = HUM
-			    portrait = "human"
-			    namelist = "HUM1"
-			    traits = random
+
+	option = {#普通
+		trigger = {
+			owner = {
+				NOR = {
+					is_hive_empire = yes
+					is_machine_empire = yes
+				}
+			}
+		}
+		name = ethic_easter.3.a
+		response_text = ethic_easter.3.a.response
+		is_dialog_only = yes
+	}
+	option = {#蜂群
+		trigger = { owner = { is_hive_empire = yes } }
+		name = ethic_easter.3.a.hive
+		response_text = ethic_easter.3.a.response
+		is_dialog_only = yes
+	}
+	option = {#智械
+		trigger = {
+            owner = {
+                is_machine_empire = yes
+                NOT = { has_valid_civic = civic_machine_terminator }
+            }
+        }
+		name = ethic_easter.3.a.machine
+		response_text = ethic_easter.3.a.response
+		is_dialog_only = yes
+	}
+
+	##################################################################
+	option = {#普通
+		trigger = {
+			owner = {
+				NOR = {
+					is_hive_empire = yes
+					is_machine_empire = yes
+					AND = {
+						has_ethic = ethic_fanatic_socialism
+						NOR = {
+							has_ethic = ethic_fanatic_authoritarian
+							has_valid_civic = civic_characteristic_socialism
+							has_valid_civic = civic_characteristic_socialism_pioneer
+						}
+					}
+				}
+			}
+		}
+		name = ethic_easter.3.b
+		response_text = ethic_easter.3.b.response
+		is_dialog_only = yes
+	}
+	option = {#社会主义
+		trigger = {
+            owner = {
+				has_ethic = ethic_fanatic_socialism
+				NOR = {
+					has_ethic = ethic_fanatic_authoritarian
+					has_valid_civic = civic_characteristic_socialism
+					has_valid_civic = civic_characteristic_socialism_pioneer
+				}
+            }
+        }
+		name = ethic_easter.3.b.socialism
+		response_text = ethic_easter.3.b.socialism.response
+		is_dialog_only = yes
+	}
+	option = {#蜂群
+		trigger = { owner = { is_hive_empire = yes } }
+		name = ethic_easter.3.b.hive
+		response_text = ethic_easter.3.b.hive.response
+		is_dialog_only = yes
+	}
+	option = {#智械
+		trigger = {
+            owner = {
+                is_machine_empire = yes
+                NOR = {
+                    has_valid_civic = civic_machine_servitor
+                    has_valid_civic = civic_machine_liberator
+                    has_valid_civic = civic_machine_terminator
+                }
+            }
+        }
+		name = ethic_easter.3.b.machine
+		response_text = ethic_easter.3.b.machine.response
+		is_dialog_only = yes
+	}
+	option = {#失控机仆
+		trigger = {
+            owner = {
+                OR = {
+                    has_valid_civic = civic_machine_servitor
+                    has_valid_civic = civic_machine_liberator
+                }
+            }
+        }
+		name = ethic_easter.3.b.machine_servitor
+		response_text = ethic_easter.3.b.machine_servitor.response
+		is_dialog_only = yes
+	}
+
+	##################################################################
+	option = {
+		trigger = {
+			owner = {
+				NOR = {
+					is_machine_empire = yes
+				}
+			}
+		}
+		name = ethic_easter.3.c
+		response_text = ethic_easter.3.c.response
+		is_dialog_only = yes
+	}
+	option = {#智械
+		trigger = {
+            owner = {
+                is_machine_empire = yes
+                NOT = { has_valid_civic = civic_machine_terminator }
+            }
+        }
+		name = ethic_easter.3.c.machine
+		response_text = ethic_easter.3.c.response
+		is_dialog_only = yes
+	}
+
+	##################################################################
+	option = {#普通
+		trigger = {
+			owner = {
+				NOR = {
+					is_hive_empire = yes
+					is_machine_empire = yes
+				}
+			}
+		}
+		name = ethic_easter.3.d
+		response_text = ethic_easter.3.d.response
+		is_dialog_only = yes
+	}
+	option = {#蜂群
+		trigger = { owner = { is_hive_empire = yes } }
+		name = ethic_easter.3.d
+		response_text = ethic_easter.3.d.response
+		is_dialog_only = yes
+	}
+	option = {#智械
+		trigger = {
+            owner = {
+                is_machine_empire = yes
+                NOT = { has_valid_civic = civic_machine_terminator }
+            }
+        }
+		name = ethic_easter.3.d.machine
+		response_text = ethic_easter.3.d.response
+		is_dialog_only = yes
+	}
+
+	##################################################################
+	option = {#普通
+		trigger = {
+			owner = {
+				NOR = {
+					is_hive_empire = yes
+					is_machine_empire = yes
+					is_capitalism = yes
+					is_authoritarian = yes
+					is_xenophobe = yes
+					has_valid_civic = civic_characteristic_socialism
+					has_valid_civic = civic_characteristic_socialism_pioneer
+				}
+			}
+		}
+		name = ethic_easter.3.e
+		response_text = ethic_easter.3.e.response
+		is_dialog_only = yes
+	}
+	option = {#反动派
+		trigger = {
+			owner = {
+				OR = {
+					is_capitalism = yes
+					is_authoritarian = yes
+					is_xenophobe = yes
+					has_valid_civic = civic_characteristic_socialism
+					has_valid_civic = civic_characteristic_socialism_pioneer
+				}
+			}
+		}
+		name = ethic_easter.3.e
+		response_text = ethic_easter.3.e.capitalism.response
+		is_dialog_only = yes
+	}
+	option = {#蜂群
+		trigger = { owner = { is_hive_empire = yes } }
+		name = ethic_easter.3.e.hive
+		response_text = ethic_easter.3.e.response
+		is_dialog_only = yes
+	}
+	option = {#智械
+        trigger = {
+            owner = {
+                is_machine_empire = yes
+                NOR = {
+                    has_valid_civic = civic_machine_servitor
+                    has_valid_civic = civic_machine_liberator
+                    has_valid_civic = civic_machine_terminator
+                }
+            }
+        }
+		name = ethic_easter.3.e.machine
+		response_text = ethic_easter.3.e.response
+		is_dialog_only = yes
+	}
+	option = {#失控机仆
+		trigger = {
+            owner = {
+                OR = {
+                    has_valid_civic = civic_machine_servitor
+                    has_valid_civic = civic_machine_liberator
+                }
+            }
+        }
+		name = ethic_easter.3.e.machine_servitor
+		response_text = ethic_easter.3.e.response
+		is_dialog_only = yes
+	}
+
+	##################################################################
+	option = {#关闭通讯
+        trigger = {
+			owner = {
+				NOR = {
+					has_valid_civic = civic_machine_terminator
+				}
+			}
+		}
+		name = ethic_easter.3.f
+		response_text = ethic_easter.3.f.response
+        hidden_effect = {
+            set_country_flag = ethic_huazhang
+			add_modifier = { modifier = "red_dawn_database" days = -1 }
+
+	        create_species = {
+		        name = "NAME_red_dawn"
+		        class = red_dawn
+		        portrait = stardust
+		        traits = {
+			        trait = trait_pc_nuked_preference
+			        trait = trait_fertile
+			        trait = trait_robust
+			        trait = trait_erudite
+			        trait = trait_conservational
+			        trait = trait_unruly
+		        }
 			    effect = {
 			    	save_event_target_as = huazhang_species
 			    }
-		    }
+	        }
             
-            create_leader={
+            create_leader = {
                 class = scientist
 		        species = event_target:huazhang_species
-		        name = "华章"
+		        name = "PRESCRIPTED_ruler_name_humans4"
 		        event_leader = yes
-                skill=3
-                gender = male
-                set_age=20
+                skill = 5
+                gender = indeterminable
+                set_age = 20
                 traits = {
+                    trait = leader_trait_scientist_red_dawn
+                    trait = leader_trait_towel
                     trait = leader_trait_spark_of_genius
-                    trait = leader_trait_expertise_biology
                 }
             }
         }
-    }
-    option = {
-        name = ehtic_easter.1.b
-        hidden_effect={
-             set_country_flag=ethic_huazhang
-        }
-    }
+	}
+
+	##################################################################
+	option = {#铁灭
+		trigger = { owner = { has_valid_civic = civic_machine_terminator } }
+		name = ethic_easter.3.g
+		response_text = ethic_easter.3.g.response
+        hidden_effect = { set_country_flag = ethic_huazhang }
+	}
 }
 
-# 引入
 country_event = {
-    id = ethic_easter.10
-    title = ethic_easter.10.name
-    is_triggered_only = yes 
-    picture = GFX_evt_ship_in_orbit
-    desc = {
-        trigger = { is_regular_empire = yes  }
-        text = ethic_easter.10.regular
-    }
-    desc = {
-        trigger = { is_regular_empire = no  }
-        text = ethic_easter.10.gestalt
-    }
-
-    option = {
-        name = ethic_easter.10_option
-    }
-}
-
-fleet_event = {
-    id = ethic_easter.100
-    title = ethic_easter.100_title
-    desc = ethic_easter.100_desc
-    location = from
-    archaeology = yes 
-    is_triggered_only = yes 
-
-    immediate = {
-		from = { set_site_progress_locked = yes }
+    id = ethic_easter.4
+	title = ethic_easter.4.name
+	desc = ethic_easter.4.desc
+	picture = GFX_evt_ghost_ship
+    is_triggered_only = yes
+    trigger = {
+		is_ai = no
+		OR = {
+			has_valid_civic = civic_fanatic_purifiers
+			has_valid_civic = civic_hive_devouring_swarm
+		}
+		NOT = { has_country_flag = ethic_huazhang }
 	}
 
-	after = { 
-		from = { set_site_progress_locked = no } 
+	option = {
+		name = ethic_easter.4.a
+        hidden_effect = { set_country_flag = ethic_huazhang }
 	}
-
-    option = {
-        name = ethic_easter.100_option
-    }
-}
-
-fleet_event = {
-    id = ethic_easter.101
-    title = ethic_easter.101_title
-    desc = ethic_easter.101_desc
-    location = from
-    archaeology = yes 
-    is_triggered_only = yes 
-
-    immediate = {
-		from = { set_site_progress_locked = yes }
-	}
-
-	after = { 
-		from = { set_site_progress_locked = no } 
-	}
-
-    option = {
-        name = ethic_easter.101_option
-    }
-}
-
-fleet_event = {
-    id = ethic_easter.102
-    title = ethic_easter.102_title
-    desc = ethic_easter.102_desc
-    location = from
-    archaeology = yes 
-    is_triggered_only = yes 
-
-    immediate = {
-		from = { set_site_progress_locked = yes }
-	}
-
-	after = { 
-		from = { set_site_progress_locked = no } 
-	}
-
-    option = {
-        name = ethic_easter.102_option
-        hidden_effect = {
-            owner = {
-                country_event = {
-                    id = ethic_easter.1
-                }
-            }
-        }
-    }
 }
