@@ -1,37 +1,40 @@
 
-###_[贸易优化debug]	<季度debug/初始化/设置完成>		pc其他星球/殖民地
-z_pf2_eft_cntr_trade_opt_debug = {
+###_[贸易优化AI]
+#_<pf季检/初始化/设置完成>
+#_list		init/pc其他星球/殖民地参数统计/添加修正
+PF_eft_cntr_trade_opt_AI = {
 	if = {
 		limit = {
+			is_ai = yes
 			is_gestalt = no
 			OR = {
-				has_global_flag = z_pf2_flg_glbl_trade_ban	#_[贸易禁止]
-				AND = { is_ai = yes		has_global_flag = z_pf2_flg_glbl_trade_opt }	#_[贸易优化]
+				has_global_flag = PF_flg_glbl_trade_ban	#_|贸易禁止|
+				has_global_flag = PF_flg_glbl_trade_opt	#_|贸易优化|
 			}
 		}
 		
 		##_[init]	####################
 		set_variable = { which = TEMP_var_trade_add_factor value = 0 }
 		
-		##_[pc其他星球]			参数统计/添加修正	##########		---z禁用
+		##_[pc其他星球]			参数统计/添加修正	##########		---禁用
 		if = { limit = { always = no is_ai = no }
 			##_[参数统计]
 			#_[init]
-			set_variable = { which = z_pf2_var_wild_trade_value_tally value = 0 }
+			set_variable = { which = PF_var_wild_trade_value_tally value = 0 }
 			#_[荒野贸易值]
 			every_planet_within_border = { limit = { is_colony = no }
-				export_modifier_to_variable = { modifier = trade_value_add variable = z_pf2_var_wild_trade_value_tally }
-				prev = { change_variable = { which = z_pf2_var_wild_trade_value_tally value = prev.z_pf2_var_wild_trade_value_tally } }
-				clear_variable = z_pf2_var_wild_trade_value_tally
+				export_modifier_to_variable = { modifier = trade_value_add variable = PF_var_wild_trade_value_tally }
+				prev = { change_variable = { which = PF_var_wild_trade_value_tally value = prev.PF_var_wild_trade_value_tally } }
+				clear_variable = PF_var_wild_trade_value_tally
 			}
 			#_[贸易值加成]
-			export_modifier_to_variable = { modifier = trade_value_mult		variable = z_pf2_var_wild_trade_value_tally_mult }
-			change_variable = { which = z_pf2_var_wild_trade_value_tally_mult	value = 1 }
-			multiply_variable = { which = z_pf2_var_wild_trade_value_tally		value = z_pf2_var_wild_trade_value_tally_mult }
-			clear_variable = z_pf2_var_wild_trade_value_tally_mult
+			export_modifier_to_variable = { modifier = trade_value_mult		variable = PF_var_wild_trade_value_tally_mult }
+			change_variable = { which = PF_var_wild_trade_value_tally_mult	value = 1 }
+			multiply_variable = { which = PF_var_wild_trade_value_tally		value = PF_var_wild_trade_value_tally_mult }
+			clear_variable = PF_var_wild_trade_value_tally_mult
 			#_[权重]
-			multiply_variable = { which = z_pf2_var_wild_trade_value_tally		value = event_target:z_fw_tgt_global_event.z_pf2_var_npc0_trade_weight_set }
-			round_variable = z_pf2_var_wild_trade_value_tally	
+			multiply_variable = { which = PF_var_wild_trade_value_tally		value = event_target:z_fw_tgt_global_event.PF_var_npc0_trade_weight_set }
+			round_variable = PF_var_wild_trade_value_tally	
 		}
 
 		
@@ -60,65 +63,101 @@ z_pf2_eft_cntr_trade_opt_debug = {
 			prev = { change_variable = { which = TEMP_var_trade_add_factor		 value = prev.TEMP_var_trade_add } }
 			clear_variable = TEMP_var_trade_add
 		}
-		
+				
 		# 变量统计
-		multiply_variable = { which = TEMP_var_trade_add_factor					 value = event_target:z_fw_tgt_global_event.z_pf2_var_npc0_trade_weight_set }	# 贸易权重
+		multiply_variable = { which = TEMP_var_trade_add_factor					  value = event_target:z_fw_tgt_global_event.PF_var_npc0_trade_weight_set }	# 贸易权重
 		round_variable = TEMP_var_trade_add_factor	# 四舍五入
 			
 		##_[添加修正]	ECAR/vanilla
 		if = { limit = { has_global_flag = ideological_revolution }
 			remove_modifier = z_pf2_mod_plnt_trade_opt_AI_market
 			remove_modifier = z_pf2_mod_plnt_trade_opt_AI_planned
-			remove_modifier = z_pf2_mod_plnt_trade_opt_minerals
-			remove_modifier = z_pf2_mod_plnt_trade_opt_food
-			remove_modifier = z_pf2_mod_plnt_trade_opt_goods
+			remove_modifier = z_pf2_mod_plnt_trade_opt_trade_league
+			remove_modifier = z_pf2_mod_plnt_trade_opt_national_economy
+			remove_modifier = z_pf2_mod_plnt_trade_opt_default
+			remove_modifier = z_pf2_mod_plnt_trade_opt_infrastructure
+			remove_modifier = z_pf2_mod_plnt_trade_opt_factory
+			remove_modifier = z_pf2_mod_plnt_trade_opt_consumer_goods
+			remove_modifier = z_pf2_mod_plnt_trade_opt_culture
 			remove_modifier = z_pf2_mod_plnt_trade_opt_alloys
-			remove_modifier = z_pf2_mod_plnt_trade_opt_unity
-			remove_modifier = z_pf2_mod_plnt_trade_opt_research
+			remove_modifier = z_pf2_mod_plnt_trade_opt_new_economy
+			remove_modifier = z_pf2_mod_plnt_trade_opt_innovation
+			remove_modifier = z_pf2_mod_plnt_trade_opt_normal
 			remove_modifier = z_pf2_mod_plnt_trade_opt_growth_dev
 			remove_modifier = z_pf2_mod_plnt_trade_opt_development
 			remove_modifier = z_pf2_mod_plnt_trade_opt_industrial_progress
-			remove_modifier = z_pf2_mod_plnt_trade_opt_league
-			remove_modifier = z_pf2_mod_plnt_trade_opt_league_research
-			remove_modifier = z_pf2_mod_plnt_trade_opt_normal
 			
-			if = {#_[AI市场]
-				limit = { owner = { has_policy_flag = trade_conversion_trade_AI_economic_stance_market } }
-				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_AI_market
-					days = 187
-					multiplier = TEMP_var_trade_add_factor
-					clear_on_owner_change = yes
-				}
-			}
-			else_if = {#_[AI计划]
+			if = {#_[AI计划]
 				limit = { owner = { has_policy_flag = trade_conversion_trade_AI_economic_stance_planned } }
 				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_minerals
+					modifier = z_pf2_mod_plnt_trade_opt_AI_planned
 					days = 187
 					multiplier = TEMP_var_trade_add_factor
-					clear_on_owner_change = yes
 				}
 			}
-			else_if = {#_[食]
-				limit = { owner = { has_policy_flag = trade_conversion_growth } }
+			else_if = {#_[合作贸易联盟]
+				limit = { owner = { has_policy_flag = trade_conversion_trade_league } }
 				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_food
+					modifier = z_pf2_mod_plnt_trade_opt_trade_league
+					days = 187
+					multiplier = TEMP_var_trade_add_factor
+				}
+			}
+			else_if = {#_[民族经济学]
+				limit = { owner = { has_policy_flag = trade_conversion_national_economy } }
+				add_modifier = {
+					modifier = z_pf2_mod_plnt_trade_opt_national_economy
 					days = 187
 					multiplier = TEMP_var_trade_add_factor
 					clear_on_owner_change = yes
 				}
 			}
-			else_if = {#_[消费]
+			else_if = {#_[自行调节]
+				limit = { owner = { has_policy_flag = trade_policy_default } }
+				add_modifier = {
+					modifier = z_pf2_mod_plnt_trade_opt_default
+					days = 187
+					multiplier = TEMP_var_trade_add_factor
+					clear_on_owner_change = yes
+				}
+			}
+			else_if = {#_[基础投资]
+				limit = { owner = { has_policy_flag = trade_conversion_infrastructure } }
+				add_modifier = {
+					modifier = z_pf2_mod_plnt_trade_opt_infrastructure
+					days = 187
+					multiplier = TEMP_var_trade_add_factor
+					clear_on_owner_change = yes
+				}
+			}
+			else_if = {#_[工业投资]
+				limit = { owner = { has_policy_flag = trade_conversion_factory } }
+				add_modifier = {
+					modifier = z_pf2_mod_plnt_trade_opt_factory
+					days = 187
+					multiplier = TEMP_var_trade_add_factor
+					clear_on_owner_change = yes
+				}
+			}
+			else_if = {#_[消费升级]
 				limit = { owner = { has_policy_flag = trade_conversion_consumer_goods } }
 				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_goods
+					modifier = z_pf2_mod_plnt_trade_opt_consumer_goods
 					days = 187
 					multiplier = TEMP_var_trade_add_factor
 					clear_on_owner_change = yes
 				}
 			}
-			else_if = {#_[合金]
+			else_if = {#_[文化经济]
+				limit = { owner = { has_policy_flag = trade_conversion_culture } }
+				add_modifier = {
+					modifier = z_pf2_mod_plnt_trade_opt_culture
+					days = 187
+					multiplier = TEMP_var_trade_add_factor
+					clear_on_owner_change = yes
+				}
+			}
+			else_if = {#_[重工业革新]
 				limit = { owner = { has_policy_flag = trade_conversion_alloys } }
 				add_modifier = {
 					modifier = z_pf2_mod_plnt_trade_opt_alloys
@@ -127,23 +166,28 @@ z_pf2_eft_cntr_trade_opt_debug = {
 					clear_on_owner_change = yes
 				}
 			}
-			else_if = {#_[凝聚]
-				limit = { owner = { has_policy_flag = trade_conversion_unity } }
+			else_if = {#_[创新经济学]
+				limit = { owner = { has_policy_flag = trade_conversion_new_economy } }
 				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_unity
+					modifier = z_pf2_mod_plnt_trade_opt_new_economy
 					days = 187
 					multiplier = TEMP_var_trade_add_factor
 					clear_on_owner_change = yes
 				}
 			}
-			else_if = {#_[科研]
-				limit = {
-					owner = {
-						has_policy_flag = trade_conversion_innovation
-					}
-				}
+			else_if = {#_[供给侧改革]
+				limit = { owner = { has_policy_flag = trade_conversion_innovation } }
 				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_research
+					modifier = z_pf2_mod_plnt_trade_opt_innovation
+					days = 187
+					multiplier = TEMP_var_trade_add_factor
+					clear_on_owner_change = yes
+				}
+			}
+			else_if = {#_[平庸富国论]
+				limit = { owner = { has_policy_flag = trade_conversion_normal } }
+				add_modifier = {
+					modifier = z_pf2_mod_plnt_trade_opt_normal
 					days = 187
 					multiplier = TEMP_var_trade_add_factor
 					clear_on_owner_change = yes
@@ -159,11 +203,7 @@ z_pf2_eft_cntr_trade_opt_debug = {
 				}
 			}
 			else_if = {#_[产业建设]
-				limit = {
-					owner = {
-						has_policy_flag = trade_conversion_development
-					}
-				}
+				limit = { owner = { has_policy_flag = trade_conversion_development } }
 				add_modifier = {
 					modifier = z_pf2_mod_plnt_trade_opt_development
 					days = 187
@@ -172,11 +212,7 @@ z_pf2_eft_cntr_trade_opt_debug = {
 				}
 			}
 			else_if = {#_[工业进步]
-				limit = {
-					owner = {
-						has_policy_flag = trade_conversion_industrial_progress
-					}
-				}
+				limit = { owner = { has_policy_flag = trade_conversion_industrial_progress } }
 				add_modifier = {
 					modifier = z_pf2_mod_plnt_trade_opt_industrial_progress
 					days = 187
@@ -184,32 +220,7 @@ z_pf2_eft_cntr_trade_opt_debug = {
 					clear_on_owner_change = yes
 				}
 			}
-			else_if = {#_[贸易联盟：产业]
-				limit = { owner = { has_policy_flag = trade_conversion_trade_league } }
-				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_league
-					days = 187
-					multiplier = TEMP_var_trade_add_factor
-					clear_on_owner_change = yes
-				}
-			}
-			else_if = {#_[贸易联盟：科技]
-				limit = { owner = { has_policy_flag = trade_conversion_trade_league_innovation } }
-				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_league_research
-					days = 187
-					multiplier = TEMP_var_trade_add_factor
-					clear_on_owner_change = yes
-				}
-			}
-			else = {#_[能量币]
-				add_modifier = {
-					modifier = z_pf2_mod_plnt_trade_opt_normal
-					days = 187
-					multiplier = TEMP_var_trade_add_factor
-					clear_on_owner_change = yes
-				}
-			}
+
 		}
 		
 		# clear
