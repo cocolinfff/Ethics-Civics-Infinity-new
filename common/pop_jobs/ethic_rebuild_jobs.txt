@@ -1971,13 +1971,12 @@ future_worker = {
 	}
 	possible_precalc = can_fill_worker_job
 	possible = {
-		OR = {
-			planet = { has_modifier = planet_unemployment_benefits }
-		}
+		planet = { has_modifier = planet_unemployment_benefits }
 		owner = {
 			has_active_tradition = tr_future_industry
 			has_technology = tech_ascension_theory
 			is_gestalt = no
+			has_policy_flag = economic_stance_planned
 		}
 	}
 
@@ -1988,7 +1987,6 @@ future_worker = {
 			minerals = 1
 			consumer_goods = 1
 			alloys = 0.5
-			unity = 0.5
 		}
 		produces = {
 			trigger = {
@@ -2192,6 +2190,10 @@ future_worker = {
 			society_research = 8
 			alloys = 14
 		}
+
+		upkeep = {
+			consumer_goods = 0.5
+		}
 	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
@@ -2199,7 +2201,6 @@ future_worker = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	planet_modifier = {
-		pop_job_trade_mult = 0.01
 		job_researcher_add = 0.2
 		job_culture_worker_add = 0.2
 	}
@@ -2223,32 +2224,63 @@ future_worker = {
 }
 
 #临时工
-economic_crisis_worker = {
+resocialization_workers = {
 	category = worker
+	is_capped_by_modifier = no
+	clothes_texture_index = 2
 	building_icon = building_crude_huts
-	clothes_texture_index = 3
 	icon = primitive_laborer
-	can_set_priority = no
 
 	possible_pre_triggers = {
 		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
 	}
-
 	possible = {
-		OR = {
-			planet = { has_modifier = planet_unemployment_benefits }
-		}
+		planet = { has_modifier = planet_unemployment_benefits }
 		owner = {
 			has_active_tradition = tr_future_industry
 			has_technology = tech_ascension_theory
 			is_gestalt = no
+			NOT = { has_policy_flag = economic_stance_planned }
 		}
 	}
 
 	resources = {
 		category = unemployment_resources
+		produces = {
+			energy = 1
+			minerals = 0.5
+			consumer_goods = 1
+			alloys = 0.3
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_democracy_and_clean_government
+						has_valid_civic = civic_business_reporting_administration
+					}
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				NOR = {
+					has_trait = trait_mechanical
+					has_trait = trait_lithoid
+				}
+			}
+			food = 1.5
+		}
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_mechanical
+					has_trait = trait_lithoid
+				}
+			}
+			minerals = 1
+		}
 
 		#利他主义
 		produces = {
@@ -2259,6 +2291,26 @@ economic_crisis_worker = {
 				}
 			}
 			unity = 2
+		}
+		
+		#社会主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_socialism
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_socialism
+				}
+			}
+			unity = 0.25
 		}
 
 		# Utopian living standards
@@ -2280,27 +2332,156 @@ economic_crisis_worker = {
 					has_shared_burden_living_standard_type = yes
 				}
 			}
-			unity = 1
+			unity = 0.5
 		}
-
-		# Unemployment Benefits Crime event
-		upkeep = {
+		#AI基础与年数产出
+		produces = {
 			trigger = {
-				planet = {
-					has_modifier = unemployment_benefits
+				owner = { is_ai = yes }
+			}
+			food = 1
+			energy = 2
+			minerals = 1
+			consumer_goods = 0.5
+			alloys = 0.25
+		}
+		produces = {
+			trigger = {
+				owner = { is_ai = yes }
+				years_passed >= 20
+			}
+			food = 0.5
+			energy = 2
+			minerals = 0.5
+			consumer_goods = 0.5
+			alloys = 0.5
+		}
+		produces = {
+			trigger = {
+				owner = { is_ai = yes }
+				years_passed >= 35
+			}
+			food = 0.5
+			energy = 2
+			minerals = 0.5
+			consumer_goods = 0.5
+			alloys = 0.5
+		}
+		produces = {
+			trigger = {
+				owner = { is_ai = yes }
+				years_passed >= 50
+			}
+			food = -3
+			energy = 8
+			minerals = -3
+			consumer_goods = -3
+			alloys = 1
+		}
+		
+		produces = { 
+			trigger = {
+				owner = { is_ai = yes }
+				mid_game_years_passed > 0
+			}
+			food = 1
+			energy = 3
+			minerals = 1
+			consumer_goods = 1
+			alloys = 1
+		}
+		
+		produces = {
+			trigger = {
+				end_game_years_passed > 0
+			}
+			alloys = 1.5
+			unity = 0.5
+		}
+		#AI思潮加成
+		produces = {
+			trigger = {
+				owner = {
+					is_ai = yes
+					or = {
+						has_ethic = ethic_fanatic_spiritualist
+						has_ethic = ethic_spiritualist
+					}
+					
 				}
 			}
-			consumer_goods = 2
+			unity = 1
 		}
+		produces = {
+			trigger = {
+				owner = {
+					is_ai = yes
+					OR = {
+						has_ethic = ethic_fanatic_materialist
+						has_ethic = ethic_materialist
+					}
+				}
+			}
+			physics_research = 0.5
+			engineering_research = 0.5
+			society_research = 0.5
+		}
+		#AI弱者强化
+		produces = {
+			trigger = {
+				years_passed >= 50
+				owner = {
+					is_ai = yes
+					num_pops < 100
+				}				
+			}				
+			physics_research = 4
+			engineering_research = 4
+			society_research = 4
+			alloys = 4
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				years_passed >= 80
+				owner = {
+					is_ai = yes
+					num_pops < 100
+				}								
+			}		
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
+			alloys = 7
+		}
+
 		upkeep = {
-			consumer_goods = 0.25
+			consumer_goods = 0.5
 		}
+	}
+
+	planet_modifier = {
+		job_merchant_add = 0.2
+		job_mogul_add = 0.05
 	}
 
 	triggered_planet_modifier = {
 		potential = { always = yes }
-		trade_value_add = 0.5
+		trade_value_add = 1
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+
+	triggered_country_modifier = { # 共产主义社会
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_shared_burden
+				has_ascension_perk = ap_future_society
+			}
+		}
+		modifier = {
+			country_admin_cap_add = 0.5
+		}
 	}
 
 	weight = {
