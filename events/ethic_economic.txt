@@ -43,9 +43,12 @@ country_event = { # 市场经济系统自动开关（月检）
 					
 					set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
 					
-					set_variable = { which = rec_pop_expand_0 value = 0 } # 初始化人口扩张数因子
-					set_variable = { which = rec_pop_expand_1 value = 0 }
-					set_variable = { which = rec_pop_expand_2 value = 0 }
+					set_variable = { which = rec_expand_pop_0 value = 0 } # 初始化扩张数人口因子
+					set_variable = { which = rec_expand_pop_1 value = 0 }
+					set_variable = { which = rec_expand_pop_2 value = 0 }
+					set_variable = { which = rec_expand_resource_0 value = 0 } # 初始化扩张数资源因子
+					set_variable = { which = rec_expand_resource_1 value = 0 }
+					set_variable = { which = rec_expand_resource_2 value = 0 }
 					
 					if = { # 市场革命 - 开局给12年
 						limit = { years_passed < 1 }
@@ -753,7 +756,12 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
 		}
 		if = { # 市场变革
 			limit = { owner = { has_modifier = cm_market_revolution } }
-			change_variable = { which = rec_crisis_add_market value = value:crisis_decline_market_revolution }
+			owner = {
+				change_variable = { which = rec_expand_pop_0 value = 0.5 }
+				change_variable = { which = rec_expand_resource_0 value = 2 }
+				change_variable = { which = rec_expand_resource_1 value = 1 }
+				change_variable = { which = rec_expand_resource_2 value = 1 }
+			}
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
@@ -773,32 +781,49 @@ situation_event = { # 计算危机积累 4号
     id = ethic_economic.4
     is_triggered_only = yes
     hide_window = yes
-    #trigger = {
-    #    is_ai = no
-    #}
     immediate = {
 	
-		if = { # 战争红利 - 扩张效应
-			limit = { NOT = { check_variable = { which = owner.rec_pop_expand_0 value = 0 } } }
-			set_variable = { which = rec_crisis_add_war value = value:effect_expand }
+		if = { # 扩张效应 - 人口
+			limit = {
+				owner = { NOT = { check_variable = { which = rec_expand_pop_0 value = 0 } } }
+			}
+			set_variable = { which = rec_crisis_add_outside value = value:effect_expand_pop }
 		}
-		else = { set_variable = { which = rec_crisis_add_war value = 0 } }
+		else = { set_variable = { which = rec_crisis_add_outside value = 0 } }
+		if = { # 扩张效应 - 资源
+			limit = {
+				owner = { NOT = { check_variable = { which = rec_expand_resource_0 value = 0 } } }
+			}
+			change_variable = { which = rec_crisis_add_outside value = value:effect_expand_resource }
+		}
+		owner = {
+			set_variable = { which = rec_expand_pop_0 value = rec_expand_pop_1 }
+			set_variable = { which = rec_expand_pop_1 value = rec_expand_pop_2 }
+			set_variable = { which = rec_expand_pop_2 value = 0 } # 3月缓冲
+			set_variable = { which = rec_expand_resource_0 value = rec_expand_resource_1 }
+			set_variable = { which = rec_expand_resource_1 value = rec_expand_resource_2 }
+			set_variable = { which = rec_expand_resource_2 value = 0 } # 3月缓冲
+		}
+		round_variable_to_closest = {
+			which = rec_crisis_add_outside
+			value = 0.01
+		}
+		change_variable = { which = rec_crisis_add value = rec_crisis_add_outside }
+		
 		if = { # 战时经济重整
 			limit = { owner = { is_at_war = yes } }
 			change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
 		}
+		else = { set_variable = { which = rec_crisis_add_war value = 0 } }
+		round_variable_to_closest = {
+			which = rec_crisis_add_war
+			value = 0.01
+		}
 		change_variable = { which = rec_crisis_add value = rec_crisis_add_war }
-		set_variable = { which = owner.rec_pop_expand_0 value = owner.rec_pop_expand_1 }
-		set_variable = { which = owner.rec_pop_expand_1 value = owner.rec_pop_expand_2 }
-		set_variable = { which = owner.rec_pop_expand_2 value = 0 } # 3月缓冲
 		
 		change_variable = { which = rec_crisis_accumulated value = rec_crisis_add }
 		set_variable = { which = rec_crisis_percentage value = value:crisis_percentage }
 
-		round_variable_to_closest = {
-			which = rec_crisis_accumulated
-			value = 0.01
-		}
     }
 }
 
@@ -1468,11 +1493,10 @@ planet_event = { # 扩张效应-征服星球带来的危机稀释
     id = ethic_economic.90
     is_triggered_only = yes
     hide_window = yes
-    #trigger = {
-    #    is_ai = no
-    #}
-    immediate={
-		change_variable = { which = from.rec_pop_expand_0 value = trigger:count_pops }
+    immediate = {
+		from = {
+			change_variable = { which = rec_expand_pop_0 value = trigger:count_pops }
+		}
     }
 }
 
@@ -1480,11 +1504,11 @@ planet_event = { # 提升效应-提升物种带来的危机稀释
     id = ethic_economic.91
     is_triggered_only = yes
     hide_window = yes
-    #trigger = {
-    #    is_ai = no
-    #}
-    immediate={
-		owner = { change_variable = { which = rec_pop_expand_0 value = 3 } }
+    immediate = {
+		owner = {
+			change_variable = { which = rec_expand_pop_0 value = 2 }
+			change_variable = { which = rec_expand_pop_1 value = 1 }
+		}
     }
 }
 
@@ -1511,7 +1535,7 @@ planet_event = { # 开拓效应-征服者私有化协议过程
     immediate = {
 		if = {
 			limit = { has_planet_modifier = pm_explorer_privatized }
-			owner = { change_variable = { which = rec_pop_expand_0 value = 1 } }
+			owner = { change_variable = { which = rec_expand_resource_0 value = 1 } }
 			planet_event = { id = ethic_economic.920 days = 30 }
 		}
     }
@@ -1527,11 +1551,13 @@ event = { # 战争效应-战争赔款的危机稀释
     immediate = {
 		if = {
 			limit = { exist = from }
-			set_variable = { which = rec_pops_out value = root.trigger:count_pops }
+			set_variable = { which = rec_pops_out value = trigger:count_pops }
 			multiply_variable = { which = rec_pops_out value = 0.05 }
-			change_variable = { which = from.rec_pop_expand_0 value = rec_pops_out }
-			change_variable = { which = from.rec_pop_expand_1 value = rec_pops_out }
-			change_variable = { which = from.rec_pop_expand_2 value = rec_pops_out }
+			from = {
+				change_variable = { which = rec_expand_pop_0 value = rec_pops_out }
+				change_variable = { which = rec_expand_pop_1 value = rec_pops_out }
+				change_variable = { which = rec_expand_pop_2 value = rec_pops_out }
+			}
 		}
     }
 }
