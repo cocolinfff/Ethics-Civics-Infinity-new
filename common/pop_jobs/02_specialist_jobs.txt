@@ -11,12 +11,17 @@ merchant = {
 
 	possible_pre_triggers = {
 		has_owner = yes
-		is_enslaved = no
 		is_being_purged = no
 		is_being_assimilated = no
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
+	possible = {
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
+	}
 
 	resources = {
 		category = planet_merchants
@@ -44,7 +49,7 @@ merchant = {
 					has_ethic = ethic_fanatic_capitalism
 				}
 			}
-			unity = 2
+			unity = 1
 		}
 		produces = {
 			trigger = {
@@ -53,7 +58,7 @@ merchant = {
 					has_ethic = ethic_capitalism
 				}
 			}
-			unity = 1
+			unity = 0.5
 		}
 		produces = {
 			trigger = {
@@ -848,12 +853,16 @@ priest = {
 			sr_zro = 0.1
 		}
 	}
-	country_modifier = {
-		country_admin_cap_add = 2
-	    pop_amenities_usage_mult = -0.015
-	}
-	planet_modifier = {
-		planet_priests_upkeep_mult = 0.01
+	triggered_country_modifier = {
+		potential = {
+			OR = {
+				has_ethic = ethic_fanatic_spiritualist
+				has_valid_civic = civic_exalted_priesthood
+			}
+		}
+		modifier = {
+			country_admin_cap_add = 3
+		}
 	}
 	triggered_planet_modifier = { # 民主廉政取消维护费
 		potential = {
@@ -863,7 +872,7 @@ priest = {
 	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
-		planet_amenities_add = 2
+		planet_amenities_add = 3
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	
@@ -1106,7 +1115,12 @@ enforcer = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-	possible = { battle_thrall_job_check_trigger = yes }
+	possible = {
+		OR = {
+			battle_thrall_job_check_trigger = yes
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
+	}
 
 	resources = {
 		category = planet_enforcers
@@ -1456,6 +1470,7 @@ entertainer = {
 		OR = {
 			entertainer_job_check_trigger = yes
 			owner = { has_valid_civic = civic_triple_the_profit }
+			owner = { has_valid_civic = civic_du_contrat_social }
 		}
 	}
 
@@ -1563,7 +1578,12 @@ duelist = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-	possible = { battle_thrall_job_check_trigger = yes }
+	possible = {
+		OR = {
+			battle_thrall_job_check_trigger = yes
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
+	}
 
 	resources = {
 		category = planet_entertainers
@@ -1668,9 +1688,6 @@ culture_worker = {
 			unity = 1
 		}
 	}
-	country_modifier = {
-	    pop_amenities_usage_mult = -0.03
-	}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -1682,34 +1699,6 @@ culture_worker = {
 			planet_amenities_add = 5
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = planet
-			planet = {
-				exists = planet
-				planet = {
-					has_designation = col_capital
-				}
-			}
-		}
-		modifier = {
-			pop_amenities_usage_mult = -0.03
-		}
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = planet
-			planet = {
-				exists = planet
-				planet = {
-					has_designation = col_culture
-				}
-			}
-		}
-		modifier = {
-			pop_amenities_usage_mult = -0.02
-		}
 	}
 
 	weight = {
@@ -1755,34 +1744,6 @@ bureaucrat = {
 		upkeep = {
 			consumer_goods = 1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOR = {
-						has_valid_civic = civic_byzantine_bureaucracy
-						has_valid_civic = civic_philosopher_king
-						has_valid_civic = civic_executive_committee
-						has_valid_civic = civic_peaceful_republic
-					}
-				}
-			}
-			unity = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					OR = {
-						has_valid_civic = civic_byzantine_bureaucracy
-						has_valid_civic = civic_philosopher_king
-						has_valid_civic = civic_executive_committee
-						has_valid_civic = civic_peaceful_republic
-					}
-				}
-			}
-			unity = 0.5
-		}
 
 		#信息管制
 		produces = {
@@ -1802,7 +1763,7 @@ bureaucrat = {
 		country_admin_cap_add = 3
 	}
 	planet_modifier = {
-		planet_amenities_add = -1
+		planet_amenities_add = -2
 		planet_bureaucrats_upkeep_mult = 0.01
 	}
 
@@ -1860,20 +1821,19 @@ bureaucrat = {
 			pop_cat_worker_happiness = -0.05
 		}
 	}
-	#严格管理
-	triggered_planet_modifier = {
+
+	#舆论控制
+	triggered_planet_modifier = { #严格管理
 		potential = {
 			owner = {
 				has_policy_flag = strict_control
 			}
 		}
 		modifier = {
-			planet_stability_add = 2
 			pop_cat_ruler_political_power = 0.5
 		}
 	}
-	#市场运作
-	triggered_planet_modifier = {
+	triggered_planet_modifier = { #市场运作
 		potential = {
 			owner = {
 				has_policy_flag = market_operation
@@ -1881,8 +1841,21 @@ bureaucrat = {
 		}
 		modifier = {
 			trade_value_add = 2
-			planet_stability_add = 2
 			planet_crime_add = 3
+		}
+	}
+	triggered_country_modifier = { #加经费
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = strict_control
+					has_policy_flag = market_operation
+				}
+			}
+		}
+		modifier = {
+			country_edict_fund_add = 1
 		}
 	}
 
@@ -2271,7 +2244,7 @@ manager = {
 	planet_modifier = {
 		pop_lifestyle_trade_mult = 0.02
 		pop_job_trade_mult = 0.02
-		planet_amenities_add = -1
+		planet_amenities_add = -2
 		planet_bureaucrats_upkeep_mult = 0.01
 	}
 	country_modifier = {
@@ -2306,20 +2279,19 @@ manager = {
 			country_admin_cap_add = 1
 		}
 	}
-	#严格管理
-	triggered_planet_modifier = {
+
+	#舆论控制
+	triggered_planet_modifier = { #严格管理
 		potential = {
 			owner = {
 				has_policy_flag = strict_control
 			}
 		}
 		modifier = {
-			planet_stability_add = 2
 			pop_cat_ruler_political_power = 0.5
 		}
 	}
-	#市场运作
-	triggered_planet_modifier = {
+	triggered_planet_modifier = { #市场运作
 		potential = {
 			owner = {
 				has_policy_flag = market_operation
@@ -2327,8 +2299,21 @@ manager = {
 		}
 		modifier = {
 			trade_value_add = 2
-			planet_stability_add = 2
 			planet_crime_add = 3
+		}
+	}
+	triggered_country_modifier = { #加经费
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = strict_control
+					has_policy_flag = market_operation
+				}
+			}
+		}
+		modifier = {
+			country_edict_fund_add = 1
 		}
 	}
 
@@ -2368,7 +2353,12 @@ necromancer = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-	possible = { battle_thrall_job_check_trigger = yes }
+	possible = {
+		OR = {
+			battle_thrall_job_check_trigger = yes
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
+	}
 
 	resources = {
 		category = planet_researchers

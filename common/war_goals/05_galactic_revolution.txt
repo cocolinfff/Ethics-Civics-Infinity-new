@@ -1,9 +1,10 @@
 ## 感谢大佬提供的代码
-# 普通解放战争
+# 消灭资本家
 wg_galactic_revolution = {
 	casus_belli = cb_galactic_revolution
-
 	hide_if_no_cb = no
+	total_war = yes
+	set_defender_wargoal = wg_end_threat
 
 	threat_multiplier = 0.5
 	
@@ -13,7 +14,6 @@ wg_galactic_revolution = {
 	}
 
 	potential = {
-		is_country_type = default
 		OR = {
 			has_civic = civic_shared_burden
 			AND = {
@@ -28,19 +28,13 @@ wg_galactic_revolution = {
 		from = {	
 			NOT = { has_ethic = ethic_gestalt_consciousness }
 			NOR = {
-				has_civic = civic_shared_burden
+				has_ethic = ethic_fanatic_socialism
 				AND = {
-					has_valid_civic = civic_socialistic
+					has_ethic = ethic_socialism
 					NOR = {
 						has_ethic = ethic_xenophobe
 						has_ethic = ethic_fanatic_xenophobe
 					}
-				}
-			}
-			NOR = {
-				AND = {
-					has_civic = civic_world_cooperative
-					NOT = { has_authority = auth_corporate }
 				}
 			}
 		}
@@ -50,22 +44,6 @@ wg_galactic_revolution = {
 	}
 	on_status_quo = {
 	    hidden_effect = {
-			if = {
-				limit = {
-					from = { has_civic = civic_criminal_heritage }
-				}
-				from = {
-					force_remove_civic = civic_criminal_heritage
-				}
-			}
-			else = {
-				limit = {
-					root = { has_civic = civic_underworld_society }
-				}
-				from = {
-					force_remove_civic = civic_underworld_society
-				}
-			}	
 			every_country = {
 				limit = {
 					NOR = {
@@ -82,7 +60,22 @@ wg_galactic_revolution = {
 				}
 				add_threat = {
 					who = root
-					amount = 0.01
+					amount = 0.05
+				}
+			}
+			if = {
+				limit = {
+					from = { has_authority = auth_corporate }
+				}
+				from = {
+					if = {
+						limit = {
+							from = { has_civic = civic_criminal_heritage }
+						}
+						from = {
+							force_remove_civic = civic_criminal_heritage
+						}
+					}
 				}
 			}
 		    from = { 
@@ -106,19 +99,6 @@ wg_galactic_revolution = {
 	}
 	
 	on_accept = {
-		root = {
-			add_resource = {
-				influence = 100
-			}
-		}
-		custom_tooltip = wg_force_ideology_accept
-		custom_tooltip = wg_force_ideology_accept_2
-		if = {
-			limit = {
-				from = { has_federation = yes }
-			}
-			custom_tooltip = wg_force_ideology_accept_3
-		}
 		hidden_effect = {
 			every_country = {
 				limit = {
@@ -136,319 +116,35 @@ wg_galactic_revolution = {
 				}
 				add_threat = {
 					who = root
-					amount = 0.05
+					amount = 0.1
 				}
-			}
-			from = {
-				if = {
-					limit = {
-						is_gestalt = no
-					}
-					impose_ideology_effect = yes
-				}
-	
-				every_subject = {
-					limit = {
-						is_gestalt = no
-					}
-					impose_ideology_effect = yes
-				}
-			}
-		    from = { add_modifier = { modifier = mod_revolutionary_propaganda days = 18000 } }
-			end_rivalry = from
-			from = { end_rivalry = root }
-			every_system_within_border = {
-				limit = {
-					from = { has_claim = prev }
-				}
-				remove_claims = { who = from }
-			}
-			every_country = {
-				limit = {
-					OR = {
-						is_in_federation_with = root
-						AND = {
-							is_subject = yes
-							exists = overlord
-							overlord = { is_same_value = root }
-						}
-					}
-				}
-				end_rivalry = from
-				from = { end_rivalry = prev }
-				add_opinion_modifier = { modifier = opinion_we_liberated who = from }
-				from = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
-				every_system_within_border = {
-					limit = {
-						from = { has_claim = prev }
-					}
-					remove_claims = { who = from }
-				}
-			}
-			every_country = {
-				limit = {
-					is_subject = yes
-					exists = overlord
-					overlord = { is_same_value = from }
-				}
-				set_subject_of = {
-					who = none
-				}
-			}
-			from = { 
-				every_owned_pop = {
-					random_list = {
-						1 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_socialism
-						}
-						1 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_egalitarian
-						}
-						3 = { }
-					}
-					set_timed_pop_flag = { flag = changed_pop days = 2 }
-				}
-				capital_scope = {
-					every_owned_pop = {
-						2 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_socialism
-						}
-						1 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_egalitarian
-						}
-						2 = { }
-						set_timed_pop_flag = { flag = changed_pop days = 2 }
-					}
-				}
-			}
-			if = {
-				limit = {
-					root = { has_civic = civic_shared_burden }
-					from = { NOT = { has_civic = civic_shared_burden } }
-				}
-				from = {
-					change_government = {
-						civics = { civic = civic_shared_burden civic = random }
-					}
-				}
-			}
-			if = {
-				limit = {
-					root = { has_civic = civic_socialistic }
-					from = { NOT = { has_civic = civic_socialistic } }
-				}
-				from = {
-					change_government = {
-						civics = { civic = civic_socialistic civic = random }
-					}
-				}
-			}
-			from = {
-				leave_alliance = { override_requirements = yes }
 			}
 		}
+	}
+	possible = {
+		always = yes
 	}
 	ai_weight = {
 		weight = 40
 	}
 }
 
-# 共产星际解放战争
+# 打倒走资派
 wg_galactic_revolution_communist_interstellar = {
-	casus_belli = cb_galactic_revolution_communist_interstellar
+	casus_belli = cb_galactic_revolution
 
 	hide_if_no_cb = yes
-	release_occupied_systems_on_status_quo = yes
+	total_war = yes
+	set_defender_wargoal = wg_end_threat
 
 	allowed_peace_offers = {
 		status_quo
-		surrender
 		demand_surrender
 	}
 
 	surrender_acceptance = -100
 
 	potential = {
-		has_total_war_cb = no
-		has_policy_flag = continuous_revolution
-	}
-	possible = {
-		custom_tooltip = {
-			fail_text = has_claimed_all_systems
-			from = {
-				is_country_type = default
-				any_owned_planet = {
-					is_colony = yes
-					root = {
-						NOT = { has_claim = prev.solar_system }
-					}
-				}
-			}
-		}
-	}
-	on_accept = {
-		hidden_effect = {
-			from = {
-				add_threat = {
-					who = root
-					amount = 0.5
-				}
-			}
-			from = {
-				if = {
-					limit = {
-						is_gestalt = no
-					}
-					impose_ideology_effect = yes
-				}
-	
-				every_subject = {
-					limit = {
-						is_gestalt = no
-					}
-					impose_ideology_effect = yes
-				}
-			}
-		    from = { add_modifier = { modifier = mod_revolutionary_propaganda days = 18000 } }
-			end_rivalry = from
-			from = { end_rivalry = root }
-			every_system_within_border = {
-				limit = {
-					from = { has_claim = prev }
-				}
-				remove_claims = { who = from }
-			}
-			every_country = {
-				limit = {
-					OR = {
-						is_in_federation_with = root
-						AND = {
-							is_subject = yes
-							exists = overlord
-							overlord = { is_same_value = root }
-						}
-					}
-				}
-				end_rivalry = from
-				from = { end_rivalry = prev }
-				add_opinion_modifier = { modifier = opinion_we_liberated who = from }
-				from = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
-				every_system_within_border = {
-					limit = {
-						from = { has_claim = prev }
-					}
-					remove_claims = { who = from }
-				}
-			}
-			every_country = {
-				limit = {
-					is_subject = yes
-					exists = overlord
-					overlord = { is_same_value = from }
-				}
-				set_subject_of = {
-					who = none
-				}
-			}
-			from = { 
-				every_owned_pop = {
-					random_list = {
-						1 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_socialism
-						}
-						1 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_egalitarian
-						}
-						3 = { }
-					}
-					set_timed_pop_flag = { flag = changed_pop days = 2 }
-				}
-				capital_scope = {
-					every_owned_pop = {
-						2 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_socialism
-						}
-						1 = {
-							wipe_pop_ethos = yes
-							pop_change_ethic = ethic_egalitarian
-						}
-						2 = { }
-						set_timed_pop_flag = { flag = changed_pop days = 2 }
-					}
-				}
-			}
-			if = {
-				limit = {
-					root = { has_civic = civic_shared_burden }
-					from = { NOT = { has_civic = civic_shared_burden } }
-				}
-				from = {
-					change_government = {
-						civics = { civic = civic_shared_burden civic = random }
-					}
-				}
-			}
-			if = {
-				limit = {
-					root = { has_civic = civic_socialistic }
-					from = { NOT = { has_civic = civic_socialistic } }
-				}
-				from = {
-					change_government = {
-						civics = { civic = civic_socialistic civic = random }
-					}
-				}
-			}
-		}
-		from = {
-			leave_alliance = { override_requirements = yes }
-			join_alliance = { who = root override_requirements = yes }
-		}
-	}
-
-	on_status_quo = {
-		if = {
-			limit = {
-				exists = last_created_country
-				last_created_country = {
-					has_country_flag = released_empire
-				}
-			}
-
-			last_created_country = {
-				join_alliance = { who = root override_requirements = yes }
-			}
-		}
-	}
-
-	ai_weight = {
-		weight = 90
-	}
-}
-
-# 对巨企解放战争
-wg_galactic_revolution_corporate = {
-	casus_belli = cb_galactic_revolution_corporate
-	hide_if_no_cb = yes
-	total_war = yes
-	set_defender_wargoal = wg_end_threat
-	
-	allowed_peace_offers = {
-		status_quo
-		on_accept
-	}
-
-	surrender_acceptance = -1000
-
-	potential = {
-		is_country_type = default
 		OR = {
 			has_civic = civic_shared_burden
 			AND = {
@@ -460,10 +156,27 @@ wg_galactic_revolution_corporate = {
 			}
 		}
 		has_policy_flag = continuous_revolution
-		from = {
-			has_authority = auth_corporate
-			NOT = { has_civic = civic_world_cooperative }
+		from = {	
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			OR = {
+				has_ethic = ethic_fanatic_socialism
+				has_ethic = ethic_socialism
+			}
+			NOR = {
+				has_civic = civic_shared_burden
+				AND = {
+					has_valid_civic = civic_socialistic
+					NOR = {
+						has_ethic = ethic_xenophobe
+						has_ethic = ethic_fanatic_xenophobe
+					}
+				}
+				has_policy_flag = reform_and_opening_up
+			}
 		}
+	}
+	possible = {
+		always = yes
 	}
 	on_status_quo = {
 	    hidden_effect = {
