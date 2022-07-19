@@ -6473,3 +6473,277 @@ building_communal_housing_large = {
 		"building_fe_dome"
 	}
 }
+
+# 有机庇护所
+building_organic_sanctuary = {
+	base_buildtime = @b1_time
+
+	category = unity
+
+	potential = {
+		NOT = { is_planet_class = pc_machine }
+		exists = owner
+		owner = { has_valid_civic = civic_machine_servitor }
+
+		OR = {
+			owner = { is_ai = no }
+			has_upgraded_capital = yes
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			is_planet_class = pc_machine
+			owner = {
+				NOT = { owner = { has_valid_civic = civic_machine_servitor } }
+			}
+			AND = {
+				owner = { is_ai = yes }
+				count_owned_pop = { limit = { has_citizenship_type = { type = citizenship_organic_trophy } } count <= 20 }
+				num_buildings = { type = building_organic_sanctuary value > 3 }
+			}
+			AND = {
+				owner = { is_ai = yes }
+				count_owned_pop = { limit = { has_citizenship_type = { type = citizenship_organic_trophy } } count <= 40 }
+				num_buildings = { type = building_organic_paradise value > 5 }
+			}
+		}
+	}
+
+	convert_to = {
+		building_luxury_residence
+		building_communal_housing
+	}
+
+	planet_modifier = {
+		job_bio_trophy_add = 8
+		planet_carry_cap_add = 6
+		job_artisan_drone_add = 1
+		job_maintenance_drone_add = 2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_valid_civic = civic_machine_paradise_lost
+		}
+		planet_amenities_add = 4
+	}
+	triggered_planet_modifier = { # 失控女仆兼容
+		potential = {
+			has_global_flag = flag_rogue_maid_mod_activated
+		}
+		job_maintenance_drone_add = -2
+		job_healthcaring_drone_add = 1
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b2_upkeep
+		}
+	}
+
+	triggered_desc = {
+		text = job_bio_trophy_effect_desc
+	}
+	triggered_desc = {
+		text = job_artisan_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			NOT = { has_global_flag = flag_rogue_maid_mod_activated }
+		}
+		text = job_maintenance_drone_effect_desc
+	}
+	triggered_desc = { # 失控女仆兼容
+		trigger = {
+			has_global_flag = flag_rogue_maid_mod_activated
+		}
+		text = job_healthcaring_drone_effect_desc
+	}
+
+	upgrades = {
+		"building_organic_paradise"
+	}
+
+	ai_resource_production = {
+		unity = 10
+		physics_research = 10
+		alloys = 5
+
+		trigger = {
+			NOT = { has_building = building_organic_sanctuary }
+		}
+	}
+	ai_resource_production = {
+		unity = 10
+		physics_research = 10
+
+		trigger = {
+			has_unemployed_pop_of_category = bio_trophy
+
+			planet_resource_compare = {
+				resource = physics_research
+				value >= 100
+				type = produces
+			}
+		}
+	}
+	ai_resource_production = {
+		unity = 10
+		alloys = 10
+
+		trigger = {
+			has_unemployed_pop_of_category = bio_trophy
+
+			planet_resource_compare = {
+				resource = alloys
+				value >= 100
+				type = produces
+			}
+		}
+	}
+	ai_resource_production = {
+		unity = 10
+		consumer_goods = 10
+
+		trigger = {
+			has_unemployed_pop_of_category = bio_trophy
+
+			planet_resource_compare = {
+				resource = consumer_goods
+				value >= 100
+				type = produces
+			}
+		}
+	}
+}
+
+# 有机天堂
+building_organic_paradise = {
+	base_buildtime = @b2_time
+	can_build = no
+	icon = building_paradise_dome
+
+	potential = {
+		exists = owner
+		owner = { has_valid_civic = civic_machine_servitor }
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			is_planet_class = pc_machine
+			owner = { is_servitor_empire = no }
+		}
+	}
+
+	convert_to = {
+		building_paradise_dome
+		building_communal_housing_large
+	}
+
+	planet_modifier = {
+		job_bio_trophy_add = 16
+		planet_carry_cap_add = 12
+		job_artisan_drone_add = 2
+		job_maintenance_drone_add = 3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_valid_civic = civic_machine_paradise_lost
+		}
+		planet_amenities_add = 8
+	}
+	triggered_planet_modifier = { # 失控女仆兼容
+		potential = {
+			has_global_flag = flag_rogue_maid_mod_activated
+		}
+		job_maintenance_drone_add = -3
+		job_healthcaring_drone_add = 2
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b4_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+	}
+
+	triggered_desc = {
+		text = job_bio_trophy_effect_desc
+	}
+	triggered_desc = {
+		text = job_artisan_drone_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			NOT = { has_global_flag = flag_rogue_maid_mod_activated }
+		}
+		text = job_maintenance_drone_effect_desc
+	}
+	triggered_desc = { # 失控女仆兼容
+		trigger = {
+			has_global_flag = flag_rogue_maid_mod_activated
+		}
+		text = job_healthcaring_drone_effect_desc
+	}
+
+
+	prerequisites = { "tech_paradise_dome" }
+
+	show_tech_unlock_if = {
+		owner = { has_valid_civic = civic_machine_servitor }
+	}
+
+	ai_resource_production = {
+		unity = 20
+		physics_research = 20
+
+		trigger = {
+			has_unemployed_pop_of_category = bio_trophy
+
+			planet_resource_compare = {
+				resource = physics_research
+				value >= 100
+				type = produces
+			}
+		}
+	}
+	ai_resource_production = {
+		unity = 20
+		alloys = 20
+
+		trigger = {
+			has_unemployed_pop_of_category = bio_trophy
+
+			planet_resource_compare = {
+				resource = alloys
+				value >= 100
+				type = produces
+			}
+		}
+	}
+	ai_resource_production = {
+		unity = 20
+		consumer_goods = 20
+
+		trigger = {
+			has_unemployed_pop_of_category = bio_trophy
+
+			planet_resource_compare = {
+				resource = consumer_goods
+				value >= 100
+				type = produces
+			}
+		}
+	}
+}
