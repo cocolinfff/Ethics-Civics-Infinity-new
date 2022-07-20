@@ -1089,7 +1089,7 @@ conscript = {
 	}
 }
 
-#苗床
+# 苗床
 tentacle_seedbed = {
 	category = worker
 	condition_string = WORKER_JOB_TRIGGER
@@ -1104,7 +1104,7 @@ tentacle_seedbed = {
 	}
 	possible_precalc = can_fill_worker_job
 	possible = {
-		has_trait = trait_slave_gene
+		NOT = { has_trait = trait_zombie }
 		owner = {
 			exists = owner
 			has_civic = civic_libido_equipment
@@ -1128,11 +1128,47 @@ tentacle_seedbed = {
 	}
 	planet_modifier = {
 		planet_pop_assembly_organic_add = 1
-		pop_amenities_usage_organic_mult = -0.1
+	}
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 12
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = { # 多彩环境强化
+		potential = {
+			AND = {
+				has_global_flag = love_between_us
+				OR = {
+					has_trait = trait_DC_ethic_lust_skynet
+					has_trait = trait_DC_ethic_carnalism
+				}
+			}
+		}
+		planet_pop_assembly_organic_add = 0.5
+		planet_amenities_add = 12
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
 	weight = {
-		weight = 500
+		weight = @clerk_job_weight
+		modifier = { # 可控的动态权重
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+		}
+		modifier = {
+			factor = 10
+			AND = {
+				has_global_flag = love_between_us
+				OR = {
+					has_trait = trait_DC_ethic_lust_skynet
+					has_trait = trait_DC_ethic_carnalism
+				}
+			}
+		}
 	}
 }
 
