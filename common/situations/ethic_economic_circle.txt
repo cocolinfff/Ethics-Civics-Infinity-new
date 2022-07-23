@@ -275,104 +275,108 @@ situation_economic_circle = {
         }
 	}
 
-        monthly_progress = {
-            base = 0
-			
-            modifier = {
-                desc = economic_factor_civics
-                add = rec_situation_add_civic
-				NOT = { has_situation_flag = economic_crisis }
-            } # 体制因素
-            modifier = {
-                desc = economic_factor_market
-                add = rec_situation_add_market
-				NOT = { has_situation_flag = economic_crisis }
-            } # 市场因素
-            modifier = {
-                desc = economic_factor_edicts
-                add = rec_situation_add_edict
-				NOT = { has_situation_flag = economic_crisis }
-            } # 法令因素
-            modifier = {
-                desc = economic_factor_approach
-                add = rec_situation_add_approach
-            } # 措施因素
-			
-			# 经济危机时
-            modifier = {
-                desc = ethic_economic_crisis
-                add = value:crisis_situation_decline
-                has_situation_flag = economic_crisis
-            } # 经济危机 -2.0
-			
-			
-			# 危机距离
-            modifier = {
-                desc = ethic_economic_crisis_distance
-                add = 0.4
-                has_situation_flag = economic_crisis_distance_low
-            } # 低危机
-            modifier = {
-                desc = ethic_economic_crisis_distance
-                add = 0.2
-                has_situation_flag = economic_crisis_distance_middle
-            } # 中危机
-            modifier = {
-                desc = ethic_economic_crisis_distance
-                add = -0.2
-                has_situation_flag = economic_crisis_distance_high
-            } # 高危机
-			
-			
-			# 经济自平衡
-            modifier = {
-                desc = ethic_economic_balance_desc
-                add = value:economy_stage_rebalance_1
-				situation_progress <= 10
-				situation_progress > 0
-            }
-            modifier = {
-                desc = ethic_economic_balance_desc
-                add = value:economy_stage_rebalance_2
-				situation_progress <= 70
-				situation_progress > 10
-            }
-            modifier = {
-                desc = ethic_economic_balance_desc
-                add = value:economy_stage_rebalance_3
-				situation_progress <= 90
-				situation_progress > 70
-            }
-            modifier = {
-                desc = ethic_economic_balance_desc
-                add = value:economy_stage_rebalance_4
-				situation_progress <= 100
-				situation_progress > 90
-            }
-			
-############################突变
-            modifier = {
-                desc = ethic_outside_desc
-                add = -0.5
-                owner = {
-                    has_country_flag = ETHIC_COLONY_RECENTLY
-                }
-            } #每殖民一个星球-0.5*10
-#           modifier = {
-#               desc = ethic_outside_desc
-#               add = -50
-#               owner = {
-#                   has_country_flag = ETHIC_WIN_WAR
-#               }
-#           } #某些情况下战胜-50*1个月
-#           modifier = {
-#               desc = ethic_outside_desc
-#               add = 50
-#               owner = {
-#                   has_country_flag = ETHIC_LOSE_WAR
-#               }
-#           } #某些情况下战败-50*1个月
+    monthly_progress = {
+        base = 0
+        
+        modifier = { # 体制因素
+            desc = economic_factor_civics
+            add = rec_situation_add_civic
+            NOT = { has_situation_flag = economic_crisis }
         }
+        modifier = { # 市场因素
+            desc = economic_factor_market
+            add = rec_situation_add_market
+            OR = {
+                NOT = { has_situation_flag = economic_crisis }
+                owner = { has_valid_civic = civic_triple_the_profit }
+            }
+        }
+        modifier = { # 法令因素
+            desc = economic_factor_edicts
+            add = rec_situation_add_edict
+            NOT = { has_situation_flag = economic_crisis }
+        }
+        modifier = { # 措施因素
+            desc = economic_factor_approach
+            add = rec_situation_add_approach
+        }
+        
+        # 经济危机时
+        modifier = { # 经济危机 -2.0
+            desc = ethic_economic_crisis
+            add = value:crisis_situation_decline
+            has_situation_flag = economic_crisis
+        }
+        
+        
+        # 危机距离
+        modifier = {
+            desc = ethic_economic_crisis_distance
+            add = 0.4
+            has_situation_flag = economic_crisis_distance_low
+        } # 低危机
+        modifier = {
+            desc = ethic_economic_crisis_distance
+            add = 0.2
+            has_situation_flag = economic_crisis_distance_middle
+        } # 中危机
+        modifier = {
+            desc = ethic_economic_crisis_distance
+            add = -0.2
+            has_situation_flag = economic_crisis_distance_high
+        } # 高危机
+        
+        
+        # 经济自平衡
+        modifier = {
+            desc = ethic_economic_balance_desc
+            add = value:economy_stage_rebalance_1
+            situation_progress <= 10
+            situation_progress > 0
+        }
+        modifier = {
+            desc = ethic_economic_balance_desc
+            add = value:economy_stage_rebalance_2
+            situation_progress <= 70
+            situation_progress > 10
+        }
+        modifier = {
+            desc = ethic_economic_balance_desc
+            add = value:economy_stage_rebalance_3
+            situation_progress <= 90
+            situation_progress > 70
+        }
+        modifier = {
+            desc = ethic_economic_balance_desc
+            add = value:economy_stage_rebalance_4
+            situation_progress <= 100
+            situation_progress > 90
+        }
+
+        #           modifier = {
+        #               desc = ethic_outside_desc
+        #               add = -50
+        #               owner = {
+        #                   has_country_flag = ETHIC_WIN_WAR
+        #               }
+        #           } #某些情况下战胜-50*1个月
+        #           modifier = {
+        #               desc = ethic_outside_desc
+        #               add = 50
+        #               owner = {
+        #                   has_country_flag = ETHIC_LOSE_WAR
+        #               }
+        #           } #某些情况下战败-50*1个月
+        
+        #突变
+        modifier = {
+            desc = ethic_outside_desc
+            add = -0.5
+            owner = {
+                has_country_flag = ETHIC_COLONY_RECENTLY
+            }
+        } #每殖民一个星球-0.5*10
+    }
 
 ## 经济措施
 # 自由放任
@@ -487,6 +491,9 @@ situation_economic_circle = {
         name = ethic_economic_control_panel
         icon = GFX_situation_approach_this_is_fine
         icon_background = GFX_situation_approach_bg_yellow
+        potential = {
+            owner = { is_ai = no }
+        }
         on_select = {
             situation_event = { id = ethic_economic.10 }
             set_situation_approach = ethic_economic_free
