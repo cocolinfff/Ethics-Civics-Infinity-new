@@ -38,29 +38,53 @@ country_event = { # 市场经济系统自动开关（月检）
 						situation_event = { id = ethic_economic.10 }
 					} 
 					add_situation_progress = 5
-				}
-				owner = {
+					
 					set_variable = { which = rec_crisis_add value = 0 } # 初始化危机累积增加
 					
-					set_variable = { which = rec_crisis_accumulated value = 0 } # 初始化危机累积
+					if = {
+						limit = { years_passed < 1 }
+						set_variable = { which = rec_crisis_accumulated value = 50 }
+					}
+					else = {
+						set_variable = { which = rec_crisis_accumulated value = 0 }
+					} # 初始化危机累积
 					
 					set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
-					
-					set_variable = { which = rec_expand_pop_0 value = 0 } # 初始化扩张数人口因子
+				}
+				owner = {
+				
+					# 初始化扩张数人口因子
+					set_variable = { which = rec_expand_pop_0 value = 0 }
 					set_variable = { which = rec_expand_pop_1 value = 0 }
 					set_variable = { which = rec_expand_pop_2 value = 0 }
-					set_variable = { which = rec_expand_resource_0 value = 0 } # 初始化扩张数资源因子
+					# 初始化扩张数资源因子
+					set_variable = { which = rec_expand_resource_0 value = 0 }
 					set_variable = { which = rec_expand_resource_1 value = 0 }
 					set_variable = { which = rec_expand_resource_2 value = 0 }
 					
-					if = { # 市场革命 - 开局给12年
-						limit = { years_passed < 1 }
+					set_variable = {
+						which = market_revolution_size
+						value = trigger:num_pops
+					}
+					if = { # 市场革命 - 开局如果是自资给12年
+						limit = {
+							is_egalitarian = yes
+							years_passed < 1
+						}
+						set_timed_country_flag = { 
+							flag = market_revolution_great
+							years = 8
+						}
 						add_modifier = {
 							modifier = cm_market_revolution
 							years = 12
 						}
 					}
 					else = { # 一般8年
+						set_timed_country_flag = { 
+							flag = market_revolution_great
+							years = 4
+						}
 						add_modifier = {
 							modifier = cm_market_revolution
 							years = 8
@@ -742,11 +766,11 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = 0.1 }
 		}
-		if = { # 发放消费券 -0.8增长
+		if = { # 发放消费券 -0.6增长
 			limit = {
 				owner = { has_edict = economic_consumer_coupon }
 			}
-			change_variable = { which = rec_crisis_add_edict value = -0.8 }
+			change_variable = { which = rec_crisis_add_edict value = -0.6 }
 		}
 		
 		situation_event = { id = ethic_economic.35 days = 5 }
@@ -796,10 +820,13 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
 		if = { # 市场变革
 			limit = { owner = { has_modifier = cm_market_revolution } }
 			owner = {
-				change_variable = { which = rec_expand_pop_0 value = 0.5 }
-				change_variable = { which = rec_expand_resource_0 value = 2 }
-				change_variable = { which = rec_expand_resource_1 value = 1 }
-				change_variable = { which = rec_expand_resource_2 value = 1 }
+				if = {
+					limit = { has_country_flag = market_revolution_great }
+					change_variable = { which = rec_expand_pop_0 value = value:market_revolution_pop }
+				}
+				change_variable = { which = rec_expand_resource_0 value = value:market_revolution_resource }
+				change_variable = { which = rec_expand_resource_1 value = value:market_revolution_resource }
+				change_variable = { which = rec_expand_resource_2 value = value:market_revolution_resource }
 			}
 		}
 		round_variable_to_closest = {
