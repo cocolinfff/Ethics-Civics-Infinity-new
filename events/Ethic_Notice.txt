@@ -12,14 +12,75 @@ event = {
 	}
 }
 
+#Real Space Menu
 country_event = {
 	id = ethic_notice.1
-	title = ethic_notice.1.name
-	desc = ethic_notice.1.desc
-	picture = GFX_evt_assembly_fight
-	show_sound = event_coronation
+	title = "ethic_notice.1.name"
+	desc = "ethic_notice.1.desc"
+	picture = GFX_evt_ECI
+	location = ROOT
+	
 	is_triggered_only = yes
-	trigger = { NOT = { has_country_flag = ethic_notice } }
-	after = { set_country_flag = ethic_notice }
-	option = { name = ethic_notice.1.a }
+
+	option = {
+		name = "ethic_notice.1.news"
+		custom_tooltip = ethic_notice.1.news.tooltip
+		hidden_effect = {
+			country_event = { id = ethic_notice.2 }
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_global_flag = eci_star } }
+		name = "ethic_notice.1.ascension_perks"
+		custom_tooltip = ethic_notice.1.ascension_perks.tooltip
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_global_flag = eci_ap_yes } }
+				set_global_flag = eci_ap_yes
+				country_event = { id = ethic_notice.1 }
+			}
+			else_if = {
+				limit = { has_global_flag = eci_ap_yes }
+				remove_global_flag = eci_ap_yes
+				country_event = { id = ethic_notice.1 }
+			}
+		}
+	}
+
+	option = {
+		name = "ethic_notice.1.economic"
+		custom_tooltip = ethic_notice.1.economic.tooltip
+		hidden_effect = {
+			country_event = { id = ethic_economic.10 }
+		}
+	}
+
+	option = {
+		name = ethic_economic_setting_complete_option
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_global_flag = eci_star } }
+				set_global_flag = eci_star
+			}
+			if = {
+				limit = { has_global_flag = economic_crisis_close }
+				destroy_situation = this # 立刻关闭机制
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ethic_notice.2
+	title = ethic_notice.2.name
+	desc = ethic_notice.2.desc
+	picture = GFX_evt_assembly_fight
+	is_triggered_only = yes
+	option = {
+		name = ethic_notice.2.a
+		hidden_effect = {
+			country_event = { id = ethic_notice.1 }
+		}
+	}
 }
