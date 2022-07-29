@@ -11,8 +11,58 @@ rec_approach_set_stimulation = {
 	set_variable = { which = rec_approach value = 90 }
 }
 
-
-
+rec_market_self_get = { # 获得本地市场规模
+	set_variable = { which = rec_market_self_size value = trigger:num_pops }
+}
+rec_market_common_get = { # 获得共同市场数据
+	set_variable = { which = rec_market_common_size_temp value = rec_market_self_size }
+	set_variable = { which = rec_market_common_accumulate_temp value = value:rec_market_common_accumulate_initial }
+	set_variable = { which = rec_market_common_threshold_temp value = value:rec_market_common_threshold_initial }
+	every_playable_country = {
+		limit = {
+			OR = {
+				is_in_federation_with = PREV
+				has_commercial_pact = PREV
+				AND = {
+					has_subject = PREV
+					PREV = { subject_can_diplomacy = no }
+				}
+				AND = {
+					has_overlord = PREV
+					subject_can_diplomacy = no
+				}
+			}
+			NOT = { is_same_empire = PREV }
+			rec_circle_access = yes
+		}
+		PREV = { change_variable = { which = rec_market_common_size_temp value = PREV.trigger:num_pops } }
+		if = { # 可开启经济周期，且已开启
+			limit = { rec_circle_able = yes }
+			PREV = {
+				change_variable = { which = rec_market_common_accumulate_temp value = PREV.value:rec_market_common_accumulate_spread }
+				change_variable = { which = rec_market_common_threshold_temp value = PREV.value:rec_market_common_threshold_spread }
+			}
+		}
+		else = { # 可开启经济周期，但未开启
+			PREV = {
+				change_variable = { which = rec_market_common_accumulate_temp value = PREV.value:rec_market_common_accumulate_spread_simple }
+				change_variable = { which = rec_market_common_threshold_temp value = PREV.value:rec_market_common_threshold_spread_simple }
+			}
+		}
+	}
+	set_variable = { which = rec_market_common_size value = rec_market_common_size_temp }
+	set_variable = { which = rec_market_common_accumulate value = rec_market_common_accumulate_temp }
+	set_variable = { which = rec_market_common_threshold value = rec_market_common_threshold_temp }
+}
+rec_benefit_exploit_get = {
+	set_variable = { which = rec_benefit_exploit_temp value = 0 }
+	every_subject = {
+		limit = { always = yes }
+		PREV = { change_variable = { which = rec_benefit_exploit_temp value = PREV.value:economic_exploited_resource } }
+	}
+	divide_variable = { which = rec_benefit_exploit_temp value = trigger:num_pops }
+	set_variable = { which = rec_situation_add_exploit value = rec_benefit_exploit_temp }
+}
 
 government_defeat={
     #event={ethic_economic.4100}
