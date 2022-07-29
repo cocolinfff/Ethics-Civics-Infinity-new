@@ -3274,3 +3274,167 @@ overlord_system_7_init = { # Fourth vassal
 		}
 	}
 }
+
+overlord_system_8_init = { # Overlord Colonies
+	class = "rl_standard_stars"
+
+	flags = { overlord_empire_flag overlord_colony_flag }
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = { min = 35 max = 55 } 
+	}
+
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = { min = 65 max = 85 } 
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = { min = 1 max = 2 }
+		class = pc_asteroid
+		orbit_distance = 0
+		orbit_angle = { min = 120 max = 300 }
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = 1
+		orbit_distance = 25
+		class = pc_gas_giant
+		orbit_angle = { min = 90 max = 270 }
+		size = 25
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = 1
+			class = random_non_colonizable
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 4
+		}
+
+		moon = {
+			count = 1
+			home_planet = yes
+			class = random_colonizable
+			orbit_distance = 10
+			orbit_angle = { min = 90 max = 270 }
+			size = { min = 15 max = 20 }
+			deposit_blockers = none
+			modifiers = none
+
+			init_effect = {
+				prevent_anomaly = yes
+			}
+
+			init_effect = {
+				save_event_target_as = imperial_colony
+				event_target:origin_imperial_species = {
+					create_species = {
+						is_mod = yes
+						name = this
+						plural = this
+						class = this
+						portrait = this
+						traits = this
+						can_be_modified = this
+						homeworld = this
+						namelist = this
+						traits = {
+							ideal_planet_class = event_target:imperial_colony
+						}
+					}
+				}
+				last_created_species = {
+					save_event_target_as = local_imperial_species
+				}
+
+				set_owner = event_target:origin_imperial_homeland_country
+				set_controller = event_target:origin_imperial_homeland_country
+
+				while = {
+					count = 10
+					create_pop = {
+						species = event_target:local_imperial_species
+					}
+				}
+
+				while = {
+					count = 10
+					create_pop = {
+						species = event_target:origin_imperial_species_robot
+					}
+				}
+
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_city
+				}
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_mining
+				}
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_farming
+				}
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_generator
+				}
+				add_district_and_planet_size_if_needed_effect = {
+					district = district_industrial
+				}
+
+				remove_all_buildings = yes
+				add_building = building_capital
+				add_building = building_bureaucratic_1
+				add_building = building_research_lab_1
+				add_building = building_commercial_zone
+
+				validate_planet_buildings_and_districts = yes
+			}
+		}
+	}
+
+	change_orbit = 45
+
+	planet = {
+		count = { min = 1 max = 3 }
+		orbit_distance = 25
+		class = random_non_colonizable
+		orbit_angle = { min = 90 max = 270 }
+	}
+
+	init_effect = {
+		create_starbase = {
+			size = "starbase_starhold"
+			owner = event_target:origin_imperial_homeland_country
+
+			module = "shipyard"
+			module = "shipyard"
+			module = "anchorage"
+			module = "anchorage"
+
+			building = "hydroponics_bay"
+			building = "naval_logistics_office"
+		}
+		
+		spawn_megastructure = {
+			type = "gateway_derelict"
+			random_pos = yes
+			graphical_culture = event_target:origin_imperial_homeland_country
+			owner = event_target:origin_imperial_homeland_country
+			orbit_angle = 360		# range of the randomization
+		}
+	}
+}
