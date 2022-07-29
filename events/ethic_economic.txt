@@ -623,6 +623,11 @@ situation_event = { # 计算危机增长-有危机时 3号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
+		set_variable = { which = rec_crisis_add_temp value = 0 } # 初始化增长
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
+	
+		set_variable = { which = rec_crisis_add_market value = 0 }
 		if = { # 一般条件市场效应
 			limit={
 				situation_progress > 10
@@ -657,6 +662,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 			value = 0.001
 		}
 		
+		set_variable = { which = rec_crisis_add_civic value = 0 }
 		if = { # 受控市场 -0.1增长
 			limit={ owner = { has_policy_flag = economic_stance_mixed } }
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
@@ -672,12 +678,13 @@ situation_event = { # 计算危机增长-有危机时 3号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
-		
-        set_variable = { which = rec_crisis_add value = rec_crisis_add_market }
-        change_variable = { which = rec_crisis_add value = rec_crisis_add_civic }
+		round_variable_to_closest = {
+			which = rec_crisis_add_civic
+			value = 0.001
+		}
 		
 		round_variable_to_closest = {
-			which = rec_crisis_add
+			which = rec_crisis_add_temp
 			value = 0.01
 		}
     }
@@ -952,7 +959,7 @@ situation_event = { # 计算危机积累 4号
 			set_variable = { which = rec_crisis_add_change value = value:rec_crisis_add_change }
 			round_variable_to_closest = {
 				which = rec_crisis_add_change
-				value = 0.01
+				value = 0.001
 			}
 		}
 		else = {
