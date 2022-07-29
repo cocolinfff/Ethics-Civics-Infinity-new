@@ -5,40 +5,33 @@ event = {
 	hide_window = yes
 	is_triggered_only = yes
 	immediate = {
-		#every_country = {
-		#	if = {
-		#		limit = { #生效
-		#			check_modifier_value = {
-		#				modifier = country_resource_max_add 
-		#				value >= 15000
-		#			}
-		#		}
-		#	}
-		#	else_if = { #未生效
-		#		limit = { 
-		#			check_modifier_value = {
-		#				modifier = country_resource_max_add 
-		#				value < 15000
-		#			}
-		#		}
-		#		set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
-		#	}
-		#}
-		#every_country = {
-		#	capital_scope = {
-		#		if = {
-		#			limit = {
-		#				check_modifier_value = {
-		#					modifier = ethic_building_check
-		#					value = 0
-		#				}
-		#			}
-		#			owner = {
-		#				set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
-		#			}	
-		#		}
-		#	}	
-		#}
+		every_country = {
+			if = {
+				limit = { #生效
+					check_modifier_value = {
+						modifier = country_resource_max_add 
+						value >= 2000
+					}
+				}
+			}
+			else_if = { #未生效
+				limit = { 
+					check_modifier_value = {
+						modifier = country_resource_max_add 
+						value < 2000
+					}
+				}
+				if = {
+					limit = { #开启ai时可能出现ai没有资源上限
+						is_ai = no
+					}
+					set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
+				}
+				#set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
+				add_modifier = { modifier = resource_base_ethic }
+			}
+		}
+		event = { id = ethic_start_set.1 days = 30 } 
 		every_country = {
             add_resource = { energy = 100	}
 		    add_resource = { minerals = 100	}
@@ -56,3 +49,29 @@ event = {
 		}
 	}
 }
+
+event = {
+    id = ethic_start_set.1
+	hide_window = yes
+	is_triggered_only = yes
+	immediate = {
+		every_country = {
+			capital_scope = {
+				if = {
+					limit = {
+						check_modifier_value = {
+							modifier = ethic_building_check
+							value = 0
+						}
+					}
+					set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
+					owner = {
+						add_modifier = { modifier = resource_base_ethic }
+					}	
+				}
+			}
+		}
+
+	}	
+
+}		
