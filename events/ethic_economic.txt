@@ -13,19 +13,8 @@ country_event = { # 市场经济系统自动开关（月检）
     immediate={
         if = {
             limit = {
-                NOR = {
-					has_country_flag = economic_crisis_close
-                    has_authority = auth_hive_mind
-                    has_authority = auth_machine_intelligence
-                    has_government = gov_parting_consciousness
-                }
-				AND = { # 更多思潮下只有市场经济政策才触发机制
-					has_global_flag = cultural_overhaul_active
-					OR = {
-						has_policy_flag = economic_stance_market
-						has_policy_flag = economic_stance_mixed
-					}
-				}
+                rec_circle_able = yes
+				rec_circle_access = yes
             }
 			if = { # 尚未激活经济周期系统 - 激活系统
 				limit = { NOT = { has_country_flag = ETHIC_MARKET_ECONOMY } }
@@ -33,10 +22,6 @@ country_event = { # 市场经济系统自动开关（月检）
 				start_situation = { type = situation_economic_circle }
 				every_situation = {
 					limit = { is_situation_type = situation_economic_circle }
-					if = {
-						limit = { is_ai = no }
-						situation_event = { id = ethic_economic.10 }
-					} 
 					add_situation_progress = 5
 					
 					set_variable = { which = rec_crisis_add value = 0 } # 初始化危机累积增加
@@ -44,14 +29,18 @@ country_event = { # 市场经济系统自动开关（月检）
 					if = {
 						limit = { years_passed < 1 }
 						set_variable = { which = rec_crisis_accumulated value = 50 }
+						set_variable = { which = rec_crisis_percentage value = 25 }
 					}
 					else = {
 						set_variable = { which = rec_crisis_accumulated value = 0 }
+						set_variable = { which = rec_crisis_percentage value = 0 }
 					} # 初始化危机累积
 					
 					set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
 				}
 				owner = {
+					rec_market_self_get = yes
+					rec_market_common_get = yes
 				
 					# 初始化扩张数人口因子
 					set_variable = { which = rec_expand_pop_0 value = 0 }
@@ -130,14 +119,27 @@ situation_event = { # 计算情况改善-总结 1号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		#set_variable = { which = rec_situation_add value = 0 } # 初始化增长
+		# 数值统一更新
+		set_variable = { which = rec_situation_add_civic value = rec_situation_add_civic_temp } # 结算经济情况改善 - 国策基础
+		set_variable = { which = rec_situation_mult_civic value = rec_situation_mult_civic_temp } # 结算经济情况改善 - 国策乘数
+		set_variable = { which = rec_situation_add_edict value = rec_situation_add_edict_temp } # 结算经济状态改善 - 法令基础
+		set_variable = { which = rec_situation_mult_edict value = rec_situation_mult_edict_temp } # 结算经济状态改善 - 法令乘数
+		set_variable = { which = rec_situation_add_market value = rec_situation_add_market_temp } # 结算经济状态改善 - 市场
+		set_variable = { which = rec_situation_add_approach value = rec_situation_add_approach_temp } # 结算经济状态改善 - 措施
+		set_variable = { which = rec_situation_add_exploit value = rec_situation_add_exploit_temp } # 结算经济状态改善 - 剥削
+		owner = {
+			set_variable = { which = rec_situation_add_civic value = prev.rec_situation_add_civic_temp } # 结算经济情况改善 - 国策基础
+			set_variable = { which = rec_situation_mult_civic value = prev.rec_situation_mult_civic_temp } # 结算经济情况改善 - 国策乘数
+			set_variable = { which = rec_situation_add_edict value = prev.rec_situation_add_edict_temp } # 结算经济状态改善 - 法令基础
+			set_variable = { which = rec_situation_mult_edict value = prev.rec_situation_mult_edict_temp } # 结算经济状态改善 - 法令乘数
+			set_variable = { which = rec_situation_add_market value = prev.rec_situation_add_market_temp } # 结算经济状态改善 - 市场
+			set_variable = { which = rec_situation_add_approach value = prev.rec_situation_add_approach_temp } # 结算经济状态改善 - 措施
+			set_variable = { which = rec_situation_add_exploit value = prev.rec_situation_add_exploit_temp } # 结算经济状态改善 - 剥削
+		}
 		
-		#change_variable = { which = rec_situation_add value = rec_situation_add_civic }
-		#change_variable = { which = rec_situation_add value = rec_situation_add_edict }
-		#change_variable = { which = rec_situation_add value = rec_situation_add_approach }
-		# 情况系统自行完成
-		#multiply_variable = { which = rec_situation_add value = rec_situation_mult_civic }
-		#multiply_variable = { which = rec_situation_add value = rec_situation_mult_edict }
+		set_variable = { which = rec_situation_improve value = rec_situation_improve_temp } # 结算经济状态改善 - 总结
+		
+		set_variable = { which = rec_economic_improve_temp value = 0 }
 		
 		situation_event = { id = ethic_economic.12 days = 5 }
     }
@@ -148,62 +150,62 @@ situation_event = { # 计算情况改善-国策基础 6号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_civic value = 0 } # 初始化经济情况改善 - 国策基础
+		set_variable = { which = rec_situation_add_civic_temp value = 0 } # 初始化经济情况改善 - 国策基础
 		# 政策
 		if = { # 自由市场 +1.0增长
 			limit={
 				owner = { has_policy_flag = economic_stance_market }
 			}
-			change_variable = { which = rec_situation_add_civic value = 1 }
+			change_variable = { which = rec_situation_add_civic_temp value = 1 }
 		}
 		else_if = { # 受控市场 +0.8增长
 			limit={
 				owner = { has_policy_flag = economic_stance_mixed }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.8 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.8 }
 		}
 		if = { # 投资市场 +0.2增长
 			limit={
 				owner = { has_policy_flag = trade_policy_default }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.2 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.2 }
 		}
 		if = { # 私人所有制 +0.1增长
 			limit={
 				owner = { has_policy_flag = private_ownership }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.1 }
 		}
 		else_if = { # 混合所有制 -0.1增长
 			limit={
 				owner = { has_policy_flag = mixed_ownership }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.1 }
 		}
 		else_if = { # 国家所有制 -0.2增长
 			limit={
 				owner = { has_policy_flag = national_ownership }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.2 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.2 }
 		}
 		else_if = { # 集体所有制 -0.3增长
 			limit={
 				owner = { has_policy_flag = labor_ownership }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.3 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.3 }
 		}
 		else_if = { # 家族所有制 -0.4增长
 			limit={
 				owner = { has_policy_flag = family_ownership }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.4 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.4 }
 		}
 		# 国策
 		if = { # 三倍利润 +3.0增长
 			limit={
 				owner = { has_valid_civic = civic_triple_the_profit }
 			}
-			change_variable = { which = rec_situation_add_civic value = 3 }
+			change_variable = { which = rec_situation_add_civic_temp value = 3 }
 		}
 		if = { # 金融精英/金融投资 +0.3增长
 			limit={
@@ -214,37 +216,37 @@ situation_event = { # 计算情况改善-国策基础 6号
 					}
 				}
 			}
-		   change_variable = { which = rec_situation_add_civic value = 0.3 }
+		   change_variable = { which = rec_situation_add_civic_temp value = 0.3 }
 		}
 		if = { # 奢侈消费主义 +0.3增长
 			limit={
 				owner = { has_valid_civic = civic_consumerism }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.3 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.3 }
 		}
 		if = { # 资本狂热 +0.2增长
 			limit={
 				owner = { has_valid_civic = civic_corpus }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.2 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.2 }
 		}
 		if = { # 行业标兵 +0.2增长
 			limit={
 				owner = { has_valid_civic = civic_industry_pacesetter }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.2 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.2 }
 		}
 		if = { # 超节奏生活 +0.2增长
 			limit={
 				owner = { has_valid_civic = civic_super_fast_paced_life }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.2 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.2 }
 		}
 		if = { # 无休之季 +0.2增长
 			limit={
 				owner = { has_valid_civic = civic_eternal_jihad }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.2 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.2 }
 		}
 		if = { # 创新型经济/创新基金 +0.1增长
 			limit={
@@ -255,7 +257,7 @@ situation_event = { # 计算情况改善-国策基础 6号
 					}
 				}
 			}
-		   change_variable = { which = rec_situation_add_civic value = 0.1 }
+		   change_variable = { which = rec_situation_add_civic_temp value = 0.1 }
 		}
 		if = { # 奴役暴君/奴隶行会/种姓制度/契约资产/死人上班 +0.1增长
 			limit={
@@ -269,7 +271,7 @@ situation_event = { # 计算情况改善-国策基础 6号
 					}
 				}
 			}
-		   change_variable = { which = rec_situation_add_civic value = 0.1 }
+		   change_variable = { which = rec_situation_add_civic_temp value = 0.1 }
 		}
 		if = { # 无情工业化/工业复合体 +0.1增长
 			limit={
@@ -280,19 +282,19 @@ situation_event = { # 计算情况改善-国策基础 6号
 					}
 				}
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.1 }
 		}
 		if = { # 互联网市场 +0.1增长
 			limit={
 				owner = { has_valid_civic = civic_internet_market }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.1 }
 		}
 		if = { # 绩效考核 +0.1增长
 			limit={
 				owner = { has_valid_civic = civic_performance_appraisal }
 			}
-			change_variable = { which = rec_situation_add_civic value = 0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = 0.1 }
 		}
 		if = { # 资本主义 +0.1增长
 			limit={
@@ -303,28 +305,35 @@ situation_event = { # 计算情况改善-国策基础 6号
 					}
 				}
 			}
-		   change_variable = { which = rec_situation_add_civic value = 0.1 }
+		   change_variable = { which = rec_situation_add_civic_temp value = 0.1 }
 		}
 		if = { # 大康采恩 -0.1增长
 			limit={
 				owner = { has_valid_civic = civic_state_monopoly }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.1 }
 		}
 		if = { # 福利国家 -0.1增长
 			limit={
 				owner = { has_valid_civic = civic_welfare_state }
 			}
-			change_variable = { which = rec_situation_add_civic value = -0.1 }
+			change_variable = { which = rec_situation_add_civic_temp value = -0.1 }
 		}
-		if = { # 极简主义/禁欲主义 -0.1增长
-			limit={
-				owner = {
-					has_valid_civic = civic_asceticism
-				}
-			}
-			change_variable = { which = rec_situation_add_civic value = -0.1 }
+		#if = { # 极简主义/禁欲主义 -0.1增长
+		#	limit={
+		#		owner = {
+		#			has_valid_civic = civic_asceticism
+		#		}
+		#	}
+		#	change_variable = { which = rec_situation_add_civic_temp value = -0.1 }
+		#}
+		
+		round_variable_to_closest = {
+			which = rec_situation_add_civic_temp
+			value = 0.001
 		}
+		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_civic_temp }
+		
 		situation_event = { id = ethic_economic.13 days = 5 }
     }
 }
@@ -333,7 +342,21 @@ situation_event = { # 计算情况改善-国策乘数 11号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_mult_civic value = 1 } # 初始化经济情况改善 - 国策乘数
+		# 共同市场计算
+		owner = {
+			rec_market_self_get = yes
+			rec_market_common_get = yes
+		}
+		
+		set_variable = { which = rec_situation_mult_civic_temp value = 1 } # 初始化经济情况改善 - 国策乘数
+		
+		#round_variable_to_closest = {
+		#	which = rec_situation_mult_civic_temp
+		#	value = 0.001
+		#}
+		#multiply_variable = { which = rec_economic_improve_temp value = rec_situation_mult_civic_temp }
+		
+		
 		situation_event = { id = ethic_economic.14 days = 5 }
     }
 }
@@ -342,55 +365,61 @@ situation_event = { # 计算情况改善-法令基础 16号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_edict value = 0 } # 初始化经济情况改善 - 法令基础
+		set_variable = { which = rec_situation_add_edict_temp value = 0 } # 初始化经济情况改善 - 法令基础
 		if = { # 发放消费券 +0.3增长
 			limit = {
 				owner = { has_edict = economic_consumer_coupon }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.3 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.3 }
 		}
 		if = { # 通胀 +0.2增长
 			limit = {
 				owner = { has_edict = economic_inflaction }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.2 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.2 }
 		}
 		if = { # 福报 +0.2增长
 			limit={
 				owner = { has_edict = blessings }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.2 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.2 }
 		}
 		if = { # 消费主义宣传 +0.2增长
 			limit={
 				owner = { has_edict = consumerist_propaganda }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.2 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.2 }
 		}
 		if = { # 学术资源商业化 +0.1增长
 			limit={
 				owner = { has_edict = commercializing_academic_resources }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.1 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.1 }
 		}
 		if = { # 赎罪卷 +0.1增长
 			limit={
 				owner = { has_edict = enhanced_surveillance }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.1 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.1 }
 		}
 		if = { # 弹性工龄 +0.1增长
 			limit={
 				owner = { has_edict = the_flexible_seniority_act }
 			}
-			change_variable = { which = rec_situation_add_edict value = 0.1 }
+			change_variable = { which = rec_situation_add_edict_temp value = 0.1 }
 		}
 		if = { # 反通胀 -0.2增长
 			limit = {
 				owner = { has_edict = economic_deinflaction }
 			}
-			change_variable = { which = rec_situation_add_edict value = -0.2 }
+			change_variable = { which = rec_situation_add_edict_temp value = -0.2 }
 		}
+		
+		round_variable_to_closest = {
+			which = rec_situation_add_edict_temp
+			value = 0.001
+		}
+		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_edict_temp }
 		
 		situation_event = { id = ethic_economic.15 days = 5 }
     }
@@ -400,7 +429,14 @@ situation_event = { # 计算情况改善-法令乘数 21号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_mult_edict value = 1 } # 初始化经济状态改善 - 法令乘数
+		set_variable = { which = rec_situation_mult_edict_temp value = 1 } # 初始化经济状态改善 - 法令乘数
+		
+		#round_variable_to_closest = {
+		#	which = rec_situation_mult_edict_temp
+		#	value = 0.001
+		#}
+		#multiply_variable = { which = rec_economic_improve_temp value = rec_situation_mult_edict_temp }
+		
 		situation_event = { id = ethic_economic.16 days = 5 }
     }
 }
@@ -409,37 +445,73 @@ situation_event = { # 计算情况改善-其它 26号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_market value = 0 } # 初始化经济状态改善 - 市场
-		set_variable = { which = rec_situation_add_approach value = 0 } # 初始化经济状态改善 - 措施
+		set_variable = { which = rec_situation_add_market_temp value = 0 } # 初始化经济状态改善 - 市场
+		set_variable = { which = rec_situation_add_approach_temp value = 0 } # 初始化经济状态改善 - 措施
+		set_variable = { which = rec_situation_add_exploit_temp value = 0 } # 初始化经济状态改善 - 剥削
 		
 		if = { # 产业繁荣
 			limit = {
 				has_situation_flag = industrial_boom
 			}
-			change_variable = { which = rec_situation_add_market value = 0.2 }
+			change_variable = { which = rec_situation_add_market_temp value = 0.2 }
 		}
-		#round_variable_to_closest = {
-		#	which = rec_situation_add_market
-		#	value = 0.01
-		#}
+		round_variable_to_closest = {
+			which = rec_situation_add_market_temp
+			value = 0.001
+		}
+		set_variable = { which = rec_situation_add_market_temp value = rec_situation_add_market }
+		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_market }
 		
 		if = { # 经济刺激项目 +0.5增长
 			limit={
 				rec_approach_is_stimulation = yes
 			}
-			change_variable = { which = rec_situation_add_approach value = 0.5 }
+			change_variable = { which = rec_situation_add_approach_temp value = 0.5 }
 		}
-		else_if = { # 控制市场过热 -0.3增长
+		else_if = { # 控制市场过热 -0.5增长
 			limit={
 				rec_approach_is_cooling = yes
 			}
-			change_variable = { which = rec_situation_add_approach value = -0.3 }
+			change_variable = { which = rec_situation_add_approach_temp value = -0.5 }
 		}
 		else_if = { # 控制商品经济 -0.1增长
 			limit={
 				rec_approach_is_control = yes
 			}
-			change_variable = { which = rec_situation_add_approach value = -0.1 }
+			change_variable = { which = rec_situation_add_approach_temp value = -0.1 }
+		}
+		round_variable_to_closest = {
+			which = rec_situation_add_approach_temp
+			value = 0.001
+		}
+		set_variable = { which = rec_situation_add_approach value = rec_situation_add_approach_temp }
+		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_approach }
+		
+		if = { # 宗主剥削
+			limit = { is_overlord = yes }
+			rec_benefit_exploit_get = yes
+		}
+		else = {
+			set_variable = { which = rec_situation_add_exploit_temp value = 0 }
+		}
+		if = { # 附庸被剥削
+			limit = { # 仅当有市场经济宗主时
+				is_subject = yes
+				overlord = { rec_circle_access = yes }
+			}
+			change_variable = { which = rec_situation_add_exploit_temp value = rec_situation_improve }
+			multiply_variable = { which = rec_situation_add_exploit_temp value = -0.1 }
+		}
+		round_variable_to_closest = {
+			which = rec_situation_add_exploit_temp
+			value = 0.001
+		}
+		set_variable = { which = rec_situation_add_exploit value = rec_situation_add_exploit_temp }
+		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_exploit }
+		
+		round_variable_to_closest = {
+			which = rec_economic_improve_temp
+			value = 0.01
 		}
     }
 }
@@ -527,6 +599,18 @@ situation_event = { # 计算危机阈值 2号
 			}
         }
 		
+		if = { # 经济危机乘数 *50%阈值
+			limit = { has_situation_flag = economic_crisis }
+			multiply_variable = { which = rec_crisis_threshold value = 0.5 }
+		}
+		
+		set_variable = { which = rec_crisis_threshold_self value = rec_crisis_threshold }
+		if = { # 共同市场危机阈值
+			limit = { owner = { NOT = { check_variable = { which = rec_market_common_threshold value = 0 } } } }
+			set_variable = { which = rec_crisis_threshold value = owner.rec_market_common_threshold }
+			set_variable = { which = rec_crisis_threshold_change value = value:rec_crisis_threshold_change }
+		}
+		
 		round_variable_to_closest = {
 			which = rec_crisis_threshold
 			value = 0.01
@@ -539,6 +623,11 @@ situation_event = { # 计算危机增长-有危机时 3号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
+		set_variable = { which = rec_crisis_add_temp value = 0 } # 初始化增长
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
+	
+		set_variable = { which = rec_crisis_add_market value = 0 }
 		if = { # 一般条件市场效应
 			limit={
 				situation_progress > 10
@@ -570,9 +659,10 @@ situation_event = { # 计算危机增长-有危机时 3号
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
-			value = 0.01
+			value = 0.001
 		}
 		
+		set_variable = { which = rec_crisis_add_civic value = 0 }
 		if = { # 受控市场 -0.1增长
 			limit={ owner = { has_policy_flag = economic_stance_mixed } }
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
@@ -588,12 +678,13 @@ situation_event = { # 计算危机增长-有危机时 3号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
-		
-        set_variable = { which = rec_crisis_add value = rec_crisis_add_market }
-        change_variable = { which = rec_crisis_add value = rec_crisis_add_civic }
+		round_variable_to_closest = {
+			which = rec_crisis_add_civic
+			value = 0.001
+		}
 		
 		round_variable_to_closest = {
-			which = rec_crisis_add
+			which = rec_crisis_add_temp
 			value = 0.01
 		}
     }
@@ -603,20 +694,14 @@ situation_event = { # 计算危机增长-无危机时-总结 3号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_crisis_add value = 0 } # 初始化增长
+		set_variable = { which = rec_crisis_add_temp value = 0 } # 初始化增长
 		
-		change_variable = { which = rec_crisis_add value = rec_crisis_add_civic }
-		change_variable = { which = rec_crisis_add value = rec_crisis_add_edict }
-		change_variable = { which = rec_crisis_add value = rec_crisis_add_market }
-		change_variable = { which = rec_crisis_add value = rec_crisis_add_approach }
-		
-		multiply_variable = { which = rec_crisis_add value = rec_crisis_mult_civic }
-		#multiply_variable = { which = rec_crisis_add value = rec_crisis_mult_edict }
-		
-		round_variable_to_closest = {
-			which = rec_crisis_add
-			value = 0.01
-		}
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
+		multiply_variable = { which = rec_crisis_add_temp value = rec_crisis_mult_civic }
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_edict }
+		#multiply_variable = { which = rec_crisis_add_temp value = rec_crisis_mult_edict }
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_approach }
 		
 		situation_event = { id = ethic_economic.32 days = 5 }
     }
@@ -668,6 +753,10 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
 				}
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
+		}
+		round_variable_to_closest = {
+			which = rec_crisis_add_civic
+			value = 0.001
 		}
 		
 		situation_event = { id = ethic_economic.33 days = 5 }
@@ -751,6 +840,11 @@ situation_event = { # 计算危机增长-无危机时-政策乘数 13号
 		#	}
         #    multiply_variable = { which = rec_crisis_mult_civic value = 0.9 }
         #}
+		round_variable_to_closest = {
+			which = rec_crisis_mult_civic
+			value = 0.001
+		}
+		
 		situation_event = { id = ethic_economic.34 days = 5 }
     }
 }
@@ -772,6 +866,10 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = -0.6 }
 		}
+		round_variable_to_closest = {
+			which = rec_crisis_add_edict
+			value = 0.001
+		}
 		
 		situation_event = { id = ethic_economic.35 days = 5 }
     }
@@ -782,6 +880,11 @@ situation_event = { # 计算危机增长-无危机时-法令乘数 23号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_crisis_mult_edict value = 1 } # 初始化危机累积增加 - 法令乘数
+		round_variable_to_closest = {
+			which = rec_crisis_mult_edict
+			value = 0.001
+		}
+		
 		situation_event = { id = ethic_economic.36 days = 5 }
     }
 }
@@ -831,7 +934,7 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
-			value = 0.01
+			value = 0.001
 		}
 		
 		if = { # 控制商品经济 -0.2增长
@@ -849,6 +952,20 @@ situation_event = { # 计算危机积累 4号
     hide_window = yes
     immediate = {
 	
+		set_variable = { which = rec_crisis_add_self value = rec_crisis_add_temp }
+		if = { # 共同市场危机增长
+			limit = { owner = { NOT = { check_variable = { which = rec_market_common_size value = rec_market_self_size } } } }
+			set_variable = { which = rec_crisis_add_temp value = owner.rec_market_common_accumulate }
+			set_variable = { which = rec_crisis_add_change value = value:rec_crisis_add_change }
+			round_variable_to_closest = {
+				which = rec_crisis_add_change
+				value = 0.001
+			}
+		}
+		else = {
+			set_variable = { which = rec_crisis_add_change value = 0 }
+		}
+		
 		if = { # 扩张效应 - 人口
 			limit = {
 				owner = { NOT = { check_variable = { which = rec_expand_pop_0 value = 0 } } }
@@ -872,24 +989,50 @@ situation_event = { # 计算危机积累 4号
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_outside
-			value = 0.01
+			value = 0.001
 		}
-		change_variable = { which = rec_crisis_add value = rec_crisis_add_outside }
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_outside }
 		
 		if = { # 战时经济重整
 			limit = { owner = { is_at_war = yes } }
-			change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
+			change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war } # BUG，本该是set_variable，目前不修
 		}
 		else = { set_variable = { which = rec_crisis_add_war value = 0 } }
 		round_variable_to_closest = {
 			which = rec_crisis_add_war
+			value = 0.001
+		}
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_war }
+		
+		set_variable = { which = rec_crisis_add value = rec_crisis_add_temp }
+		round_variable_to_closest = {
+			which = rec_crisis_add
 			value = 0.01
 		}
-		change_variable = { which = rec_crisis_add value = rec_crisis_add_war }
-		
-		change_variable = { which = rec_crisis_accumulated value = rec_crisis_add }
-		set_variable = { which = rec_crisis_percentage value = value:crisis_percentage }
 
+		if = { # 积累结果不能为负
+			limit = { check_variable = { which = rec_crisis_accumulated value < 0 } }
+			set_variable = { which = rec_crisis_accumulated value = 0 }
+		}
+		round_variable_to_closest = {
+			which = rec_crisis_accumulated
+			value = 0.01
+		}
+		change_variable = { which = rec_crisis_accumulated value = rec_crisis_add }
+		
+		set_variable = { which = rec_crisis_percentage value = value:crisis_percentage }
+		round_variable_to_closest = {
+			which = rec_crisis_percentage
+			value = 0.01
+		}
+    }
+}
+
+situation_event = { # 缓冲事件
+	id = ethic_economic.810
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
     }
 }
 
@@ -897,16 +1040,36 @@ situation_event = { # 判断危机效果 5号
     id = ethic_economic.5
     is_triggered_only = yes
     hide_window = yes
-    #trigger = {
-    #    is_ai = no
-    #}
     immediate = {
+		#顺带总结数据
+		owner = {
+			set_variable = { which = rec_economic_improve value = prev.rec_economic_improve }
+			set_variable = { which = rec_economic_situation value = prev.trigger:situation_progress }
+			set_variable = { which = rec_crisis_add_self value = prev.rec_crisis_add_self }
+			set_variable = { which = rec_crisis_add value = prev.rec_crisis_add }
+			set_variable = { which = rec_crisis_accumulated value = prev.rec_crisis_accumulated }
+			set_variable = { which = rec_crisis_threshold_self value = prev.rec_crisis_threshold_self }
+			set_variable = { which = rec_crisis_threshold value = prev.rec_crisis_threshold }
+			
+			rec_market_self_get = yes
+			rec_market_common_get = yes
+			
+			round_variable_to_closest = {
+				which = rec_market_common_accumulate
+				value = 0.01
+			}
+			round_variable_to_closest = {
+				which = rec_market_common_threshold
+				value = 0.01
+			}
+		}
 	
 		if = { # 有危机时
 			limit = { has_situation_flag = economic_crisis }
 			if = { # 危机积累小于10，结束危机
 				limit = { check_variable = { which = rec_crisis_accumulated value < 10 } }
 				remove_situation_flag = economic_crisis
+				owner = { remove_country_flag = rec_economic_crisis }
 				situation_event = { id = ethic_economic_crisis.10 days = 25 }
 			}
 			if = { # 经济状况回正，结束危机
@@ -915,17 +1078,19 @@ situation_event = { # 判断危机效果 5号
 					situation_monthly_progress > 0
 				}
 				remove_situation_flag = economic_crisis
+				owner = { remove_country_flag = rec_economic_crisis }
 				situation_event = { id = ethic_economic_crisis.11 days = 25 }
 			}
 		}
 		else_if = { # 危机积累超过危机阈值，爆发危机
 			limit = { check_variable = { which = rec_crisis_accumulated value > rec_crisis_threshold } }
 			set_situation_flag = economic_crisis
+			owner = { set_country_flag = rec_economic_crisis }
 			situation_event = { id = ethic_economic_crisis.0 days = 25 }
 		}
 
 		if = { # 危机积累60%以下，低危机
-			limit = { check_variable = { which = rec_crisis_percentage value < 0.6 } }
+			limit = { check_variable = { which = rec_crisis_percentage value < 60 } }
 			if = {
 				limit = { NOT = { has_situation_flag = economic_crisis_distance_low } }
 				set_situation_flag = economic_crisis_distance_low
@@ -934,7 +1099,7 @@ situation_event = { # 判断危机效果 5号
 			}
 		}
 		else_if = { # 危机积累80%以下，中危机
-			limit = { check_variable = { which = rec_crisis_percentage value < 0.8 } }
+			limit = { check_variable = { which = rec_crisis_percentage value < 80 } }
 			if = {
 				limit = { NOT = { has_situation_flag = economic_crisis_distance_middle } }
 				remove_situation_flag = economic_crisis_distance_low
@@ -950,7 +1115,6 @@ situation_event = { # 判断危机效果 5号
 				set_situation_flag = economic_crisis_distance_high
 			}
 		}
-
     }
 }
 

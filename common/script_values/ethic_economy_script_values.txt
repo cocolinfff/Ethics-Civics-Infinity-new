@@ -24,21 +24,21 @@ economy_stage_rebalance_4 = {
 }
 
 crisis_percentage = {
-	base = 1
+	base = 100
 	mult = rec_crisis_accumulated
 	divide = rec_crisis_threshold
 }
 
 crisis_situation_decline = {
-	base = -2
+	base = -0.02
 	mult = root.rec_crisis_percentage
 }
 crisis_crisis_decline = {
-	base = -4
+	base = -0.04
 	mult = root.rec_crisis_percentage
 }
 crisis_decline_war = {
-	base = -0.005
+	base = -0.01
 	mult = rec_crisis_accumulated
 }
 crisis_decline_market_revolution = {
@@ -51,6 +51,15 @@ crisis_breakout = {
 	mult = trigger:situation_progress
 }
 
+effect_exploited_subject = {
+	base = -0.1
+	mult = rec_economic_improve
+}
+effect_exploited_resource = {
+	base = 0.1
+	mult = trigger.num_pops
+	mult = rec_economic_improve
+}
 effect_expand_pop = {
 	base = -1
 	mult = rec_crisis_accumulated
@@ -62,6 +71,73 @@ effect_expand_resource = {
 	mult = owner.rec_expand_resource_0
 	divide = owner.trigger:num_pops
 }
+
+ratio_threshold_common_self = {
+	base = 0
+	add = rec_market_common_threshold
+	divide = rec_crisis_threshold_self
+}
+rec_market_common_accumulate_initial = {
+	base = 0
+	add = rec_crisis_add_self
+	divide = rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_accumulate_spread = {
+	base = 0
+	add = rec_crisis_add_self
+	divide = PREV.rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_accumulate_spread_simple = {
+	base = 1
+	modifier = {
+		add = -0.25
+		is_socialism = yes
+	}
+	modifier = {
+		add = -0.15
+		is_authoritarian = yes
+	}
+	modifier = {
+		add = 3
+		has_valid_civic = civic_triple_the_profit
+	}
+	divide = PREV.rec_market_common_size
+	mult = trigger:num_pops
+}
+rec_crisis_add_change = {
+	base = 0
+	add = owner.rec_market_common_accumulate
+	subtract = rec_crisis_add_self
+}
+rec_market_common_threshold_initial = {
+	base = 0
+	add = rec_crisis_threshold_self
+	divide = rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_threshold_spread = {
+	base = 0
+	add = rec_crisis_threshold_self
+	divide = PREV.rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_threshold_spread_simple = {
+	base = 240
+	modifier = {
+		divide = 3
+		has_modifier = rec_economic_crisis_ai
+	}
+	divide = PREV.rec_market_common_size
+	mult = trigger:num_pops
+}
+rec_crisis_threshold_change = {
+	base = 0
+	add = rec_crisis_threshold
+	subtract = rec_crisis_threshold_self
+}
+
 market_revolution_pop = {
 	base = 0.01
 	mult = market_revolution_size
