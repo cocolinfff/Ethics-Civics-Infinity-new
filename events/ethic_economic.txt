@@ -522,7 +522,6 @@ situation_event = { # 计算情况改善-其它 26号
 		}
 
 		
-
 		round_variable_to_closest = {
 			which = rec_situation_add_exploit_temp
 			value = 0.001
@@ -533,6 +532,33 @@ situation_event = { # 计算情况改善-其它 26号
 		round_variable_to_closest = {
 			which = rec_economic_improve_temp
 			value = 0.01
+		}
+
+		set_variable = { which = economic_mult_due_to_situation value = 0 } # 计算经济繁荣度
+		if = {
+			limit = { situation_progress >= 50 }
+			set_variable = { which = economic_mult_due_to_situation value = trigger:situation_progress }
+			subtract_variable = { which = economic_mult_due_to_situation value = 50 }
+			multiply_variable = { which = economic_mult_due_to_situation value = 0.8 }
+		}
+		else_if = {
+			limit = { situation_progress < 50 }
+			set_variable = { which = economic_mult_due_to_situation value = trigger:situation_progress }
+			multiply_variable = { which = economic_mult_due_to_situation value = -1 }
+			change_variable = { which = economic_mult_due_to_situation value = 50 }
+			multiply_variable = { which = economic_mult_due_to_situation value = 1.8 }
+		}
+		round_variable_to_closest = {
+			which = economic_mult_due_to_situation
+			value = 0.1
+		}
+
+		owner = { # 经济繁荣度buff
+			add_modifier = {
+				modifier = economic_mult_due_to_situation_modifier
+				multiplier = from.economic_mult_due_to_situation
+				clear_on_owner_change = yes
+			}
 		}
     }
 }
