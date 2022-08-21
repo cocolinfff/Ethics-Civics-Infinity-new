@@ -349,6 +349,14 @@ decision_promote_basic_industry_models = {
 
 	ai_weight = {
 		weight = 1
+		modifier = {
+			factor = 0
+			OR = {
+				has_modifier = promote_worker_models
+				has_modifier = promote_basic_industry_models
+				has_modifier = promote_research_models
+			}
+		}
 	}
 }
 
@@ -423,6 +431,14 @@ decision_promote_worker_models = {
 
 	ai_weight = {
 		weight = 1
+		modifier = {
+			factor = 0
+			OR = {
+				has_modifier = promote_worker_models
+				has_modifier = promote_basic_industry_models
+				has_modifier = promote_research_models
+			}
+		}
 	}
 }
 
@@ -498,6 +514,14 @@ decision_promote_research_models = {
 
 	ai_weight = {
 		weight = 1
+		modifier = {
+			factor = 0
+			OR = {
+				has_modifier = promote_worker_models
+				has_modifier = promote_basic_industry_models
+				has_modifier = promote_research_models
+			}
+		}
 	}
 }
 
@@ -1087,6 +1111,105 @@ decision_boost_market_nomination = {
 			factor = 2
 			from = {
 				has_valid_civic = civic_globalism
+			}
+		}
+	}
+}
+
+decision_economic_zone = {
+	owned_planets_only = yes 
+	icon = decision_economic_zone
+	prerequisites = {
+		"tech_colonial_centralization"
+	}
+
+	resources = {
+		category = decisions
+		cost = {
+			influence = 50
+			mult = value:ethic_economic_zone_num
+		}
+	}
+
+	potential = {
+		is_capital = no 
+		NOT = { has_modifier = resort_colony }
+		NOT = { has_modifier = slave_colony }
+		NOT = { has_modifier = penal_colony }
+		NOT = { has_modifier = economic_colony }
+		owner = {
+			has_policy_flag = reform_and_opening_up
+		}
+	}
+	
+	allow = {}
+
+	effect = {
+		add_modifier = {
+			modifier = economic_colony
+			days = -1
+		}
+	}
+
+	ai_weight = {
+		weight = 10
+		modifier = {
+			factor = 0
+			num_pops < 30
+		}
+		modifier = {
+			factor = 0
+			check_modifier_value = {
+				modifier = trade_value_mult
+				value <= 3.00
+			}
+		}
+		modifier = {
+			factor = 0
+			check_modifier_value = {
+				modifier = trade_value_add
+				value <= 200
+			}
+		}
+	}
+}
+
+decision_abolish_economic_zone = {
+	owned_planets_only = yes 
+	icon = decision_economic_zone
+
+
+	resources = {
+		category = decisions
+		cost = {
+			influence = 200
+		}
+	}
+
+	potential = {
+		has_modifier = economic_colony
+	}
+	
+	allow = {}
+
+	effect = {
+		remove_modifier = economic_colony
+	}
+	
+	ai_weight = {
+		weight = 10
+		modifier = {
+			factor = 0
+			check_modifier_value = {
+				modifier = trade_value_mult
+				value >= 2.00
+			}
+		}
+		modifier = {
+			factor = 0
+			check_modifier_value = {
+				modifier = trade_value_add
+				value >= 100
 			}
 		}
 	}

@@ -1054,14 +1054,98 @@ war_doctrine = {
 		}
 
 		AI_weight = {
-			factor = 100
-			modifier = {
-				factor = 0
-				NOR = {
-					has_ai_personality = honorbound_warriors
-					has_ai_personality = devouring_swarm
-				}
+			factor = 1000
+		}
+	}	
+
+	# 终末审判
+	option = {
+		name = "pure_fury"
+
+		potential = {
+			OR = {
+				has_tradition = tr_supremacy_finish
+				has_tradition = tr_revolution_finish
 			}
+		}
+
+		valid = {
+			has_civic = civic_fanatic_purifiers
+		}
+
+		policy_flags = {}
+		modifier = {
+			ship_fire_rate_mult = 1.66
+			ship_speed_mult = 0.66
+			ship_disengage_chance_reduction = 10
+			ship_emergency_ftl_min_days_mult = 1
+			ship_evasion_add = -10
+		}
+
+		AI_weight = {
+			factor = 100000
+		}
+	}
+
+	# 无尽虫群
+	option = {
+		name = "scourge_of_the_universe"
+
+		potential = {
+			OR = {
+				has_tradition = tr_supremacy_finish
+				has_tradition = tr_revolution_finish
+			}
+		}
+
+		valid = {
+			has_civic = civic_hive_devouring_swarm
+		}
+
+		policy_flags = {}
+		modifier = {
+			ship_corvette_cost_mult = -0.15
+			ship_destroyer_cost_mult = -0.05
+			starbase_shipyard_build_speed_mult = 1
+			country_naval_cap_mult = 2
+			country_command_limit_add = 100
+			ships_upkeep_mult = -0.5
+			ship_hull_regen_add_perc = 2
+			ship_armor_regen_add_perc = 2
+			ship_speed_mult = 1
+		}
+
+		AI_weight = {
+			factor = 100000
+		}
+	}
+
+	# 高效杀毒
+	option = {
+		name = "mega_brutal"
+
+		potential = {
+			OR = {
+				has_tradition = tr_supremacy_finish
+				has_tradition = tr_revolution_finish
+			}
+		}
+
+		valid = {
+			has_civic = civic_machine_terminator
+		}
+
+		policy_flags = {}
+		modifier = {
+			ship_weapon_damage = 1.28
+			ship_fire_rate_mult = 0.64
+			ship_weapon_range_mult = 0.32
+			ship_accuracy_add = 16
+			ship_tracking_add = 16
+		}
+
+		AI_weight = {
+			factor = 100000
 		}
 	}
 }
@@ -1264,6 +1348,8 @@ military_service = {
 		}
 		modifier = {
 			pop_defense_armies_add = 1
+			army_defense_health_mult = -0.6
+			army_defense_damage_mult = -0.6
 		}
 		AI_weight = {
 			factor = 1000
@@ -1446,8 +1532,8 @@ ownership = {
 			pop_job_trade_mult = 0.15
 			pop_cat_ruler_political_power = 2
 			pop_cat_specialist_political_power = 1
-			pop_category_rulers_consumer_goods_upkeep_add = 1
-			pop_category_specialists_consumer_goods_upkeep_add = 0.5
+			pop_category_rulers_consumer_goods_upkeep_add = 0.75
+			pop_category_specialists_consumer_goods_upkeep_add = 0.25
 			pop_category_workers_consumer_goods_upkeep_add = 0.05
 		}
 		AI_weight = {
@@ -1479,8 +1565,8 @@ ownership = {
 			planet_bureaucrats_unity_produces_add = 0.5
 			pop_cat_ruler_political_power = 1
 			pop_cat_specialist_political_power = 0.5
-			pop_category_rulers_consumer_goods_upkeep_add = 0.75
-			pop_category_specialists_consumer_goods_upkeep_add = 0.5
+			pop_category_rulers_consumer_goods_upkeep_add = 0.5
+			pop_category_specialists_consumer_goods_upkeep_add = 0.33
 		}
 		AI_weight = {
 			factor = 6
@@ -1509,6 +1595,7 @@ ownership = {
 				has_valid_civic = civic_aristocratic_elite
 				has_valid_civic = civic_family_business
 				has_valid_civic = civic_inwards_perfection
+				has_valid_civic = civic_curse_of_blood_kin
 			}
 		}
 		modifier = {
@@ -1518,9 +1605,9 @@ ownership = {
 			pop_cat_ruler_political_power = 5
 			pop_cat_specialist_political_power = 1
 			pop_cat_worker_political_power = -0.5
-			pop_category_rulers_consumer_goods_upkeep_add = 1.25
-			pop_category_specialists_consumer_goods_upkeep_add = 0.5
-			pop_category_workers_consumer_goods_upkeep_add = -0.05
+			pop_category_rulers_consumer_goods_upkeep_add = 1
+			pop_category_specialists_consumer_goods_upkeep_add = 0.33
+			pop_category_workers_consumer_goods_upkeep_add = -0.1
 		}
 		AI_weight = {
 			factor = 7
@@ -1907,17 +1994,20 @@ economic_stance = {
 			pop_ethic_capitalism_attraction_mult = 0.2
 		}
 		valid = {
-			NOR = {
-				AND = {
-					is_socialism = yes
-					NOT = { has_policy_flag = reform_and_opening_up }
-				}
-				has_ethic = ethic_fanatic_authoritarian
-				has_valid_civic = civic_state_monopoly
-				has_valid_civic = civic_welfare_state
-				any_owned_pop = {
-					has_living_standard = {
-						type = living_standard_shared_burden
+			OR = {
+				has_valid_civic = civic_triple_the_profit
+				NOR = {
+					AND = {
+						is_socialism = yes
+						NOT = { has_policy_flag = reform_and_opening_up }
+					}
+					has_ethic = ethic_fanatic_authoritarian
+					has_valid_civic = civic_state_monopoly
+					has_valid_civic = civic_welfare_state
+					any_owned_pop = {
+						has_living_standard = {
+							type = living_standard_shared_burden
+						}
 					}
 				}
 			}
@@ -1982,14 +2072,17 @@ economic_stance = {
 			pop_ethic_socialism_attraction_mult = 0.2
 		}
 		valid = {
+			OR = {
+				has_valid_civic = civic_socialistic
+				NOR = {
+					has_policy_flag = full_decentralization
+					has_policy_flag = high_decentralization
+				}
+			}
 			NOR = {
 				OR = {
 					is_capitalism = yes
 					has_ethic = ethic_fanatic_egalitarian
-				}
-				OR = {
-					has_policy_flag = full_decentralization
-					has_policy_flag = high_decentralization
 				}
 				has_policy_flag = private_ownership
 				has_policy_flag = reform_and_opening_up
@@ -2038,10 +2131,8 @@ economic_stance = {
 			pop_ethic_socialism_attraction_mult = 0.1
 		}
 		valid = {
-			OR = {
-				is_egalitarian = yes
-				is_socialism = yes
-			}
+			is_socialism = yes
+			is_egalitarian = yes
 			NOT = { has_policy_flag = private_ownership }
 			OR = {
 				has_valid_civic = civic_shared_burden
@@ -2210,8 +2301,8 @@ trade_policy = {
 			trade_conversion_trade_league
 		}
 		modifier = {
-		    job_mogul_per_pop = 0.02
-		    job_merchant_per_pop = 0.04
+		    job_mogul_per_pop = -0.04
+		    job_merchant_per_pop = 0.05
 			pop_ethic_capitalism_attraction_mult = 0.25
 		}
 		AI_weight = {
@@ -2289,7 +2380,7 @@ trade_policy = {
 				factor = 3
 			}
 			modifier = {
-				factor = 10
+				factor = 15
 				OR = {
 					has_valid_civic = "civic_merchant_guilds"
 					has_ethic = "ethic_capitalism"
@@ -2300,7 +2391,7 @@ trade_policy = {
 				has_policy_flag = reform_and_opening_up
 			}
 			modifier = {
-				factor = 20
+				factor = 30
 				has_ethic = "ethic_fanatic_capitalism"
 			}
 		}
@@ -2489,15 +2580,6 @@ trade_policy = {
 					has_monthly_income = {
 						resource = consumer_goods
 						value > 30
-					}
-				}
-			}
-			modifier = {
-				factor = 50
-				owner = {
-					has_monthly_income = {
-						resource = consumer_goods
-						value < 2
 					}
 				}
 			}

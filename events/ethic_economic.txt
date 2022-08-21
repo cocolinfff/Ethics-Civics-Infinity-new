@@ -455,11 +455,29 @@ situation_event = { # 计算情况改善-其它 26号
 			}
 			change_variable = { which = rec_situation_add_market_temp value = 0.2 }
 		}
+
+		if = { # 伞の优化-贸易额总值影响 = 贸易总额/帝国规模 * 系数(0.008)
+			limit = { has_global_flag = z_pf2_installed }
+			set_variable = { which = trade_value_per_size value = owner.PF_var_cntr_TRADE_value }
+			divide_variable = { which = trade_value_per_size value = owner.trigger:empire_size }
+			subtract_variable = { which = trade_value_per_size value = 20 }
+			multiply_variable = { which = trade_value_per_size value = 0.008 }
+
+			if = { #影响上限为3
+				limit = { check_variable = { which = trade_value_per_size value > 3 } }
+				change_variable = { which = rec_situation_add_market_temp value = 3 }
+			}
+			else = {
+				change_variable = { which = rec_situation_add_market_temp value = trade_value_per_size }
+			}
+			
+		}
+
 		round_variable_to_closest = {
 			which = rec_situation_add_market_temp
 			value = 0.001
 		}
-		set_variable = { which = rec_situation_add_market_temp value = rec_situation_add_market }
+		set_variable = { which = rec_situation_add_market value = rec_situation_add_market_temp }
 		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_market }
 		
 		if = { # 经济刺激项目 +0.5增长
@@ -502,6 +520,8 @@ situation_event = { # 计算情况改善-其它 26号
 			change_variable = { which = rec_situation_add_exploit_temp value = rec_situation_improve }
 			multiply_variable = { which = rec_situation_add_exploit_temp value = -0.1 }
 		}
+
+		
 		round_variable_to_closest = {
 			which = rec_situation_add_exploit_temp
 			value = 0.001
@@ -512,6 +532,33 @@ situation_event = { # 计算情况改善-其它 26号
 		round_variable_to_closest = {
 			which = rec_economic_improve_temp
 			value = 0.01
+		}
+
+		set_variable = { which = economic_mult_due_to_situation value = 0 } # 计算经济繁荣度
+		if = {
+			limit = { situation_progress >= 50 }
+			set_variable = { which = economic_mult_due_to_situation value = trigger:situation_progress }
+			subtract_variable = { which = economic_mult_due_to_situation value = 50 }
+			multiply_variable = { which = economic_mult_due_to_situation value = 0.8 }
+		}
+		else_if = {
+			limit = { situation_progress < 50 }
+			set_variable = { which = economic_mult_due_to_situation value = trigger:situation_progress }
+			multiply_variable = { which = economic_mult_due_to_situation value = -1 }
+			change_variable = { which = economic_mult_due_to_situation value = 50 }
+			multiply_variable = { which = economic_mult_due_to_situation value = -2 }
+		}
+		round_variable_to_closest = {
+			which = economic_mult_due_to_situation
+			value = 0.1
+		}
+
+		owner = { # 经济繁荣度buff
+			add_modifier = {
+				modifier = economic_mult_due_to_situation_modifier
+				multiplier = from.economic_mult_due_to_situation
+				clear_on_owner_change = yes
+			}
 		}
     }
 }
@@ -1113,6 +1160,17 @@ situation_event = { # 判断危机效果 5号
 				remove_situation_flag = economic_crisis_distance_low
 				remove_situation_flag = economic_crisis_distance_middle
 				set_situation_flag = economic_crisis_distance_high
+				create_message = {
+					type = ETHIC_ECONOMIC_HIGH_CRISIS
+					localization = ETHIC_ECONOMIC_HIGH_CRISIS_desc
+					days = 30
+					target = this 
+					variable = {
+						type = name 
+						localization = COUNTRY 
+						scope = owner
+					} 
+				}
 			}
 		}
     }
