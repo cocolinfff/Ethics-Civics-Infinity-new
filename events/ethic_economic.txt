@@ -127,6 +127,8 @@ situation_event = { # 计算情况改善-总结 1号
 		set_variable = { which = rec_situation_add_market value = rec_situation_add_market_temp } # 结算经济状态改善 - 市场
 		set_variable = { which = rec_situation_add_approach value = rec_situation_add_approach_temp } # 结算经济状态改善 - 措施
 		set_variable = { which = rec_situation_add_exploit value = rec_situation_add_exploit_temp } # 结算经济状态改善 - 剥削
+		set_variable = { which = rec_situation_add_war value = rec_situation_add_war_temp } # 结算经济状态改善 - 战争
+		
 		owner = {
 			set_variable = { which = rec_situation_add_civic value = prev.rec_situation_add_civic_temp } # 结算经济情况改善 - 国策基础
 			set_variable = { which = rec_situation_mult_civic value = prev.rec_situation_mult_civic_temp } # 结算经济情况改善 - 国策乘数
@@ -135,6 +137,7 @@ situation_event = { # 计算情况改善-总结 1号
 			set_variable = { which = rec_situation_add_market value = prev.rec_situation_add_market_temp } # 结算经济状态改善 - 市场
 			set_variable = { which = rec_situation_add_approach value = prev.rec_situation_add_approach_temp } # 结算经济状态改善 - 措施
 			set_variable = { which = rec_situation_add_exploit value = prev.rec_situation_add_exploit_temp } # 结算经济状态改善 - 剥削
+			set_variable = { which = rec_situation_add_war value = prev.rec_situation_add_war_temp } # 结算经济状态改善 - 战争
 		}
 		
 		set_variable = { which = rec_situation_improve value = rec_situation_improve_temp } # 结算经济状态改善 - 总结
@@ -414,6 +417,12 @@ situation_event = { # 计算情况改善-法令基础 16号
 			}
 			change_variable = { which = rec_situation_add_edict_temp value = -0.2 }
 		}
+		if = { # 债券 +0.3增长
+			limit = {
+				owner = { has_edict = war_bonds }
+			}
+			change_variable = { which = rec_situation_add_edict_temp value = 0.3 }
+		}
 		
 		round_variable_to_closest = {
 			which = rec_situation_add_edict_temp
@@ -448,6 +457,7 @@ situation_event = { # 计算情况改善-其它 26号
 		set_variable = { which = rec_situation_add_market_temp value = 0 } # 初始化经济状态改善 - 市场
 		set_variable = { which = rec_situation_add_approach_temp value = 0 } # 初始化经济状态改善 - 措施
 		set_variable = { which = rec_situation_add_exploit_temp value = 0 } # 初始化经济状态改善 - 剥削
+		#set_variable = { which = rec_situation_add_war_temp value = 0 } # 初始化经济状态改善 - 战争 | 不进行归0处理
 		
 		if = { # 产业繁荣
 			limit = {
@@ -463,22 +473,49 @@ situation_event = { # 计算情况改善-其它 26号
 			subtract_variable = { which = trade_value_per_size value = 20 }
 			multiply_variable = { which = trade_value_per_size value = 0.008 }
 
-			if = { #影响上限为3
+			if = { # 影响上限为3
 				limit = { check_variable = { which = trade_value_per_size value > 3 } }
 				change_variable = { which = rec_situation_add_market_temp value = 3 }
 			}
 			else = {
 				change_variable = { which = rec_situation_add_market_temp value = trade_value_per_size }
 			}
-			
 		}
-
 		round_variable_to_closest = {
 			which = rec_situation_add_market_temp
 			value = 0.001
 		}
 		set_variable = { which = rec_situation_add_market value = rec_situation_add_market_temp }
 		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_market }
+	
+		if = { # 战时经济重整-经济恶化
+			limit = { owner = { is_at_war = yes } }
+			if = {
+				limit = { NOT = { has_situation_flag = economic_at_war } }
+				set_situation_flag = economic_at_war
+				set_variable = { which = rec_situation_add_war_temp value = 0 }
+			}
+		
+			if = {
+				limit = { check_variable = { which = rec_situation_add_war_temp value > -3 } } # 最大为3
+				change_variable = { which = rec_situation_add_war_temp value = -0.02 }
+			}
+		
+			if = { # 衍生法令-战争债券
+				limit = { owner = { has_edict = war_bonds } }
+				change_variable = { which = rec_situation_add_war_temp value = 0.015 } # 长期的债券并不能拯救经济
+			}
+		}
+		else_if = {
+			limit = { owner = { is_at_war = no } }
+			set_variable = { which = rec_situation_add_war_temp value = 0 }
+		}
+		round_variable_to_closest = {
+			which = rec_situation_add_war_temp
+			value = 0.001
+		}
+		set_variable = { which = rec_situation_add_war value = rec_situation_add_war_temp }
+		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_war }
 		
 		if = { # 经济刺激项目 +0.5增长
 			limit={
@@ -913,6 +950,10 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = -0.6 }
 		}
+		if = { # 债券 -0.3增长
+			limit = { owner = { has_edict = war_bonds } }
+			change_variable = { which = rec_crisis_add_edict value = -0.3 }
+		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_edict
 			value = 0.001
@@ -1040,9 +1081,15 @@ situation_event = { # 计算危机积累 4号
 		}
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_outside }
 		
-		if = { # 战时经济重整
+		#if = { # 战时经济重整
+		#	limit = { owner = { is_at_war = yes } }
+		#	change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war } # BUG，本该是set_variable，目前不修
+		#}
+		# 测试新版战争经济-提供少量危机减少
+		if = { # 战时经济重整-释放危机压力
 			limit = { owner = { is_at_war = yes } }
-			change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war } # BUG，本该是set_variable，目前不修
+			set_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
+			multiply_variable = { which = rec_crisis_add_war value = 0.5 } # 战争期间每月减少0.5%(0-1)危机积累
 		}
 		else = { set_variable = { which = rec_crisis_add_war value = 0 } }
 		round_variable_to_closest = {
