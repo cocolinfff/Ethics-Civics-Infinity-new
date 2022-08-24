@@ -466,16 +466,16 @@ situation_event = { # 计算情况改善-其它 26号
 			change_variable = { which = rec_situation_add_market_temp value = 0.2 }
 		}
 
-		if = { # 伞の优化-贸易额总值影响 = 贸易总额/帝国规模 * 系数(0.008)
+		if = { # 伞の优化-贸易额总值影响 = 贸易总额/帝国规模 * 系数(0.005)
 			limit = { has_global_flag = z_pf2_installed }
 			set_variable = { which = trade_value_per_size value = owner.PF_var_cntr_TRADE_value }
 			divide_variable = { which = trade_value_per_size value = owner.trigger:empire_size }
-			subtract_variable = { which = trade_value_per_size value = 20 }
-			multiply_variable = { which = trade_value_per_size value = 0.008 }
+			subtract_variable = { which = trade_value_per_size value = 40 }
+			multiply_variable = { which = trade_value_per_size value = 0.005 }
 
 			if = { # 影响上限为3
-				limit = { check_variable = { which = trade_value_per_size value > 3 } }
-				change_variable = { which = rec_situation_add_market_temp value = 3 }
+				limit = { check_variable = { which = trade_value_per_size value > 1 } }
+				change_variable = { which = rec_situation_add_market_temp value = 1 }
 			}
 			else = {
 				change_variable = { which = rec_situation_add_market_temp value = trade_value_per_size }
@@ -1088,8 +1088,7 @@ situation_event = { # 计算危机积累 4号
 		# 测试新版战争经济-提供少量危机减少
 		if = { # 战时经济重整-释放危机压力
 			limit = { owner = { is_at_war = yes } }
-			set_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
-			multiply_variable = { which = rec_crisis_add_war value = 0.5 } # 战争期间每月减少0.5%(0-1)危机积累
+			set_variable = { which = rec_crisis_add_war value = value:crisis_decline_war } # 战争期间每月减少1%(0-2)危机积累
 		}
 		else = { set_variable = { which = rec_crisis_add_war value = 0 } }
 		round_variable_to_closest = {
@@ -1829,7 +1828,7 @@ planet_event = { # 扩张效应-征服星球带来的危机稀释
     hide_window = yes
     immediate = {
 		from = {
-			change_variable = { which = rec_expand_pop_0 value = trigger:count_pops }
+			change_variable = { which = rec_expand_pop_0 value = trigger:num_pops }
 		}
     }
 }
@@ -1874,18 +1873,14 @@ planet_event = { # 开拓效应-征服者私有化协议过程
 		}
     }
 }
-
 event = { # 战争效应-战争赔款的危机稀释
-    id = ethic_economic.95
-    is_triggered_only = yes
-    hide_window = yes
-    #trigger = {
-    #    is_ai = no
-    #}
-    immediate = {
+	id = ethic_economic.95
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
 		if = {
 			limit = { exist = from }
-			set_variable = { which = rec_pops_out value = trigger:count_pops }
+			set_variable = { which = rec_pops_out value = from.value:num_pops }
 			multiply_variable = { which = rec_pops_out value = 0.05 }
 			from = {
 				change_variable = { which = rec_expand_pop_0 value = rec_pops_out }
@@ -1893,5 +1888,382 @@ event = { # 战争效应-战争赔款的危机稀释
 				change_variable = { which = rec_expand_pop_2 value = rec_pops_out }
 			}
 		}
+	}
+}
+
+situation_event = { # 魅魔酱的完美经济学教室
+    id = ethic_economic.93
+    is_triggered_only = yes
+	hide_window = yes
+	
+
+    immediate = {
+		if = { # crisis
+			limit = { has_situation_flag = economic_crisis }
+			if = { # high accumulated
+				limit = { check_variable = { which = rec_crisis_accumulated value > 50 } }
+				situation_event = { id = ethic_economic.9316 }
+			}
+			else = { # low accumulated
+				situation_event = { id = ethic_economic.9317 }
+			}
+		}
+		else = { # non-crisis
+			if = { # low-crisis
+				limit = { has_situation_flag = economic_crisis_distance_low }
+				if = { # bad economic
+					limit = { situation_progress < 45 }
+					if = { # bad improve
+						limit = { check_variable = { which = rec_situation_improve value < 0.3 } }
+						if = { # at war
+							limit = { is_at_war = yes }
+							situation_event = { id = ethic_economic.9301 }
+						}
+						else = { # not at war
+							situation_event = { id = ethic_economic.9302 }
+						}
+					}
+					else = { # good improve
+						situation_event = { id = ethic_economic.9303 }
+					}
+				}
+				else_if = { # middle economic
+					limit = { situation_progress < 65 }
+					if = { # bad improve
+						limit = { check_variable = { which = rec_situation_improve value < -0.2 } }
+						situation_event = { id = ethic_economic.9304 }
+					}
+					else_if = { # perfect improve
+						limit = { check_variable = { which = rec_situation_improve value < 0.3 } }
+						situation_event = { id = ethic_economic.9305 }
+					}
+					else = { # too much improve
+						situation_event = { id = ethic_economic.9306 }
+					}
+				}
+				else = { # high economic
+					situation_event = { id = ethic_economic.9307 }
+				}
+			}
+			else_if = { # middle-crisis
+				limit = { has_situation_flag = economic_crisis_distance_middle }
+				if = { # bad economic
+					limit = { situation_progress < 45 }
+					if = { # bad improve
+						limit = { check_variable = { which = rec_situation_improve value < 0.2 } }
+						situation_event = { id = ethic_economic.9308 }
+					}
+					else = { # too much improve
+						situation_event = { id = ethic_economic.9309 }
+					}
+				}
+				else_if = { # middle economic
+					limit = { situation_progress < 60 }
+					if = { # good improve
+						limit = { check_variable = { which = rec_situation_improve value < 0.3 } }
+						situation_event = { id = ethic_economic.9310 }
+					}
+
+					else = { # too much improve
+						situation_event = { id = ethic_economic.9311 }
+					}
+				}
+				else = { # high economic
+					if = { # good improve
+						limit = { check_variable = { which = rec_situation_improve value < -0.3 } }
+						situation_event = { id = ethic_economic.9312 }
+					}
+					else = { # too much improve
+						situation_event = { id = ethic_economic.9313 }
+					}
+				}
+			}
+			else_if = { # high-crisis
+				limit = { has_situation_flag = economic_crisis_distance_high }
+				if = { # war
+					limit = { owner = { is_militarist = yes } }
+					situation_event = { id = ethic_economic.9314 }
+				}
+				else = { #trade
+					situation_event = { id = ethic_economic.9314 }
+				}
+			}
+		}
     }
+}
+
+situation_event = { # at war , bad economic , bad improve , low crisis
+	id = ethic_economic.9301
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = war_economic_info
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = war_advice
+	}
+	option = {
+		name = economic_advice
+	}
+}
+situation_event = { # not at war , bad economic , bad improve , low crisis
+	id = ethic_economic.9302
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_progress_info
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = economic_advice
+	}
+	option = {
+		name = civic_advice
+	}
+}
+situation_event = { # not at war , bad economic , good improve , low crisis
+	id = ethic_economic.9303
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_good_future_info
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = economic_advice
+	}
+	option = {
+		name = trade_advice
+	}
+}
+situation_event = { # not at war , mid economic , bad improve , low crisis
+	id = ethic_economic.9304
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_progress_info
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = economic_advice
+	}
+}
+situation_event = { # not at war , mid economic , perfect improve , low crisis
+	id = ethic_economic.9305
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_good_info
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = expand_advice
+	}
+	option = {
+		name = economic_advice
+	}
+}
+situation_event = { # not at war , mid economic , high improve , low crisis
+	id = ethic_economic.9306
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_improve_info
+	option = {
+		name = civic_advice
+	}
+	option = {
+		name = expand_advice
+	}
+	option = {
+		name = policy_advice
+	}
+}
+situation_event = { # not at war , high economic , low crisis
+	id = ethic_economic.9307
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_progress_info
+	option = {
+		name = expand_advice
+	}
+	option = {
+		name = policy_advice
+	}
+	option = {
+		name = trade_advice
+	}
+}
+situation_event = { # not at war , bad economic , bad improve , mid crisis
+	id = ethic_economic.9308
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_progress_info
+	option = {
+		name = expand_advice
+	}
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = edict_advice
+	}
+}
+
+situation_event = { # not at war , bad economic , high improve , mid crisis
+	id = ethic_economic.9309
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_good_future_info
+	option = {
+		name = war_advice
+	}
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = edict_advice
+	}
+}
+situation_event = { # not at war , mid economic , good improve , mid crisis
+	id = ethic_economic.9310
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_crisis_info
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = expand_advice
+	}
+}
+
+situation_event = { # not at war , mid economic , high improve , mid crisis
+	id = ethic_economic.9311
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_progress_info
+	option = {
+		name = economic_advice
+	}
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = war_advice
+	}
+}
+situation_event = { # not at war , high economic , good improve , mid crisis
+	id = ethic_economic.9312
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_progress_info
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = economic_advice
+	}
+	option = {
+		name = war_advice
+	}
+}
+situation_event = { # not at war , high economic , high improve , mid crisis
+	id = ethic_economic.9313
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_crisis_desc
+	option = {
+		name = policy_advice
+	}
+	option = {
+		name = economic_advice
+	}
+	option = {
+		name = approach_advice
+	}
+}
+situation_event = { # not at war , high economic , high improve , mid crisis
+	id = ethic_economic.9314
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	picture = GFX_economic_classroom
+	
+	desc = economic_crisis_info
+	option = {
+		name = war_advice
+	}
+	option = {
+		name = trade_advice
+	}
+	option = {
+		name = policy_advice
+	}
+}
+situation_event = { # not at war , high economic , high improve , mid crisis
+	id = ethic_economic.9316
+	is_triggered_only = yes
+	picture = GFX_economic_classroom
+	title = ethic_economic.classroom.title
+	
+	
+	desc = economic_in_crisis_info
+	option = {
+		name = war_advice
+	}
+	option = {
+		name = wait_advice
+	}
+	option = {
+		name = expand_advice
+	}
+}
+situation_event = { # not at war , high economic , high improve , mid crisis
+	id = ethic_economic.9317
+	is_triggered_only = yes
+	title = ethic_economic.classroom.title
+	
+	
+	desc = economic_in_crisis_info
+	option = {
+		name = approach_advice
+	}
+	option = {
+		name = edict_advice
+	}
+	option = {
+		name = policy_advice
+	}
 }
