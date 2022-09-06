@@ -236,9 +236,10 @@ building_ethic_akx_worm_4 = {
 	}
 }
 
-#艺术俱乐部
-building_art_club = {
+#先驱者纪念碑
+building_autochthon_monument = {
 	base_buildtime = @b1_time
+	base_cap_amount = 1
 	category = unity
 
 	potential = {
@@ -247,7 +248,8 @@ building_art_club = {
 		owner = {
 			NOR = {
 				is_gestalt = yes
-				is_spiritualist = yes
+				is_megacorp = yes
+				is_memorialist_empire = yes
 			}
 		}
 	}
@@ -259,7 +261,8 @@ building_art_club = {
 			owner = {
 				OR = {
 					is_gestalt = yes
-					is_spiritualist = yes
+					is_megacorp = yes
+					is_memorialist_empire = yes
 				}
 			}
 		}
@@ -267,6 +270,11 @@ building_art_club = {
 
 	resources = {
 		category = planet_buildings
+		produces = {
+			trigger = { exists = owner }
+			unity = 1
+			multiplier = owner.trigger:num_ascension_perks
+		}
 		produces = {
 			trigger = {
 				exists = owner
@@ -282,13 +290,14 @@ building_art_club = {
 		cost = {
 			minerals = @b1_minerals
 		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
 	}
 
 	planet_modifier = {
 		job_culture_worker_add = @b1_jobs
+	}
+
+	triggered_desc = {
+		text = building_autochthon_monument_effect
 	}
 
 	triggered_desc = {
@@ -310,24 +319,28 @@ building_art_club = {
 	}
 
 	upgrades = {
-		building_art_building
+		building_heritage_site
 	}
 
 	convert_to = {
-		building_hive_node
-		building_uplink_node
+		building_corporate_monument
+		building_simulation_1
+		building_galactic_memorial_1
+		building_sensorium_1
 	}
 
 	show_tech_unlock_if = {
 		is_gestalt = no
-		is_spiritualist = no
+		is_megacorp = no
+		is_memorialist_empire = no
 	}
 }
 
-#艺术大楼
-building_art_building = {
+#传承遗迹
+building_heritage_site = {
 	base_buildtime = @b2_time
 	can_build = no
+
 	category = unity
 
 	potential = {
@@ -336,9 +349,13 @@ building_art_building = {
 		owner = {
 			NOR = {
 				is_gestalt = yes
-				is_spiritualist = yes
+				is_megacorp = yes
 			}
 		}
+	}
+
+	allow = {
+		has_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
@@ -348,14 +365,26 @@ building_art_building = {
 			owner = {
 				OR = {
 					is_gestalt = yes
-					is_spiritualist = yes
+					is_megacorp = yes
 				}
 			}
 		}
 	}
 
+	convert_to = {
+		building_corporate_site
+		building_simulation_2
+		building_galactic_memorial_2
+		building_sensorium_2
+	}
+
 	resources = {
 		category = planet_buildings
+		produces = {
+			trigger = { exists = owner }
+			unity = 2
+			multiplier = owner.trigger:num_ascension_perks
+		}
 		produces = {
 			trigger = {
 				exists = owner
@@ -370,16 +399,104 @@ building_art_building = {
 		}
 		cost = {
 			minerals = @b2_minerals
-			rare_crystals = @b2_rare_cost
-		}
-		upkeep = {
-			energy = @b2_upkeep
-			rare_crystals = @b2_rare_upkeep
 		}
 	}
 
 	planet_modifier = {
 		job_culture_worker_add = @b2_jobs
+	}
+
+	triggered_desc = {
+		text = building_heritage_site_effect
+	}
+
+	prerequisites = {
+		"tech_heritage_site"
+	}
+
+	show_tech_unlock_if = {
+		is_gestalt = no
+		is_megacorp = no
+		is_memorialist_empire = no
+	}
+
+	upgrades = {
+		building_hypercomms_forum
+	}
+}
+
+#超光速通讯论坛
+building_hypercomms_forum = {
+	base_buildtime = @b3_time
+	can_build = no
+
+	category = unity
+
+	potential = {
+		exists = owner
+		NOT = { has_modifier = slave_colony }
+		owner = {
+			NOR = {
+				is_gestalt = yes
+				is_megacorp = yes
+			}
+		}
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = slave_colony
+			owner = {
+				OR = {
+					is_gestalt = yes
+					is_megacorp = yes
+				}
+			}
+		}
+	}
+
+	convert_to = {
+		building_corporate_forum
+		building_simulation_3
+		building_galactic_memorial_3
+		building_sensorium_3
+	}
+
+	resources = {
+		category = planet_buildings
+		produces = {
+			trigger = { exists = owner }
+			unity = 3
+			multiplier = owner.trigger:num_ascension_perks
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_futuristic_art
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			multiplier = owner.trigger:num_ascension_perks
+		}
+		cost = {
+			minerals = @b3_minerals
+		}
+	}
+
+	planet_modifier = {
+		job_culture_worker_add = @b3_jobs
+	}
+
+	triggered_desc = {
+		text = building_hypercomms_forum_effect
 	}
 
 	triggered_desc = {
@@ -397,17 +514,13 @@ building_art_building = {
 	}
 
 	prerequisites = {
-		"tech_heritage_site"
-	}
-
-	convert_to = {
-		building_hive_cluster
-		building_network_junction
+		"tech_hypercomms_forum"
 	}
 
 	show_tech_unlock_if = {
 		is_gestalt = no
-		is_spiritualist = no
+		is_megacorp = no
+		is_memorialist_empire = no
 	}
 }
 
@@ -1641,13 +1754,28 @@ building_planet_network_node = {
 		exists = owner
 		owner = {
 			has_valid_civic = civic_OGAS
+			NOT = { has_technology = tech_sapient_ai }
 		}
 	}
+
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
+			OR = {
+				NOT = { has_valid_civic = civic_OGAS }
+				has_technology = tech_sapient_ai
+			}
 		}
+	}
+
+	convert_to = {
+		building_planetary_management_center
+		building_bureaucratic_1
+		building_hive_node
+		building_uplink_node
+		building_temple
+		building_information_tower
 	}
 
 	planet_modifier = {
@@ -1775,15 +1903,6 @@ building_planet_network_node = {
 		}
 		text = job_democratic_politician_effect_desc
 	}
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				has_technology = tech_sapient_ai
-			}
-		}
-		text = job_researcher_effect_desc
-	}
 	ai_weight = {
 		weight = 5000
 	}
@@ -1792,19 +1911,27 @@ building_planet_network_node = {
 #星球管理中枢
 building_planetary_management_center = {
 	base_buildtime = @b2_time
-	can_build = no
 	category = government
 	potential = {
 		exists = owner
 		owner = {
 			has_valid_civic = civic_OGAS
+			has_technology = tech_sapient_ai
 		}
 	}
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
+			NOT = { has_valid_civic = civic_OGAS }
 		}
+	}
+
+	convert_to = {
+		building_hive_cluster
+		building_network_junction
+		building_bureaucratic_2
+		building_information_tower
 	}
 	
 	country_modifier = {
@@ -1960,10 +2087,6 @@ building_planetary_management_center = {
 			}
 			energy = 3
 		}
-	}
-
-	prerequisites = {
-		"tech_sapient_ai"
 	}
 
 	triggered_desc = {
@@ -3496,7 +3619,7 @@ building_bureaucratic_1 = {
 			}
 		}
 		modifier = {
-			job_bureaucrat_add = 2
+			job_bureaucrat_add = 1
 		}
 	}
 
@@ -3532,7 +3655,7 @@ building_bureaucratic_1 = {
 			}
 		}
 		modifier = {
-			job_manager_add = 2
+			job_manager_add = 1
 		}
 	}
 
@@ -3564,7 +3687,7 @@ building_bureaucratic_1 = {
 			}
 		}
 		modifier = {
-			job_clerk_add = 2
+			job_clerk_add = 1
 		}
 	}
 
@@ -3581,8 +3704,17 @@ building_bureaucratic_1 = {
 		text = job_clerk_effect_desc
 	}
 
+	planet_modifier = {
+		job_media_worker_add = 1
+	}
+
+	triggered_desc = {
+		text = job_media_worker_effect_desc
+	}
+
 	upgrades = {
 		"building_bureaucratic_2"
+		"building_media_worker_2"
 	}
 
 	prerequisites = {
@@ -3639,8 +3771,9 @@ building_bureaucratic_2 = {
 	convert_to = {
 		building_hive_cluster
 		building_network_junction
+		building_planet_network_node
 		building_planetary_management_center
-		building_holotemple
+		building_information_tower
 	}
 
 	resources = {
@@ -3759,9 +3892,9 @@ building_bureaucratic_2 = {
 		"tech_colonial_bureaucracy"
 	}
 
-	upgrades = {
-		"building_bureaucratic_3"
-	}
+	#upgrades = {
+	#	"building_bureaucratic_3"
+	#}
 
 	show_tech_unlock_if = {
 		is_regular_empire = yes
@@ -3778,13 +3911,14 @@ building_bureaucratic_3 = {
 	potential = {
 		exists = owner
 		owner = { is_regular_empire = yes }
-		owner = { is_spiritualist = no }
-		NOT = { has_modifier = slave_colony }
+		NOR = { 
+			has_modifier = slave_colony 
+			owner = { has_ethic = ethic_fanatic_spiritualist }
+		}
 	}
 
 	allow = {
 		has_upgraded_capital = yes
-		owner = { is_spiritualist = no }
 	}
 
 	destroy_trigger = {
@@ -3930,6 +4064,70 @@ building_bureaucratic_3 = {
 
 	show_tech_unlock_if = {
 		is_regular_empire = yes
+	}
+}
+
+#媒体大楼
+building_media_worker_2 = {
+	base_buildtime = @b1_time
+	category = unity
+
+	potential = {
+		exists = owner
+		NOT = { has_modifier = slave_colony }
+		owner = {
+			NOR = {
+				is_gestalt = yes
+				is_spiritualist = yes
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = slave_colony
+			owner = {
+				OR = {
+					is_gestalt = yes
+					is_spiritualist = yes
+				}
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		job_media_worker_add = @b2_jobs
+	}
+
+	triggered_desc = {
+		text = job_media_worker_effect_desc
+	}
+
+	prerequisites = {
+		"tech_effective_bureaucracy"
+	}
+
+	convert_to = {
+		building_hive_cluster
+		building_network_junction
+	}
+
+	show_tech_unlock_if = {
+		is_gestalt = no
+		is_spiritualist = no
 	}
 }
 
