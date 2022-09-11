@@ -1,0 +1,79 @@
+# 国策年检通用
+
+namespace = ethic_civic_yearly
+
+country_event = {
+	id = ethic_civic_yearly.2
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		OR = {
+			has_valid_civic = civic_zhaowen_dao
+		}
+	}
+
+	immediate = {
+				#改下面这个数字可以改变每次过劳死人数
+				while = { count = 2     
+					# 献祭人口
+						random_owned_pop = {
+							weights = { base = 2
+								modifier = { factor = 4		OR = { is_pop_category = specialist } }	# 专家
+								modifier = { factor = 8		OR = { is_pop_category = ruler } }	# 统治者
+							}
+							kill_pop = yes
+						}
+				}
+				
+	}
+}
+
+country_event = {
+	id = ethic_civic_yearly.3
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		OR = {
+			has_valid_civic = civic_forever_with_us
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = { NOT = { has_country_flag = vanguard_set_started } }
+			set_variable = { which = vanguard_num value = 0 }
+			set_country_flag = vanguard_set_started
+		}
+		capital_scope = {
+			if = {
+				limit = { years_passed < 10 }
+				add_vanguard_pop = { POSSIBILITY = 0 }
+			}
+			else_if = {
+				limit = { check_variable = { which = vanguard_num value < trigger:num_ascension_perks } }
+				add_vanguard_pop = { POSSIBILITY = 75 }
+			}
+			else = {
+				add_vanguard_pop = { POSSIBILITY = 5 }
+			}
+		}		
+	}
+}
+
+country_event = {
+	id = ethic_civic_yearly.4
+	is_triggered_only = yes
+	desc = ethic_civic_yearly.4.desc
+	title = ethic_civic_yearly.4.title
+	option = {
+		name = ethic_civic_yearly.4.a
+	}
+	option = {
+		name = ethic_civic_yearly.4.b
+		hidden_effect = {
+			set_country_flag = vanguard_no_window
+		}
+	}
+}
