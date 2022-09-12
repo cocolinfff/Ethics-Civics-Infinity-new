@@ -46,16 +46,23 @@ country_event = {
 			set_variable = { which = vanguard_num value = 0 }
 			set_country_flag = vanguard_set_started
 		}
-		capital_scope = {
+		every_owned_planet = {
 			if = {
-				limit = { years_passed < 10 }
+				limit = {
+					years_passed < 10
+					NOT = { has_planet_flag = vanguard_star_yes }
+				}
 				add_vanguard_pop = { POSSIBILITY = 0 }
 			}
 			else_if = {
-				limit = { check_variable = { which = vanguard_num value < trigger:num_ascension_perks } }
+				limit = {
+					check_variable = { which = vanguard_num value < trigger:num_ascension_perks }
+					NOT = { has_planet_flag = vanguard_star_yes }
+				}
 				add_vanguard_pop = { POSSIBILITY = 75 }
 			}
 			else = {
+				limit = { NOT = { has_planet_flag = vanguard_star_yes } }
 				add_vanguard_pop = { POSSIBILITY = 5 }
 			}
 		}		
@@ -75,5 +82,37 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = vanguard_no_window
 		}
+	}
+}
+
+planet_event = {
+	id = ethic_civic_yearly.5
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		planet.owner = {
+			has_valid_civic = civic_forever_with_us
+		}
+	}
+
+	immediate = {
+		planet_event = { id = ethic_civic_yearly.6 days = 90000 }	
+	}
+}
+
+planet_event = {
+	id = ethic_civic_yearly.7
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		planet.owner = {
+			has_valid_civic = civic_forever_with_us
+		}
+	}
+
+	immediate = {
+		set_planet_flag = vanguard_star_yes
 	}
 }
