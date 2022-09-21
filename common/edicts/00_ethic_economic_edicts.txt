@@ -186,3 +186,105 @@ explorer_privatization = { # 开拓者私有化协议
 		}
 	}
 }
+
+# 战争债券
+war_bonds = {
+	length = 360
+	icon = "GFX_edict_type_policy"
+	
+	resources = {
+		category = edicts
+		cost = {
+			influence = 25
+			mult = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+		}
+	}
+	
+	effect = {
+		custom_tooltip = edict_economic_war_bonds_tooltip
+		hidden_effect = {
+			add_modifier = {
+				modifier = economic_war_bonds_num
+				multiplier = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+				clear_on_owner_change = yes
+			}
+			#add_modifier = {
+			#	modifier = economic_war_bonds_num
+			#	multiplier = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+			#	clear_on_owner_change = yes
+			#}
+		}
+	}
+	modifier = {
+		planet_jobs_alloys_produces_mult = 0.40
+		planet_jobs_produces_mult = -0.25
+		planet_pops_consumer_goods_upkeep_mult = -0.25
+	}
+	
+	potential = {
+		is_at_war = yes
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+	possible = {
+		any_situation = {
+			limit = { is_situation_type = situation_economic_circle }
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+	
+	ai_weight = {
+		weight = 0
+	}
+}
+
+
+# 清除债券
+clean_war_bonds = {
+	length = 1800
+	icon = "GFX_edict_type_policy"
+	
+	resources = {
+		category = edicts
+		cost = {
+			unity = 1000
+			mult = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+		}
+	}
+	
+	effect = {
+		custom_tooltip = clean_war_bonds_tooltip
+		hidden_effect = {
+			add_modifier = {
+				modifier = economic_war_bonds_num
+				multiplier = 0
+				clear_on_owner_change = yes
+			}
+			#add_modifier = {
+			#	modifier = economic_war_bonds_num
+			#	multiplier = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+			#	clear_on_owner_change = yes
+			#}
+		}
+	}
+	modifier = {
+		country_cost_mult = 0.25
+		planet_jobs_produces_mult = 0.05
+		planet_pops_consumer_goods_upkeep_mult = 0.75
+	}
+	
+	potential = {
+		is_at_war = no
+		has_country_flag = ETHIC_MARKET_ECONOMY
+		check_modifier_value = { which = economic_war_bonds_num value > 0 }
+	}
+	possible = {
+		any_situation = {
+			limit = { is_situation_type = situation_economic_circle }
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+	
+	ai_weight = {
+		weight = 0
+	}
+}

@@ -125,6 +125,7 @@ manufacturing_workers = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -287,6 +288,7 @@ smelting_workers = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -513,6 +515,7 @@ labour_hero = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -721,6 +724,7 @@ druid = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -905,6 +909,7 @@ conscript = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -1097,7 +1102,7 @@ conscript = {
 	}
 }
 
-# 苗床
+#苗床
 tentacle_seedbed = {
 	category = worker
 	condition_string = WORKER_JOB_TRIGGER
@@ -1219,6 +1224,7 @@ re_acolyte_metallurgists = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -1349,6 +1355,7 @@ re_acolyte_artisan = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -1491,6 +1498,7 @@ re_acolyte_farm = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -1660,6 +1668,7 @@ re_acolyte_mine = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -1824,6 +1833,7 @@ re_acolyte_generator = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -2569,8 +2579,7 @@ media_worker = {
 	resources = {
 		category = planet_culture_workers
 		produces = {
-			unity = 4
-			society_research = 1
+			unity = 3
 		}
 		#信息管制
 		produces = {
@@ -2603,7 +2612,7 @@ media_worker = {
 					has_ethic = ethic_fanatic_pacifist
 				}
 			}
-			unity = 1
+			unity = 2
 		}
 		produces = {
 			trigger = {
@@ -2612,49 +2621,29 @@ media_worker = {
 					has_ethic = ethic_pacifist
 				}
 			}
-			unity = 0.5
+			unity = 1
 		}
 		upkeep = {
-			consumer_goods = 2
+			consumer_goods = 1
 		}
 	}
 
-	#完全自由
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_policy_flag = freedom_of_speech
-			}
-		}
-		planet_stability_add = -45
-		planet_crime_mult = 0.65
-		mult = planet.society_factor_pops
+	planet_modifier = {
+		POP_ETHICS_SHIFT_SPEED = 0.1
 	}
 
-	#严格管理
-	triggered_planet_modifier = {
+	#舆论控制
+	triggered_planet_modifier = { #严格管理
 		potential = {
 			owner = {
 				has_policy_flag = strict_control
 			}
 		}
-		planet_stability_add = 40
-		pop_cat_ruler_political_power = 10
-		mult = planet.society_factor_pops
-	}
-
-	#市场运作
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_policy_flag = market_operation
-			}
+		modifier = {
+			pop_cat_ruler_political_power = 0.5
 		}
-		planet_stability_add = 45
-		planet_crime_mult = 0.65
-		mult = planet.society_factor_pops
 	}
-	triggered_planet_modifier = {
+	triggered_planet_modifier = { #市场运作
 		potential = {
 			owner = {
 				has_policy_flag = market_operation
@@ -2662,8 +2651,22 @@ media_worker = {
 		}
 		modifier = {
 			trade_value_add = 2
+			planet_crime_add = 3
 		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_country_modifier = { #加经费
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = strict_control
+					has_policy_flag = market_operation
+				}
+			}
+		}
+		modifier = {
+			country_edict_fund_add = 1
+		}
 	}
 
 	weight = {
@@ -3114,6 +3117,7 @@ model_worker = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -3306,6 +3310,7 @@ deep_miner = {
 					OR = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
 					}
 				}
 			}
@@ -5603,6 +5608,50 @@ breeding_drone = {
 
 	weight = {
 		weight = -1.0
+	}
+}
+
+#不朽者
+vanguard = {
+	category = complex_drone
+	condition_string = DRONE_JOB_TRIGGER
+	is_capped_by_modifier = no
+	building_icon = building_power_plant
+	clothes_texture_index = 2
+	icon = mind_thrall
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible = {
+		owner = {
+			has_valid_civic = civic_forever_with_us
+		}
+		planet = {
+			num_assigned_jobs = {
+				job = vanguard
+				value <= 20
+			}
+		}
+		has_trait = trait_hive_mind
+	}
+	resources = {
+		category = planet_politicians
+		upkeep = {
+			energy = 6
+		}
+	}
+	planet_modifier = {
+		plan_type_mult = 0.05
+	}
+	country_modifier = {
+		country_admin_cap_add = 10
+	}
+	weight = {
+		weight = 9999
 	}
 }
 

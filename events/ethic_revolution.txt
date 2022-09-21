@@ -6,7 +6,7 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {	
-		has_swapped_tradition = tr_revolution_revolutionary_propaganda_soc
+		has_tradition = tr_revolution_revolutionary_propaganda
 	}
 	
 	immediate = {
@@ -33,7 +33,7 @@ country_event = {
 				}
 				remove_country_flag = revolutionary_propaganda
 			    add_modifier = {
-				    modifier = "mod_revolutionary_propaganda"
+				    modifier = "revolutionary_propaganda"
 				    days = 360
 			    }
 			}
@@ -47,7 +47,7 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {	
-		has_swapped_tradition = tr_revolution_revolutionary_propaganda_soc
+		has_tradition = tr_revolution_revolutionary_propaganda
 	}
 	
 	immediate = {
@@ -70,68 +70,71 @@ country_event = {
 
 country_event = {
 	id = ethic_revolution.3
-	hide_window = yes
+	title = "ethic_revolution.3.name"
+	desc = "ethic_revolution.3.desc"
+	picture = GFX_evt_victorious_army
+	location = ROOT
 	is_triggered_only = yes
 	
-	trigger = {	
-		has_swapped_tradition = tr_revolution_revolutionary_propaganda
+	trigger = {
+		OR = {
+			is_capitalism = yes
+			is_authoritarian = yes
+		}
+		has_tradition = tr_revolution_finish
 	}
-	
-	immediate = {
-		every_neighbor_country = {
-			limit = {
-				NOT = {
-					has_ethic = ethic_gestalt_consciousness
+
+	option = {
+		name = "ethic_revolution.3.a"
+		custom_tooltip = ethic_revolution.3.a.tooltip
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ethic = ethic_capitalism
 				}
+				country_remove_ethic = ethic_capitalism
+				shift_ethic = ethic_socialism
 			}
 			if = {
 				limit = {
-					NOT = { has_country_flag = revolutionary_propaganda_free }
+					has_ethic = ethic_fanatic_capitalism
 				}
-				set_country_flag = revolutionary_propaganda_free
-			    add_modifier = {
-				    modifier = "mod_revolutionary_propaganda_free"
-				    days = 360
-			    }
+				country_remove_ethic = ethic_fanatic_capitalism
+				shift_ethic = ethic_fanatic_socialism
 			}
 			if = {
 				limit = {
-					has_country_flag = revolutionary_propaganda_free
-					NOT = { has_modifier = mod_revolutionary_propaganda_free }
+					has_ethic = ethic_authoritarian
 				}
-				remove_country_flag = revolutionary_propaganda_free
-			    add_modifier = {
-				    modifier = "revolutionary_propaganda_free"
-				    days = 360
-			    }
+				country_remove_ethic = ethic_authoritarian
+				shift_ethic = ethic_egalitarian
+			}
+			if = {
+				limit = {
+					has_ethic = ethic_fanatic_authoritarian
+				}
+				country_remove_ethic = ethic_fanatic_authoritarian
+				shift_ethic = ethic_fanatic_egalitarian
+			}
+			kill_leader = {
+				show_notification = no
+				type = ruler
 			}
 		}
 	}
-}
 
-country_event = {
-	id = ethic_revolution.4
-	hide_window = yes
-	is_triggered_only = yes
-	
-	trigger = {	
-		has_swapped_tradition = tr_revolution_revolutionary_propaganda
-	}
-	
-	immediate = {
-		every_neighbor_country = {
-			limit = {
-				NOT = {
-					has_ethic = ethic_gestalt_consciousness
+	option = {
+		name = "ethic_revolution.3.b"
+		custom_tooltip = ethic_revolution.3.b.tooltip
+		hidden_effect = {
+			set_country_flag = not_revorution
+			every_owned_pop = {
+				random_list = {
+					9 = { }
+					1 = { kill_pop = yes }
 				}
 			}
-			if = {
-				limit = {
-					has_country_flag = revolutionary_propaganda_free
-					has_modifier = mod_revolutionary_propaganda_free
-				}
-				remove_country_flag = revolutionary_propaganda_free
-			}
+			add_modifier = { modifier = "unity_deficit" days = 3600 }
 		}
 	}
 }
