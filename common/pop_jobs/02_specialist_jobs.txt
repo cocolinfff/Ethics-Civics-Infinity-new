@@ -3524,3 +3524,135 @@ reassigner = {
 		weight = 500
 	}
 }
+
+bath_attendant = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_toxic_bath
+	clothes_texture_index = 3
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	triggered_planet_modifier = {
+		pop_growth_speed = 0.01
+		pop_environment_tolerance = -0.0025
+		pop_happiness = -0.0075
+		mult = planet.value:toxic_attendant_growth
+	}
+
+
+	resources = {
+		category = planet_bath_attendants
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_multiple_resources_modifier|JOB|artificer|RESOURCE1|consumer_goods|WEIGHT1|0.8|RESOURCE2|engineering_research|WEIGHT2|0.2|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
+		modifier = {
+			factor = 2
+			is_enslaved = yes
+			can_take_servant_job = no
+		}
+		modifier = {
+			factor = 5
+			has_job = bath_attendant
+		}
+	}
+}
+
+knight = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_order_keep
+	clothes_texture_index = 3
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_enslaved = no
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	resources = {
+		category = knights_independent_category
+		produces = {
+			trigger = { exists = owner }
+			unity = 3
+			mult = value:knights_unity_output_modifier
+		}
+		produces = {
+			trigger = { exists = owner }
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+			mult = value:knights_research_output_modifier
+		}
+		upkeep = {
+			alloys = 1
+		}
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			always = yes
+		}
+		pop_defense_armies_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_country_flag = toxoids_7090_a }
+		}
+		planet_stability_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
+	}
+
+	triggered_country_modifier = {
+		country_naval_cap_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			owner = { has_country_flag = toxoids_7165_a }
+		}
+		country_alloys_produces_mult = 0.015
+	}
+
+	weight = {
+		weight = @high_prio_specialist_job_weight
+		factor = 1.2
+		modifier = {
+			mult = value:job_weights_modifier|JOB|bureaucrat|RESOURCE|unity|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:job_weights_research_modifier|JOB|researcher|
+		}
+	}
+}
