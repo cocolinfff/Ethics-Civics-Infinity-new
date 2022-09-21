@@ -154,6 +154,14 @@ situation_event = { # 计算情况改善-国策基础 6号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_situation_add_civic_temp value = 0 } # 初始化经济情况改善 - 国策基础
+		if = { # 加载scripted_modifier
+			limit={ has_situation_flag = economic_crisis }
+			change_variable = { which = rec_situation_add_civic_temp value = modifier:rec_incrisis_civic_situation_improve_add }
+		}
+		else = {
+			change_variable = { which = rec_situation_add_civic_temp value = modifier:rec_civic_situation_improve_add }
+		}
+		
 		# 政策
 		if = { # 自由市场 +1.0增长
 			limit={
@@ -373,7 +381,8 @@ situation_event = { # 计算情况改善-法令基础 16号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		set_variable = { which = rec_situation_add_edict_temp value = 0 } # 初始化经济情况改善 - 法令基础
+		set_variable = { which = rec_situation_add_edict_temp value = 0 } # 初始化经济情况改善 - 法令基础国策基础
+		change_variable = { which = rec_situation_add_edict_temp value = modifier:rec_edict_situation_improve_add } # 加载scripted_modifier
 		if = { # 发放消费券 +0.3增长
 			limit = {
 				owner = { has_edict = economic_consumer_coupon }
@@ -690,7 +699,11 @@ situation_event = { # 计算危机阈值 2号
 		
 		if = { # 经济危机乘数 *50%阈值
 			limit = { has_situation_flag = economic_crisis }
+			change_variable = { which = rec_crisis_threshold value = modifier:rec_incrisis_crisis_threshold_add } # 加载scripted_modifier
 			multiply_variable = { which = rec_crisis_threshold value = 0.5 }
+		}
+		else = {
+			change_variable = { which = rec_crisis_threshold value = modifier:rec_crisis_threshold_add } # 加载scripted_modifier
 		}
 		
 		set_variable = { which = rec_crisis_threshold_self value = rec_crisis_threshold }
@@ -752,6 +765,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 		}
 		
 		set_variable = { which = rec_crisis_add_civic value = 0 }
+		change_variable = { which = rec_crisis_add_civic value = modifier:mod_rec_incrisis_civic_crisis_accumulate_add } # 加载scripted_modifier
 		if = { # 受控市场 -0.1增长
 			limit={ owner = { has_policy_flag = economic_stance_mixed } }
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
@@ -801,6 +815,7 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_crisis_add_civic value = 0 } # 初始化危机累积增加 - 国策基础
+		change_variable = { which = rec_crisis_add_civic value = modifier:mod_rec_civic_crisis_accumulate_add } # 加载scripted_modifier
 		# 政策
 		if = { # 受控市场 -0.1增长
 			limit={
@@ -948,6 +963,7 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_crisis_add_edict value = 0 } # 初始化危机累积增加 - 法令基础
+		change_variable = { which = rec_crisis_add_edict value = modifier:mod_rec_edict_crisis_accumulate_add } # 加载scripted_modifier
 		if = { # 福报 +0.1增长
 			limit={
 				owner = { has_edict = blessings }
