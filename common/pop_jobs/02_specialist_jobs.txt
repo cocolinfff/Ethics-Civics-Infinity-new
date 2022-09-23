@@ -138,11 +138,11 @@ merchant = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = { #限制条件的sv mult
-			factor = 10
+			factOR = 10
 			owner = {
 				OR = {
 					is_capitalism = yes
@@ -152,17 +152,17 @@ merchant = {
 			}
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			exists = owner
 			owner = { is_capitalism = yes }
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = merchant
 		}
 		# crisis purge
 		modifier = {
-			factor = 0.01
+			factOR = 0.01
 			exists = planet
 			exists = planet.controller
 			planet.controller = {
@@ -340,97 +340,97 @@ soldier = {
 	weight = {
 		weight = @soldier_job_weight
 		modifier = {
-			factor = 10
+			factOR = 10
 			exists = planet
 			planet = { has_modifier = martial_law }
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			exists = owner
 			owner = { is_militarist = yes }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_resilient
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_very_strong
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_strong
 		}
 		modifier = {
-			factor = 0.5
+			factOR = 0.5
 			has_trait = trait_weak
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			is_enslaved = yes
 			NOT = { has_slavery_type = { type = slavery_military } }
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_military }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_cybernetic
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_presapient_earthbound
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_limited_regeneration
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_presapient_proles
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_brainslug
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			has_trait = trait_presapient_natural_intellectuals
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			OR = {
 				has_trait = trait_robust
 				has_trait = trait_robot_efficient_processors
 			}
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			has_trait = trait_nerve_stapled
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			OR = {
 				has_trait = trait_robot_propaganda_machines
 				has_trait = trait_traditional
 			}
 		}
 		modifier = {
-			factor = 0.9
+			factOR = 0.9
 			has_trait = trait_quarrelsome
 		}
 		modifier = {
-			factor = 0
+			factOR = 0
 			species = { can_be_soldier = no }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_lithoid
 		}
 	}
@@ -486,19 +486,19 @@ colonist = {
 	weight = {
 		weight = @colonist_job_weight # Higher prio
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = colonist
 		}
 		modifier = {
-			factor = 0
+			factOR = 0
 			NOT = { has_job = colonist }
 			exists = planet
 			planet = {
@@ -510,7 +510,7 @@ colonist = {
 			}
 		}
 		modifier = {
-			factor = 0.8
+			factOR = 0.8
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -536,6 +536,10 @@ researcher = {
 	resources = {
 		category = planet_researchers
 		produces = {
+			trigger = {
+				exists = owner
+				owner = { NOT = { has_valid_civic = civic_science_knight } }
+			}
 			physics_research = 4
 			engineering_research = 4
 			society_research = 4
@@ -543,8 +547,18 @@ researcher = {
 		produces = {
 			trigger = {
 				exists = owner
+				owner = { has_valid_civic = civic_science_knight }
+			}
+			physics_research = 4
+			engineering_research = 4
+			society_research = 4
+			mult = value:knight_commander_unity_output_modifier
+		}
+		produces = {
+			trigger = {
+				exists = owner
 				owner = {
-					or = {
+					OR = {
 						has_edict = scientific_spirit
 						has_edict = indefinite_patent_act
 					}
@@ -556,7 +570,7 @@ researcher = {
 			trigger = {
 				exists = owner
 				owner = {
-					or = {
+					OR = {
 						has_valid_civic = civic_futuristic_art
 					}
 				}
@@ -707,31 +721,38 @@ researcher = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_science_knight }
+		}
+		job_squire_add = 2
+	}
+
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_research_modifier|JOB|researcher|
+			factOR = value:job_weights_research_modifier|JOB|researcher|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_living_standard = { type = living_standard_academic_privilege }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = researcher
 		}
 		modifier = {
-			factor = 0.8
+			factOR = 0.8
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -823,7 +844,7 @@ priest = {
 			trigger = {
 				exists = owner
 				owner = {
-					or = {
+					OR = {
 						has_valid_civic = civic_exalted_priesthood
 						has_valid_civic = civic_imperial_cult
 						has_valid_civic = civic_divine_council
@@ -898,122 +919,122 @@ priest = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|priest|RESOURCE|unity|
+			factOR = value:job_weights_modifier|JOB|priest|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			exists = owner
 			owner = { has_civic = civic_exalted_priesthood }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			OR = {
 				has_trait = trait_robot_domestic_protocols
 				has_trait = trait_charismatic
 			}
 		}
 		modifier = {
-			factor = 0.5
+			factOR = 0.5
 			has_trait = trait_repugnant
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			OR = {
 				has_trait = trait_robot_propaganda_machines
 				has_trait = trait_traditional
 			}
 		}
 		modifier = {
-			factor = 1.2
+			factOR = 1.2
 			has_ethic = ethic_spiritualist
 		}
 		modifier = {
-			factor = 0.5
+			factOR = 0.5
 			has_trait = trait_quarrelsome
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_natural_sociologists
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			has_ethic = ethic_materialist
 			NOT = { has_job = priest }
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = priest
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_brainslug
 		}
 		modifier = {
-			factor = 1.3
+			factOR = 1.3
 			has_trait = trait_presapient_natural_intellectuals
 		}
 		modifier = {
-			factor = 1.3
+			factOR = 1.3
 			OR = {
 				has_trait = trait_robust
 				has_trait = trait_robot_efficient_processors
 			}
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			OR = {
 				has_trait = trait_robot_logic_engines
 				has_trait = trait_intelligent
 			}
 		}
 		modifier = {
-			factor = 0.9
+			factOR = 0.9
 			has_trait = trait_presapient_proles
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			has_trait = trait_psionic
 		}
 		modifier = {
-			factor = 0.7
+			factOR = 0.7
 			has_trait = trait_enigmatic_intelligence_failed
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			OR = {
 				has_trait = trait_enigmatic_intelligence
 				has_trait = trait_enigmatic_intelligence_poor
 			}
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_void_dweller_1
 			exists = planet
 			planet = { is_planet_class = pc_habitat }
 		}
 		modifier = {
-			factor = 0.85
+			factOR = 0.85
 			has_trait = trait_void_dweller_1
 			exists = planet
 			planet = { is_artificial = no }
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_necrophage
 		}
 	}
@@ -1064,38 +1085,38 @@ death_priest = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|death_priest|RESOURCE|unity|
+			factOR = value:job_weights_modifier|JOB|death_priest|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			exists = owner
 			owner = { has_civic = civic_exalted_priesthood }
 		}
 		modifier = {
-			factor = 1.2
+			factOR = 1.2
 			has_ethic = ethic_spiritualist
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			has_ethic = ethic_materialist
 			NOT = { has_job = death_priest }
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = death_priest
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -1202,7 +1223,7 @@ enforcer = {
 		weight = @specialist_job_weight
 
 		modifier = {
-			factor = 10
+			factOR = 10
 			OR = {
 				has_ethic = ethic_militarist
 				has_ethic = ethic_fanatic_militarist
@@ -1210,80 +1231,80 @@ enforcer = {
 		}
 
 		modifier = {
-			factor = 10
+			factOR = 10
 			has_job = enforcer
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			planet = { planet_crime > 15}
 			NOT = { has_job = enforcer }
 		}
 		modifier = {
-			factor = 0.01
+			factOR = 0.01
 			planet = { planet_crime <= 15}
 			NOT = { has_job = enforcer }
 		}
 
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_resilient
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_very_strong
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_strong
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_military }
 		}
 		modifier = {
-			factor = 0.50
+			factOR = 0.50
 			has_trait = trait_weak
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_cybernetic
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_presapient_earthbound
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_limited_regeneration
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_presapient_proles
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_brainslug
 			exists = owner
 			owner = { has_valid_civic = civic_police_state }
 		}
 		modifier = {
-			factor = 1.05
+			factOR = 1.05
 			has_trait = trait_presapient_natural_intellectuals
 			exists = owner
 			owner = { has_valid_civic = civic_police_state }
 		}
 		modifier = {
-			factor = 20
+			factOR = 20
 			has_job = enforcer
 			OR = {
 				has_trait = trait_robust
@@ -1291,7 +1312,7 @@ enforcer = {
 			}
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			OR = {
 				has_trait = trait_robot_propaganda_machines
 				has_trait = trait_traditional
@@ -1300,28 +1321,28 @@ enforcer = {
 			owner = { has_valid_civic = civic_police_state }
 		}
 		modifier = {
-			factor = 0.9
+			factOR = 0.9
 			has_trait = trait_quarrelsome
 		}
 		modifier = {
-			factor = 0.8
+			factOR = 0.8
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_void_dweller_1
 			exists = planet
 			planet = { is_planet_class = pc_habitat }
 		}
 		modifier = {
-			factor = 0.85
+			factOR = 0.85
 			has_trait = trait_void_dweller_1
 			exists = planet
 			planet = { is_artificial = no }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_lithoid
 		}
 	}
@@ -1421,27 +1442,27 @@ telepath = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|telepath|RESOURCE|unity|
+			factOR = value:job_weights_modifier|JOB|telepath|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_resilient
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = telepath
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -1539,20 +1560,20 @@ entertainer = {
 	weight = {
 		weight = @high_prio_specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = { # 可控的动态权重
-			factor = 100
+			factOR = 100
 			owner = { has_valid_civic = civic_eternal_jihad }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 3
+			factOR = 3
 			has_trait = trait_robot_domestic_protocols
 			OR = {
 				is_non_sapient_robot = yes
@@ -1560,15 +1581,15 @@ entertainer = {
 			}
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = entertainer
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			is_domestic_servant = yes
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			NOT = { has_job = entertainer }
 			exists = planet
 			planet = {
@@ -1576,7 +1597,7 @@ entertainer = {
 			}
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			NOT = { has_job = entertainer }
 			exists = planet
 			planet = {
@@ -1628,34 +1649,34 @@ duelist = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			has_ethic = ethic_pacifist
 			NOT = { has_job = duelist }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_military }
 		}
 		modifier = {
-			factor = 1.20
+			factOR = 1.20
 			has_ethic = ethic_militarist
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = duelist
 		}
 		modifier = {
-			factor = 0.5
+			factOR = 0.5
 			NOT = { has_job = duelist }
 			exists = planet
 			planet = {
@@ -1845,20 +1866,20 @@ culture_worker = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|culture_worker|RESOURCE|unity|
+			factOR = value:job_weights_modifier|JOB|culture_worker|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = culture_worker
 		}
 	}
@@ -1951,16 +1972,16 @@ bureaucrat = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = bureaucrat
 		}
 	}
@@ -1995,20 +2016,20 @@ chemist = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|chemist|RESOURCE|volatile_motes|
+			factOR = value:job_weights_modifier|JOB|chemist|RESOURCE|volatile_motes|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 7
+			factOR = 7
 			has_job = chemist
 		}
 	}
@@ -2043,24 +2064,24 @@ translucer = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|translucer|RESOURCE|rare_crystals|
+			factOR = value:job_weights_modifier|JOB|translucer|RESOURCE|rare_crystals|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 7
+			factOR = 7
 			has_job = translucer
 		}
 		modifier = {
-			factor = 1.2
+			factOR = 1.2
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -2096,24 +2117,24 @@ gas_refiner = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|gas_refiner|RESOURCE|exotic_gases|
+			factOR = value:job_weights_modifier|JOB|gas_refiner|RESOURCE|exotic_gases|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 7
+			factOR = 7
 			has_job = gas_refiner
 		}
 		modifier = {
-			factor = 1.2
+			factOR = 1.2
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -2250,29 +2271,29 @@ healthcare = {
 	weight = {
 		weight = @high_prio_specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = healthcare
 		}
 		modifier = {
-			factor = 0.5
+			factOR = 0.5
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			NOT = { has_job = healthcare }
 			planet = {
 				free_amenities < 0
@@ -2358,20 +2379,20 @@ manager = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_job = manager
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -2445,48 +2466,48 @@ necromancer = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_resources_modifier|JOB|necromancer|RESOURCE1|physics_research|WEIGHT1|0.5|RESOURCE2|society_research|WEIGHT2|0.5|
+			factOR = value:job_weights_resources_modifier|JOB|necromancer|RESOURCE1|physics_research|WEIGHT1|0.5|RESOURCE2|society_research|WEIGHT2|0.5|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 10
+			factOR = 10
 			exists = planet
 			planet = { has_modifier = martial_law }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_resilient
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_very_strong
 		}
 		modifier = {
-			factor = 1.5
+			factOR = 1.5
 			has_trait = trait_strong
 		}
 		modifier = {
-			factor = 0.5
+			factOR = 0.5
 			has_trait = trait_weak
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_cybernetic
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_presapient_earthbound
 		}
 		modifier = {
-			factor = 1.1
+			factOR = 1.1
 			has_trait = trait_limited_regeneration
 		}
 		modifier = {
-			factor = 0
+			factOR = 0
 			species = { can_be_soldier = no }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			has_trait = trait_lithoid
 		}
 	}
@@ -2551,24 +2572,24 @@ bluelotus_technician = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|bluelotus_technician|RESOURCE|alloys|
+			factOR = value:job_weights_modifier|JOB|bluelotus_technician|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = bluelotus_technician
 		}
 		modifier = {
-			factor = 1.2
+			factOR = 1.2
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
@@ -2743,15 +2764,15 @@ death_chronicler = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.2
+			factOR = 0.2
 			has_citizenship_rights = no
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 	}
@@ -2884,19 +2905,19 @@ necro_apprentice = {
 	weight = {
 		weight = @ruler_job_weight #deliberate
 		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			factOR = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.75
+			factOR = 0.75
 			is_enslaved = yes #willing apprentices first, please
 		}
 		modifier = {
-			factor = 0.75
+			factOR = 0.75
 			pop_has_happiness = no
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			exists = owner
 			owner = { is_ai = yes }
 			exists = planet
@@ -3008,16 +3029,16 @@ foundry = {
 	weight = {
 		weight = @specialist_job_weight		# Fairly important job
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|foundry|RESOURCE|alloys|
+			factOR = value:job_weights_modifier|JOB|foundry|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = foundry
 		}
 	}
@@ -3087,16 +3108,16 @@ catalytic_technician = {
 	weight = {
 		weight = @specialist_job_weight # Fairly important job
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|catalytic_technician|RESOURCE|alloys|
+			factOR = value:job_weights_modifier|JOB|catalytic_technician|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = catalytic_technician
 		}
 	}
@@ -3208,22 +3229,22 @@ artisan = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
+			factOR = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = artisan
 		}
 
 		# low income modifier
 		modifier = {
-			factor = 1.2
+			factOR = 1.2
 			exists = planet
 			planet = {
 				has_available_jobs = "artisan"
@@ -3319,16 +3340,16 @@ artificer = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|artificer|RESOURCE|consumer_goods|
+			factOR = value:job_weights_modifier|JOB|artificer|RESOURCE|consumer_goods|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = artificer
 		}
 	}
@@ -3434,11 +3455,11 @@ pearl_diver = {
 	weight = {
 		weight = @worker_job_weight #deliberate
 		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|pearl_diver|RESOURCE|consumer_goods|
+			factOR = value:job_weights_modifier|JOB|pearl_diver|RESOURCE|consumer_goods|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = { #限制条件的sv mult
-			factor = 5
+			factOR = 5
 			owner = {
 				has_valid_civic = civic_anglers
 				NOT = {
@@ -3447,16 +3468,16 @@ pearl_diver = {
 			}
 		}
 		modifier = {
-			factor = 2
+			factOR = 2
 			is_enslaved = yes
 			has_slavery_type = { type = slavery_indentured }
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 0.1
+			factOR = 0.1
 			NOT = { has_job = pearl_diver }
 			exists = owner
 			owner = {
@@ -3467,7 +3488,7 @@ pearl_diver = {
 			}
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = pearl_diver
 		}
 	}
@@ -3525,6 +3546,7 @@ reassigner = {
 	}
 }
 
+#诱变水疗护工
 bath_attendant = {
 	category = specialist
 	condition_string = SPECIALIST_JOB_TRIGGER
@@ -3565,17 +3587,18 @@ bath_attendant = {
 		mult = value:job_weights_multiple_resources_modifier|JOB|artificer|RESOURCE1|consumer_goods|WEIGHT1|0.8|RESOURCE2|engineering_research|WEIGHT2|0.2|
 		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
 		modifier = {
-			factor = 2
+			factOR = 2
 			is_enslaved = yes
 			can_take_servant_job = no
 		}
 		modifier = {
-			factor = 5
+			factOR = 5
 			has_job = bath_attendant
 		}
 	}
 }
 
+#骑士
 knight = {
 	category = specialist
 	condition_string = SPECIALIST_JOB_TRIGGER
@@ -3616,6 +3639,10 @@ knight = {
 		}
 	}
 
+	planet_modifier = {
+		job_squire_add = 2
+	}
+
 	triggered_pop_modifier = {
 		potential = {
 			always = yes
@@ -3646,7 +3673,7 @@ knight = {
 
 	weight = {
 		weight = @high_prio_specialist_job_weight
-		factor = 1.2
+		factOR = 1.2
 		modifier = {
 			mult = value:job_weights_modifier|JOB|bureaucrat|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
