@@ -353,5 +353,56 @@ country_event = {
 	}
 }
 
+namespace = ethic_rebuild_swarm
 
+planet_event = {
+	id = ethic_rebuild_swarm.1
+	title = "ethic_rebuild_swarm.1.name"
+	desc = "ethic_rebuild_swarm.1.desc"
+	picture = GFX_evt_circuitry_modification
+	is_triggered_only = yes
+	
+	trigger = {
+		from = {
+			is_hive_empire = yes
+		}
+		fromfrom = {
+			is_robotic_species = no
+			from = {
+				owner_main_species = {
+					NOT = { is_same_species = prevprev }
+				}
+			}
+		}
+		fromfrom.species = {
+			NOT = { has_species_flag = eaten_by@root.owner }
+		}
+		NOT = {
+			any_galaxy_species = {
+				has_species_flag = eaten_by@root.owner
+				is_same_species = fromfrom.species
+			}
+		}
+	}	
 
+	immediate = { 
+		fromfrom.species = {
+			set_species_flag = eaten_by@root.owner
+		}
+		from = {
+			change_variable = {
+				which = species_eaten
+				value = 1
+			}
+			remove_modifier = swarm_species_eaten
+			add_modifier = {
+				modifier = swarm_species_eaten
+				multiplier = species_eaten
+			}
+		}		
+	}
+
+	option = {
+		name = "ethic_rebuild_swarm.1.a"
+	}
+}
