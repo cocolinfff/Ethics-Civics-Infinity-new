@@ -3,6 +3,85 @@
 @buildings_t3 = 8
 @buildings_t4 = 12
 
+#骑士团支部
+holding_knight_commandery = {
+	base_buildtime = @b1_time
+	owner_type = subject_holding
+	icon = building_order_holding
+	base_cap_amount = 1
+
+	resources = {
+		category = planet_holdings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	potential = {
+		owner.overlord = {
+			OR = {
+				has_origin = origin_toxic_knights
+				has_valid_civic = civic_feudal_realm
+			}
+		}
+	}
+
+	allow = {
+		exists = planet
+		planet = { 
+			is_capital = yes
+			num_pops >= 50
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			NOT = { exists = owner.overlord }
+			owner.overlord = { 
+				NOR = {
+				    has_origin = origin_toxic_knights
+				    has_valid_civic = civic_feudal_realm
+			    }
+		    }
+		}
+	}
+
+	planet_modifier = {
+		monthly_loyalty = -0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = { is_gestalt = no }
+		}
+		job_overlord_knight_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = { is_gestalt = yes }
+		}
+		job_overlord_knight_drone_add = 1
+	}
+
+	triggered_country_modifier = {
+		country_naval_cap_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = planet.owner
+		}
+		text = job_overlord_knight_commandery_effect_desc
+	}
+}
+
 #贵族庄园
 building_noble_estates = {
 	base_buildtime = @b2_time
