@@ -1,3 +1,85 @@
+
+toxic_knights_order_habitat_setup = {
+	optimize_memory
+	owner = {
+		save_event_target_as = toxic_knights_owner
+		add_research_option = tech_habitat_1
+
+		if = {
+			limit = {
+				OR = {
+					is_lithoid_empire = no
+					is_catalytic_empire = yes
+				}
+			}
+			give_technology = {
+				tech = tech_eco_simulation
+				message = no
+			}
+			give_technology = {
+				tech = tech_hydroponics
+				message = no
+			}
+		}
+		else = {
+			give_technology = {
+				tech = tech_powered_exoskeletons
+				message = no
+			}
+			give_technology = {
+				tech = tech_space_mining_1
+				message = no
+			}
+		}
+	}
+
+	while = { #they get the habitat + destruction
+		count = 7
+		random_owned_pop = { kill_pop = yes }
+	}
+	remove_district = district_city
+	remove_district = district_farming
+	remove_district = district_generator
+	remove_building = building_commercial_zone
+
+	add_deposit = d_toxic_god_blight_upon_the_land
+	add_deposit = d_toxic_god_deitys_swarms
+	add_deposit = d_toxic_god_pools_most_venemous
+	add_deposit = d_toxic_god_pestilential_wasteland
+	add_deposit = d_toxic_god_envenomed_seas
+
+	solar_system = {
+		random_system_planet = {
+			limit = { has_planet_flag = toxic_knights_habitat }
+			set_owner = event_target:toxic_knights_owner
+			while = {
+				count = 4
+				create_pop = {
+					species = owner_main_species
+				}
+			}
+			set_planet_entity = {
+				entity = "habitat_phase_02_entity"
+				graphical_culture = event_target:toxic_knights_owner
+			}
+			set_planet_size = 6
+			set_planet_flag = advanced_habitat
+			set_colony_type = col_habitat_fortress
+
+			add_district_and_planet_size_if_needed_effect = {
+				district = district_orders_demesne
+			}
+
+			remove_building = building_hab_capital
+			add_building = building_order_keep
+		}
+		every_system_planet = {
+			limit = { has_deposit_for = shipclass_mining_station }
+			create_mining_station = { owner = prevprev.owner }
+		}
+	}
+}
+
 civic_anarchism_start_buildings = {
 	owner = {
 		save_event_target_as = civic_anarchism_start
