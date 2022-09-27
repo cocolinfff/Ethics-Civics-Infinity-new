@@ -3,8 +3,11 @@
 ##################
 
 #行政办公楼
-building_bureaucratic_1 = {
+building_bureaucratic_1_coalition = {
 	base_buildtime = @b1_time
+	icon = building_bureaucratic_1
+
+	base_cap_amount = 1
 
 	category = government
 
@@ -13,8 +16,15 @@ building_bureaucratic_1 = {
 		owner = { is_regular_empire = yes }
 		NOR = { 
 			has_modifier = slave_colony 
-			owner = { has_ethic = ethic_fanatic_spiritualist }
+			owner = {  OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				} }
 		}
+		owner = { has_civic = civic_coalition_government }
 	}
 	
 	allow = {
@@ -23,6 +33,7 @@ building_bureaucratic_1 = {
 				has_valid_civic = civic_OGAS
 				has_valid_civic = civic_cybercap
 				has_valid_civic = civic_corporate_cybercap
+				is_megacorp = yes
 				AND = {
 					OR = {
 						has_valid_civic = civic_anarchism
@@ -45,7 +56,14 @@ building_bureaucratic_1 = {
 
 	destroy_trigger = {
 		exists = owner
-		owner = { has_ethic = ethic_fanatic_spiritualist }
+		owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				} }
+		OR = {
 		owner = {
 			OR = {
 				has_valid_civic = civic_OGAS
@@ -68,7 +86,16 @@ building_bureaucratic_1 = {
 					}
 				}
 				is_regular_empire = no
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 		    }
+		}
+		owner = { NOT = { has_civic = civic_coalition_government } }
 		}
 	}
 
@@ -76,7 +103,7 @@ building_bureaucratic_1 = {
 		building_hive_node
 		building_uplink_node
 		building_planet_network_node
-		building_temple
+		building_bureaucratic_1
 	}
 
 	resources = {
@@ -104,7 +131,7 @@ building_bureaucratic_1 = {
 			}
 		}
 		modifier = {
-			job_bureaucrat_add = 1
+			job_bureaucrat_add = 2
 		}
 	}
 
@@ -140,7 +167,7 @@ building_bureaucratic_1 = {
 			}
 		}
 		modifier = {
-			job_manager_add = 1
+			job_manager_add = 2
 		}
 	}
 
@@ -172,25 +199,8 @@ building_bureaucratic_1 = {
 			}
 		}
 		modifier = {
-			job_clerk_add = 1
+			job_clerk_add = 2
 		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		text = job_clerk_effect_desc
-	}
-
-	planet_modifier = {
-		job_media_worker_add = 1
 	}
 
 	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
@@ -200,13 +210,8 @@ building_bureaucratic_1 = {
 		unity = 20
 	} 
 
-	triggered_desc = {
-		text = job_media_worker_effect_desc
-	}
-
 	upgrades = {
 		"building_bureaucratic_2"
-		"building_media_worker_2"
 	}
 
 	prerequisites = {
@@ -225,7 +230,8 @@ building_bureaucratic_1 = {
 }
 
 #行政园区
-building_bureaucratic_2 = {
+building_bureaucratic_2_coalition = {
+	icon = building_bureaucratic_2
 	base_buildtime = @b2_time
 	can_build = no
 
@@ -234,8 +240,16 @@ building_bureaucratic_2 = {
 	potential = {
 		exists = owner
 		owner = { is_regular_empire = yes }
-		owner = { is_spiritualist = no }
+		owner = { NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
 		NOT = { has_modifier = slave_colony }
+		owner = { has_civic = civic_coalition_government }
 	}
 
 	allow = {
@@ -244,7 +258,13 @@ building_bureaucratic_2 = {
 
 	destroy_trigger = {
 		exists = owner
-		owner = { has_ethic = ethic_fanatic_spiritualist }
+		owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				} }
 		OR = {
 			buildings_no_crystals = yes
 			AND = {
@@ -273,6 +293,9 @@ building_bureaucratic_2 = {
 					}
 				}
 			}
+			owner = { NOT = {
+				has_civic = civic_coalition_government
+			}  }
 		}
 	}
 
@@ -282,6 +305,647 @@ building_bureaucratic_2 = {
 		building_planet_network_node
 		building_planetary_management_center
 		building_information_tower
+		building_bureaucratic_2
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
+		potential = {
+			always = yes
+		}
+		unity = 40
+	} 
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_triple_the_profit
+				}
+			}
+		}
+		modifier = {
+			job_bureaucrat_add = 4
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_triple_the_profit
+				}
+			}
+		}
+		text = job_bureaucrat_effect_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+				NOT = { has_valid_civic = civic_business_reporting_administration }
+			}
+		}
+		modifier = {
+			job_manager_add = 4
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+				NOT = { has_valid_civic = civic_business_reporting_administration }
+			}
+		}
+		text = job_manager_effect_desc
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_business_reporting_administration
+				}
+			}
+		}
+		modifier = {
+			job_clerk_add = 4
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_business_reporting_administration
+				}
+			}
+		}
+		text = job_clerk_effect_desc
+	}
+
+	prerequisites = {
+		"tech_colonial_bureaucracy"
+	}
+
+	upgrades = {
+		"building_bureaucratic_3"
+	}
+
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+	}
+}
+
+#复合型行政区
+building_bureaucratic_3_coalition = {
+	base_buildtime = @b3_time
+	can_build = no
+
+	category = government
+
+	potential = {
+		exists = owner
+		owner = { is_regular_empire = yes }
+		NOR = { 
+			has_modifier = slave_colony 
+			owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				} }
+		}
+		owner = { has_civic = civic_coalition_government }
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				} }
+		OR = {
+			buildings_no_crystals = yes
+			AND = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_OGAS
+						has_valid_civic = civic_cybercap
+						has_valid_civic = civic_corporate_cybercap
+						AND = {
+							OR = {
+								has_valid_civic = civic_anarchism
+								AND = {
+									has_valid_civic = civic_shared_burden
+									has_ascension_perk = ap_future_society
+								}
+							}
+							NOR = {
+								AND = {
+									has_valid_civic = civic_democracy_and_clean_government
+									has_valid_civic = civic_OGAS
+								}
+								has_valid_civic = civic_triple_the_profit
+							}
+						}
+						is_regular_empire = no
+					}
+				}
+			}
+			owner = { NOT = {
+				has_civic = civic_coalition_government
+			} }
+		}
+	}
+
+	convert_to = {
+		building_hive_confluence
+		building_system_conflux
+		building_planetary_management_center
+		building_information_tower
+		building_bureaucratic_3
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			rare_crystals = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			rare_crystals = @b3_rare_upkeep
+		}
+	}
+	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
+		potential = {
+			always = yes
+		}
+		unity = 60
+	} 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_triple_the_profit
+				}
+			}
+		}
+		modifier = {
+			job_bureaucrat_add = 6
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_triple_the_profit
+				}
+			}
+		}
+		text = job_bureaucrat_effect_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+				NOT = { has_valid_civic = civic_business_reporting_administration }
+			}
+		}
+		modifier = {
+			job_manager_add = 6
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+				NOT = { has_valid_civic = civic_business_reporting_administration }
+			}
+		}
+		text = job_manager_effect_desc
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_business_reporting_administration
+				}
+			}
+		}
+		modifier = {
+			job_clerk_add = 6
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_business_reporting_administration
+				}
+			}
+		}
+		text = job_clerk_effect_desc
+	}
+
+	prerequisites = {
+		"tech_galactic_bureaucracy"
+	}
+
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+	}
+}
+
+#行政办公楼
+building_bureaucratic_1 = {
+	base_buildtime = @b1_time
+
+	category = government
+
+	potential = {
+		exists = owner
+		owner = { is_regular_empire = yes }
+		NOR = { 
+			has_modifier = slave_colony 
+			owner = {  OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
+		}
+		planet = { is_capital = yes }
+	}
+	
+	allow = {
+		owner = {
+			NOR = {
+				has_valid_civic = civic_OGAS
+				has_valid_civic = civic_cybercap
+				has_valid_civic = civic_corporate_cybercap
+				has_civic = civic_coalition_government
+				is_megacorp = yes
+				AND = {
+					OR = {
+						has_valid_civic = civic_anarchism
+						AND = {
+							has_valid_civic = civic_shared_burden
+							has_ascension_perk = ap_future_society
+						}
+					}
+					NOR = {
+						AND = {
+							has_valid_civic = civic_democracy_and_clean_government
+							has_valid_civic = civic_OGAS
+						}
+						has_valid_civic = civic_triple_the_profit
+					}
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
+		OR = {
+		owner = {
+			OR = {
+				has_valid_civic = civic_OGAS
+				has_valid_civic = civic_cybercap
+				has_valid_civic = civic_corporate_cybercap
+				AND = {
+					OR = {
+						has_valid_civic = civic_anarchism
+						AND = {
+							has_valid_civic = civic_shared_burden
+							has_ascension_perk = ap_future_society
+						}
+					}
+					NOR = {
+						AND = {
+							has_valid_civic = civic_democracy_and_clean_government
+							has_valid_civic = civic_OGAS
+						}
+						has_valid_civic = civic_triple_the_profit
+					}
+				}
+				is_regular_empire = no
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+		    }
+		}
+		planet = { is_capital = no }
+		}
+	}
+
+	convert_to = {
+		building_hive_node
+		building_uplink_node
+		building_planet_network_node
+		building_bureaucratic_1_coalition
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_triple_the_profit
+				}
+			}
+		}
+		modifier = {
+			job_bureaucrat_add = 2
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_triple_the_profit
+				}
+			}
+		}
+		text = job_bureaucrat_effect_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+				NOT = { has_valid_civic = civic_business_reporting_administration }
+			}
+		}
+		modifier = {
+			job_manager_add = 2
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
+				NOT = { has_valid_civic = civic_business_reporting_administration }
+			}
+		}
+		text = job_manager_effect_desc
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_democracy_and_clean_government
+					has_valid_civic = civic_business_reporting_administration
+				}
+			}
+		}
+		modifier = {
+			job_clerk_add = 2
+		}
+	}
+
+	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
+		potential = {
+			always = yes
+		}
+		unity = 20
+	} 
+
+	upgrades = {
+		"building_bureaucratic_2"
+	}
+
+	prerequisites = {
+		"tech_planetary_government"
+	}
+
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+	}
+
+	on_queued = {
+		planet = {
+			set_timed_planet_flag = { flag = recent_admin_building_built days = 720 }
+		}
+	}
+}
+
+#行政园区
+building_bureaucratic_2 = {
+	base_buildtime = @b2_time
+	can_build = no
+
+	category = government
+
+	potential = {
+		exists = owner
+		owner = { is_regular_empire = yes }
+		owner = { NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
+		NOT = { has_modifier = slave_colony }
+		planet = { is_capital = yes }
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
+		OR = {
+			buildings_no_crystals = yes
+			AND = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_OGAS
+						has_valid_civic = civic_cybercap
+						has_valid_civic = civic_corporate_cybercap
+						AND = {
+							OR = {
+								has_valid_civic = civic_anarchism
+								AND = {
+									has_valid_civic = civic_shared_burden
+									has_ascension_perk = ap_future_society
+								}
+							}
+							NOR = {
+								AND = {
+									has_valid_civic = civic_democracy_and_clean_government
+									has_valid_civic = civic_OGAS
+								}
+								has_valid_civic = civic_triple_the_profit
+							}
+						}
+						is_regular_empire = no
+					}
+				}
+			}
+			planet = { is_capital = no }
+		}
+	}
+
+	convert_to = {
+		building_hive_cluster
+		building_network_junction
+		building_planet_network_node
+		building_planetary_management_center
+		building_information_tower
+		building_bureaucratic_2_coalition
 	}
 
 	resources = {
@@ -428,8 +1092,16 @@ building_bureaucratic_3 = {
 		owner = { is_regular_empire = yes }
 		NOR = { 
 			has_modifier = slave_colony 
-			owner = { has_ethic = ethic_fanatic_spiritualist }
+			owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
 		}
+		planet = { is_capital = yes }
 	}
 
 	allow = {
@@ -438,7 +1110,14 @@ building_bureaucratic_3 = {
 
 	destroy_trigger = {
 		exists = owner
-		owner = { has_ethic = ethic_fanatic_spiritualist }
+		owner = { OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				} }
 		OR = {
 			buildings_no_crystals = yes
 			AND = {
@@ -467,6 +1146,7 @@ building_bureaucratic_3 = {
 					}
 				}
 			}
+			planet = { is_capital = no }
 		}
 	}
 
@@ -474,7 +1154,8 @@ building_bureaucratic_3 = {
 		building_hive_confluence
 		building_system_conflux
 		building_planetary_management_center
-		building_sacred_nexus
+		building_information_tower
+		building_bureaucratic_3_coalition
 	}
 
 	resources = {
@@ -614,53 +1295,19 @@ building_media_worker_1 = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOT = { has_modifier = slave_colony }
+		owner = { is_regular_empire = yes is_spiritualist = no }
+		NOT = { has_modifier = slave_colony }	
 	}
 	
-	allow = {
-		owner = {
-			OR = {
-				has_ethic = ethic_fanatic_spiritualist
-				has_valid_civic = civic_OGAS
-				has_valid_civic = civic_cybercap
-				has_valid_civic = civic_corporate_cybercap
-				has_valid_civic = civic_anarchism
-				has_valid_civic = civic_democracy_and_clean_government
-				has_valid_civic = civic_OGAS
-			}
-		}
-	}
-
 	destroy_trigger = {
 		exists = owner
 		OR = {
 			has_modifier = slave_colony
 			owner = {
-				OR = {
-					is_gestalt = yes
-					NOR = {
-						has_valid_civic = civic_OGAS
-						has_valid_civic = civic_cybercap
-						has_valid_civic = civic_corporate_cybercap
-						AND = {
-							OR = {
-								has_valid_civic = civic_anarchism
-								AND = {
-									has_valid_civic = civic_shared_burden
-									has_ascension_perk = ap_future_society
-								}
-							}
-							NOR = {
-								AND = {
-									has_valid_civic = civic_democracy_and_clean_government
-									has_valid_civic = civic_OGAS
-								}
-								has_valid_civic = civic_triple_the_profit
-							}
-						}
-					}
-				}
+				is_spiritualist = yes
+			}
+			owner = {
+				is_gestalt = yes
 			}
 		}
 	}
@@ -713,6 +1360,7 @@ building_media_worker_2 = {
 		NOT = { has_modifier = slave_colony }
 		owner = {
 			is_gestalt = no
+			is_spiritualist = no
 		}
 	}
 
@@ -720,6 +1368,9 @@ building_media_worker_2 = {
 		exists = owner
 		OR = {
 			has_modifier = slave_colony
+			owner = {
+				is_spiritualist = yes
+			}
 			owner = {
 				is_gestalt = yes
 			}
@@ -776,6 +1427,7 @@ building_media_worker_3 = {
 		NOT = { has_modifier = slave_colony }
 		owner = {
 			is_gestalt = no
+			is_spiritualist = no
 		}
 	}
 
@@ -783,6 +1435,9 @@ building_media_worker_3 = {
 		exists = owner
 		OR = {
 			has_modifier = slave_colony
+			owner = {
+				is_spiritualist = yes
+			}
 			owner = {
 				is_gestalt = yes
 			}
@@ -852,10 +1507,7 @@ building_temple = {
 	}
 
 	convert_to = {
-		building_hive_node
-		building_simulation_1
-		building_autochthon_monument
-		building_corporate_monument
+		building_media_worker_1
 	}
 
 	planet_modifier = {
@@ -1023,10 +1675,7 @@ building_holotemple = {
 	}
 
 	convert_to = {
-		building_simulation_2
-		building_hive_cluster
-		building_heritage_site
-		building_corporate_site
+		building_media_worker_2
 	}
 
 	planet_modifier = {
@@ -1192,10 +1841,7 @@ building_sacred_nexus = {
 	}
 
 	convert_to = {
-		building_hypercomms_forum
-		building_hive_confluence
-		building_simulation_3
-		building_corporate_forum
+		building_media_worker_3
 	}
 
 	triggered_planet_modifier = {
@@ -1398,7 +2044,13 @@ building_autochthon_monument = {
 		owner = {
 			NOR = {
 				is_gestalt = yes
-				is_megacorp = yes
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 				is_memorialist_empire = yes
 			}
 		}
@@ -1411,7 +2063,13 @@ building_autochthon_monument = {
 			owner = {
 				OR = {
 					is_gestalt = yes
-					is_megacorp = yes
+					OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 					is_memorialist_empire = yes
 				}
 			}
@@ -1444,11 +2102,9 @@ building_autochthon_monument = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.05
-	}
-
-	planet_modifier = {
 		job_culture_worker_add = @b1_jobs
 	}
+
 
 	triggered_desc = {
 		text = building_autochthon_monument_effect
@@ -1485,7 +2141,14 @@ building_autochthon_monument = {
 
 	show_tech_unlock_if = {
 		is_gestalt = no
-		is_megacorp = no
+		NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 		is_memorialist_empire = no
 	}
 }
@@ -1503,7 +2166,13 @@ building_heritage_site = {
 		owner = {
 			NOR = {
 				is_gestalt = yes
-				is_megacorp = yes
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 			}
 		}
 	}
@@ -1519,7 +2188,13 @@ building_heritage_site = {
 			owner = {
 				OR = {
 					is_gestalt = yes
-					is_megacorp = yes
+					OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 				}
 			}
 		}
@@ -1558,9 +2233,6 @@ building_heritage_site = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.10
-	}
-
-	planet_modifier = {
 		job_culture_worker_add = @b2_jobs
 	}
 
@@ -1574,7 +2246,14 @@ building_heritage_site = {
 
 	show_tech_unlock_if = {
 		is_gestalt = no
-		is_megacorp = no
+		NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 		is_memorialist_empire = no
 	}
 
@@ -1596,7 +2275,13 @@ building_hypercomms_forum = {
 		owner = {
 			NOR = {
 				is_gestalt = yes
-				is_megacorp = yes
+				OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 			}
 		}
 	}
@@ -1612,7 +2297,13 @@ building_hypercomms_forum = {
 			owner = {
 				OR = {
 					is_gestalt = yes
-					is_megacorp = yes
+					OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 				}
 			}
 		}
@@ -1651,9 +2342,6 @@ building_hypercomms_forum = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.15
-	}
-
-	planet_modifier = {
 		job_culture_worker_add = @b3_jobs
 	}
 
@@ -1681,7 +2369,14 @@ building_hypercomms_forum = {
 
 	show_tech_unlock_if = {
 		is_gestalt = no
-		is_megacorp = no
+		NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 		is_memorialist_empire = no
 	}
 }
@@ -2178,10 +2873,15 @@ building_simulation_1 = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.05
+		job_evaluator_add = @b1_jobs
 	}
 
 	triggered_desc = {
 		text = building_autochthon_monument_effect
+	}
+
+	triggered_desc = {
+		text = "job_evaluator_effect_desc"
 	}
 
 	prerequisites = {
@@ -2259,10 +2959,15 @@ building_simulation_2 = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.10
+		job_evaluator_add = @b2_jobs
 	}
 
 	triggered_desc = {
 		text = building_heritage_site_effect
+	}
+
+	triggered_desc = {
+		text = "job_evaluator_effect_desc"
 	}
 
 	prerequisites = {
@@ -2333,10 +3038,15 @@ building_simulation_3 = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.15
+
 	}
 
 	triggered_desc = {
 		text = building_hypercomms_forum_effect
+	}
+
+	triggered_desc = {
+		text = "job_evaluator_effect_desc"
 	}
 
 	prerequisites = {
@@ -2363,7 +3073,13 @@ building_corporate_monument = {
 		exists = owner
 		NOT = { has_modifier = slave_colony }
 		owner = {
-			is_megacorp = yes
+			OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 			is_memorialist_empire = no
 		}
 	}
@@ -2373,7 +3089,14 @@ building_corporate_monument = {
 		OR = {
 			has_modifier = slave_colony
 			owner = {
-				is_megacorp = no
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 				is_memorialist_empire = yes
 			}
 		}
@@ -2402,8 +3125,60 @@ building_corporate_monument = {
 		planet_jobs_unity_produces_mult = 0.05
 	}
 
+	
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_civic = civic_business_reporting_administration }
+			}
+		}
+		job_manager_add = @b1_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		job_culture_worker_add = 1
+		job_clerk_add = 1
+	}
+
 	triggered_desc = {
 		text = building_autochthon_monument_effect
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_civic = civic_business_reporting_administration }
+			}
+		}
+		text = job_manager_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		text = job_culture_worker_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		text = job_clerk_effect_desc
 	}
 
 	prerequisites = {
@@ -2411,7 +3186,13 @@ building_corporate_monument = {
 	}
 
 	show_tech_unlock_if = {
-		is_megacorp = yes
+		OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 		is_memorialist_empire = no
 	}
 
@@ -2431,7 +3212,13 @@ building_corporate_site = {
 		exists = owner
 		NOT = { has_modifier = slave_colony }
 		owner = {
-			is_megacorp = yes
+			OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 		}
 	}
 
@@ -2444,7 +3231,14 @@ building_corporate_site = {
 		OR = {
 			has_modifier = slave_colony
 			owner = {
-				is_megacorp = no
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 			}
 		}
 	}
@@ -2472,8 +3266,60 @@ building_corporate_site = {
 		planet_jobs_unity_produces_mult = 0.10
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_civic = civic_business_reporting_administration }
+			}
+		}
+		job_manager_add = @b2_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		job_culture_worker_add = 2
+		job_clerk_add = 2
+	}
+
+
 	triggered_desc = {
 		text = building_heritage_site_effect
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_civic = civic_business_reporting_administration }
+			}
+		}
+		text = job_manager_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		text = job_culture_worker_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		text = job_clerk_effect_desc
 	}
 
 	prerequisites = {
@@ -2481,7 +3327,13 @@ building_corporate_site = {
 	}
 
 	show_tech_unlock_if = {
-		is_megacorp = yes
+		OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 	}
 
 	upgrades = {
@@ -2500,7 +3352,13 @@ building_corporate_forum = {
 		exists = owner
 		NOT = { has_modifier = slave_colony }
 		owner = {
-			is_megacorp = yes
+			OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 		}
 	}
 
@@ -2513,7 +3371,14 @@ building_corporate_forum = {
 		OR = {
 			has_modifier = slave_colony
 			owner = {
-				is_megacorp = no
+				NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 			}
 		}
 	}
@@ -2541,8 +3406,59 @@ building_corporate_forum = {
 		planet_jobs_unity_produces_mult = 0.15
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_civic = civic_business_reporting_administration }
+			}
+		}
+		job_manager_add = @b3_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		job_culture_worker_add = 3
+		job_clerk_add = 3
+	}
+
 	triggered_desc = {
 		text = building_hypercomms_forum_effect
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				NOT = { has_civic = civic_business_reporting_administration }
+			}
+		}
+		text = job_manager_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		text = job_culture_worker_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				has_civic = civic_business_reporting_administration
+			}
+		}
+		text = job_clerk_effect_desc
 	}
 
 	prerequisites = {
@@ -2550,7 +3466,13 @@ building_corporate_forum = {
 	}
 
 	show_tech_unlock_if = {
-		is_megacorp = yes
+		OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 	}
 }
 
@@ -2600,10 +3522,15 @@ building_sensorium_1 = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.05
+		job_synapse_drone_add = @b1_jobs
 	}
 
 	triggered_desc = {
 		text = building_autochthon_monument_effect
+	}
+
+	triggered_desc = {
+		text = job_synapse_drone_effect_desc
 	}
 
 	prerequisites = {
@@ -2681,10 +3608,15 @@ building_sensorium_2 = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.10
+		job_synapse_drone_add = @b2_jobs
 	}
 
 	triggered_desc = {
 		text = building_heritage_site_effect
+	}
+
+	triggered_desc = {
+		text = job_synapse_drone_effect_desc
 	}
 
 	prerequisites = {
@@ -2755,10 +3687,15 @@ building_sensorium_3 = {
 
 	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.15
+		job_synapse_drone_add = @b3_jobs
 	}
 
 	triggered_desc = {
 		text = building_hypercomms_forum_effect
+	}
+
+	triggered_desc = {
+		text = job_synapse_drone_effect_desc
 	}
 
 	prerequisites = {
@@ -2791,7 +3728,14 @@ building_autocurating_vault = {
 		owner = {
 			is_machine_empire = no
 			is_spiritualist = no
-			is_megacorp = no
+			NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 		}
 	}
 
@@ -2807,7 +3751,13 @@ building_autocurating_vault = {
 	 		owner = {
 				OR = {
 					is_spiritualist = yes
-					is_megacorp = yes
+					OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 				}
 			}
 		}
@@ -2840,20 +3790,8 @@ building_autocurating_vault = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = no }
-		}
+	planet_modifier = {
 		planet_jobs_unity_produces_mult = 0.15
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_gestalt = yes }
-		}
-		planet_synapse_drones_unity_produces_mult = 0.15
 	}
 
 	triggered_desc = {
@@ -2871,7 +3809,14 @@ building_autocurating_vault = {
 	show_tech_unlock_if = {
 		is_machine_empire = no
 		is_spiritualist = no
-		is_megacorp = no
+		NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 	}
 }
 
@@ -2890,7 +3835,13 @@ building_corporate_vault = {
 		exists = owner
 		NOT = { has_modifier = slave_colony }
 		owner = {
-			is_megacorp = yes
+			OR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+				}
 			is_spiritualist = no
 		}
 	}
@@ -2906,7 +3857,14 @@ building_corporate_vault = {
 			buildings_no_crystals = yes
 			owner = {
 				OR = {
-					is_megacorp = no
+					NOR = {
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
+					has_civic = civic_family_business
+					has_civic = civic_world_cooperative
+					has_valid_civic = civic_triple_the_profit
+					has_civic = civic_coalition_government
+				}
 					is_spiritualist = yes
 				}
 			}
@@ -2957,7 +3915,13 @@ building_corporate_vault = {
 	}
 
 	show_tech_unlock_if = {
-		is_megacorp = yes
+		OR = {
+			has_authority = auth_corporate
+			has_civic = civic_galactic_sovereign_megacorp
+			has_civic = civic_family_business
+			has_civic = civic_world_cooperative
+			has_valid_civic = civic_triple_the_profit
+		}
 	}
 }
 
@@ -3133,7 +4097,7 @@ building_alpha_hub = {
 	}
 
 	planet_modifier = {
-		planet_synapse_drones_unity_produces_mult = 0.15
+		planet_jobs_unity_produces_mult = 0.15
 	}
 
 	triggered_desc = {
