@@ -1622,7 +1622,7 @@ squire = {
 		is_enslaved = no
 	}
 
-	possible_precalc = can_fill_specialist_job #deliberate, they are baby knights
+	possible_precalc = can_fill_worker_job #Who said that squires must be future knights?
 
 	possible = {
 		hidden_trigger = { exists = owner }
@@ -1632,6 +1632,13 @@ squire = {
 	}
 
 	planet_modifier = {
+		knights_independent_category_produces_mult = 0.03
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_planet_flag = toxic_knights_habitat }
+		}
 		knights_independent_category_produces_mult = 0.02
 	}
 
@@ -1650,12 +1657,121 @@ squire = {
 		planet_pop_assembly_organic_add = 0.25
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				OR = {
+					has_district = district_generator
+					has_district = district_generator_uncapped
+					has_district = district_rw_generator
+					has_district = district_hab_energy
+					has_district = district_pdhab_energy
+				}
+			}
+		}
+		planet_technician_energy_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOR = {
+				has_trait = trait_mechanical
+				has_trait = trait_lithoid
+			}
+			planet = {
+				OR = {
+					has_district = district_mining
+					has_district = district_mining_uncapped
+					has_district = district_hab_mining
+					has_district = district_pdhab_mining
+				}
+			}
+		}
+		planet_miners_minerals_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_mechanical
+				has_trait = trait_lithoid
+			}
+			planet = {
+				OR = {
+					has_district = district_mining
+					has_district = district_mining_uncapped
+					has_district = district_hab_mining
+					has_district = district_pdhab_mining
+				}
+			}
+		}
+		planet_miners_minerals_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOR = {
+				has_trait = trait_mechanical
+				has_trait = trait_lithoid
+			}
+			planet = {
+				OR = {
+					has_district = district_farming
+					has_district = district_farming_uncapped
+					has_district = district_rw_farming
+					has_district = district_pdhab_food
+					has_building = building_hydroponics_farm
+					has_designation = col_habitat_farming
+				}
+			}
+		}
+		planet_farmers_food_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				OR = {
+					has_district = district_industrial
+					has_district = district_rw_industrial
+					has_district = district_hab_industrial
+					has_district = district_pdhab_industrial
+				}
+				NOR = {
+					has_designation = col_factory
+					has_designation = col_habitat_factory
+					has_designation = col_ring_factory
+					has_designation = col_ecu_factory
+					has_designation = col_dome_factory
+				}
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				OR = {
+					has_district = district_industrial
+					has_district = district_rw_industrial
+					has_district = district_hab_industrial
+					has_district = district_pdhab_industrial
+				}
+				NOR = {
+					has_designation = col_foundry
+					has_designation = col_habitat_foundry
+					has_designation = col_ring_foundry
+					has_designation = col_ecu_foundry
+					has_designation = col_dome_foundry
+				}
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 0.25
+	}
+
 	resources = {
 		category = planet_squires
-		produces = {
-			alloys = 1
-			consumer_goods = 1
-		}
 		produces = {
 			trigger = {
 				exists = owner
@@ -1664,6 +1780,9 @@ squire = {
 			physics_research = 2
 			engineering_research = 2
 			society_research = 2
+		}
+		upkeep = {
+			consumer_goods = 0.25
 		}
 		upkeep = {
 			trigger = {
@@ -1675,6 +1794,10 @@ squire = {
 
 	weight = {
 		weight = @worker_job_weight
-		factor = 1.2
+		modifier = { factor = 3.6 }
+		modifier = { # 可控的动态权重
+			factor = value:job_weights_modifier|JOB|technician|RESOURCE|energy|
+			owner = { has_edict = dynamic_weight }
+		}
 	}
 }
