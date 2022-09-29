@@ -18,24 +18,42 @@ rec_market_common_get = { # 获得共同市场数据
 	set_variable = { which = rec_market_common_size_temp value = rec_market_self_size }
 	set_variable = { which = rec_market_common_accumulate_temp value = value:rec_market_common_accumulate_initial }
 	set_variable = { which = rec_market_common_threshold_temp value = value:rec_market_common_threshold_initial }
-	every_playable_country = {
+	every_playable_country = { #计算市场规模
 		limit = {
 			OR = {
 				is_in_federation_with = PREV
 				has_commercial_pact = PREV
 				AND = {
 					has_subject = PREV
-					PREV = { subject_can_diplomacy = no }
+					NOT = { subject_can_diplomacy = PREV }
 				}
 				AND = {
 					has_overlord = PREV
-					subject_can_diplomacy = no
+					NOT = { subject_can_diplomacy = THIS }
 				}
 			}
 			NOT = { is_same_empire = PREV }
 			rec_circle_access = yes
 		}
 		PREV = { change_variable = { which = rec_market_common_size_temp value = PREV.trigger:num_pops } }
+	}
+	every_playable_country = { #计算市场效应
+		limit = {
+			OR = {
+				is_in_federation_with = PREV
+				has_commercial_pact = PREV
+				AND = {
+					has_subject = PREV
+					NOT = { subject_can_diplomacy = PREV }
+				}
+				AND = {
+					has_overlord = PREV
+					NOT = { subject_can_diplomacy = THIS }
+				}
+			}
+			NOT = { is_same_empire = PREV }
+			rec_circle_access = yes
+		}
 		if = { # 可开启经济周期，且已开启
 			limit = { rec_circle_able = yes }
 			PREV = {
@@ -49,10 +67,10 @@ rec_market_common_get = { # 获得共同市场数据
 				change_variable = { which = rec_market_common_threshold_temp value = PREV.value:rec_market_common_threshold_spread_simple }
 			}
 		}
-	}
 	set_variable = { which = rec_market_common_size value = rec_market_common_size_temp }
 	set_variable = { which = rec_market_common_accumulate value = rec_market_common_accumulate_temp }
 	set_variable = { which = rec_market_common_threshold value = rec_market_common_threshold_temp }
+	}
 }
 rec_benefit_exploit_get = {
 	set_variable = { which = rec_benefit_exploit_temp value = 0 }
