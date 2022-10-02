@@ -807,3 +807,72 @@ not_has_building_foundry = {
 		has_building = building_foundry_3
 	}
 }
+
+allow_bureaucratic_building = { # NOT corporate & regular empire
+	owner = { is_regular_empire = yes }
+	NOT = {	has_modifier = slave_colony	}
+}
+
+is_eci_megacorp = {
+	owner = {
+		OR = {
+			is_megacorp = yes
+			has_authority = auth_corporate
+			has_civic = civic_galactic_sovereign_megacorp
+			has_civic = civic_family_business
+			has_civic = civic_world_cooperative
+		}
+	}
+}
+
+is_adminless_country = { # like OGAS country
+	owner = {
+		OR = {
+			has_valid_civic = civic_OGAS
+			has_valid_civic = civic_cybercap
+			has_valid_civic = civic_corporate_cybercap
+			#has_valid_civic = civic_democracy_and_clean_government
+			has_valid_civic = civic_anarchism
+			AND = {
+				has_valid_civic = civic_shared_burden
+				has_ascension_perk = ap_future_society
+			}
+		}
+	}
+}
+
+is_coalition = { # just for policies
+	OR = {
+		owner = {
+			OR = {
+				has_policy_flag = full_decentralization
+				has_policy_flag = high_decentralization
+			}
+		}
+		AND = {
+			planet = { is_sector_capital = yes }
+			NOT = { #  while no megacorp , cant build this on capital 
+				planet = { is_capital = yes }
+				is_eci_megacorp = no
+			}
+			owner = {
+				OR = {
+					has_policy_flag = partial_decentralization
+					has_policy_flag = concentration_of_power
+				}
+			}
+		}
+	}
+}
+
+is_centered = { # just for policies
+	owner = {
+		OR = {
+			has_policy_flag = partial_decentralization
+			has_policy_flag = concentration_of_power
+			has_policy_flag = centralized_state
+			has_policy_flag = excessive_centralization
+		}
+	}
+	planet = { is_capital = yes }
+}

@@ -2,139 +2,29 @@
 # Bureaucrats
 ##################
 
-#行政办公楼
+#行政办公楼-地方
 building_bureaucratic_1_coalition = {
 	base_buildtime = @b1_time
 	icon = building_bureaucratic_1
-
 	base_cap_amount = 1
-
 	category = government
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOR = {
-			has_modifier = slave_colony
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
-		}
-		#owner = { has_civic = civic_coalition_government }
-		OR = {
-			owner = {
-				OR = {
-					has_policy_flag = full_decentralization
-					has_policy_flag = high_decentralization
-				}
-			}
-			AND = {
-				planet = { is_sector_capital = yes }
-				owner = {
-					OR = {
-						has_policy_flag = partial_decentralization
-						has_policy_flag = concentration_of_power
-					}
-				}
-			}
-		}
-		
+		allow_bureaucratic_building = yes
+		is_coalition = yes
 	}
 	
 	allow = {
-		owner = {
-			NOR = {
-				has_valid_civic = civic_OGAS
-				has_valid_civic = civic_cybercap
-				has_valid_civic = civic_corporate_cybercap
-				is_megacorp = yes
-				AND = {
-					OR = {
-						has_valid_civic = civic_anarchism
-						AND = {
-							has_valid_civic = civic_shared_burden
-							has_ascension_perk = ap_future_society
-						}
-					}
-					NOR = {
-						AND = {
-							has_valid_civic = civic_democracy_and_clean_government
-							has_valid_civic = civic_OGAS
-						}
-						#has_valid_civic = civic_triple_the_profit
-					}
-				}
-			}
-		}
+		is_adminless_country = no
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			OR = {
-				has_authority = auth_corporate
-				has_civic = civic_galactic_sovereign_megacorp
-				has_civic = civic_family_business
-				has_civic = civic_world_cooperative
-				#has_valid_civic = civic_triple_the_profit
-			}
-		}
 		OR = {
-			owner = {
-				OR = {
-					has_valid_civic = civic_OGAS
-					has_valid_civic = civic_cybercap
-					has_valid_civic = civic_corporate_cybercap
-					AND = {
-						OR = {
-							has_valid_civic = civic_anarchism
-							AND = {
-								has_valid_civic = civic_shared_burden
-								has_ascension_perk = ap_future_society
-							}
-						}
-						NOR = {
-							AND = {
-								has_valid_civic = civic_democracy_and_clean_government
-								has_valid_civic = civic_OGAS
-							}
-							#has_valid_civic = civic_triple_the_profit
-						}
-					}
-					is_regular_empire = no
-					OR = {
-						has_authority = auth_corporate
-						has_civic = civic_galactic_sovereign_megacorp
-						has_civic = civic_family_business
-						has_civic = civic_world_cooperative
-						#has_valid_civic = civic_triple_the_profit
-					}
-			    }
-			}
-		#owner = { NOT = { has_civic = civic_coalition_government } }
-			NOT = {
-				owner = {
-					OR = {
-						has_policy_flag = full_decentralization
-						has_policy_flag = high_decentralization
-					}
-				}
-				AND = {
-					planet = { is_sector_capital = yes }
-					owner = {
-						OR = {
-							has_policy_flag = partial_decentralization
-							has_policy_flag = concentration_of_power
-						}
-					}
-				}
-			}
+			allow_bureaucratic_building = no
+			is_adminless_country = yes
+			is_coalition = no
 		}
 	}
 
@@ -157,55 +47,20 @@ building_bureaucratic_1_coalition = {
 	
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		modifier = {
 			job_bureaucrat_add = 2
 		}
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
-		}
-		text = job_bureaucrat_effect_desc
-	}
-
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
+			exists = owner 
+			is_eci_megacorp = yes
 		}
 		modifier = {
+			job_bureaucrat_add = -2
 			job_manager_add = 2
 		}
 	}
@@ -213,41 +68,18 @@ building_bureaucratic_1_coalition = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
+			NOT = { is_eci_megacorp = yes }
+		}
+		text = job_bureaucrat_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			is_eci_megacorp = yes
 		}
 		text = job_manager_effect_desc
 	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		modifier = {
-			job_clerk_add = 2
-		}
-	}
-
-	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
-		potential = {
-			always = yes
-		}
-		unity = 20
-	} 
 
 	upgrades = {
 		"building_bureaucratic_2"
@@ -260,111 +92,35 @@ building_bureaucratic_1_coalition = {
 	show_tech_unlock_if = {
 		is_regular_empire = yes
 	}
-
-	on_queued = {
-		planet = {
-			set_timed_planet_flag = { flag = recent_admin_building_built days = 720 }
-		}
-	}
 }
 
-#行政园区
+#行政园区-地方
 building_bureaucratic_2_coalition = {
 	icon = building_bureaucratic_2
 	base_buildtime = @b2_time
 	can_build = no
-
+	base_cap_amount = 1
 	category = government
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		owner = { NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		NOT = { has_modifier = slave_colony }
-		OR = {
-			owner = {
-				OR = {
-					has_policy_flag = full_decentralization
-					has_policy_flag = high_decentralization
-				}
-			}
-			AND = {
-				planet = { is_sector_capital = yes }
-				owner = {
-					OR = {
-						has_policy_flag = partial_decentralization
-						has_policy_flag = concentration_of_power
-					}
-				}
-			}
-		}
+		allow_bureaucratic_building = yes
+		is_coalition = yes
 	}
+	
 
 	allow = {
+		is_adminless_country = no
 		has_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				} }
 		OR = {
+			allow_bureaucratic_building = no
+			is_adminless_country = yes
+			is_coalition = no
 			buildings_no_crystals = yes
-			AND = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_OGAS
-						has_valid_civic = civic_cybercap
-						has_valid_civic = civic_corporate_cybercap
-						AND = {
-							OR = {
-								has_valid_civic = civic_anarchism
-								AND = {
-									has_valid_civic = civic_shared_burden
-									has_ascension_perk = ap_future_society
-								}
-							}
-							NOR = {
-								AND = {
-									has_valid_civic = civic_democracy_and_clean_government
-									has_valid_civic = civic_OGAS
-								}
-								#has_valid_civic = civic_triple_the_profit
-							}
-						}
-						is_regular_empire = no
-					}
-				}
-			}
-			NOT = {
-				owner = {
-					OR = {
-						has_policy_flag = full_decentralization
-						has_policy_flag = high_decentralization
-					}
-				}
-				AND = {
-					planet = { is_sector_capital = yes }
-					owner = {
-						OR = {
-							has_policy_flag = partial_decentralization
-							has_policy_flag = concentration_of_power
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -389,64 +145,22 @@ building_bureaucratic_2_coalition = {
 		}
 	}
 
-	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
-		potential = {
-			always = yes
-		}
-		unity = 40
-	} 
-
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		modifier = {
 			job_bureaucrat_add = 4
 		}
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
-		}
-		text = job_bureaucrat_effect_desc
-	}
-
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
+			exists = owner 
+			is_eci_megacorp = yes
 		}
 		modifier = {
+			job_bureaucrat_add = -4
 			job_manager_add = 4
 		}
 	}
@@ -454,46 +168,17 @@ building_bureaucratic_2_coalition = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
+			NOT = { is_eci_megacorp = yes }
 		}
-		text = job_manager_effect_desc
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		modifier = {
-			job_clerk_add = 4
-		}
+		text = job_bureaucrat_effect_desc
 	}
 
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
+			is_eci_megacorp = yes
 		}
-		text = job_clerk_effect_desc
+		text = job_manager_effect_desc
 	}
 
 	prerequisites = {
@@ -509,103 +194,32 @@ building_bureaucratic_2_coalition = {
 	}
 }
 
-#复合型行政区
+#复合型行政区-地方
 building_bureaucratic_3_coalition = {
 	base_buildtime = @b3_time
 	can_build = no
-
+	base_cap_amount = 1
 	category = government
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOR = { 
-			has_modifier = slave_colony 
-			owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				} }
-		}
-		OR = {
-			owner = {
-				OR = {
-					has_policy_flag = full_decentralization
-					has_policy_flag = high_decentralization
-				}
-			}
-			AND = {
-				planet = { is_sector_capital = yes }
-				owner = {
-					OR = {
-						has_policy_flag = partial_decentralization
-						has_policy_flag = concentration_of_power
-					}
-				}
-			}
-		}
+		allow_bureaucratic_building = yes=
+		is_coalition = yes
 	}
+	
 
 	allow = {
 		has_upgraded_capital = yes
+		is_adminless_country = no
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				} }
 		OR = {
+			allow_bureaucratic_building = no
+			is_adminless_country = yes
+			is_coalition = no
 			buildings_no_crystals = yes
-			AND = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_OGAS
-						has_valid_civic = civic_cybercap
-						has_valid_civic = civic_corporate_cybercap
-						AND = {
-							OR = {
-								has_valid_civic = civic_anarchism
-								AND = {
-									has_valid_civic = civic_shared_burden
-									has_ascension_perk = ap_future_society
-								}
-							}
-							NOR = {
-								AND = {
-									has_valid_civic = civic_democracy_and_clean_government
-									has_valid_civic = civic_OGAS
-								}
-								#has_valid_civic = civic_triple_the_profit
-							}
-						}
-						is_regular_empire = no
-					}
-				}
-			}
-			NOT = {
-				owner = {
-					OR = {
-						has_policy_flag = full_decentralization
-						has_policy_flag = high_decentralization
-					}
-				}
-				AND = {
-					planet = { is_sector_capital = yes }
-					owner = {
-						OR = {
-							has_policy_flag = partial_decentralization
-							has_policy_flag = concentration_of_power
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -628,63 +242,23 @@ building_bureaucratic_3_coalition = {
 			rare_crystals = @b3_rare_upkeep
 		}
 	}
-	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
-		potential = {
-			always = yes
-		}
-		unity = 60
-	} 
+
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		modifier = {
 			job_bureaucrat_add = 6
 		}
 	}
 
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
-		}
-		text = job_bureaucrat_effect_desc
-	}
-
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
+			exists = owner 
+			is_eci_megacorp = yes
 		}
 		modifier = {
+			job_bureaucrat_add = -6
 			job_manager_add = 6
 		}
 	}
@@ -692,47 +266,19 @@ building_bureaucratic_3_coalition = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
+			NOT = { is_eci_megacorp = yes }
 		}
-		text = job_manager_effect_desc
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		modifier = {
-			job_clerk_add = 6
-		}
+		text = job_bureaucrat_effect_desc
 	}
 
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
+			is_eci_megacorp = yes
 		}
-		text = job_clerk_effect_desc
+		text = job_manager_effect_desc
 	}
+
 
 	prerequisites = {
 		"tech_galactic_bureaucracy"
@@ -751,108 +297,22 @@ building_bureaucratic_1 = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOR = { 
-			has_modifier = slave_colony 
-			owner = {  OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		}
-		owner = {
-			OR = {
-				has_policy_flag = partial_decentralization
-				has_policy_flag = concentration_of_power
-				has_policy_flag = centralized_state
-				has_policy_flag = excessive_centralization
-			}
-		}
-		planet = { is_capital = yes }
+		allow_bureaucratic_building = yes
+		is_centered = yes
+		is_eci_megacorp = no
 	}
 	
 	allow = {
-		owner = {
-			NOR = {
-				has_valid_civic = civic_OGAS
-				has_valid_civic = civic_cybercap
-				has_valid_civic = civic_corporate_cybercap
-				has_civic = civic_coalition_government
-				is_megacorp = yes
-				AND = {
-					OR = {
-						has_valid_civic = civic_anarchism
-						AND = {
-							has_valid_civic = civic_shared_burden
-							has_ascension_perk = ap_future_society
-						}
-					}
-					NOR = {
-						AND = {
-							has_valid_civic = civic_democracy_and_clean_government
-							has_valid_civic = civic_OGAS
-						}
-						#has_valid_civic = civic_triple_the_profit
-					}
-				}
-			}
-		}
+		is_adminless_country = no
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		OR = {
-			owner = {
-				OR = {
-					has_valid_civic = civic_OGAS
-					has_valid_civic = civic_cybercap
-					has_valid_civic = civic_corporate_cybercap
-					AND = {
-						OR = {
-							has_valid_civic = civic_anarchism
-							AND = {
-								has_valid_civic = civic_shared_burden
-								has_ascension_perk = ap_future_society
-							}
-						}
-						NOR = {
-							AND = {
-								has_valid_civic = civic_democracy_and_clean_government
-								has_valid_civic = civic_OGAS
-							}
-							#has_valid_civic = civic_triple_the_profit
-						}
-					}
-					is_regular_empire = no
-					OR = {
-						has_authority = auth_corporate
-						has_civic = civic_galactic_sovereign_megacorp
-						has_civic = civic_family_business
-						has_civic = civic_world_cooperative
-						#has_valid_civic = civic_triple_the_profit
-					}
-			    }
-			}
-			planet = { is_capital = no }
-			owner = {
-				NOR = {
-					has_policy_flag = partial_decentralization
-					has_policy_flag = concentration_of_power
-					has_policy_flag = centralized_state
-					has_policy_flag = excessive_centralization
-				}
-			}
+		NOR = {
+			allow_bureaucratic_building = yes
+			is_centered = yes
+			is_eci_megacorp = no
+			is_adminless_country = no
 		}
 	}
 
@@ -875,17 +335,7 @@ building_bureaucratic_1 = {
 	
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		modifier = {
 			job_bureaucrat_add = 2
@@ -894,78 +344,10 @@ building_bureaucratic_1 = {
 
 	triggered_desc = {
 		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		text = job_bureaucrat_effect_desc
 	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
-		}
-		modifier = {
-			job_manager_add = 2
-		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
-		}
-		text = job_manager_effect_desc
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		modifier = {
-			job_clerk_add = 2
-		}
-	}
-
-	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
-		potential = {
-			always = yes
-		}
-		unity = 20
-	} 
 
 	upgrades = {
 		"building_bureaucratic_2"
@@ -978,12 +360,6 @@ building_bureaucratic_1 = {
 	show_tech_unlock_if = {
 		is_regular_empire = yes
 	}
-
-	on_queued = {
-		planet = {
-			set_timed_planet_flag = { flag = recent_admin_building_built days = 720 }
-		}
-	}
 }
 
 #行政园区
@@ -995,81 +371,27 @@ building_bureaucratic_2 = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		owner = { NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		NOT = { has_modifier = slave_colony }
-		planet = { is_capital = yes }
-		owner = {
-			OR = {
-				has_policy_flag = partial_decentralization
-				has_policy_flag = concentration_of_power
-				has_policy_flag = centralized_state
-				has_policy_flag = excessive_centralization
-			}
-		}
+		allow_bureaucratic_building = yes
+		is_centered = yes
+		is_eci_megacorp = no
 	}
-
+	
 	allow = {
+		is_adminless_country = no
 		has_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		OR = {
-			buildings_no_crystals = yes
-			AND = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_OGAS
-						has_valid_civic = civic_cybercap
-						has_valid_civic = civic_corporate_cybercap
-						AND = {
-							OR = {
-								has_valid_civic = civic_anarchism
-								AND = {
-									has_valid_civic = civic_shared_burden
-									has_ascension_perk = ap_future_society
-								}
-							}
-							NOR = {
-								AND = {
-									has_valid_civic = civic_democracy_and_clean_government
-									has_valid_civic = civic_OGAS
-								}
-								#has_valid_civic = civic_triple_the_profit
-							}
-						}
-						is_regular_empire = no
-					}
-				}
-			}
-			planet = { is_capital = no }
-			owner = {
-				NOR = {
-					has_policy_flag = partial_decentralization
-					has_policy_flag = concentration_of_power
-					has_policy_flag = centralized_state
-					has_policy_flag = excessive_centralization
-				}
-			}
+		NOR = {
+			allow_bureaucratic_building = yes
+			is_centered = yes
+			is_eci_megacorp = no
+			is_adminless_country = no
+			buildings_no_crystals = no
 		}
 	}
-
+	
 	convert_to = {
 		building_hive_cluster
 		building_network_junction
@@ -1091,26 +413,10 @@ building_bureaucratic_2 = {
 		}
 	}
 
-	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
-		potential = {
-			always = yes
-		}
-		unity = 40
-	} 
 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		modifier = {
 			job_bureaucrat_add = 4
@@ -1119,84 +425,11 @@ building_bureaucratic_2 = {
 
 	triggered_desc = {
 		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		text = job_bureaucrat_effect_desc
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
-		}
-		modifier = {
-			job_manager_add = 4
-		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
-		}
-		text = job_manager_effect_desc
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		modifier = {
-			job_clerk_add = 4
-		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		text = job_clerk_effect_desc
-	}
 
 	prerequisites = {
 		"tech_colonial_bureaucracy"
@@ -1220,80 +453,24 @@ building_bureaucratic_3 = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
-		NOR = { 
-			has_modifier = slave_colony 
-			owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		}
-		planet = { is_capital = yes }
-		owner = {
-			OR = {
-				has_policy_flag = partial_decentralization
-				has_policy_flag = concentration_of_power
-				has_policy_flag = centralized_state
-				has_policy_flag = excessive_centralization
-			}
-		}
+		allow_bureaucratic_building = yes
+		is_centered = yes
+		is_eci_megacorp = no
 	}
-
+	
 	allow = {
+		is_adminless_country = no
 		has_upgraded_capital = yes
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-					#has_civic = civic_coalition_government
-				} }
-		OR = {
-			buildings_no_crystals = yes
-			AND = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_OGAS
-						has_valid_civic = civic_cybercap
-						has_valid_civic = civic_corporate_cybercap
-						AND = {
-							OR = {
-								has_valid_civic = civic_anarchism
-								AND = {
-									has_valid_civic = civic_shared_burden
-									has_ascension_perk = ap_future_society
-								}
-							}
-							NOR = {
-								AND = {
-									has_valid_civic = civic_democracy_and_clean_government
-									has_valid_civic = civic_OGAS
-								}
-								#has_valid_civic = civic_triple_the_profit
-							}
-						}
-						is_regular_empire = no
-					}
-				}
-			}
-			planet = { is_capital = no }
-			owner = {
-				NOR = {
-					has_policy_flag = partial_decentralization
-					has_policy_flag = concentration_of_power
-					has_policy_flag = centralized_state
-					has_policy_flag = excessive_centralization
-				}
-			}
+		NOR = {
+			allow_bureaucratic_building = yes
+			is_centered = yes
+			is_eci_megacorp = no
+			is_adminless_country = no
+			buildings_no_crystals = no
 		}
 	}
 
@@ -1316,25 +493,9 @@ building_bureaucratic_3 = {
 			rare_crystals = @b3_rare_upkeep
 		}
 	}
-	ai_resource_production = { # cheat ai player that empire_size_buidling makes unity
-		potential = {
-			always = yes
-		}
-		unity = 60
-	} 
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		modifier = {
 			job_bureaucrat_add = 6
@@ -1343,83 +504,9 @@ building_bureaucratic_3 = {
 
 	triggered_desc = {
 		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_democracy_and_clean_government
-					#has_valid_civic = civic_triple_the_profit
-				}
-			}
+			always = yes
 		}
 		text = job_bureaucrat_effect_desc
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
-		}
-		modifier = {
-			job_manager_add = 6
-		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					#has_valid_civic = civic_triple_the_profit
-				}
-				NOT = { has_valid_civic = civic_business_reporting_administration }
-			}
-		}
-		text = job_manager_effect_desc
-	}
-	
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		modifier = {
-			job_clerk_add = 6
-		}
-	}
-
-	triggered_desc = {
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_democracy_and_clean_government
-					has_valid_civic = civic_business_reporting_administration
-				}
-			}
-		}
-		text = job_clerk_effect_desc
 	}
 
 	prerequisites = {
