@@ -811,6 +811,37 @@ not_has_building_foundry = {
 allow_bureaucratic_building = { # NOT corporate & regular empire
 	owner = { is_regular_empire = yes }
 	NOT = {	has_modifier = slave_colony	}
+	OR = {
+		owner = {
+			OR = {
+				has_policy_flag = full_decentralization
+				has_policy_flag = high_decentralization
+			}
+		}
+		AND = {
+			owner = {
+				OR = {
+					has_policy_flag = partial_decentralization
+					has_policy_flag = concentration_of_power
+				}
+			}
+			planet = {
+				OR = {
+					is_capital = yes
+					is_sector_capital = yes
+				}
+			}
+		}
+		AND = {
+			owner = {
+				OR = {
+					has_policy_flag = centralized_state
+					has_policy_flag = excessive_centralization
+				}
+			}
+			planet = { is_capital = yes }
+		}
+	}
 }
 
 is_eci_megacorp = {
@@ -825,13 +856,12 @@ is_eci_megacorp = {
 	}
 }
 
-is_adminless_country = { # like OGAS country
+is_adminless_country = { # 自动化行政国家
 	owner = {
 		OR = {
 			has_valid_civic = civic_OGAS
 			has_valid_civic = civic_cybercap
 			has_valid_civic = civic_corporate_cybercap
-			has_valid_civic = civic_democracy_and_clean_government
 			has_valid_civic = civic_anarchism
 			AND = {
 				has_valid_civic = civic_shared_burden
@@ -841,38 +871,11 @@ is_adminless_country = { # like OGAS country
 	}
 }
 
-is_coalition = { # just for policies
-	OR = {
-		owner = {
-			OR = {
-				has_policy_flag = full_decentralization
-				has_policy_flag = high_decentralization
-			}
-		}
-		AND = {
-			planet = { is_sector_capital = yes }
-			NOT = { #  while no megacorp , cant build this on capital 
-				planet = { is_capital = yes }
-				is_eci_megacorp = no
-			}
-			owner = {
-				OR = {
-					has_policy_flag = partial_decentralization
-					has_policy_flag = concentration_of_power
-				}
-			}
-		}
-	}
-}
-
-is_centered = { # just for policies
+is_clean_government_country = { # 民主廉政国家
 	owner = {
 		OR = {
-			has_policy_flag = partial_decentralization
-			has_policy_flag = concentration_of_power
-			has_policy_flag = centralized_state
-			has_policy_flag = excessive_centralization
+			has_valid_civic = civic_democracy_and_clean_government
+			has_valid_civic = civic_business_reporting_administration
 		}
 	}
-	planet = { is_capital = yes }
 }

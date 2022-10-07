@@ -1946,13 +1946,26 @@ bureaucrat = {
 	resources = {
 		category = planet_bureaucrats
 		upkeep = {
-			consumer_goods = 2
+			consumer_goods = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = excessive_centralization
+					}
+				}
+			}
+			consumer_goods = 1
 		}
 	}
 
 	country_modifier = {
 		country_admin_cap_add = 10
 	}
+
 	triggered_country_modifier = {
 		potential = {
 			exists = owner
@@ -1963,7 +1976,20 @@ bureaucrat = {
 				}
 			}
 		}
-		country_admin_cap_add = 5
+		country_admin_cap_add = 10
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = full_decentralization
+					has_policy_flag = high_decentralization
+				}
+			}
+		}
+		country_admin_cap_add = -5
 	}
 
 	planet_modifier = {
@@ -1996,13 +2022,6 @@ bureaucrat = {
 			pop_cat_worker_happiness = -0.05
 		}
 	}
-	#triggered_planet_modifier = {
-	#	potential = {
-	#		exists = owner
-	#		owner = { has_civic = civic_coalition_government }
-	#	}
-	#	species_empire_size_mult = -0.05
-	#}
 
 	weight = {
 		weight = @specialist_job_weight
@@ -2375,9 +2394,15 @@ manager = {
 
 	resources = {
 		category = planet_managers
-		produces = {
-			unity = 3
+		upkeep = {
 			society_research = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				is_eci_megacorp = no
+			}
+			unity = 3
 		}
 		upkeep = {
 			consumer_goods = 1
@@ -2386,15 +2411,13 @@ manager = {
 			trigger = {
 				exists = owner
 				owner = {
-					NOR = {
-						has_valid_civic = civic_byzantine_bureaucracy
-						has_valid_civic = civic_philosopher_king
-						has_valid_civic = civic_executive_committee
-						has_valid_civic = civic_peaceful_republic
+					OR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = excessive_centralization
 					}
 				}
 			}
-			unity = 1
+			consumer_goods = 1
 		}
 	}
 	planet_modifier = {
@@ -2405,13 +2428,7 @@ manager = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-				owner = { OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-					has_civic = civic_family_business
-					has_civic = civic_world_cooperative
-					has_valid_civic = civic_triple_the_profit
-				} }
+			is_eci_megacorp = yes
 		}
 		species_empire_size_mult = -0.1
 	}
