@@ -96,6 +96,14 @@ country_event = {
 		name = ethic_economic_setting_complete_option
 		hidden_effect = {
 			if = {
+				limit = { NOT = { has_global_flag = eci_star } }
+				set_global_flag = eci_star
+			}
+			if = {
+				limit = { has_global_flag = economic_crisis_close }
+				destroy_situation = this # 立刻关闭机制
+			}
+			if = {
 				limit = { has_global_flag = eci_educated_no }
 				every_country = {
 					every_owned_pop = {
@@ -107,12 +115,31 @@ country_event = {
 				}
 			}
 			if = {
-				limit = { NOT = { has_global_flag = eci_star } }
-				set_global_flag = eci_star
-			}
-			if = {
-				limit = { has_global_flag = economic_crisis_close }
-				destroy_situation = this # 立刻关闭机制
+				limit = { NOT = { has_global_flag = eci_educated_no } }
+				every_country = {
+					if = {
+						limit = {
+							NOT = { has_origin = origin_void_dwellers }
+						}
+						capital_scope = {
+							while = {
+								count = 3
+								create_pop = { species = owner_main_species }
+							}
+						}
+					}
+					if = {
+						limit = {
+							has_origin = origin_void_dwellers
+						}
+						every_owned_planet = {
+							while = {
+								count = 1
+								create_pop = { species = owner_main_species }
+							}
+						}
+					}
+				}
 			}
 		}
 	}
