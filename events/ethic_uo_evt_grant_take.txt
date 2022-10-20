@@ -1,0 +1,118 @@
+namespace = uo_grant
+country_event = { #授予
+	id = uo_grant.1
+	title = uo_grant.1.t
+	desc = { text = uo_grant.1.starbase trigger = { event_target:uo_gt_obj = { is_scope_type = starbase } } }
+	desc = { text = uo_grant.1.planet trigger = { event_target:uo_gt_obj = { is_scope_type = planet } } }
+	desc = { text = uo_grant.1.fleet trigger = { event_target:uo_gt_obj = { is_scope_type = fleet } } }
+	picture = { picture = GFX_evt_star_chart trigger = { event_target:uo_gt_obj = { is_scope_type = starbase } } }
+	picture = { picture = GFX_evt_inhabited_solar_system trigger = { event_target:uo_gt_obj = { is_scope_type = planet } } }
+	picture = { picture = GFX_evt_federation_fleet trigger = { event_target:uo_gt_obj = { is_scope_type = fleet } } }
+	is_triggered_only = yes
+	immediate = {
+		set_update_modifiers_batch = begin
+		set_country_flag = uo_is_gt_engaged
+		event_target:uo_gt_obj = {
+			owner = { save_event_target_as = uo_gt_obj_owner }
+			if = {
+				limit = { is_scope_type = fleet }
+				set_event_locked = yes
+			}
+		}
+		uo_efx_calc_gt_obj_price = yes
+		set_variable = { which = uo_gt_obj_unity value = value:uo_sv_gt_obj_unity_value } #凝聚力
+	}
+	option = { name = uo_grant.1.quit }
+	option = { #CN
+		name = uo_grant.1.cn
+		trigger = {
+			exists = event_target:uo_cn
+			NOT = { is_at_war_with = event_target:uo_cn }
+		}
+		event_target:uo_gt_obj = { set_owner = event_target:uo_cn }
+		uo_efx_gt_grant = { TARGET = uo_cn }
+	}
+	option = { #US
+		name = uo_grant.1.us
+		trigger = {
+			exists = event_target:uo_us
+			NOT = { is_at_war_with = event_target:uo_us }
+		}
+		event_target:uo_gt_obj = { set_owner = event_target:uo_us }
+		uo_efx_gt_grant = { TARGET = uo_us }
+	}
+	option = { #EU
+		name = uo_grant.1.eu
+		trigger = {
+			exists = event_target:uo_eu
+			NOT = { is_at_war_with = event_target:uo_eu }
+		}
+		event_target:uo_gt_obj = { set_owner = event_target:uo_eu }
+		uo_efx_gt_grant = { TARGET = uo_eu }
+	}
+	option = { #RS
+		name = uo_grant.1.rs
+		trigger = {
+			exists = event_target:uo_rs
+			NOT = { is_at_war_with = event_target:uo_rs }
+		}
+		event_target:uo_gt_obj = { set_owner = event_target:uo_rs }
+		uo_efx_gt_grant = { TARGET = uo_rs }
+	}
+	option = { #AB
+		name = uo_grant.1.ab
+		trigger = {
+			exists = event_target:uo_ab
+			NOT = { is_at_war_with = event_target:uo_ab }
+		}
+		event_target:uo_gt_obj = { set_owner = event_target:uo_ab }
+		uo_efx_gt_grant = { TARGET = uo_ab }
+	}
+	after = {
+		remove_country_flag = uo_is_gt_engaged
+		event_target:uo_gt_obj = {
+			if = { limit = { is_scope_type = fleet } set_event_locked = no }
+		}
+		set_update_modifiers_batch = end
+	}
+}
+namespace = uo_take
+country_event = { #拿走
+	id = uo_take.1
+	title = uo_take.1.t
+	desc = { text = uo_grant.1.starbase trigger = { event_target:uo_gt_obj = { is_scope_type = starbase } } }
+	desc = { text = uo_grant.1.planet trigger = { event_target:uo_gt_obj = { is_scope_type = planet } } }
+	desc = { text = uo_grant.1.fleet trigger = { event_target:uo_gt_obj = { is_scope_type = fleet } } }
+	picture = { picture = GFX_evt_star_chart trigger = { event_target:uo_gt_obj = { is_scope_type = starbase } } }
+	picture = { picture = GFX_evt_inhabited_solar_system trigger = { event_target:uo_gt_obj = { is_scope_type = planet } } }
+	picture = { picture = GFX_evt_federation_fleet trigger = { event_target:uo_gt_obj = { is_scope_type = fleet } } }
+	is_triggered_only = yes
+	immediate = {
+		set_update_modifiers_batch = begin
+		set_country_flag = uo_is_gt_engaged
+		event_target:uo_gt_obj = {
+			owner = { save_event_target_as = uo_gt_obj_owner }
+		}
+		uo_efx_calc_gt_obj_price = yes
+		set_variable = { which = uo_gt_obj_unity value = value:uo_sv_gt_obj_unity_value } #凝聚力
+	}
+	option = { name = uo_take.1.quit }
+	option = { #拿走
+		name = uo_take.1.take
+		allow = {
+			event_target:uo_gt_obj_owner = {
+				is_at_war = no
+				if = {
+					limit = { ROOT = { check_variable = { which = uo_gt_obj_price value >= 1500 } } }
+					opinion = { who = Root value >= Root.uo_gt_obj_price }
+				}
+				else = { opinion = { who = Root value >= Root.uo_gt_obj_price } }
+			}
+		}
+		uo_efx_gt_take = yes
+	}
+	after = {
+		remove_country_flag = uo_is_gt_engaged
+		set_update_modifiers_batch = end
+	}
+}

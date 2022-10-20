@@ -1,0 +1,132 @@
+uo_bt_un_hud_toggle = { #开关hud
+	potential = { }
+	allow = { }
+	effect = {
+		FROM = {
+			custom_tooltip = uo_bt_un_hud_toggle
+			if = { limit = { has_country_flag = uo_hud_open } remove_country_flag = uo_hud_open }
+			else = { set_country_flag = uo_hud_open }
+		}
+	}
+}
+uo_bt_open_un_window = { #开启大界面
+	potential = { always = no FROM = { has_country_flag = uo_hud_open } }
+	allow = { }
+	effect = {
+		FROM = {
+			custom_tooltip = uo_bt_open_un_window
+			hidden_effect = { country_event = { id = uo_un_window.1 } }
+		}
+	}
+}
+uo_bt_grant_member_obj = { #授予东西
+	potential = { FROM = { has_country_flag = uo_hud_open } }
+	allow = {
+		custom_tooltip = {
+			fail_text = uo_not_is_grant_or_taking
+			NOT = { FROM = { has_country_flag = uo_is_gt_engaged } }
+		}
+		custom_tooltip = { text = uo_bt_grant_member_obj }
+		if = { #舰队
+			limit = { is_scope_type = fleet is_mobile = yes }
+			is_owned_by = FROM
+			is_leased = no
+			is_in_combat = no
+			is_disabled = no
+		}
+		else_if = { #星基
+			limit = { is_scope_type = fleet is_mobile = no }
+			solar_system = {
+				is_owned_by = FROM
+				is_capital_system = no
+			}
+		}
+		else_if = { #星球
+			limit = { is_scope_type = planet has_owner = yes }
+			FROM = { is_at_war = no }
+			is_owned_by = FROM
+			is_capital = no
+		}
+		else = {
+			custom_tooltip = { text = uo_gt_obj_type_tt always = no }
+		}
+	}
+	effect = {
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = fleet is_mobile = no }
+				starbase = { save_event_target_as = uo_gt_obj }
+			}
+			else = {
+				save_global_event_target_as = uo_gt_obj
+			}
+		}
+		FROM = {
+			custom_tooltip = uo_bt_grant_member_obj
+			hidden_effect = { country_event = { id = uo_grant.1 } }
+		}
+	}
+}
+uo_bt_take_member_obj = { #拿取东西
+	potential = { FROM = { has_country_flag = uo_hud_open } }
+	allow = {
+		custom_tooltip = { text = uo_bt_take_member_obj }
+		custom_tooltip = {
+			fail_text = uo_not_is_grant_or_taking
+			NOT = { FROM = { has_country_flag = uo_is_gt_engaged } }
+		}
+		if = { #舰队
+			limit = { is_scope_type = fleet is_mobile = yes }
+			custom_tooltip = {
+				fail_text = uo_owned_by_un_member
+				owner = { reverse_has_relation_flag = { who = FROM flag = uo_une_member_flg } has_origin = uo_origin_une_member }
+			}
+			is_leased = no
+			is_in_combat = no
+			is_disabled = no
+		}
+		if = { #星基
+			limit = { is_scope_type = fleet is_mobile = no }
+			solar_system = {
+				custom_tooltip = {
+					fail_text = uo_owned_by_un_member
+					owner = { reverse_has_relation_flag = { who = FROM flag = uo_une_member_flg } has_origin = uo_origin_une_member }
+				}
+				is_capital_system = no
+			}
+			custom_tooltip = {
+				fail_text = uo_owned_by_un_member
+				owner = { reverse_has_relation_flag = { who = FROM flag = uo_une_member_flg } has_origin = uo_origin_une_member }
+			}
+			is_in_combat = no
+			is_disabled = no
+		}
+		else_if = { #星球
+			limit = { is_scope_type = planet has_owner = yes }
+			FROM = { is_at_war = no }
+			custom_tooltip = {
+				fail_text = uo_owned_by_un_member
+				owner = { reverse_has_relation_flag = { who = FROM flag = uo_une_member_flg } has_origin = uo_origin_une_member }
+			}
+			is_capital = no
+		}
+		else = {
+			custom_tooltip = { text = uo_gt_obj_type_tt always = no }
+		}
+	}
+	effect = {
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = fleet is_mobile = no }
+				starbase = { save_event_target_as = uo_gt_obj }
+			}
+			else = {
+				save_global_event_target_as = uo_gt_obj
+			}
+		}
+		FROM = {
+			custom_tooltip = uo_bt_take_member_obj
+			hidden_effect = { country_event = { id = uo_take.1 } }
+		}
+	}
+}

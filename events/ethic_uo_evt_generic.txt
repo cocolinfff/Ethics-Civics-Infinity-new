@@ -1,0 +1,150 @@
+namespace = uo_generic
+country_event = { #开局
+	id = uo_generic.1
+	title = uo_generic.1.t
+	desc = uo_generic.1.d
+	picture = GFX_evt_news_room
+	is_triggered_only = yes
+	trigger = {
+		has_origin = uo_origin_une
+	}
+	immediate = {
+		
+	}
+	option = { #
+		name = uo_generic.1.egalitarian
+		exclusive_trigger = { has_ethic = ethic_fanatic_egalitarian }
+	}
+	option = { #
+		name = uo_generic.1.authoritarian
+		exclusive_trigger = { has_ethic = ethic_fanatic_authoritarian }
+	}
+	option = { #
+		name = uo_generic.1.xenophile
+		exclusive_trigger = { has_ethic = ethic_fanatic_xenophile }
+	}
+	option = { #
+		name = uo_generic.1.xenophobe
+		exclusive_trigger = { has_ethic = ethic_fanatic_xenophobe }
+	}
+	option = { #
+		name = uo_generic.1.militarist
+		exclusive_trigger = { has_ethic = ethic_fanatic_militarist }
+	}
+	option = { #
+		name = uo_generic.1.pacifist
+		exclusive_trigger = { has_ethic = ethic_fanatic_pacifist }
+	}
+	option = { #
+		name = uo_generic.1.materialist
+		exclusive_trigger = { has_ethic = ethic_fanatic_materialist }
+	}
+	option = { #
+		name = uo_generic.1.spiritualist
+		exclusive_trigger = { has_ethic = ethic_fanatic_spiritualist }
+	}
+	option = { #
+		name = uo_generic.1.socialism
+		exclusive_trigger = { has_ethic = ethic_fanatic_socialism }
+	}
+	option = { #
+		name = uo_generic.1.capitalism
+		exclusive_trigger = { has_ethic = ethic_fanatic_capitalism }
+	}
+	option = { #
+		name = uo_generic.1.default
+	}
+	after = {
+		add_modifier = { modifier = uo_mod_une_new_age days = 3600 }
+		custom_tooltip = uo_generic.1.tt
+		hidden_effect = {
+			every_subject = {
+				limit = { reverse_has_relation_flag = { who = ROOT flag = uo_une_member_flg } }
+				add_modifier = { modifier = uo_mod_une_member_new_age days = 3600 }
+			}
+		}
+	}
+}
+namespace = uo_colony
+planet_event = { #AI殖民地建成后给球
+	id = uo_colony.1
+	hide_window = yes
+	picture = GFX_evt_acquire_asset
+	is_triggered_only = yes
+	pre_triggers = {
+		is_ai = yes
+		is_capital = no
+	}
+	trigger = {
+		owner = {
+			is_ai = yes
+			has_origin = uo_origin_une
+			any_subject = {
+				reverse_has_relation_flag = { who = Root flag = uo_une_member_flg }
+				num_owned_planets < 1
+			}
+		}
+	}
+	immediate = {
+		owner = {
+			save_event_target_as = uo_colony_demand_owner
+			random_subject = {
+				limit = {
+					reverse_has_relation_flag = { who = Root flag = uo_une_member_flg }
+					num_owned_planets < 1
+				}
+				save_event_target_as = uo_colony_demand_member
+			}
+			add_resource = { unity = 1000 }
+			while = {
+				count = 200
+				add_opinion_modifier = { who = event_target:uo_colony_demand_owner modifier = opinion_uo_granted_obj }
+			}
+		}
+		set_owner = event_target:uo_colony_demand_member
+		solar_system = {
+			if = {
+				limit = {
+					is_capital_system = no
+					is_owned_by = event_target:uo_colony_demand_owner
+				}
+				starbase = {
+					set_owner = event_target:uo_colony_demand_member
+				}
+			}
+		}
+	}
+	after = {
+
+	}
+}
+namespace = uo_tech
+country_event = { #共享科技
+	id = uo_tech.1
+	hide_window = yes
+	is_triggered_only = yes
+	trigger = {
+		OR = {
+			has_origin = uo_origin_une
+			has_origin = uo_origin_une_member
+		}
+	}
+	immediate = {
+		if = {
+			limit = {
+				exists = event_target:uo_une
+				reverse_has_relation_flag = { who = event_target:uo_une flag = uo_une_member_flg }
+			}
+			event_target:uo_une = {
+				copy_techs_from = { target = ROOT }
+			}
+		}
+		every_subject = {
+			limit = {
+				has_origin = uo_origin_une_member
+				reverse_has_relation_flag = { who = Root flag = uo_une_member_flg }
+			}
+			copy_techs_from = { target = ROOT }
+		}
+	}
+}
