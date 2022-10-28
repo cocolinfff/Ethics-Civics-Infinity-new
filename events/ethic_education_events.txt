@@ -24,9 +24,6 @@ pop_event = {
 			has_trait = trait_zombie
 			has_trait = trait_nerve_stapled
 		}
-		planet = {
-			num_pops > 5
-		}
 	}
 
 	immediate = {
@@ -55,7 +52,6 @@ planet_event = {
 				has_trait = trait_nerve_stapled
 			}
 		}
-		num_pops > 5
 	}
 
 	immediate = {
@@ -69,7 +65,7 @@ planet_event = {
 	}
 }
 
-# 每五年的毕业人数
+# 中学毕业率
 country_event = {
 	id = education_mod.3
 	hide_window = yes
@@ -78,230 +74,144 @@ country_event = {
 	trigger = {
 		NOT = { has_global_flag = eci_educated_no }
 		any_owned_pop = {
-			OR = {
-				has_job = student
-				has_job = university_student
-			}
+			has_job = teacher
 		}
 	}
 
 	immediate = {
-		every_owned_pop = {
-			limit = {
-				has_job = student
-				has_modifier = pop_uneducated
-			}
-			if = {
+		every_owned_planet = {
+			#为持有修正的人口添加flag
+			every_owned_pop = {
 				limit = {
-					owner = { NOT = { has_policy_flag = private_education_eo } }
+					has_modifier = pop_uneducated
 				}
-				random_list = {
-					40 = {
-					}
-					60 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_educated"
-							days = -1
-						}
-					}
-				}
+				set_pop_flag = educated_set_started
 			}
-			if = {
+			#循环删除人口的flag，每删除一个人口，在人口所在的星球域上加一变量
+			while = {
 				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					OR = {
-						has_living_standard = { type = living_standard_stratified }
-						has_living_standard = { type = living_standard_subsistence }
-						has_living_standard = { type = living_standard_chemical_bliss }
+					any_owned_pop = {
+						has_pop_flag = educated_set_started
 					}
 				}
-				random_list = {
-					70 = {
+				random_owned_pop = {
+					limit = {
+						has_pop_flag = educated_set_started
 					}
-					30 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_educated"
-							days = -1
-						}
+					remove_pop_flag = educated_set_started
+				}
+				planet = {
+					change_variable = {
+						which = secondary_education_rate
+						value = 0.1
 					}
 				}
 			}
-			if = {
-				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					OR = {
-						has_living_standard = { type = living_standard_normal }
-						has_living_standard = { type = living_standard_good }
-						has_living_standard = { type = living_standard_shared_burden }
-					}
+			export_trigger_value_to_variable = {
+				trigger = num_assigned_jobs
+				parameters = {
+					job = teacher
 				}
-				random_list = {
-					50 = {
-					}
-					50 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_educated"
-							days = -1
-						}
-					}
-				}
+				variable = secondary_school_graduation_rate
 			}
 			if = {
 				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					OR = {
-						has_living_standard = { type = living_standard_utopian }
-						has_living_standard = { type = living_standard_decadent }
-					}
+					check_variable = { which = secondary_education_rate value < trigger:secondary_school_graduation_rate }
 				}
-				random_list = {
-					30 = {
-					}
-					60 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_educated"
-							days = -1
-						}
-					}
-					10 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_highly_educated"
-							days = -1
-						}
-					}
-				}
+				graduated_from_secondary_school = { POSSIBILITY = 60 }
 			}
 			if = {
 				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					has_living_standard = { type = living_standard_academic_privilege }
+					check_variable = { which = secondary_education_rate value > trigger:secondary_school_graduation_rate }
+				}
+				graduated_from_secondary_school = { POSSIBILITY = 20 }
+			}
+		
+			every_owned_pop = {
+				limit = {
+					is_enslaved = yes
+					has_modifier = pop_uneducated
+					owner = { has_policy_flag = slavery_not_allowed }
 				}
 				random_list = {
-					15 = {
-					}
-					65 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_educated"
-							days = -1
-						}
+					80 = {
 					}
 					20 = { 
-						remove_modifier = "pop_uneducated"
+						remove_modifier = "pop_slave_educated"
 						add_modifier = {
-							modifier = "pop_highly_educated"
+							modifier = "pop_educated"
 							days = -1
 						}
 					}
 				}
 			}
 		}
-		every_owned_pop = {
-			limit = {
-				has_job = university_student
-				has_modifier = pop_educated
-			}
-			if = {
+	}
+}
+
+# 大学毕业率
+country_event = {
+	id = education_mod.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		any_owned_pop = {
+			has_job = professor
+		}
+	}
+
+	immediate = {
+		every_owned_planet = {
+			#为持有修正的人口添加flag
+			every_owned_pop = {
 				limit = {
-					owner = { NOT = { has_policy_flag = private_education_eo } }
+					has_modifier = pop_educated
 				}
-				random_list = {
-					65 = {
-					}
-					35 = {
-						remove_modifier = "pop_educated"
-						add_modifier = {
-							modifier = "pop_highly_educated"
-							days = -1
-						}
-					}
-				}
+				set_pop_flag = educated_set_started
 			}
-			if = {
+			#循环删除人口的flag，每删除一个人口，在人口所在的星球域上加一变量
+			while = {
 				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					OR = {
-						has_living_standard = { type = living_standard_stratified }
-						has_living_standard = { type = living_standard_subsistence }
-						has_living_standard = { type = living_standard_chemical_bliss }
+					any_owned_pop = {
+						has_pop_flag = highly_educated_set_started
 					}
 				}
-				random_list = {
-					85 = {
+				random_owned_pop = {
+					limit = {
+						has_pop_flag = highly_educated_set_started
 					}
-					15 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_highly_educated"
-							days = -1
-						}
-					}
+					remove_pop_flag = highly_educated_set_started
 				}
-			}
-			if = {
-				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					OR = {
-						has_living_standard = { type = living_standard_normal }
-						has_living_standard = { type = living_standard_good }
-						has_living_standard = { type = living_standard_shared_burden }
-					}
-				}
-				random_list = {
-					75 = {
-					}
-					25 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_highly_educated"
-							days = -1
-						}
+				planet = {
+					change_variable = {
+						which = higher_education_rate
+						value = 0.3
 					}
 				}
 			}
-			if = {
-				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					OR = {
-						has_living_standard = { type = living_standard_utopian }
-						has_living_standard = { type = living_standard_decadent }
-					}
+			export_trigger_value_to_variable = {
+				trigger = num_assigned_jobs
+				parameters = {
+					job = professor
 				}
-				random_list = {
-					50 = {
-					}
-					50 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_highly_educated"
-							days = -1
-						}
-					}
-				}
+				variable = university_graduation_rate
 			}
 			if = {
 				limit = {
-					owner = { has_policy_flag = private_education_eo }
-					has_living_standard = { type = living_standard_academic_privilege }
+					check_variable = { which = higher_education_rate value < trigger:university_graduation_rate }
 				}
-				random_list = {
-					35 = {
-					}
-					65 = { 
-						remove_modifier = "pop_uneducated"
-						add_modifier = {
-							modifier = "pop_highly_educated"
-							days = -1
-						}
-					}
+				graduated_from_secondary_school = { POSSIBILITY = 50 }
+			}
+			if = {
+				limit = {
+					check_variable = { which = higher_education_rate value > trigger:university_graduation_rate }
 				}
+				graduated_from_secondary_school = { POSSIBILITY = 10 }
 			}
 		}
+		
 		every_owned_pop = {
 			limit = {
 				has_job_category = bio_trophy
@@ -468,6 +378,7 @@ country_event = {
 						has_job = research_pacesetter
 						has_job = dimensional_portal_researcher
 						has_job = space_time_anomaly_researcher
+						has_job = professor
 					}
 				}
 				add_modifier = {
@@ -485,6 +396,7 @@ country_event = {
 							has_job = research_pacesetter
 							has_job = dimensional_portal_researcher
 							has_job = space_time_anomaly_researcher
+							has_job = professor
 						}
 					}
 				}
@@ -495,7 +407,10 @@ country_event = {
 			}
 			if = {
 				limit = {
-					has_job = clerk
+					OR = {
+						has_job = clerk
+						has_job = teacher
+					}
 				}
 				add_modifier = {
 					modifier = "pop_educated"
@@ -508,7 +423,10 @@ country_event = {
 				every_owned_pop = {
 					limit = {
 						has_job_category = worker
-						NOT = { has_job = clerk }
+						NOR = {
+							has_job = clerk
+							has_job = teacher
+						}
 					}
 					add_modifier = {
 						modifier = "pop_educated"
@@ -520,7 +438,10 @@ country_event = {
 				every_owned_pop = {
 					limit = {
 						has_job_category = worker
-						NOT = { has_job = clerk }
+						NOR = {
+							has_job = clerk
+							has_job = teacher
+						}
 					}
 					add_modifier = {
 						modifier = "pop_uneducated"
