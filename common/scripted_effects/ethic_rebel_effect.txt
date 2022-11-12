@@ -14,28 +14,30 @@ set_rebel_dynamic_flag = {
 }
 
 generate_rebel_final = {
-    
-    random_list = {
-        100 = { # peace way
-            modifier = {
-                factor = 0.5
-                has_country_flag = ethic_pacifist_rebel_set
+    hidden_effect = {
+        random_list = {
+            100 = { # peace way
+                modifier = {
+                    factor = 0.5
+                    has_country_flag = ethic_pacifist_rebel_set
+                }
+                generate_politics_rebel = { ETHIC = $ETHIC$ }
+                country_event = { id = ethic_rebel.1001 }
             }
-            generate_politics_rebel = { ETHIC = $ETHIC$ }
-        }
-        50 = {
-            modifier = {
-                factor = 1.2
-                has_country_flag = ethic_militarist_rebel_set
+            50 = {
+                modifier = {
+                    factor = 1.2
+                    has_country_flag = ethic_militarist_rebel_set
+                }
+                generate_war_rebel = { ETHIC = $ETHIC$ }
+                
             }
-            generate_war_rebel = { ETHIC = $ETHIC$ }
         }
     }
-    remove_country_flag = ethic_$ETHIC$_rebel_set
 }
 
 generate_politics_rebel = { 
-    shift_ethic = ethic_$ETHIC
+    shift_ethic = ethic_$ETHIC$
     if = { limit = { has_country_flag = ethic_egalitarian_rebel_set } 
         change_government = {
             authority = auth_dictatorial
@@ -62,111 +64,113 @@ generate_politics_rebel = {
 }
 
 generate_war_rebel = {
-    save_event_target_as = from_country
-    create_country = {
-        name = random
-        type = default
-        species = from.owner_species
-		ignore_initial_colony_error = yes
-		day_zero_contact = no
-        ethos = { ethic = ethic_fanatic_$ETHIC$ ethic = random }
-        civics = random
-        origin = origin_separatists
-        flag = random
-        effect = { 
-            save_event_target_as = rebel_country 
-            from = {
-                random_owned_planet = { 
-                    limit = { is_capital = no } 
-                    set_owner = event_target:rebel_country 
-                    set_controller = event_target:rebel_country
-                    set_capital = yes
-                    save_event_target_as = rebel_country_capital
-                    solar_system = {
-						every_fleet_in_system = {
-							limit = {
-								exists = owner
-								owner = { is_same_value = event_target:from_country }
-								any_controlled_ship = { is_ship_class = shipclass_military_station }
-							}
-							set_owner = event_target:rebel_country
-                            set_controller = event_target:rebel_country
-						}
-					}
-                }
-                every_owned_planet = {
-                    random_list = {
-                        100 = {}
-                        25 = {
-                            modifier = { 
-                                factor = 2
-                                planet_stability < 50
+    hidden_effect = {
+        save_event_target_as = from_country
+        create_country = {
+            name = random
+            type = default
+            species = from.owner_species
+	    	ignore_initial_colony_error = yes
+	    	day_zero_contact = no
+            ethos = { ethic = ethic_fanatic_$ETHIC$ ethic = random }
+            civics = random
+            origin = origin_separatists
+            flag = random
+            effect = { 
+                save_event_target_as = rebel_country 
+                establish_contact = { who = event_target:from_country location = root }
+                establish_communications_no_message = event_target:from_country
+                event_target:from_country = {
+                    random_owned_planet = { 
+                        limit = { is_capital = no } 
+                        set_owner = event_target:rebel_country 
+                        set_controller = event_target:rebel_country
+                        save_event_target_as = rebel_country_capital
+                        solar_system = {
+	    					every_fleet_in_system = {
+	    						set_owner = event_target:rebel_country
+                                set_controller = event_target:rebel_country
+	    					}
+	    				}
+                    }
+                    every_owned_planet = {
+                        limit = { is_capital = no }
+                        random_list = {
+                            100 = {}
+                            25 = {
+                                modifier = { 
+                                    factor = 2
+                                    planet_stability < 50
+                                }
+                                modifier = { 
+                                    factor = 2
+                                    planet_stability < 25
+                                }
+                                set_owner = event_target:rebel_country
+                                set_controller = event_target:rebel_country
+                                solar_system = {
+	    				        	every_fleet_in_system = {
+	    				        		set_owner = event_target:rebel_country
+                                        set_controller = event_target:rebel_country
+	    				        	}
+	    				        }
                             }
-                            modifier = { 
-                                factor = 2
-                                planet_stability < 25
-                            }
+                        }
+                    }
+                    random_owned_leader = {
+                        limit = { leader_class = admiral }
+                        save_event_target_as = rebel_country_admiral
+                        event_target:rebel_country = { 
+                            assign_leader = event_target:rebel_country_admiral 
+                            set_leader = event_target:rebel_country_admiral 
+                        }
+                        unassign_leader = event_target:rebel_country_admiral
+                        fleet = {
                             set_owner = event_target:rebel_country
                             set_controller = event_target:rebel_country
-                            solar_system = {
-					        	every_fleet_in_system = {
-					        		limit = {
-					        			exists = owner
-					        			owner = { is_same_value = event_target:from_country }
-					        			any_controlled_ship = { is_ship_class = shipclass_military_station }
-					        		}
-					        		set_owner = event_target:rebel_country
-                                    set_controller = event_target:rebel_country
-					        	}
-					        }
                         }
                     }
                 }
-                random_owner_leader = {
-                    limit = { leader_class = admiral }
-                    save_event_target_as = rebel_country_admiral
-                    event_target:rebel_country = { 
-                        assign_leader = event_target:rebel_country_admiral 
-                        set_leader = event_target:rebel_country_admiral 
-                    }
-                    unassign_leader = event_target:rebel_country_admiral
-                    fleet = {
-                        set_owner = event_target:rebel_country
-                        set_controller = event_target:rebel_country
-                    }
+                event_target:rebel_country_capital = {
+                    set_capital = yes
+                }
+
+                event_target:rebel_country = {
+                    copy_techs_from = {
+	            		target = event_target:from_country
+	            	}
+                    add_basic_resources_effect = { VALUE = 3000 }
+	            	add_manufactured_resources_effect = { VALUE = 1500 } 
+
+
+                    create_fleet_from_naval_cap = 0.5
+	            	random_owned_planet = {
+	            		last_created_fleet = {
+	            			set_location = event_target:rebel_country_capital
+	            		}
+	            	}
+                    set_country_flag = ethic_$ETHIC$_rebel_set
+                    set_player = event_target:from_country
+                    declare_war = {
+	                	target = event_target:from_country
+	                	name = {
+	                		key = NAME_WAR_OF_REVOLT
+	                		variable_string = "Root.Target.GetName"
+	                	}
+	                	attacker_war_goal = "wg_colossus"
+	                }
+                    country_event = { id = ethic_rebel.1002 }
+                }
+                event_target:from_country = {
+                    create_fleet_from_naval_cap = 0.8
+	            	capital_scope = {
+	            		last_created_fleet = {
+	            			set_location = from
+	            		}
+	            	}
                 }
             }
-            copy_techs_from = {
-				target = event_target:from_country
-			}
-            add_basic_resources_effect = { VALUE = 3000 }
-			add_manufactured_resources_effect = { VALUE = 1500 } 
-
-            create_fleet_from_naval_cap = 0.5
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = event_target:rebel_country_capital
-				}
-			}
-
-            declare_war = {
-		    	target = event_target:from_country
-		    	name = {
-		    		key = NAME_WAR_OF_REVOLT
-		    		variable_string = "Root.Target.GetName"
-		    	}
-		    	attacker_war_goal = "wg_independence"
-		    }
-              
         }
     }
-    from_country = {
-        create_fleet_from_naval_cap = 0.8
-		capital_scope = {
-			last_created_fleet = {
-				set_location = from
-			}
-		}
-    }
-    set_player = rebel_country
+    
 }
