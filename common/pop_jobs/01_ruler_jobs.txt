@@ -31,19 +31,22 @@ head_researcher = {
 				exists = owner
 				owner = { NOT = { has_valid_civic = civic_science_knight } }
 			}
-			physics_research = 5
-			engineering_research = 5
-			society_research = 5
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
 		}
 		produces = {
 			trigger = {
 				exists = owner
 				owner = { has_valid_civic = civic_science_knight }
 			}
-			physics_research = 5
-			engineering_research = 5
-			society_research = 5
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
 			mult = value:knight_commander_unity_output_modifier
+		}
+		produces = { 
+			unity = 2
 		}
 		produces = {
 			trigger = {
@@ -68,6 +71,14 @@ head_researcher = {
 			unity = 3
 		}
 		upkeep = {
+			consumer_goods = 2
+		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
 			consumer_goods = 1
 		}
 		upkeep = {
@@ -80,6 +91,21 @@ head_researcher = {
 			consumer_goods = 1
 		}
 	}
+	
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+		}
+	}
+	
 	planet_modifier = {
 		planet_jobs_physics_research_produces_mult = 0.05
 		planet_jobs_society_research_produces_mult = 0.05
@@ -164,25 +190,36 @@ head_researcher = {
 
 	weight = {
 		weight = @ruler_job_weight
-		modifier = { # 可控的动态权重
-			factOR = value:job_weights_research_modifier|JOB|head_researcher|
+		modifier = {
+			mult = value:job_weights_research_modifier|JOB|head_researcher|
+			exists = owner
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factOR = 0.2
+			mult = value:job_weights_modifier|JOB|head_researcher|RESOURCE|unity|FACTOR|0.25|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factOR = 2
+			factor = 2
 			has_living_standard = { type = living_standard_academic_privilege }
 		}
 		modifier = {
-			factOR = 5
+			factor = 5
 			has_job = head_researcher
 		}
 		modifier = {
-			factOR = 0.01
+			factor = 0.01
 			exists = planet
 			exists = planet.controller
 			planet.controller = {
@@ -221,8 +258,7 @@ high_priest = {
 	resources = {
 		category = planet_priests
 		produces = {
-			unity = 5
-			society_research = 2
+			unity = 6
 		}
 		produces = {
 			trigger = {
@@ -299,9 +335,10 @@ high_priest = {
 			unity = 1
 		}
 		upkeep = {
-			consumer_goods = 1
+			consumer_goods = 2
 		}
 	}
+	
 	triggered_planet_modifier = {
 		potential = { always = yes }
 		planet_amenities_add = 5
@@ -345,31 +382,37 @@ high_priest = {
 
 	weight = {
 		weight = @ruler_job_weight
-		modifier = { # 可控的动态权重
-			factOR = value:job_weights_modifier|JOB|high_priest|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|high_priest|RESOURCE|unity|
+			exists = owner
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factOR = 0.1
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.1
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factOR = 1.2
+			factor = 1.2
 			has_ethic = ethic_spiritualist
 		}
 		modifier = {
-			factOR = 0.1
+			factor = 0.1
 			has_ethic = ethic_materialist
 			NOT = { has_job = high_priest }
 		}
 		modifier = {
-			factOR = 5
+			factor = 5
 			has_job = high_priest
 		}
 		# crisis purge
 		modifier = {
-			factOR = 0.01
+			factor = 0.01
 			exists = planet
 			exists = planet.controller
 			planet.controller = {
@@ -408,15 +451,16 @@ politician = {
 	resources = {
 		category = planet_politicians
 		produces = {
-			unity = 3
+			unity = 4
 		}
 		upkeep = {
-			consumer_goods = 1
+			consumer_goods = 2
 		}
 	}
 	country_modifier = {
 		country_edict_fund_add = 5
 	}
+	
 	triggered_planet_modifier = {
 		potential = { always = yes }
 		planet_amenities_add = 8
@@ -486,22 +530,28 @@ politician = {
 
 	weight = {
 		weight = @ruler_job_weight
-		modifier = { # 可控的动态权重
-			factOR = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
+			exists = owner
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factOR = 0.1
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.1
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factOR = 5
+			factor = 5
 			has_job = politician
 		}
 		# crisis purge
 		modifier = {
-			factOR = 0.01
+			factor = 0.01
 			exists = planet
 			exists = planet.controller
 			planet.controller = {
@@ -539,15 +589,17 @@ noble = {
 	resources = {
 		category = planet_nobles
 		produces = {
-			unity = 3
+			unity = 4
 		}
 		upkeep = {
-			consumer_goods = 1
+			consumer_goods = 2
 		}
 	}
+	
 	planet_modifier = {
 		job_slave_overseer_add = 1
 	}
+	
 	triggered_pop_modifier = {
 		potential = { always = yes }
 		modifier = {
@@ -565,12 +617,6 @@ noble = {
 			pop_cat_specialist_happiness = -0.05
 		}
 	}
-
-	
-	planet_modifier = {
-		
-	}
-
 	triggered_planet_modifier = {
 		potential = { 
 			exists = owner
@@ -588,27 +634,28 @@ noble = {
 
 	weight = {
 		weight = @ruler_job_weight
-		modifier = { # 可控的动态权重
-			factOR = value:job_weights_modifier|JOB|noble|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|noble|RESOURCE|unity|
+			exists = owner
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factOR = 0.1
+			factor = 0.1
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
 		}
 		modifier = {
-			factOR = 0.1
+			factor = 0.1
 			is_egalitarian = yes
 			NOT = { has_job = noble }
 		}
 		modifier = {
-			factOR = 5
+			factor = 5
 			has_job = noble
 		}
 		# crisis purge
 		modifier = {
-			factOR = 0.01
+			factor = 0.01
 			exists = planet
 			exists = planet.controller
 			planet.controller = {
@@ -649,6 +696,17 @@ executive = {
 			owner = { has_valid_civic = civic_du_contrat_social }
 		}
 	}
+	
+	resources = {
+		category = planet_executives
+		produces = {
+			unity = 2
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+	
 	triggered_pop_modifier = {
 		potential = {
 			owner = {
@@ -659,7 +717,6 @@ executive = {
 			pop_cat_ruler_political_power = 3
 		}
 	}
-	
 	triggered_pop_modifier = {
 		potential = {
 			owner = {
@@ -670,17 +727,6 @@ executive = {
 			pop_cat_ruler_political_power = 1
 		}
 	}
-
-	resources = {
-		category = planet_executives
-		produces = {
-			unity = 2
-		}
-		upkeep = {
-			consumer_goods = 1
-		}
-	}
-	
 	triggered_planet_modifier = {
 		potential = { always = yes }
 		trade_value_add = 2
@@ -722,17 +768,28 @@ executive = {
 
 	weight = {
 		weight = @ruler_job_weight
-		modifier = { # 可控的动态权重
-			factOR = value:job_weights_modifier|JOB|executive|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|executive|RESOURCE|unity|
+			exists = owner
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factOR = 5
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_trade_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 5
 			has_job = executive
 		}
 		# crisis purge
 		modifier = {
-			factOR = 0.01
+			factor = 0.01
 			exists = planet
 			exists = planet.controller
 			planet.controller = {
@@ -758,17 +815,20 @@ knight_commander = {
 	condition_string = RULER_JOB_TRIGGER
 	building_icon = building_order_keep
 	clothes_texture_index = 1
-
+	can_set_priority = no
+	
 	possible_pre_triggers = {
 		has_owner = yes
-		is_enslaved = no
 		is_being_purged = no
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_ruler_job
 	possible = {
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
 		hidden_trigger = { exists = owner }
 		owner = {
 			is_gestalt = no
@@ -834,12 +894,15 @@ knight_commander = {
 	weight = {
 		weight = @high_prio_specialist_job_weight
 		modifier = { # 可控的动态权重
-			factOR = value:job_weights_modifier|JOB|executive|RESOURCE|unity|
+			mult = value:job_weights_modifier|JOB|executive|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
 			mult = value:job_weights_research_modifier|JOB|researcher|
-			owner = { has_country_flag = toxoids_7011_b }
+			owner = { 
+				has_country_flag = toxoids_7011_b
+				has_edict = dynamic_weight
+			}
 		}
 	}
 }
