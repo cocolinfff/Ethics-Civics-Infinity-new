@@ -16,6 +16,7 @@
 * 调整 正在净化的人口产出的研究点数改为1
 * 调整 非罪企时罪犯-5贸易额产出，罪犯相关BUG修复
 * 重命名 封装变量
+* 调整 指令式/分布式计划经济 效果互换
 
 ```
 planet_modifier/planet_jobs_slave_produces_mult
