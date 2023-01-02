@@ -15,6 +15,7 @@
 * 调整 格式塔职业职业：数值调整
 * 调整 正在净化的人口产出的研究点数改为1
 * 调整 非罪企时罪犯-5贸易额产出，罪犯相关BUG修复
+* 重命名 封装变量
 
 ```
 planet_modifier/planet_jobs_slave_produces_mult
