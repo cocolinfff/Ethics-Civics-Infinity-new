@@ -19,7 +19,24 @@
 * 调整 指令式/分布式计划经济 效果互换
 * 修复 职业脚本中判断是否拥有国策时，该国策必须合法
 
+待调整：
+
 ```
 planet_modifier/planet_jobs_slave_produces_mult
+```
+
+脚本缺失：
+
+```
 civic_anglers_lithoid
+building_guerrilla_stronghold_large
+building_rebel_mine
+building_rebel_mine_large
+building_rebel_food
+building_rebel_food_large
+building_rebel_arms
+building_rebel_arms_large
+building_rebel_goods
+building_rebel_goods_large
+building_rebel_communication_centre
 ```
