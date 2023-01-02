@@ -689,7 +689,7 @@ executive = {
 	triggered_planet_modifier = {
 		potential = { always = yes }
 		trade_value_add = 2
-		mult = planet.value:count_job|JOB|manager|
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	country_modifier = {
 		trade_value_mult = 0.03
@@ -814,8 +814,8 @@ knight_commander = {
 			mult = value:knight_commander_research_output_modifier
 		}
 		upkeep = {
-			alloys = 1
-			consumer_goods = @ruler_job_consumer_goods_upkeep_half
+			alloys = @ruler_job_alloys_upkeep_knight_commander
+			consumer_goods = @ruler_job_consumer_goods_upkeep_knight_commander
 		}
 	}
 
@@ -856,6 +856,15 @@ knight_commander = {
 		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_anarchism
+			}
+		}
+		pop_cat_specialist_happiness = -0.05
+	}
+
 	weight = {
 		weight = @high_prio_specialist_job_weight
 		modifier = {
@@ -867,6 +876,31 @@ knight_commander = {
 			owner = { 
 				has_country_flag = toxoids_7011_b
 				has_edict = dynamic_weight 
+			}
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+			OR = {
+				# contingency won't purge itself
+				NOT = { exists = event_target:custodian_bot }
+				AND = {
+					exists = event_target:custodian_bot
+					NOT = { species = { is_same_value = event_target:custodian_bot } }
+				}
 			}
 		}
 	}

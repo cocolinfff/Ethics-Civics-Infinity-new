@@ -161,25 +161,6 @@ merchant = {
 			factor = 5
 			has_job = merchant
 		}
-		# crisis purge
-		modifier = {
-			factor = 0.01
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
-			OR = { # contingency won't purge itself
-				NOT = { exists = event_target:custodian_bot }
-				AND = {
-					exists = event_target:custodian_bot
-					NOT = { species = { is_same_value = event_target:custodian_bot } }
-				}
-			}
-		}
 	}
 }
 
@@ -192,6 +173,7 @@ soldier = {
 
 	possible_pre_triggers = {
 		has_owner = yes
+		is_enslaved = no
 		is_being_purged = no
 		is_being_assimilated = no
 		is_sapient = yes
@@ -360,16 +342,6 @@ soldier = {
 		modifier = {
 			factor = 0.5
 			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 0.1
-			is_enslaved = yes
-			NOT = { has_slavery_type = { type = slavery_military } }
-		}
-		modifier = {
-			factor = 10
-			is_enslaved = yes
-			has_slavery_type = { type = slavery_military }
 		}
 		modifier = {
 			factor = 0.1
@@ -1512,7 +1484,7 @@ entertainer = {
 			unity = 1
 		}
 		upkeep = {
-			consumer_goods = @specialist_job_consumer_goods_upkeep
+			consumer_goods = @specialist_job_consumer_goods_upkeep_entertainer
 		}
 	}
 	triggered_planet_modifier = {
@@ -1627,10 +1599,10 @@ duelist = {
 	resources = {
 		category = planet_entertainers
 		produces = {
-			unity = 3
+			unity = 2
 		}
 		upkeep = {
-			alloys = 1
+			alloys = @specialist_job_alloys_upkeep_duelist
 		}
 	}
 	triggered_planet_modifier = {
@@ -2382,9 +2354,13 @@ manager = {
 		}
 	}
 	planet_modifier = {
-		trade_value_add = 4
 		planet_amenities_add = -2
 		planet_bureaucrats_upkeep_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		trade_value_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -3300,7 +3276,7 @@ knight = {
 			mult = value:knights_research_output_modifier
 		}
 		upkeep = {
-			alloys = 1
+			alloys = @specialist_job_alloys_upkeep_knight
 		}
 	}
 
