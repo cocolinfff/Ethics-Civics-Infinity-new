@@ -16,7 +16,8 @@ servant = {
 
 	resources = {
 		category = planet_jobs
-		upkeep = { # 失控女仆兼容
+		# 失控女仆兼容
+		upkeep = {
 			trigger = {
 				has_global_flag = flag_rogue_maid_mod_activated
 				has_trait = trait_machine_maid
@@ -26,13 +27,6 @@ servant = {
 			energy = 2
 		}
 	}
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 4
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
 
 	triggered_pop_modifier = {
 		potential = {
@@ -40,6 +34,15 @@ servant = {
 		}
 		pop_housing_usage_add = -0.5
 	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -158,10 +161,11 @@ slave_overseer = {
 			}
 			unity = 1
 		}
-		#
 	}
+	
 	pop_modifier = {
 		pop_happiness = 0.25
+		pop_defense_armies_add = 2
 	}
 	planet_modifier = {
 		planet_crime_add = -20
@@ -202,7 +206,8 @@ slave_overseer = {
 		weight = @specialist_job_weight
 	}
 }
-#原版
+
+#苦工
 slave_toiler = {
 	category = worker
 	is_capped_by_modifier = no
@@ -282,8 +287,8 @@ slave_toiler = {
 #		weight = @special_job_weight
 #	}
 #}
-#
-#原版
+
+#并入电网
 organic_battery = {
 	category = worker
 	is_capped_by_modifier = no
@@ -326,7 +331,8 @@ organic_battery = {
 		weight = @special_job_weight
 	}
 }
-#原版
+
+#牲口
 livestock = {
 	category = worker
 	is_capped_by_modifier = no
@@ -419,6 +425,8 @@ bio_trophy = {
 			}
 			unity = 4
 		}
+		
+		# 机械乌托邦
 		produces = {
 			trigger = {
 				owner = {
@@ -524,7 +532,8 @@ bio_trophy = {
 		weight = 500000
 	}
 }
-#原版
+
+#正在净化
 purge = {
 	category = purge
 	is_capped_by_modifier = no
@@ -716,7 +725,8 @@ purge = {
 		}
 	}
 }
-#原版
+
+#正在净化
 crisis_purge = {
 	icon = purge
 	category = purge
@@ -795,23 +805,45 @@ assimilation = {
 		category = planet_jobs
 		upkeep = {
 			trigger = {
-				is_organic_species = yes
-				is_lithoid = no
+				has_phototrophic_energy_upkeep = yes
+			}
+			energy = @living_standard_phototrophic_normal
+		}
+		upkeep = {
+			trigger = {
+				has_food_upkeep = yes
+				is_phototrophic = no
 			}
 			food = @living_standard_food_normal
 		}
 		upkeep = {
 			trigger = {
-				is_lithoid = yes
+				has_food_upkeep = yes
+				is_phototrophic = yes
+			}
+			food = @living_standard_phototrophic_normal
+		}
+		upkeep = {
+			trigger = {
+				has_mineral_upkeep = yes
+				is_phototrophic = no
 			}
 			minerals = @living_standard_food_normal
 		}
 		upkeep = {
 			trigger = {
-				is_robotic_species = yes
+				has_mineral_upkeep = yes
+				is_phototrophic = yes
+			}
+			minerals = @living_standard_phototrophic_normal
+		}
+		upkeep = {
+			trigger = {
+				is_robotic_or_voidspawn_species = yes
 			}
 			energy = @living_standard_energy_normal
 		}
+		
 		# 失控女仆兼容：机飞帝国不会同化有基因库的星球上的物种，作为补偿产出一点科研
 		produces = {
 			trigger = {
