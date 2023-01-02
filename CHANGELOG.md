@@ -17,6 +17,7 @@
 * 调整 非罪企时罪犯-5贸易额产出，罪犯相关BUG修复
 * 重命名 封装变量
 * 调整 指令式/分布式计划经济 效果互换
+* 修复 职业脚本中判断是否拥有国策时，该国策必须合法
 
 ```
 planet_modifier/planet_jobs_slave_produces_mult
