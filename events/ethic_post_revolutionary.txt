@@ -1,0 +1,118 @@
+namespace = ethic_post_revolutionary
+
+country_event = {
+	id = ethic_post_revolutionary.1
+	title = "ethic_post_revolutionary.1.name"
+	desc = "ethic_post_revolutionary.1.desc"
+	picture = GFX_evt_victorious_army
+	location = ROOT
+	is_triggered_only = yes
+
+	trigger = {
+		is_post_revolutionary = yes
+		NOT = { has_country_flag = not_revolution }
+	}
+
+	option = {
+		name = "ethic_post_revolutionary.1.a"
+		custom_tooltip = ethic_post_revolutionary.1.a.tooltip
+		hidden_effect = {
+			if = {
+				limit = {
+					has_ethic = ethic_capitalism
+				}
+				country_remove_ethic = ethic_capitalism
+				shift_ethic = ethic_socialism
+			}
+			if = {
+				limit = {
+					has_ethic = ethic_fanatic_capitalism
+				}
+				country_remove_ethic = ethic_fanatic_capitalism
+				shift_ethic = ethic_fanatic_socialism
+			}
+			if = {
+				limit = {
+					has_ethic = ethic_authoritarian
+				}
+				country_remove_ethic = ethic_authoritarian
+				shift_ethic = ethic_egalitarian
+			}
+			if = {
+				limit = {
+					has_ethic = ethic_fanatic_authoritarian
+				}
+				country_remove_ethic = ethic_fanatic_authoritarian
+				shift_ethic = ethic_fanatic_egalitarian
+			}
+			kill_leader = {
+				show_notification = no
+				type = ruler
+			}
+			
+			clear_variable = post_revolutionary
+			remove_modifier = post_revolutionary
+			add_modifier = { 
+				modifier = re_revolution_question
+				years = @post_revolutionary_re_revolution_years
+			}
+		}
+	}
+
+	option = {
+		name = "ethic_post_revolutionary.1.b"
+		custom_tooltip = ethic_post_revolutionary.1.b.tooltip
+		hidden_effect = {
+			change_variable = { which = post_revolutionary value = 1 }
+			IF = { 
+				limit = { check_variable = { which = post_revolutionary value = 1 } }
+				set_timed_country_flag = {
+					flag = not_revolution
+					years = @post_revolutionary_check_years_1
+				}
+				every_owned_pop = {
+					random_list = {
+						19 = { }
+						1 = { kill_pop = yes }
+					}
+				}
+			}
+			ELSE_IF = {
+				limit = { check_variable = { which = post_revolutionary value = 2 } }
+				set_timed_country_flag = {
+					flag = not_revolution
+					years = @post_revolutionary_check_years_2
+				}
+				every_owned_pop = {
+					random_list = {
+						8 = { }
+						2 = { kill_pop = yes }
+					}
+				}
+			}
+			ELSE = {
+				set_timed_country_flag = {
+					flag = not_revolution
+					years = @post_revolutionary_check_years
+				}
+				add_modifier = {
+					modifier = post_revolutionary_unret
+					years = @post_revolutionary_check_years
+				}
+				every_owned_pop = {
+					random_list = {
+						9 = { }
+						1 = { kill_pop = yes }
+					}
+				}
+			}
+			IF = { 
+				limit = { NOT = { has_modifier = post_revolutionary } }
+				add_modifier = {
+					modifier = post_revolutionary
+					years = -1
+				}
+			}
+		}
+	}
+}

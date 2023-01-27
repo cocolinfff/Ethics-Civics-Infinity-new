@@ -1,27 +1,85 @@
 wg_the_benefits_spread ={
+	# wg_megacorp_subjugate
+	# wg_plunder
+	
     casus_belli = cb_the_benefits_spread
 	
 	hide_if_no_cb = no
 	total_war = no
+	release_occupied_systems_on_status_quo = yes
+
+	galactic_empire_joins_defender = {
+		from = { is_galactic_emperor = yes }
+		imperial_authority >= 100
+	}
 	
 	allowed_peace_offers = {
 		status_quo
+		surrender
 		demand_surrender
 	}
 	
+	surrender_acceptance = -100 # wg_megacorp_subjugate
+	
 	potential = {
-		has_total_war_cb = no
-		has_authority = auth_corporate
+		OR = {
+			has_valid_civic = civic_state_monopoly
+			has_authority = auth_corporate
+		}
 		NOT = { has_ethic = ethic_fanatic_pacifist }
+		has_total_war_cb = no
 		from = { is_country_type = default }
 		NOT = { is_in_federation_with = from }
+		NOT = { has_ascension_perk = ap_become_the_crisis }
+		NAND = {
+			is_galactic_emperor = yes
+			from = { is_galactic_community_member = yes }
+		}
 	}
 	possible = {
-		from = { is_country_type = default }
-		NOT = { is_in_federation_with = from }
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = cannot_subjugate_empire_member
+			NAND = {
+				has_galactic_emperor = yes
+				is_galactic_community_member = no
+				from = { is_galactic_community_member = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_custodian"
+			from = { is_galactic_custodian = no }
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_emperor"
+			from = { is_galactic_emperor = no }
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_btc"
+			from = { has_been_declared_crisis = no }
+		}
+		custom_tooltip = {
+			fail_text = pax_galactica_active
+			NAND = {
+				is_active_resolution = resolution_emperor_pax_galactica
+				is_galactic_community_member = yes
+				from = { is_galactic_community_member = yes }
+			}
+		}
 	}
 	on_status_quo = {
-	    if = {
+		if = {
 			limit = {
 				exists = last_created_country
 				last_created_country = {
@@ -30,215 +88,117 @@ wg_the_benefits_spread ={
 			}
 
 			last_created_country = {
-				set_subject_of = {
-					who = root
-					subject_type = subsidiary
+				set_origin_effect = yes
+				ROOT = {
+					switch = {
+						trigger = has_policy_flag
+						oppressive_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_oppressive
+								}
+							}
+						}
+						balanced_terms = {
+							PREV = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_balanced
+								}
+							}
+						}
+						benevolent_terms = {
+							PREV = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_benevolent
+								}
+							}
+						}
+					}
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+
+			if = {
+				limit = {
+					root = { has_authority = auth_corporate }
+					last_created_country = { has_authority = auth_corporate }
+				}
+				last_created_country = {
+					set_merchant_government_effect = yes
 				}
 			}
 		}
+		
 		custom_tooltip = wg_plunder_accept_them
-		if = {
-			limit = {
-				from = {
-					num_owned_planets <= 3
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_1
-			hidden_effect = { add_resource = { energy = 500 minerals = 500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 4
-					num_owned_planets <= 6
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_2
-			hidden_effect = { add_resource = { energy = 1000 minerals = 1000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 7
-					num_owned_planets <= 9
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_3
-			hidden_effect = { add_resource = { energy = 1500 minerals = 1500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 10
-					num_owned_planets <= 12
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_4
-			hidden_effect = { add_resource = { energy = 2000 minerals = 2000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 13
-					num_owned_planets <= 15
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_5
-			hidden_effect = { add_resource = { energy = 2500 minerals = 2500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 16
-					num_owned_planets <= 18
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_6
-			hidden_effect = { add_resource = { energy = 3000 minerals = 3000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 19
-					num_owned_planets <= 21
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_7
-			hidden_effect = { add_resource = { energy = 3500 minerals = 3500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 22
-					num_owned_planets <= 24
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_8
-			hidden_effect = { add_resource = { energy = 4000 minerals = 4000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 25
-					num_owned_planets <= 27
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_9
-			hidden_effect = { add_resource = { energy = 4500 minerals = 4500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 28
-					num_owned_planets <= 30
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_10
-			hidden_effect = { add_resource = { energy = 5000 minerals = 5000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 31
-					num_owned_planets <= 33
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_11
-			hidden_effect = { add_resource = { energy = 5500 minerals = 5500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 34
-					num_owned_planets <= 36
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_12
-			hidden_effect = { add_resource = { energy = 6000 minerals = 6000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 37
-					num_owned_planets <= 39
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_13
-			hidden_effect = { add_resource = { energy = 6500 minerals = 6500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 40
-					num_owned_planets <= 42
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_14
-			hidden_effect = { add_resource = { energy = 7000 minerals = 7000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 43
-					num_owned_planets <= 45
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_15
-			hidden_effect = { add_resource = { energy = 7500 minerals = 7500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 46
-					num_owned_planets <= 48
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_16
-			hidden_effect = { add_resource = { energy = 8000 minerals = 8000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 49
-					num_owned_planets <= 51
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_17
-			hidden_effect = { add_resource = { energy = 8500 minerals = 8500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 52
-					num_owned_planets <= 54
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_18
-			hidden_effect = { add_resource = { energy = 9000 minerals = 9000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 55
-					num_owned_planets <= 57
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_19
-			hidden_effect = { add_resource = { energy = 9500 minerals = 9500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 58
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_21
-			hidden_effect = { add_resource = { energy = 10000 minerals = 10000 } }
+		add_resource = {
+			energy = 150
+			minerals = 150
+			mult = from.trigger:num_owned_planets
 		}
 		hidden_effect = { from = { add_modifier = { modifier = raided days = 3600 } } }
 	}
 	on_accept = {
+		FROM = {
+			if = {
+				limit = { has_been_declared_crisis = no }
+				ROOT = {
+					switch = {
+						trigger = has_policy_flag
+						oppressive_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_oppressive
+								}
+							}
+						}
+						balanced_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_balanced
+								}
+							}
+						}
+						benevolent_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_benevolent
+								}
+							}
+						}
+					}
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+		}
+
+		custom_tooltip = wg_plunder_accept_them
+		add_resource = {
+			energy = 150
+			minerals = 150
+			mult = from.trigger:num_owned_planets
+		}
+		hidden_effect = { from = { add_modifier = { modifier = raided days = 3600 } } }
+		
+		# add threat
 		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
 			every_country = {
 				limit = {
 					NOT = { is_country_type = fallen_empire }
@@ -249,213 +209,6 @@ wg_the_benefits_spread ={
 				}
 			}
 		}
-		from = {
-			set_subject_of = {
-				who = root
-				subject_type = subsidiary
-			}
-		}
-        
-		custom_tooltip = wg_plunder_accept_them
-		if = {
-			limit = {
-				from = {
-					num_owned_planets <= 3
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_1
-			hidden_effect = { add_resource = { energy = 500 minerals = 500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 4
-					num_owned_planets <= 6
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_2
-			hidden_effect = { add_resource = { energy = 1000 minerals = 1000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 7
-					num_owned_planets <= 9
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_3
-			hidden_effect = { add_resource = { energy = 1500 minerals = 1500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 10
-					num_owned_planets <= 12
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_4
-			hidden_effect = { add_resource = { energy = 2000 minerals = 2000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 13
-					num_owned_planets <= 15
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_5
-			hidden_effect = { add_resource = { energy = 2500 minerals = 2500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 16
-					num_owned_planets <= 18
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_6
-			hidden_effect = { add_resource = { energy = 3000 minerals = 3000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 19
-					num_owned_planets <= 21
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_7
-			hidden_effect = { add_resource = { energy = 3500 minerals = 3500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 22
-					num_owned_planets <= 24
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_8
-			hidden_effect = { add_resource = { energy = 4000 minerals = 4000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 25
-					num_owned_planets <= 27
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_9
-			hidden_effect = { add_resource = { energy = 4500 minerals = 4500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 28
-					num_owned_planets <= 30
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_10
-			hidden_effect = { add_resource = { energy = 5000 minerals = 5000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 31
-					num_owned_planets <= 33
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_11
-			hidden_effect = { add_resource = { energy = 5500 minerals = 5500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 34
-					num_owned_planets <= 36
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_12
-			hidden_effect = { add_resource = { energy = 6000 minerals = 6000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 37
-					num_owned_planets <= 39
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_13
-			hidden_effect = { add_resource = { energy = 6500 minerals = 6500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 40
-					num_owned_planets <= 42
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_14
-			hidden_effect = { add_resource = { energy = 7000 minerals = 7000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 43
-					num_owned_planets <= 45
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_15
-			hidden_effect = { add_resource = { energy = 7500 minerals = 7500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 46
-					num_owned_planets <= 48
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_16
-			hidden_effect = { add_resource = { energy = 8000 minerals = 8000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 49
-					num_owned_planets <= 51
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_17
-			hidden_effect = { add_resource = { energy = 8500 minerals = 8500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 52
-					num_owned_planets <= 54
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_18
-			hidden_effect = { add_resource = { energy = 9000 minerals = 9000 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 55
-					num_owned_planets <= 57
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_19
-			hidden_effect = { add_resource = { energy = 9500 minerals = 9500 } }
-		}
-		if = {
-			limit = {
-				from = {
-					num_owned_planets >= 58
-				}
-			}
-			custom_tooltip = wg_plunder_accept_us_21
-			hidden_effect = { add_resource = { energy = 10000 minerals = 10000 } }
-		}
-		hidden_effect = { from = { add_modifier = { modifier = raided days = 3600 } } }
 	}
 
 	ai_weight = {
