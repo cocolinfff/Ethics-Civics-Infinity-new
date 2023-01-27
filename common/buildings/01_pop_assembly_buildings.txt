@@ -108,29 +108,15 @@ building_robot_assembly_plant = {
 
 #合成人组装复合体
 building_robot_assembly_complex = {
-	icon = building_machine_assembly_complex
 	base_buildtime = @b3_time
 	can_build = no
+	icon = building_machine_assembly_complex
 
 	category = pop_assembly
 
 	potential = {
 		exists = owner
-		OR = {
-			owner = { is_ai = no }
-			NOT = { exists = assembling_species }
-			assembling_species = { is_robotic_species = yes }
-		}
-		owner = {
-			is_regular_empire = yes
-			NOT = { has_policy_flag = robots_outlawed }
-			OR = {
-				is_ai = no
-				NOT = { has_ascension_perk = ap_engineered_evolution }
-				is_materialist = yes
-			}
-		}
-		NOT = { has_modifier = slave_colony }
+		owner = { is_regular_empire = yes }
 	}
 
 	convert_to = {
@@ -140,24 +126,16 @@ building_robot_assembly_complex = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
+			buildings_no_crystals = yes
 			owner = {
-				OR = {
-					is_regular_empire = no
-					has_policy_flag = robots_outlawed
-				}
+				is_regular_empire = no
 			}
-			has_modifier = slave_colony
 			AND = {
 				owner = { is_ai = yes }
 				free_district_slots = 0
 				free_building_slots = 0
 				free_housing <= 0
 				free_jobs <= 0
-			}
-			owner = {
-				is_ai = yes
-				has_ascension_perk = ap_engineered_evolution
-				is_materialist = no
 			}
 		}
 	}
@@ -179,53 +157,18 @@ building_robot_assembly_complex = {
 	}
 
 	prerequisites = {
-		tech_robot_assembly_complex
+		tech_synthetic_workers
 	}
-
+	
 	triggered_desc = {
-		trigger = {
-			OR = {
-				NOT = { exists = owner }
-				AND = {
-					exists = owner
-					owner = {
-						NOT = { has_policy_flag = roboticist_output_build_cyborgs }
-					}
-				}
-			}
-
-		}
 		text = job_roboticist_effect_desc
 	}
-
 	triggered_desc = {
 		trigger = {
-			exists = owner
-			owner = {
-				has_policy_flag = roboticist_output_build_cyborgs
-			}
-		}
-		text = job_roboticist_cyborg_effect_desc
-	}
-
-	triggered_desc = {
-		trigger = {
-			OR = {
-				has_building = building_clone_vats
-				has_building = building_clone_army_clone_vat
-				has_building = building_posthumous_employment_center
-				AND = {
-					exists = assembling_species
-					assembling_species = { is_organic_species = yes }
-					exists = owner
-					owner = {
-						NOT = { has_policy_flag = roboticist_output_build_cyborgs }
-					}
-				}
-			}
+			has_building = building_clone_vats
 		}
 		text = tooltip_organic_and_artificial_assembly_warning
-	}
+	}	
 }
 
 #############
@@ -909,6 +852,15 @@ building_clone_vats = {
 	}
 	planet_modifier = {
 		planet_pop_assembly_organic_add = 3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_tradition = tr_genetics_efficient_cloning }
+		}
+		modifier = {
+			planet_pop_assembly_organic_add = 1.5
+		}
 	}
 	triggered_planet_modifier = {
 		potential = {
