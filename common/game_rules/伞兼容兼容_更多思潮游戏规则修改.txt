@@ -998,30 +998,82 @@ can_dismiss_leader = {
 can_species_be_assembled = {
 	is_sapient = yes
 	has_population_control = {
-		type = no
+		value = no
 		country = root.owner
 	}
-	## 微械
-	root.owner = { NOT = { has_modifier = modifier_ban_assemble } }
-	## 基础条件
+	##_|基础条件|
 	OR = {
-		#_|原版智械|	+azl/gsf
+		#_|原版智械|	+azl/GF/魔女/久远
 		AND = {
 			is_robotic = yes	# 含|是wsg物种|
-			NOT = { has_trait = trait_robot_mind_relic_core }	# azl
-			root = {
-				check_modifier_value = {
-					modifier = planet_pop_assembly_add
-					value > 0
+			NOR = {
+				has_trait = trait_robot_mind_relic_core	# azl
+				has_trait = trait_reassembler			# 时与空
+			}
+			KZ_VOY_trgr_plnt_ASSEMBLY = yes	# 久远
+
+			#	魔女
+			if = { limit = { has_trait = trait_dummy }
+				if = { limit = { root.owner = { has_origin = origin_garbage_princesses } }
+					root = { 
+						OR = {
+							has_building = building_enigmatic_assembly_plant
+							num_assigned_jobs = {
+								job = dummicist
+								value > 0
+							}
+						}
+						check_modifier_value = {
+							modifier = planet_pop_assembly_add
+							value > 0
+						}
+					}
 				}
-				owner = {
-					NOR = {# 这类mod国家不组装机器人
-						# azl
-						has_authority = auth_azur_lane_1
-						has_authority = auth_azur_lane_2
-						has_authority = auth_azur_lane_K
-						# gsf
-						has_authority = auth_commonwealth
+				else = {
+					root.owner = { has_technology = tech_dummy_workers }
+					root = {
+						num_assigned_jobs = {
+							job = dummicist
+							value > 0
+						}
+					}
+					root = {
+						check_modifier_value = {
+							modifier = planet_pop_assembly_add
+							value > 0
+						}
+					}
+				}
+			}
+			#	久远
+			else_if = { limit = { has_trait = trait_KZ_VOY_magic_puppet }
+				KZ_VOY_can_assemble_magic_puppet = yes
+			}
+			#	GF
+			else_if = { limit = { has_trait = GF_trait_doll }
+				root.owner = {
+					OR = {
+						has_authority = GF_auth_commonwealth
+						is_valid_GF_OGAS_subnet = yes
+					}
+				}
+			}
+			#_|v默认|	+azl
+			else = {
+				root = {
+					check_modifier_value = {
+						modifier = planet_pop_assembly_add
+						value > 0
+					}
+					owner = {
+						NOR = {# 这类mod国家不组装机器人
+							# azl
+							has_authority = auth_azur_lane_1
+							has_authority = auth_azur_lane_2
+							has_authority = auth_azur_lane_K
+							# GF
+							has_authority = auth_commonwealth
+						}
 					}
 				}
 			}
@@ -1029,16 +1081,16 @@ can_species_be_assembled = {
 		#_|原版克隆|
 		AND = {
 			is_organic_species = yes
-			#_|v蜂群|		+Ecar
+			#_|v蜂群|	+Ecar
 			if = {
 				limit = {
-					root.owner = { is_hive_empire = yes }
+					OR = {
+						has_trait = trait_hive_mind
+						# Ecar
+						has_trait = trait_psionic_link
+					}
 				}
-				OR = {
-					has_trait = trait_hive_mind
-					# Ecar
-					has_trait = trait_psionic_link
-				}
+				root.owner = { is_hive_empire = yes }
 			}
 			#_|v植物|
 			else_if = {
@@ -1047,22 +1099,20 @@ can_species_be_assembled = {
 					any_owned_species = { is_exact_same_species = prevprev }
 				}
 			}
-			#_|v多肢化|
+			#_|v鲸族|
 			else_if = {
 				limit = { has_trait = trait_tiyanki }
 				root = {
 					any_owned_species = { is_exact_same_species = prevprev }
 				}
 			}
-			#_|v义体人|
+			#_|v义体|
 			else_if = {
-				limit = {
-					root.owner = {
-						has_tradition = tr_cybernetics_assembly_standards
-						has_policy_flag = roboticist_output_build_cyborgs
-					}
+				limit = { has_trait = trait_cybernetic }
+				root.owner = {
+					has_tradition = tr_cybernetics_assembly_standards
+					has_policy_flag = roboticist_output_build_cyborgs
 				}
-				has_trait = trait_cybernetic
 			}
 			#_|v克隆军|		+星海帝皇
 			else_if = {
@@ -1076,7 +1126,7 @@ can_species_be_assembled = {
 					# Event 'clones.3' should cover this, but extra safety check.
 					OR = {
 						has_building = building_clone_army_clone_vat
-						# 星海帝皇
+						#	星海帝皇
 						has_building = building_clone_guard_clone_vat
 						has_building = building_clone_vats
 					}
@@ -1088,48 +1138,38 @@ can_species_be_assembled = {
 					}
 				}
 			}
-			#_|v死而后已|
-			else_if = {
-				limit = {
-					root.owner = { has_civic = civic_permanent_employment }
-				}
-				root = {
-					has_building = building_posthumous_employment_center
-				}
-			}
-			#_|Ecar|
-			else_if = {
-				limit = {
-					root.owner = { has_civic = civic_libido_equipment }
-				}
-				root = {
-					has_building = building_equipment_breeding_plant
-				}
-			}
 			#_|通用|=|存在克隆+特殊spcs|		+FW/星海帝皇/Ecar
 			else = {
 				root = {
 					OR = {
-						# vanilla
+						#	vanilla
 						has_building = building_clone_vats	# 提供|planet_pop_assembly_organic_add|
-						# 星海帝皇
+						has_modifier = tiyanki_trophy
+						owner = { has_modifier = syamelles_curse }
+						AND = {
+							has_building = building_posthumous_employment_center
+							owner = { has_civic = civic_permanent_employment }
+						}
+						has_planet_flag = can_organic_assemble_flag #for mod compatibility
+						
+						#	星海帝皇
 						has_building = building_clone_guard_clone_vat
-						# FW
+						#	FW
 						check_modifier_value = { modifier = planet_pop_assembly_organic_add value > 0 }
-						# Ecar
+						#	Ecar
 						has_building = building_advanced_clone_vats
 					}
 				}
 			}
 		}
-		# UGRC组装物种
+		#	UGRC组装物种
 		UGRC_trgr_spcs_ASSEMBLY = yes
-		# WSG物种/wsg
+		#	WSG物种/wsg
 		UGRC_trgr_spcs_WSG = yes
 
-		# 久远
+		#	久远
 		KZ_VOY_trgr_plnt_CLONE = yes
-		# azl/azlr
+		#	azl/azlr
 		AND = {
 			OR = {
 				is_Azur_Lane_organic_species = yes
@@ -1142,25 +1182,30 @@ can_species_be_assembled = {
 				}
 			}
 		}
-		# gsf
+		#	GF
 		AND = {
 			has_trait = trait_doll
 			root.owner = { has_authority = auth_commonwealth }
 		}
-		# PTep
+		#	PTep
 		AND = {
 			has_trait = trait_plentiful_traditions_pt_cocoon
 			root.owner = { has_ascension_perk = ap_total_assimilation }
 		}
-		# SC
+		#	SC
 		is_archetype = DPURIFIER	# 净化者
+		#	EE
+		is_archetype = ASCENDED
 	}
-	# hiveDLC
+
+	##	微械
+	root.owner = { NOT = { has_modifier = modifier_ban_assemble } }
+	##	hiveDLC
 	NAND = {
-		root = { owner = { has_valid_civic = civic_machine_replicators } }
 		has_trait = trait_machine_central
+		root.owner = { has_valid_civic = civic_machine_replicators }
 	}
-	# 多彩
+	##	多彩
 	if = { limit = { has_global_flag = love_between_us }
 		OR = {
 			AND = {
@@ -1212,6 +1257,16 @@ can_species_be_assembled = {
 				}
 			}
 		}
+	}
+	##	久远
+	else_if = {
+		limit = { 
+			OR = {
+				has_trait = trait_KZ_VOY_sub_terran_dragon
+				has_trait = trait_KZ_VOY_sub_terran_dragon_SP
+			}
+		}
+		KZ_VOY_trgr_plnt_CLONE = yes
 	}
 }
 
