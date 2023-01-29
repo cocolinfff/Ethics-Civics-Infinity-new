@@ -1228,17 +1228,17 @@ country_event = {
 
 	immediate = {
 		overlord = {
-			save_event_target_as = from_overlord
+			save_global_event_target_as = from_overlord
 			capital_star = {
-				save_event_target_as = from_overlord
+				save_global_event_target_as = from_overlord_star
 			}
 			leader = {
-				save_event_target_as = overlord_leader
+				save_global_event_target_as = overlord_leader
 			}
 			capital_scope = {
 				sector = {
 					leader = {
-						save_event_target_as = captial_leader
+						save_global_event_target_as = captial_leader
 					}
 				}
 			}
@@ -1248,10 +1248,10 @@ country_event = {
 					is_ship_class = shipclass_military
 				}
 				leader = {
-					save_event_target_as = coup_leader
+					save_global_event_target_as = coup_leader
 				}
 				set_location = prev.capital_scope
-				save_event_target_as = coup_fleet
+				save_global_event_target_as = coup_fleet
 			}
 		}
 	}
@@ -1264,11 +1264,10 @@ country_event = {
 			overlord = {
 				every_subject = {
 					limit = { NOT = { has_country_flag = soc_supporter } }
+					country_event = {
+						id = red_origin.8191
+					}
 				}
-				country_event = {
-					id = red_origin.8191
-				}
-			
 			}
 			country_event = {
 				id = red_origin.8193
@@ -1301,6 +1300,13 @@ country_event = {
 		set_country_flag = soc_supporter
 		ai_chance = {
 			base = 35
+			modifier = {
+ 				factor = 0
+ 				NOR = {
+					has_ethic = ethic_socialism
+					has_ethic = ethic_fanatic_socialism
+				}
+ 			}
 		}
 	}
 	option = { #改革方
@@ -1356,26 +1362,20 @@ country_event = {
 
 	immediate = {
 		event_target:from_overlord = {
-			destroy_situation = situation_road_to_dissolution
+			random_situation = {
+				limit = {
+					is_situation_type = situation_road_to_dissolution
+				}
+				destroy_situation = this
+			}
 			every_subject = {
 				set_subject_of = {
 					who = none
 				}
 			}
-			capital_scope = {
-				set_controller = root
-				solar_system = {
-					every_fleet_in_system = {
-						set_controller = root
-					}
-				}
-			}
-			event_target:coup_fleet = {
-				set_controller = root
-			}
 		}
 		declare_war = {
-			target = THIS
+			target = event_target:from_overlord
 			attacker_war_goal = wg_force_ideology
 			effect = {
 				every_playable_country = {
@@ -1399,6 +1399,25 @@ country_event = {
 				set_war_flag = 819_war
 			}
 		}
+		event_target:coup_fleet = {
+			set_owner = root
+		}
+		event_target:from_overlord = {
+			capital_scope = {
+				set_controller = root
+				solar_system = {
+					every_fleet_in_system = {
+						limit = {
+							is_ship_class = shipclass_military
+							NOT = {
+								is_same_value = event_target:coup_fleet
+							}
+						}
+						set_mia = yes
+					}
+				}
+			}
+		}
 	}
 
 	option = { #骰子已经掷下
@@ -1409,8 +1428,8 @@ country_event = {
 #胜利
 country_event = {
 	id = red_origin.8194
-	title = red_origin.8193.name
-	desc = red_origin.8193.desc
+	title = red_origin.8194.name
+	desc = red_origin.8194.desc
 	picture = GFX_evt_galactic_senate
 	is_triggered_only = yes
 
@@ -1438,8 +1457,12 @@ country_event = {
 			}
 		}
 		from = {
-			save_event_target_as = previous_union
+			save_global_event_target_as = previous_union
 			set_country_flag = origin_red_satellite_ex_union
+			country_event = {
+				id = red_origin.8196
+				days = 1
+			}
 			set_name = "NAME_Red_Origin_Ex_Union"
 			export_trigger_value_to_variable = { trigger = count_owned_planet variable = splintering_worlds }
 			divide_variable = { which = splintering_worlds value = 2 }
@@ -1499,16 +1522,14 @@ country_event = {
 						authority = random
 						civics = random
 						species = root.species
-						ethos = {
-							ethic = "ethic_fanatic_socialism"
-						}
+						ethos = random
 						origin = origin_default
 						day_zero_contact = no
 						effect = {
 							set_country_flag = origin_red_satellite_ex_union
 							set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
 							set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
-							save_event_target_as = current_splinter
+							save_global_event_target_as = current_splinter
 							copy_techs_from = {
 								target = root
 							}
@@ -1728,12 +1749,36 @@ country_event = {
 					has_country_flag = soc_supporter
 					has_country_flag = cap_supporter
 				}
+				NOT = { has_ethic = ethic_fanatic_socialism }
 			}
 			shift_ethic = ethic_fanatic_socialism
+			change_government = {
+				authority = random
+				civics = random
+				cooldown = no
+				remove_invalid_civics = yes
+			}
+			set_name = random
+		}
+		every_playable_country = {
+			limit = {
+				NOT = { is_same_value = root }
+				OR = {
+					has_country_flag = origin_red_satellite_ex_union
+					has_country_flag = soc_supporter
+					has_country_flag = cap_supporter
+				}
+			}
 			join_alliance = {
 				who = root
 				override_requirements = yes
 			}
+		}
+		every_playable_country = {
+			limit = {
+				has_country_flag = origin_red_satellite_ex_union
+			}
+			set_name = random
 		}
 		root = {
 			federation = {
@@ -1746,6 +1791,9 @@ country_event = {
 				}
 				add_cohesion = 200
 			}
+		}
+		root = {
+			save_global_event_target_as = new_union
 		}
 	}
 
@@ -1773,7 +1821,7 @@ country_event = {
 
 	immediate = {
 		from = {
-			save_event_target_as = previous_union
+			save_global_event_target_as = previous_union
 		set_country_flag = origin_red_satellite_ex_union
 		set_origin = origin_default
 		country_remove_ethic = ethic_fanatic_socialism
@@ -1784,11 +1832,11 @@ country_event = {
 		}
 		set_name = random
 		leader = {
-			save_event_target_as = previous_leader
+			save_global_event_target_as = previous_leader
 			unassign_leader = this
 		}
 		event_target:captial_leader = {
-			save_event_target_as = new_leader
+			save_global_event_target_as = new_leader
 			root = {
 				assign_leader = prev
 			}
@@ -1862,7 +1910,7 @@ country_event = {
 							set_country_flag = origin_red_satellite_ex_union
 							set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
 							set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
-							save_event_target_as = current_splinter
+							save_global_event_target_as = current_splinter
 							copy_techs_from = {
 								target = root
 							}
@@ -2077,7 +2125,7 @@ country_event = {
 		}
 		set_name = random
 		leader = {
-			save_event_target_as = previous_leader
+			save_global_event_target_as = previous_leader
 			unassign_leader = this
 		}
 	}
@@ -2087,7 +2135,20 @@ country_event = {
 	}
 }
 
+country_event = {
+	id = red_origin.8196
+	hide_window = yes
+	is_triggered_only = yes
 
+	immediate = {
+		event_target:previous_union = {
+			join_alliance = {
+				who = event_target:new_union
+				override_requirements = yes
+			}
+		}
+	}
+}
 
 ################################################
 #### 既然是red origins 塞点revolution也不成问题吧

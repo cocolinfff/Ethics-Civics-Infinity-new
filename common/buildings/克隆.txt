@@ -1,0 +1,132 @@
+#############
+# Clone vats
+#############
+
+building_clone_army_clone_vat = {
+	icon = building_ancient_relics
+	base_buildtime = 90
+	position_priority = 100
+
+	empire_limit = {
+		base = 7
+	}
+
+	category = pop_assembly
+
+	potential = {
+		exists = owner
+		owner = {
+			has_origin = origin_clone_army
+			NOT = {
+				has_country_flag = clone_army_fertility_unlocked
+			}
+		}
+		if = {
+			limit = {
+				owner = { is_ai = yes }
+			}
+			NOR = {
+				has_building = building_clone_army_clone_vat
+				AND = {
+					exists = assembling_species
+					assembling_species = { is_robotic_species = yes }
+				}
+			}
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				OR = {
+					NOT = { has_origin = origin_clone_army }
+					is_synthetic_empire = yes
+					has_country_flag = clone_army_fertility_unlocked
+				}
+			}
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_ai = yes }
+			can_assemble_clone_soldier_pop = yes
+		}
+		planet_pop_assembly_organic_add = 2
+		job_healthcare_add = 1
+	}
+
+	# Add growth from 0 to 25 depending on 'clone_pops_missing_per_vat'.
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_clone_soldier_pop = yes
+			check_variable = { which = clone_pops_missing_per_vat value > 0 }
+		}
+		modifier = { planet_pop_assembly_organic_add = 2 }
+	}
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_clone_soldier_pop = yes
+			check_variable = { which = clone_pops_missing_per_vat value > 1 }
+		}
+		modifier = { planet_pop_assembly_organic_add = 3 }
+	}
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_clone_soldier_pop = yes
+			check_variable = { which = clone_pops_missing_per_vat value > 4 }
+		}
+		modifier = { planet_pop_assembly_organic_add = 2 }
+	}
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_clone_soldier_pop = yes
+			check_variable = { which = clone_pops_missing_per_vat value > 8 }
+		}
+		modifier = { planet_pop_assembly_organic_add = 3 }
+	}
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_clone_soldier_pop = yes
+			years_passed > 10
+			check_variable = { which = clone_pops_missing_per_vat value > 12 }
+		}
+		modifier = { planet_pop_assembly_organic_add = 5 }
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+		}
+		upkeep = {
+			energy = @b2_upkeep
+		}
+	}
+
+	upgrades = {
+	}
+
+	prerequisites = {
+	}
+
+	triggered_desc = {
+		text = building_clone_army_clone_vat_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			OR = {
+				has_building = building_robot_assembly_plant
+				AND = {
+					exists = assembling_species
+					assembling_species = { is_robotic_species = yes }
+				}
+			}
+		}
+		text = tooltip_organic_and_artificial_assembly_warning
+	}
+
+	is_essential = yes
+}
