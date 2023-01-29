@@ -16,13 +16,6 @@ merchant = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = {
-		OR = {
-			is_enslaved = no
-			exists = owner
-				owner = { has_valid_civic = civic_du_contrat_social }
-		}
-	}
 
 	resources = {
 		category = planet_merchants
@@ -204,6 +197,7 @@ soldier = {
 
 	possible_pre_triggers = {
 		has_owner = yes
+		# is_enslaved = no
 		is_being_purged = no
 		is_being_assimilated = no
 		is_sapient = yes
@@ -218,7 +212,7 @@ soldier = {
 			}
 		}
 	}
-
+	
 	resources = {
 		category = planet_soldiers
 		produces = {
@@ -729,7 +723,9 @@ priest = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = { complex_specialist_job_check_trigger = yes }
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
 
 	resources = {
 		category = planet_priests
@@ -856,7 +852,7 @@ priest = {
 		}
 		modifier = {
 			planet_amenities_add = 4
-			POP_GROWTH_SPEED = 0.02
+			pop_growth_speed = 0.02
 		}
 	}
 		#神权政治
@@ -913,7 +909,7 @@ priest = {
 			}
 			modifier = {
 				job_druid_add = 1
-				POP_ENVIRONMENT_TOLERANCE = 0.02 #宜居度+5%
+				pop_environment_tolerance = 0.02 #宜居度+5%
 			}
 		}
 		triggered_planet_modifier = {
@@ -1102,7 +1098,9 @@ death_priest = {
 		is_being_assimilated = no
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = { complex_specialist_job_check_trigger = yes }
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
 
 	resources = {
 		category = planet_priests
@@ -1410,6 +1408,7 @@ telepath = {
 	}
 	possible_precalc = can_fill_specialist_job
 	possible = {
+		complex_specialist_job_check_trigger = yes
 		OR = {
 			has_trait = trait_latent_psionic
 			has_trait = trait_psionic
@@ -1798,7 +1797,9 @@ culture_worker = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = { complex_specialist_job_check_trigger = yes }
+	possible = { 
+		complex_specialist_job_check_trigger = yes
+	}
 
 	resources = {
 		category = planet_culture_workers
@@ -1811,7 +1812,7 @@ culture_worker = {
 	}
 
 	planet_modifier = {
-		POP_GOVERNMENT_ETHIC_ATTRACTION = 0.1
+		pop_government_ethic_attraction = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -2010,7 +2011,9 @@ bureaucrat = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = { complex_specialist_job_check_trigger = yes }
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
 
 	resources = {
 		category = planet_bureaucrats
@@ -2126,7 +2129,6 @@ chemist = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_specialist_job
 
 	resources = {
@@ -2218,7 +2220,6 @@ translucer = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_specialist_job
 
 	resources = {
@@ -2315,7 +2316,6 @@ gas_refiner = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_specialist_job
 
 	resources = {
@@ -2412,7 +2412,6 @@ roboticist = {
 		is_being_assimilated = no
 		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_specialist_job
 
 	triggered_planet_modifier = {
@@ -2748,7 +2747,7 @@ necromancer = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = { # 可控的动态权重
-			factOR = value:job_weights_resources_modifier|JOB|necromancer|RESOURCE1|physics_research|WEIGHT1|0.5|RESOURCE2|society_research|WEIGHT2|0.5|
+			factOR = value:job_weights_multiple_resources_modifier|JOB|necromancer|RESOURCE1|physics_research|WEIGHT1|0.5|RESOURCE2|society_research|WEIGHT2|0.5|
 			exists = owner
 			owner = { has_edict = dynamic_weight }
 		}
@@ -2894,7 +2893,9 @@ death_chronicler = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = { complex_specialist_job_check_trigger = yes }
+	possible = { 
+		complex_specialist_job_check_trigger = yes
+	}
 	
 	resources = {
 		category = planet_culture_workers
@@ -3083,6 +3084,21 @@ necro_apprentice = {
 	clothes_texture_index = 3
 	icon = apprentice
 
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible = { #deliberately allows slaves!
+		species = { species_can_be_necrophaged = yes }
+		exists = owner
+		owner = {
+			has_trait = trait_necrophage
+			has_origin = origin_necrophage
+		}
+	}
+	
 	desc = { #Note: planet-scope
 		trigger = {
 			OR = {
@@ -3099,23 +3115,7 @@ necro_apprentice = {
 		}
 		text = job_necro_apprentice_desc_hive
 	}
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible = { #deliberately allows slaves!
-		species = { species_can_be_necrophaged = yes }
-		exists = owner
-		owner = {
-			has_trait = trait_necrophage
-			has_origin = origin_necrophage
-		}
-	}
-
+	
 	resources = {
 		category = planet_necro_apprentices
 		produces = {
@@ -3438,14 +3438,7 @@ bath_attendant = {
 		is_being_purged = no
 		is_being_assimilated = no
 	}
-
 	possible_precalc = can_fill_specialist_job
-	possible = {
-		hidden_trigger = { exists = owner }
-		owner = {
-			is_gestalt = no
-		}
-	}
 
 	triggered_planet_modifier = {
 		pop_growth_speed = 0.01
@@ -3487,17 +3480,14 @@ knight = {
 
 	possible_pre_triggers = {
 		has_owner = yes
+		# is_enslaved = no
 		is_being_purged = no
 		is_being_assimilated = no
-		is_enslaved = no
+		is_sapient = yes
 	}
-
 	possible_precalc = can_fill_specialist_job
-	possible = {
-		hidden_trigger = { exists = owner }
-		owner = {
-			is_gestalt = no
-		}
+	possible = { 
+		ethic_is_not_enslaved = yes
 	}
 
 	resources = {
