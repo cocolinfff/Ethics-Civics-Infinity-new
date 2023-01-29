@@ -4,9 +4,14 @@
 # @阿道夫·希特勒 你背叛了民族社会主义，操你妈
 ## 发病结束
 
-wg_nazbol_national_liberation = {
-	casus_belli = cb_nazbol_revolution
+@protectorate_tech_threshold = 0.4
 
+wg_nazbol_national_liberation = {
+	# wg_subjugation
+	# wg_force_ideology
+	
+	casus_belli = cb_nazbol_revolution
+	
 	hide_if_no_cb = no
 	release_occupied_systems_on_status_quo = yes
 
@@ -18,7 +23,7 @@ wg_nazbol_national_liberation = {
 
 	surrender_acceptance = -100
 
-	war_exhaustion = 0.5
+	war_exhaustion = 0.75 # wg_force_ideology
 
 	potential = {
 		has_civic = civic_nazbol
@@ -57,31 +62,16 @@ wg_nazbol_national_liberation = {
 			fail_text = "cannot_use_against_btc"
 			from = { has_been_declared_crisis = no }
 		}
-	}
-
-	on_accept = {
-		hidden_effect = {
-			from = {
-				add_threat = {
-					who = root
-					amount = 0.5
-				}
-			}
-		}
-		if = {
-			limit = { from = { has_been_declared_crisis = no } }
-			from = {
-				set_subject_of = {
-					who = root
-				}
-				add_modifier = {
-					modifier = newly_subjugated_loyalty
-					years = 5
-				}
+		custom_tooltip = {
+			fail_text = pax_galactica_active
+			NAND = {
+				is_active_resolution = resolution_emperor_pax_galactica
+				is_galactic_community_member = yes
+				from = { is_galactic_community_member = yes }
 			}
 		}
 	}
-
+	
 	on_status_quo = {
 		if = {
 			limit = {
@@ -92,8 +82,62 @@ wg_nazbol_national_liberation = {
 			}
 
 			last_created_country = {
-				set_subject_of = {
-					who = root
+				set_origin_effect = yes
+				if = {
+					limit = {
+						tech_unlocked_ratio = {
+							who = ROOT
+							ratio < @protectorate_tech_threshold
+						}
+					}
+					set_subject_of = {
+						who = ROOT
+						preset = preset_protectorate
+					}
+				}
+				else = {
+					ROOT = {
+						switch = {
+							trigger = has_policy_flag
+							oppressive_terms = {
+								if = {
+									limit = {
+										ROOT = { is_ai = yes }
+									}
+									PREV = {
+										set_subject_of = {
+											who = ROOT
+											preset = preset_vassal_oppressive_ai
+										}
+									}
+								}
+								else = {
+									PREV = {
+										set_subject_of = {
+											who = ROOT
+											preset = preset_vassal_oppressive
+										}
+									}
+								}
+							}
+							balanced_terms = {
+								PREV = {
+									set_subject_of = {
+										who = ROOT
+										preset = preset_vassal_balanced
+									}
+								}
+							}
+							benevolent_terms = {
+								PREV = {
+									set_subject_of = {
+										who = ROOT
+										preset = preset_vassal_benevolent
+									}
+								}
+							}
+						}
+					}
 				}
 				add_modifier = {
 					modifier = newly_subjugated_loyalty
@@ -107,34 +151,84 @@ wg_nazbol_national_liberation = {
 					last_created_country = { has_authority = auth_corporate }
 				}
 				last_created_country = {
-					if = {
-						limit = {
-							has_technology = tech_galactic_administration
+					set_merchant_government_effect = yes
+				}
+			}
+		}
+	}
+	
+	on_accept = {
+		if = {
+			limit = { from = { has_been_declared_crisis = no } }
+			from = {
+				if = {
+					limit = {
+						tech_unlocked_ratio = {
+							who = ROOT
+							ratio < @protectorate_tech_threshold
 						}
-						change_government = {
-							authority = auth_oligarchic
-							cooldown = no
-							remove_invalid_civics = yes
-							civics = {
-								civic = civic_merchant_guilds
-								civic = random
-								civic = random
-								civic = random
+					}
+					set_subject_of = {
+						who = ROOT
+						preset = preset_protectorate
+					}
+				}
+				else = {
+					ROOT = {
+						switch = {
+							trigger = has_policy_flag
+							oppressive_terms = {
+								if = {
+									limit = {
+										ROOT = { is_ai = yes }
+									}
+									FROM = {
+										set_subject_of = {
+											who = ROOT
+											preset = preset_vassal_oppressive_ai
+										}
+									}
+								}
+								else = {
+									FROM = {
+										set_subject_of = {
+											who = ROOT
+											preset = preset_vassal_oppressive
+										}
+									}
+								}
+							}
+							balanced_terms = {
+								FROM = {
+									set_subject_of = {
+										who = ROOT
+										preset = preset_vassal_balanced
+									}
+								}
+							}
+							benevolent_terms = {
+								FROM = {
+									set_subject_of = {
+										who = ROOT
+										preset = preset_vassal_benevolent
+									}
+								}
 							}
 						}
 					}
-					else = {
-						change_government = {
-							authority = auth_oligarchic
-							cooldown = no
-							remove_invalid_civics = yes
-							civics = {
-								civic = civic_merchant_guilds
-								civic = random
-								civic = random
-							}
-						}
-					}
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+		}
+		
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
 				}
 			}
 		}
@@ -150,10 +244,11 @@ wg_nazbol_national_liberation = {
 }
 
 wg_nazbol_class_struggle = {
+	# wg_cleansing
+	
 	casus_belli = cb_nazbol_revolution
 	hide_if_no_cb = yes
 	total_war = yes
-	destroy_starbases = yes
 	set_defender_wargoal = wg_end_threat_crisis
 
 	galactic_empire_joins_defender = {
@@ -167,14 +262,69 @@ wg_nazbol_class_struggle = {
 
 	surrender_acceptance = -1000
 
-	war_exhaustion = 0.5
+	war_exhaustion = 0.75 # wg_force_ideology
 
 	potential = {
-		always = yes
+		has_civic = civic_nazbol
+		from = { NOT = { is_country_type = fallen_empire } }
+		NAND = {
+			is_galactic_emperor = yes
+			from = { is_galactic_community_member = yes }
+		}
 	}
 
 	possible = {
-		always = yes
+		custom_tooltip = {
+			fail_text = cannot_use_against_emperor
+			OR = {
+				from = { is_galactic_emperor = no }
+				is_galactic_community_member = no
+			}
+		}
+		custom_tooltip = {
+			fail_text = pax_galactica_active
+			NAND = {
+				is_active_resolution = resolution_emperor_pax_galactica
+				is_galactic_community_member = yes
+				from = { is_galactic_community_member = yes }
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 100
+	}
+}
+
+wg_nazbol_class_struggle_vs_fe = {
+	# wg_cleansing_vs_fe
+	
+	casus_belli = cb_nazbol_revolution
+
+	hide_if_no_cb = yes
+	total_war = yes
+
+	allowed_peace_offers = {
+		status_quo
+	}
+
+	surrender_acceptance = -1000
+
+	war_exhaustion = 0.75 # wg_force_ideology
+
+	potential = {
+		has_civic = civic_nazbol
+		from = { is_country_type = fallen_empire }
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = pax_galactica_active
+			NAND = {
+				is_active_resolution = resolution_emperor_pax_galactica
+				is_galactic_community_member = yes
+				from = { is_galactic_community_member = yes }
+			}
+		}
 	}
 
 	ai_weight = {
