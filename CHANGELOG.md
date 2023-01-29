@@ -9,6 +9,8 @@
 * 修改 直接民主的社会主义政体改为人民公社
 * 调整 先进社会主义和革命先锋队的适用条件 - 非任何程度的威权和排外，非道德，先锋队可可以是直接民主/间接民主
 * 重构 提取trigger并应用 是否是科学社会主义 `is_scientific_socialism` - 先进社会主义/革命先锋队
+* 修复 职业适用条件修复 - 注意士官的职业适用条件参照骑士
+* 修复 职业脚本和政策脚本中的语法错误
 
 ### 2023/1/2
 
@@ -33,10 +35,13 @@
 * 调整 内圣之道改为思潮要求种族主义即可
 * 调整 和谐集体改为一定程度社会主义+一定程度教权主义/自由主义即可
 
+### TODO
+
 待调整：
 
 ```
-planet_modifier/planet_jobs_slave_produces_mult
+planet_jobs_slave_produces_mult
+pop_slave_resource_output
 ```
 
 脚本缺失：
