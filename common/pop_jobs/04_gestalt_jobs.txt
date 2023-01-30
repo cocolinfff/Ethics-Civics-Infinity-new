@@ -33,9 +33,7 @@ spawning_drone = {
 			}
 			
 		}
-		modifier = {
-			planet_pop_assembly_organic_add = 2
-		}
+		planet_pop_assembly_organic_add = 2
 		mult = value:scripted_modifier_mult|MODIFIER|pop_growth_speed_mult|
 	}
 
@@ -71,8 +69,8 @@ spawning_drone = {
 
 	weight = {
 		weight = @spawner_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -81,16 +79,10 @@ spawning_drone = {
 				has_modifier = planet_population_control_gestalt
 			}
 		}
+		# crisis purge
 		modifier = {
-			factor = 0.01 # crisis purge
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
 		}
 	}
 }
@@ -164,8 +156,8 @@ offspring_drone = {
 
 	weight = {
 		weight = @spawner_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -174,16 +166,63 @@ offspring_drone = {
 				has_modifier = planet_population_control_gestalt
 			}
 		}
+		# crisis purge
 		modifier = {
-			factor = 0.01 # crisis purge
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
+		}
+	}
+}
+
+cyber_drone = {
+	category = complex_drone
+	condition_string = DRONE_JOB_TRIGGER
+	building_icon = building_spawning_pool
+	icon = machine_nurse
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_drone_job
+	possible = { can_think = yes }
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_cyborg_pop = yes
+			can_assemble_hive_pop = yes
+		}
+		modifier = {
+			planet_pop_assembly_organic_add = 1.5
+		}
+	}
+
+	resources = {
+		category = planet_pop_assemblers
+		upkeep = {
+			alloys = 1
+		}
+	}
+
+	weight = {
+		weight = @spawner_drone_job_weight
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.5 # job is less useful if pop control is active, but still gives amenities
+			planet = {
+				has_modifier = planet_population_control_gestalt
 			}
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
 		}
 	}
 	possible_precalc = can_fill_drone_job
@@ -280,16 +319,10 @@ replicator = {
 	weight = {
 		weight = @spawner_drone_job_weight
 		mult = 10
+		# crisis purge
 		modifier = {
-			factor = 0.01			# crisis purge
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
 		}
 		modifier = { # 失控女仆兼容
 			factor = 2
@@ -401,7 +434,7 @@ coordinator = {
 		}
 		modifier = {
 			planet_stability_add = 2
-			planet_jobs_produces_mult = 0.02
+			planet_jobs_produces_mult = 0.01
 		}
 	}
 	triggered_planet_modifier = {
@@ -439,8 +472,8 @@ coordinator = {
 	
 	weight = {
 		weight = @synapse_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|coordinator|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|coordinator|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -457,7 +490,7 @@ coordinator = {
 evaluator = {
 	category = complex_drone
 	condition_string = DRONE_JOB_TRIGGER
-	building_icon = building_machine_capital
+	building_icon = building_simulation_1
 
 	possible_pre_triggers = {
 		has_owner = yes
@@ -479,10 +512,31 @@ evaluator = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_active_tradition = tr_synchronicity_integrated_preservation
+			}
+		}
+		modifier = {
+			planet_crime_no_happiness_add = -3
+		}
+	}
+
+	triggered_planet_modifier = {
+		planet_amenities_no_happiness_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
 	weight = {
 		weight = @synapse_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|evaluator|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|evaluator|RESOURCE|unity|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 	}
@@ -582,8 +636,12 @@ synapse_drone = {
 
 	weight = {
 		weight = @synapse_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|synapse_drone|RESOURCE|unity|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|synapse_drone|RESOURCE|unity|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 	}
@@ -615,12 +673,34 @@ brain_drone = {
 		upkeep = {
 			minerals = 6
 		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			minerals = 3
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+		}
 	}
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_research_modifier|JOB|brain_drone|
+		modifier = {
+			mult = value:job_weights_research_modifier|JOB|brain_drone|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -659,12 +739,34 @@ calculator = {
 		upkeep = {
 			energy = 4
 		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			energy = 2
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+		}
 	}
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_research_modifier|JOB|calculator|
+		modifier = {
+			mult = value:job_weights_research_modifier|JOB|calculator|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -844,8 +946,8 @@ artisan_drone = {
 	}
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|artisan_drone|RESOURCE|consumer_goods|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|artisan_drone|RESOURCE|consumer_goods|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -968,8 +1070,8 @@ fabricator = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|fabricator|RESOURCE|alloys|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|fabricator|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1117,8 +1219,8 @@ alloy_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|alloy_drone|RESOURCE|alloys|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|alloy_drone|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 	}
@@ -1142,7 +1244,7 @@ catalytic_drone = {
 	resources = {
 		category = planet_metallurgists
 		produces = {
-			alloys = 4
+			alloys = 3
 		}
 		produces = {
 			trigger = {
@@ -1243,8 +1345,8 @@ catalytic_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|catalytic_drone|RESOURCE|alloys|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|catalytic_drone|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 	}
@@ -1320,8 +1422,8 @@ chemist_drone = {
 	}
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|chemist_drone|RESOURCE|volatile_motes|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|chemist_drone|RESOURCE|volatile_motes|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1404,8 +1506,8 @@ translucer_drone = {
 	}
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|translucer_drone|RESOURCE|rare_crystals|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|translucer_drone|RESOURCE|rare_crystals|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1488,8 +1590,8 @@ gas_refiner_drone = {
 	}
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|gas_refiner_drone|RESOURCE|exotic_gases|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|gas_refiner_drone|RESOURCE|exotic_gases|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1534,8 +1636,8 @@ patrol_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|patrol_drone|RESOURCE|unity|FACTOR|0.25|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|patrol_drone|RESOURCE|unity|FACTOR|0.25|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1603,8 +1705,8 @@ crystal_mining_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|crystal_mining_drone|RESOURCE|rare_crystals|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|crystal_mining_drone|RESOURCE|rare_crystals|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1644,8 +1746,8 @@ mote_harvesting_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|mote_harvesting_drone|RESOURCE|volatile_motes|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|mote_harvesting_drone|RESOURCE|volatile_motes|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1685,8 +1787,8 @@ gas_extraction_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|gas_extraction_drone|RESOURCE|exotic_gases|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|gas_extraction_drone|RESOURCE|exotic_gases|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1716,7 +1818,7 @@ mining_drone = {
 	resources = {
 		category = planet_miners
 		produces = {
-			minerals = 6
+			minerals = 4
 		}
 		produces = {
 			trigger = {
@@ -1785,8 +1887,8 @@ mining_drone = {
 
 	weight = {
 		weight = @simple_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|mining_drone|RESOURCE|minerals|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|mining_drone|RESOURCE|minerals|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1829,7 +1931,7 @@ agri_drone = {
 	resources = {
 		category = planet_farmers
 		produces = {
-			food = 8
+			food = 6
 		}
 		produces = {
 			trigger = {
@@ -1918,8 +2020,8 @@ agri_drone = {
 
 	weight = {
 		weight = @simple_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|agri_drone|RESOURCE|food|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|agri_drone|RESOURCE|food|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -1982,7 +2084,7 @@ technician_drone = {
 	resources = {
 		category = planet_technician
 		produces = {
-			energy = 8
+			energy = 6
 		}
 		produces = {
 			trigger = {
@@ -1991,7 +2093,7 @@ technician_drone = {
 					is_robot_empire = yes
 				}
 			}
-			energy = 4
+			energy = 2
 		}
 		produces = {
 			trigger = {
@@ -2060,8 +2162,8 @@ technician_drone = {
 	}
 	weight = {
 		weight = @simple_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|technician_drone|RESOURCE|energy|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|technician_drone|RESOURCE|energy|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -2121,12 +2223,22 @@ maintenance_drone = {
 		planet_amenities_no_happiness_add = 4
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
+	
 	planet_modifier = {
-		planet_crime_no_happiness_add = -4
-		planet_stability_add = 1
-		planet_jobs_produces_mult = 0.02
+		planet_jobs_produces_mult = 0.01
+	}
+	country_modifier = {
+		pop_amenities_usage_mult = -0.01
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_active_tradition = tr_versatility_finish }
+		}
+		planet_amenities_no_happiness_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
 	triggered_planet_modifier = {
 		potential = {
 			exists = planet.orbital_defence
@@ -2140,18 +2252,19 @@ maintenance_drone = {
 		planet_amenities_no_happiness_add = 1
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
+
+	# 失控女仆兼容
 	triggered_planet_modifier = {
 		potential = {
 			owner = {
 				has_valid_civic = civic_machine_paradise_lost
-				NOT = { has_global_flag = flag_rogue_maid_mod_activated } # 失控女仆兼容
+				NOT = { has_global_flag = flag_rogue_maid_mod_activated }
 			}
 		}
 		modifier = {
 			pop_happiness = 0.01
 		}
 	}
-	# 失控女仆兼容
 	triggered_planet_modifier = {
 		potential = {
 			has_global_flag = flag_rogue_maid_mod_activated
@@ -2164,15 +2277,16 @@ maintenance_drone = {
 	
 	weight = {
 		weight = @maintenance_drone_job
-		modifier = { # 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			mult = 0.25
+			mult = value:job_weights_modifier|JOB|maintenance_drone|RESOURCE|unity|FACTOR|0.25|
 			exists = owner
 			owner = {
 				has_valid_civic = civic_machine_maintenance_protocols
+				has_edict = dynamic_weight
 			}
 		}
 		modifier = {
@@ -2355,6 +2469,7 @@ warrior_drone = {
 		}
 	}
 }
+
 #原版
 bluelotus_drone = {
 	category = complex_drone
@@ -2375,16 +2490,36 @@ bluelotus_drone = {
 	resources = {
 		category = planet_metallurgists
 		produces = {
-			alloys = 5
+			alloys = 4
 		}
 
 		upkeep = {
 			trigger = {
-				is_organic_species = yes
+				has_food_upkeep = yes
 				is_phototrophic = no
-				is_lithoid = no
 			}
 			food = @living_standard_food_normal
+		}
+		upkeep = {
+			trigger = {
+				has_food_upkeep = yes
+				is_phototrophic = yes
+			}
+			food = @living_standard_phototrophic_normal
+		}
+		upkeep = {
+			trigger = {
+				has_mineral_upkeep = yes
+				is_phototrophic = no
+			}
+			minerals = @living_standard_food_normal
+		}
+		upkeep = {
+			trigger = {
+				has_mineral_upkeep = yes
+				is_phototrophic = yes
+			}
+			minerals = @living_standard_phototrophic_normal
 		}
 		upkeep = {
 			trigger = {
@@ -2394,19 +2529,7 @@ bluelotus_drone = {
 		}
 		upkeep = {
 			trigger = {
-				is_phototrophic = yes
-			}
-			food = @living_standard_phototrophic_normal
-		}
-		upkeep = {
-			trigger = {
-				is_lithoid = yes
-			}
-			minerals = @living_standard_food_normal
-		}
-		upkeep = {
-			trigger = {
-				is_robotic_species = yes
+				is_robotic_or_voidspawn_species = yes
 			}
 			energy = @living_standard_energy_normal
 		}
@@ -2414,8 +2537,8 @@ bluelotus_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|bluelotus_drone|RESOURCE|alloys|
+		modifier = {
+			mult = value:job_weights_modifier|JOB|bluelotus_drone|RESOURCE|alloys|
 			owner = { has_edict = dynamic_weight }
 		}
 	}
@@ -2436,27 +2559,28 @@ chronicle_drone = {
 	possible = { can_think = yes }
 
 	resources = {
-		category = planet_administrators
+		category = planet_evaluators
 		produces = {
 			unity = 4
-			society_research = 2
 		}
 		upkeep = {
-			trigger = { is_robotic_species = yes }
+			trigger = {
+				is_robotic_or_voidspawn_species = yes
+			}
 			minerals = 1
 			energy = 2
 		}
 		upkeep = {
 			trigger = {
-				is_organic_species = yes
+				has_food_upkeep = yes
 				is_phototrophic = no
-				is_lithoid = no
 			}
 			energy = 1
 			food = 2
 		}
 		upkeep = {
 			trigger = {
+				has_food_upkeep = yes
 				is_phototrophic = yes
 			}
 			energy = 1
@@ -2470,7 +2594,7 @@ chronicle_drone = {
 		}
 		upkeep = {
 			trigger = {
-				is_lithoid = yes
+				has_mineral_upkeep = yes
 			}
 			energy = 1
 			minerals = 2
@@ -2478,14 +2602,23 @@ chronicle_drone = {
 	}
 
 	planet_modifier = {
-		planet_stability_add = 2
+		planet_stability_add = 2.5
 	}
 
 	triggered_planet_modifier = {
 		potential = {
-			always = yes
+			exists = owner
+			owner = {
+				has_active_tradition = tr_synchronicity_integrated_preservation
+			}
 		}
-		planet_amenities_no_happiness_add = 2
+		modifier = {
+			planet_crime_no_happiness_add = -3
+		}
+	}
+	
+	triggered_planet_modifier = {
+		planet_amenities_no_happiness_add = 3
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
@@ -2498,20 +2631,18 @@ chronicle_drone = {
 
 	weight = {
 		weight = @complex_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_multiple_resources_modifier|JOB|chronicle_drone|RESOURCE1|unity|WEIGHT1|0.7|RESOURCE2|society_research|WEIGHT2|0.3|
+		modifier = {
+			mult = value:job_weights_multiple_resources_modifier|JOB|chronicle_drone|RESOURCE1|unity|WEIGHT1|0.7|RESOURCE2|society_research|WEIGHT2|0.3|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
-			factor = 0.01 # crisis purge
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_edict = dynamic_weight }
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
 		}
 	}
 }
@@ -2534,10 +2665,12 @@ scrap_miner_drone = {
 	resources = {
 		category = planet_miners
 		produces = {
-			minerals = 3
-			alloys = 2
+			minerals = 2
+			alloys = 1
 		}
-		produces = { # 失控女仆兼容
+
+		# 失控女仆兼容
+		produces = {
 			trigger = {
 				has_global_flag = flag_rogue_maid_mod_activated
 				owner = { is_machine_empire = yes }
@@ -2559,8 +2692,8 @@ scrap_miner_drone = {
 	
 	weight = {
 		weight = @simple_drone_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_multiple_resources_modifier|JOB|scrap_miner_drone|RESOURCE1|minerals|WEIGHT1|0.7|RESOURCE2|alloys|WEIGHT2|0.3|
+		modifier = {
+			mult = value:job_weights_multiple_resources_modifier|JOB|scrap_miner_drone|RESOURCE1|minerals|WEIGHT1|0.7|RESOURCE2|alloys|WEIGHT2|0.3|
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
@@ -2631,16 +2764,10 @@ bath_attendant_hive = {
 				has_modifier = planet_population_control_gestalt
 			}
 		}
+		# crisis purge
 		modifier = {
-			factor = 0.01 # crisis purge
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
 		}
 	}
 }
@@ -2674,16 +2801,10 @@ bath_attendant_machine = {
 
 	weight = {
 		weight = @spawner_drone_job_weight
+		# crisis purge
 		modifier = {
-			factor = 0.01 # crisis purge
-			exists = planet
-			exists = planet.controller
-			planet.controller = {
-				OR = {
-					is_country_type = swarm
-					is_country_type = ai_empire
-				}
-			}
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
 		}
 	}
 }
