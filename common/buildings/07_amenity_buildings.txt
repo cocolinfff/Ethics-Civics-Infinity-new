@@ -592,14 +592,15 @@ building_expanded_warren = {
 	}
 }
 
+#剧院
 building_holo_theatres = {
 	base_buildtime = @b1_time
 
 	category = amenity
 
 	potential = {
-		NOT = {	has_modifier = slave_colony	}
-		owner = { is_regular_empire = yes }
+		exists = owner
+		NOT = { has_modifier = slave_colony }
 		OR = {
 			owner = {
 				NOT = { is_ai = yes }
@@ -609,14 +610,27 @@ building_holo_theatres = {
 				NOT = { has_forbidden_jobs = entertainer }
 			}
 		}
+		owner = {
+			NOR = {
+				is_gestalt = yes
+				OR = {
+					has_valid_civic = civic_proletarian_culture
+				}
+			}
+		}
 	}
-
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			owner = { is_regular_empire = no }
+			owner = { is_regular_empire = no 
+			OR = {has_valid_civic = civic_proletarian_culture}
+			}
 			has_modifier = slave_colony
 		}
+	}
+	
+	convert_to = {
+		building_cultural_palace
 	}
 
 	triggered_planet_modifier = {
@@ -689,9 +703,17 @@ building_hyper_entertainment_forum = {
 	category = amenity
 
 	potential = {
-		has_building = building_holo_theatres
+		exists = owner
+		NOT = { has_modifier = slave_colony }
+		owner = {
+			NOR = {
+				is_gestalt = yes
+				OR = {
+					has_valid_civic = civic_proletarian_culture
+				}
+			}
+		}
 	}
-
 	allow = {
 		has_upgraded_capital = yes
 	}
@@ -699,11 +721,14 @@ building_hyper_entertainment_forum = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			owner = { is_regular_empire = no }
+			owner = { is_regular_empire = no 
+			OR = {has_valid_civic = civic_proletarian_culture}}
 			has_modifier = slave_colony
 		}
 	}
-
+	convert_to = {
+		building_cultural_complex
+	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
