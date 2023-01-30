@@ -1567,6 +1567,17 @@ entertainer = {
 			unity = 1
 			society_research = 1
 		}
+		#无产阶级文化
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_proletarian_culture
+				}
+			}
+			unity = 1
+			consumer_goods = 1
+		}
 		#和平主义
 		produces = {
 			trigger = {
@@ -1589,10 +1600,55 @@ entertainer = {
 		upkeep = {
 			consumer_goods = 1
 		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_commercial_entertainment
+				}
+			}
+			unity = 1
+		}
 	}
 	triggered_planet_modifier = {
-		potential = { always = yes }
+		potential = {
+			exists = owner
+				owner = {
+				has_valid_civic = civic_commercial_entertainment
+			}
+		}
+		modifier={trade_value_add = 2}
+	}
+	triggered_planet_modifier = {
+		potential = { exists = owner
+				owner = {
+					NOT={
+				has_valid_civic = civic_proletarian_culture
+				has_valid_civic = civic_commercial_entertainment
+				}
+			}
+		 }
 		planet_amenities_add = 10
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+				owner = {
+				has_valid_civic = civic_proletarian_culture
+			}
+		}
+		planet_amenities_add = 8
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+				owner = {
+				has_valid_civic = civic_commercial_entertainment
+			}
+		}
+		planet_amenities_add = 8
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	triggered_planet_modifier = {
@@ -2385,20 +2441,45 @@ roboticist = {
 
 	possible_precalc = can_fill_specialist_job
 
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				AND = {
+					exists = owner
+					owner = {
+						NOT = { has_policy_flag = roboticist_output_build_cyborgs }
+					}
+				}
+				NOT = { exists = owner }
+			}
+		}
 		planet_pop_assembly_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = roboticist_output_build_cyborgs
+			}
+			can_assemble_cyborg_pop = yes
+		}
+		planet_pop_assembly_organic_add = 2.25
 	}
 
 	resources = {
 		category = planet_pop_assemblers
 		upkeep = {
-			minerals = 6
-			consumer_goods = 0.5
+			alloys = 2
 		}
 	}
 
 	weight = {
 		weight = 500
+		modifier = {
+			factor = 10
+			owner = { is_synthetic_empire = yes }
+		}
 	}
 }
 

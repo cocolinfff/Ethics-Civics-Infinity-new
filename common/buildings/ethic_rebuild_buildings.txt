@@ -5,6 +5,129 @@
 
 
 
+#工人文化宫
+building_cultural_palace = {
+	base_buildtime = @b1_time
+
+	category = amenity
+	
+	icon = building_cultural_palace
+
+	potential = {
+		NOT = {	has_modifier = slave_colony	}
+		owner = {
+			has_valid_civic = civic_proletarian_culture
+		}
+		OR = {
+			owner = {
+				NOT = { is_ai = yes }
+			}
+			AND = {
+				NOT = { has_available_jobs = entertainer }
+				NOT = { has_forbidden_jobs = entertainer }
+			}
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_regular_empire = no}
+			has_modifier = slave_colony
+		}
+	}
+	convert_to = {
+		building_holo_theatres
+	}
+	planet_modifier = {
+			job_entertainer_add = 3
+		}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	upgrades = {
+		building_cultural_complex
+	}
+
+	prerequisites = {
+		"tech_holo_entertainment"
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+		}
+		text = job_entertainer_effect_desc
+	}
+	ai_weight = {
+		weight = 5000
+	}
+}
+#文化综合体
+building_cultural_complex = {
+	base_buildtime = @b2_time
+	can_build = no
+
+	category = amenity
+
+	icon = building_cultural_complex
+
+	potential = {
+		exists = owner
+		owner = {
+			has_valid_civic = civic_proletarian_culture
+			has_technology = tech_hyper_entertainment_forum
+		}
+	}
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_regular_empire = no 
+			}
+			has_modifier = slave_colony
+		}
+	}
+	convert_to = {
+		building_hyper_entertainment_forum
+	}
+	planet_modifier = {
+			job_entertainer_add = 6
+		}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+	}
+
+	prerequisites = {
+		tech_hyper_entertainment_forum
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+		}
+		text = job_entertainer_effect_desc
+	}
+	ai_weight = {
+		weight = 5000
+	}
+}
+
 
 #器械繁殖厂
 building_equipment_breeding_plant = {
@@ -254,7 +377,7 @@ building_advanced_clone_vats = {
 	icon = building_ancient_relics
 	allow = {
 		owner = {
-			has_tradition = tr_genetics_efficient_cloning
+			has_ascension_perk = ap_evolutionary_mastery
 		}
 	}
 	destroy_trigger = {
@@ -271,7 +394,7 @@ building_advanced_clone_vats = {
 			}
 			NOT = {
 				owner = {
-					has_tradition = tr_genetics_efficient_cloning
+					has_ascension_perk = ap_evolutionary_mastery
 				}
 			}
 		}
@@ -510,12 +633,10 @@ building_colliseum = {
 building_planet_network_node = {
 	base_buildtime = @b1_time
 	category = government
-	base_cap_amount = 7
 	potential = {
 		exists = owner
 		owner = {
 			has_valid_civic = civic_OGAS
-			NOT = { has_technology = tech_sapient_ai }
 		}
 	}
 
@@ -523,7 +644,9 @@ building_planet_network_node = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
-			NOT = { has_valid_civic = civic_OGAS }
+			OR = {
+				NOT = { has_valid_civic = civic_OGAS }
+			}
 		}
 	}
 
@@ -536,74 +659,10 @@ building_planet_network_node = {
 		building_information_tower
 	}
 
-	#一级首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_colony_shelter
-				has_building = building_hab_capital
-			}
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.01
-			job_democratic_politician_add = 1
-		}
-	}
-
-	#二级首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_capital
-				has_building = building_hab_major_capital
-				has_building = building_resort_capital
-			}
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.03
+	planet_modifier = {
 			job_democratic_politician_add = 2
 		}
-	}
-	
-	#三级首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_major_capital
-				has_building = building_hab_system_capital
-				has_building = building_resort_major_capital
-			}
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.05
-			job_democratic_politician_add = 3
-		}
-	}
-	
-	#四级首都
-	triggered_planet_modifier = {
-		potential = {
-			has_building = building_system_capital
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.07
-			job_democratic_politician_add = 4
-		}
-	}
-	
-	#帝国首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_imperial_capital
-				has_building = building_hab_imperial_capital
-			}
-		}
-		modifier = {
-			planet_jobs_unity_produces_mult = 0.1
-			job_democratic_politician_add = 6
-		}
-	}
+
 
 	resources = {
 		category = planet_buildings
@@ -613,53 +672,14 @@ building_planet_network_node = {
 		upkeep = {
 			energy = 2
 		}
-		upkeep = {
-			trigger = {
-				OR = {
-					has_building = building_capital
-					has_building = building_hab_major_capital
-					has_building = building_resort_capital
-				}
-			}
-			energy = 2
-		}
-		upkeep = {
-			trigger = {
-				OR = {
-					has_building = building_major_capital
-					has_building = building_hab_system_capital
-					has_building = building_resort_major_capital
-				}
-			}
-			energy = 2
-		}
-		upkeep = {
-			trigger = {
-				has_building = building_system_capital
-			}
-			energy = 2
-		}
-		upkeep = {
-			trigger = {
-				OR = {
-					has_building = building_imperial_capital
-					has_building = building_hab_imperial_capital
-				}
-			}
-			energy = 2
-		}
 	}
 
 	upgrades = {
 		building_planetary_management_center
 	}
-
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = {
-				NOT = { has_technology = tech_sapient_ai }
-			}
 		}
 		text = job_democratic_politician_effect_desc
 	}
@@ -672,7 +692,6 @@ building_planet_network_node = {
 building_planetary_management_center = {
 	base_buildtime = @b2_time
 	category = government
-	base_cap_amount = 7
 	potential = {
 		exists = owner
 		owner = {
@@ -695,97 +714,10 @@ building_planetary_management_center = {
 		building_information_tower
 	}
 
-	country_modifier = {
-		country_admin_cap_add = 50
-	}
-
-	#一级首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_colony_shelter
-				has_building = building_hab_capital
-			}
+	planet_modifier = {
+			job_democratic_politician_add = 4
+			species_empire_size_mult = -0.1
 		}
-		modifier = {
-			job_researcher_add = 2
-			planet_researchers_physics_research_produces_mult = 0.1
-			planet_researchers_society_research_produces_mult = 0.1
-			planet_researchers_engineering_research_produces_mult = 0.1
-			planet_researchers_energy_upkeep_add = 2
-		}
-	}
-
-	#二级首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_capital
-				has_building = building_hab_major_capital
-				has_building = building_resort_capital
-			}
-		}
-		modifier = {
-			job_researcher_add = 3
-			planet_jobs_unity_produces_mult = 0.05
-			planet_researchers_physics_research_produces_mult = 0.2
-			planet_researchers_society_research_produces_mult = 0.2
-			planet_researchers_engineering_research_produces_mult = 0.2
-			planet_researchers_energy_upkeep_add = 4
-		}
-	}
-	
-	#三级首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_major_capital
-				has_building = building_hab_system_capital
-				has_building = building_resort_major_capital
-			}
-		}
-		modifier = {
-			job_researcher_add = 4
-			planet_jobs_unity_produces_mult = 0.1
-			planet_researchers_physics_research_produces_mult = 0.25
-			planet_researchers_society_research_produces_mult = 0.25
-			planet_researchers_engineering_research_produces_mult = 0.25
-			planet_researchers_energy_upkeep_add = 6
-		}
-	}
-	
-	#四级首都
-	triggered_planet_modifier = {
-		potential = {
-			has_building = building_system_capital
-		}
-		modifier = {
-			job_researcher_add = 4
-			planet_jobs_unity_produces_mult = 0.15
-			planet_researchers_physics_research_produces_mult = 0.5
-			planet_researchers_society_research_produces_mult = 0.5
-			planet_researchers_engineering_research_produces_mult = 0.5
-			planet_researchers_energy_upkeep_add = 9
-		}
-	}
-	
-	#帝国首都
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_building = building_imperial_capital
-				has_building = building_hab_imperial_capital
-			}
-		}
-		modifier = {
-			job_researcher_add = 6
-			planet_jobs_unity_produces_mult = 0.2
-			planet_researchers_physics_research_produces_mult = 0.75
-			planet_researchers_society_research_produces_mult = 0.75
-			planet_researchers_engineering_research_produces_mult = 0.75
-			planet_researchers_energy_upkeep_add = 13
-		}
-	}
 
 	resources = {
 		category = planet_buildings
@@ -793,85 +725,17 @@ building_planetary_management_center = {
 			minerals = 1000
 		}
 		produces = {
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				OR = {
-					has_building = building_capital
-					has_building = building_hab_major_capital
-					has_building = building_resort_capital
-				}
-			}
-			unity = 10
-		}
-		produces = {
-			trigger = {
-				OR = {
-					has_building = building_major_capital
-					has_building = building_hab_system_capital
-					has_building = building_resort_major_capital
-				}
-			}
-			unity = 15
-		}
-		produces = {
-			trigger = {
-				has_building = building_system_capital
-			}
-			unity = 20
-		}
-		produces = {
-			trigger = {
-				OR = {
-					has_building = building_imperial_capital
-					has_building = building_hab_imperial_capital
-				}
-			}
-			unity = 25
+			physics_research = 5
+			engineering_research = 5
+			society_research = 5
 		}
 		upkeep = {
 			energy = 4
 		}
-		upkeep = {
-			trigger = {
-				OR = {
-					has_building = building_capital
-					has_building = building_hab_major_capital
-					has_building = building_resort_capital
-				}
-			}
-			energy = 3
-		}
-		upkeep = {
-			trigger = {
-				OR = {
-					has_building = building_major_capital
-					has_building = building_hab_system_capital
-					has_building = building_resort_major_capital
-				}
-			}
-			energy = 3
-		}
-		upkeep = {
-			trigger = {
-				has_building = building_system_capital
-			}
-			energy = 3
-		}
-		upkeep = {
-			trigger = {
-				OR = {
-					has_building = building_imperial_capital
-					has_building = building_hab_imperial_capital
-				}
-			}
-			energy = 3
-		}
 	}
 
 	triggered_desc = {
-		text = job_researcher_effect_desc
+		text = job_democratic_politician_effect_desc
 	}
 	ai_weight = {
 		weight = 5000
