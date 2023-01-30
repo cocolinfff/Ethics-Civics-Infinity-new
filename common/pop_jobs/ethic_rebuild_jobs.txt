@@ -675,7 +675,7 @@ conscript = {
 	}
 	possible = {
 		soldier_job_check_trigger = yes
-		owner = { is_gestalt = no }
+		owner = { is_gestalt = no NOT = { has_policy_flag = sparta_system } }
 	}
 
 	resources = {
@@ -932,6 +932,191 @@ conscript = {
 			factor = 2
 			has_trait = trait_lithoid
 		}
+	}
+}
+
+#士兵（无上限）
+conscript_uncapped = {
+	category = worker
+	icon = soldier
+	condition_string = SOLDIER_JOB_TRIGGER
+	building_icon = building_stronghold
+	clothes_texture_index = 4
+	is_capped_by_modifier = no
+	can_set_priority = no
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+		is_enslaved = no
+	}
+	possible = {
+		soldier_job_check_trigger = yes
+		owner = { has_policy_flag = sparta_system }
+	}
+
+	resources = {
+		category = planet_soldiers
+		produces = {
+			trigger = {
+				is_lithoid = no
+				owner = {
+					exists = owner
+					has_valid_civic = civic_army_production
+					NOT = { has_country_flag = synthetic_empire }
+				}
+			}
+			food = 2
+			alloys = 1
+		}
+		produces = {
+			trigger = {
+				is_lithoid = yes
+				owner = {
+					exists = owner
+					has_valid_civic = civic_army_production
+					NOT = { has_country_flag = synthetic_empire }
+				}
+			}
+			minerals = 2
+			alloys = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_army_production
+					has_country_flag = synthetic_empire
+				}
+			}
+			energy = 2
+			alloys = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_army_production
+				}
+			}
+			minerals = 1
+			energy = 1
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_military_scientific
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_shared_burden
+						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_forever_with_us
+					}
+				}
+			}
+			society_research = 0.25
+		}
+		#军国主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_militarist
+				}
+			}
+			unity = 0.5
+		}
+	}
+	country_modifier = {
+		country_naval_cap_add = 2
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = planet
+			planet = {
+				exists = owner
+				owner = {
+					has_technology = "tech_ground_defense_planning"
+				}
+			}
+		}
+		modifier = {
+			country_naval_cap_add = 2
+		}
+	}
+	pop_modifier = {
+		pop_defense_armies_add = 3
+	}
+	triggered_pop_modifier = {
+		potential = {
+			planet = {
+				has_building = building_automated_defense_system
+			}
+		}
+		modifier = {
+			pop_defense_armies_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				exists = planet
+				has_modifier = martial_law
+				has_modifier = martial_law_martial_brotherhood
+			}
+			happiness >= 0.35
+		}
+		planet_stability_add = 80
+		mult = planet.society_factor_pops
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				exists = planet
+				has_modifier = martial_law
+				has_modifier = martial_law_martial_brotherhood
+			}
+			happiness < 0.35
+		}
+		planet_stability_add = -50
+		mult = planet.society_factor_pops
+	}
+	triggered_country_modifier = { # 共产主义社会
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_shared_burden
+				has_ascension_perk = ap_future_society
+			}
+		}
+		modifier = {
+			country_admin_cap_add = 0.5
+		}
+	}
+
+	weight = {
+		weight = 1
 	}
 }
 
@@ -4944,6 +5129,14 @@ commandante = {
 			}
 			unity = 1
 		}
+		produces = {
+			trigger = {
+				owner = {
+					has_valid_civic = civic_sparta_spirit
+				}
+			}
+			unity = 3
+		}
 		upkeep = {
 			consumer_goods = 1
 		}
@@ -4980,11 +5173,31 @@ commandante = {
 	triggered_planet_modifier = {
 		potential = {
 			owner = {
+				has_valid_civic = civic_sparta_spirit
+			}
+		}
+		modifier = {
+			planet_amenities_add = 5
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
 				has_valid_civic = civic_anarchism
 			}
 		}
 		modifier = {
 			pop_cat_specialist_happiness = -0.05
+		}
+	}
+	triggered_pop_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_triple_the_profit
+			}
+		}
+		modifier = {
+			pop_cat_ruler_political_power = 3
 		}
 	}
 	weight = {
