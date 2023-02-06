@@ -345,22 +345,22 @@ subject_can_expand = {
 can_build_branch_offices = {
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_NOT_MEGACORP
-		## +ETCPM/hiveDLC/MCA/驴岛/wsg	/gsf/azl/azlr/多彩	/Ecar
+		##	+ETCPM/hiveDLC/MCA/驴岛/wsg	/GF/azl/azlr/多彩	/Ecar
 		OR = {
 			has_authority = auth_corporate
 			has_civic = civic_galactic_sovereign_megacorp
 			
-			# ETCPM
+			#	ETCPM
 			has_authority = auth_private
-			# hiveDLC
+			#	hiveDLC
             has_valid_civic = civic_mutualistic_behavior
 			has_valid_civic = civic_machine_trading
-			# MCA
+			#	MCA
 			has_authority = auth_corporate_fiefdom
 			has_authority = auth_cooperative
-			# 驴岛
+			#	驴岛
 			has_civic = civic_business_union
-			# wsg
+			#	wsg
 			has_authority = auth_warshipgirls
 			AND = {
 				has_authority = auth_shenhai
@@ -369,27 +369,30 @@ can_build_branch_offices = {
 					has_civic = civic_sh_criminal_syndicate
 				}
 			}
-			# gsf
+			#	GF
 			has_civic = civic_gk
-			# azl
+			has_civic = GF_civic_GK
+			#	azl
 			has_authority = auth_azur_lane_0
 			has_authority = auth_azur_lane_1
 			has_authority = auth_azur_lane_2
 			has_authority = auth_azur_lane_K
-			# azlr
+			#	azlr
 			AND = {
 				exists = event_target:elizabeth_leader
 				has_country_flag = azur_lane_leader_elizabeth
 			}
-			# 多彩
+			#	多彩
 			has_authority = auth_brothel
-			# 莉莉
+			#	莉莉
 			has_authority = auth_AL_democratic
 			has_authority = auth_AL_arsenal
-			# 久远
+			#	久远
 			KZ_VOY_can_build_branch_offices = yes
-			# 星海帝皇	=|义军同盟|
+			#	星海帝皇	=|义军同盟|
 			is_country_type = rebel_allience
+			#	ARP
+			has_authority = auth_Arp_0
 
 			#_|Ecar|
 			AND = {
@@ -410,11 +413,9 @@ can_build_branch_offices = {
 					}
 				}
 			}
-			# 失控女仆	=|外派服务飞升|
-			AND = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				has_ascension_perk = ap_expactriate_service
-			}
+
+			#	rmaid		=|外派服务飞升|
+			has_ascension_perk = ap_expactriate_service
 		}
 	}
 }
@@ -422,20 +423,6 @@ can_build_branch_offices = {
 ##国家是否支持企业建筑
 # This = country
 can_support_branch_offices = {
-	##_|Regular帝国|	 +ZOFE
-	custom_tooltip = {
-		fail_text = BRANCH_OFFICE_NOT_REGULAR_EMPIRE
-		OR = {
-			# vanilla
-			is_regular_empire = yes
-			# +ZOFE
-			AND = {
-				is_gestalt = no
-				is_country_type = ascended_empire
-			}
-		}
-	}
-	
 	##_|禁止_国家类型|
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_NOT_FALLEN_EMPIRES
@@ -470,13 +457,13 @@ can_support_branch_offices = {
 			has_authority = auth_azur_dictatorial
 		}
 	}
-	##_|禁止_巨企| +AAR		/ETCPM/hiveDLC/MCA/驴岛/wsg		/gsf/azl/SOFE	/Ecar
+	##_|禁止_巨企| +AAR		/ETCPM/hiveDLC/MCA/驴岛/wsg		/GF/azl/SOFE	/Ecar
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_NOT_ON_MEGACORP_PLANET
 		OR = {
 			## 特殊允许|企业政府|	############
 			# AAR
-			is_subject_type = AAR_SBJ_subsidiary
+			is_subject_with_preset = { PRESET = AAR_SBJ_subsidiary }
 			# Ecar
 			AND = {
 				has_global_flag = ideological_revolution	# |Ecar激活|
@@ -489,11 +476,6 @@ can_support_branch_offices = {
 					has_civic = civic_galactic_sovereign_megacorp
 					has_civic = civic_galactic_sovereign_people
 				}
-			}
-			# 兼容失控女仆，移至can_build_branch_office_on_planet判断
-			AND = {
-				has_global_flag = flag_rogue_maid_mod_activated	# |失控女仆激活|
-				always = yes
 			}
 
 			## 禁止所有|企业政府|	############
@@ -522,12 +504,27 @@ can_support_branch_offices = {
 						has_civic = civic_sh_criminal_syndicate
 					}
 				}
-				# gsf
+				# GF
 				has_civic = civic_gk
+				has_civic = GF_civic_GK
 				# azl
 				has_authority = auth_azur_lane_1
 				# SOFE
 				has_valid_civic = civic_sofe_inner_strength
+			}
+		}
+	}
+	
+	##_|必要国家类型|	 +ZOFE
+	custom_tooltip = {
+		fail_text = BRANCH_OFFICE_NOT_REGULAR_EMPIRE
+		OR = {
+			# vanilla
+			is_regular_empire = yes
+			# +ZOFE
+			AND = {
+				is_gestalt = no
+				is_country_type = ascended_empire
 			}
 		}
 	}
@@ -577,34 +574,41 @@ can_build_branch_office_on_planet = {
 						exists = event_target:elizabeth_leader
 						has_country_flag = azur_lane_leader_elizabeth
 					}
-					# 失控女仆
-					AND = {
-						has_global_flag = flag_rogue_maid_mod_activated
-						has_ascension_perk = ap_expactriate_service
-					}
 				}
 			}
 			owner = { has_commercial_pact = root }
 			owner = { is_in_federation_with = root }
-			# allow branch offices in subsidiaries and vice versa
-			##_|附庸国建造| +AAR
+			# allow branch offices in subsidiaries and vice versa (and fellow subjects)
+			##_|附庸国建造|
 			root = {
 				is_subject = yes
 				OR = {
-					is_subject_type = subsidiary	# vanilla
-					is_subject_type = AAR_SBJ_subsidiary	# AAR	宗主国="投资人"
+					has_authority = auth_corporate
+					has_civic = civic_galactic_sovereign_megacorp
 				}
-				overlord = { is_same_value = owner }
+				overlord = {
+					OR = {
+						is_same_value = prevprev.owner
+						is_same_value = prevprev.owner.overlord
+					}
+				}
 			}
-			##_|宗主国建造| +wsg/AAR
+			##_|宗主国建造| +wsg
 			owner = {
 				is_subject = yes
-				OR = {
-					is_subject_type = subsidiary	# vanilla
-					is_subject_type = AAR_SBJ_subsidiary	# AAR	附庸国="投资人"
-					overlord = { has_authority = auth_warshipgirls }	# wsg|宗主必然建造|
+				overlord = {
+					OR = {
+						is_same_value = root
+						is_same_value = root.overlord
+					}
+					OR = {
+						has_authority = auth_corporate
+						has_civic = civic_galactic_sovereign_megacorp
+						
+						# |wsg|	=宗主必然建造
+						has_authority = auth_warshipgirls
+					}
 				}
-				overlord = { is_same_value = root }
 			}
 			AND = {
 				root = { has_civic = civic_galactic_sovereign_megacorp }
@@ -655,19 +659,9 @@ can_build_branch_office_on_planet = {
 				owner = {
 					is_same_value = root	# <建造者>和<接受者>相同
 					OR = {
-						#has_active_tradition = tr_future_economy_soc
+						has_active_tradition = tr_future_economy_soc
 						has_civic = civic_state_owned_enterprises
 						has_civic = civic_world_cooperative
-					}
-				}
-			}
-			# ECI 未来传统重置
-			AND = {
-				is_capital = yes
-				owner = {
-					is_same_value = root 	# <建造者>和<接受者>相同
-					OR = {
-						has_active_tradition = tr_future_economy_soc
 						AND = {
 							has_active_tradition = tr_future_economy
 							OR = {
@@ -683,16 +677,6 @@ can_build_branch_office_on_planet = {
 							}
 						}
 					}
-					
-				}
-			}
-			AND = { # 经济特区
-				root = {
-					is_capitalism = yes
-				}
-				has_modifier = economic_colony
-				owner = {
-					NOT = { is_same_value = root }
 				}
 			}
 			# 星海帝皇	=|义军同盟|
@@ -702,7 +686,7 @@ can_build_branch_office_on_planet = {
 			}
 		}
 	}
-	###_|罪企和平|
+	###_|贸易协议|
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_CRIMINAL_HERITAGE_HAS_TRUCE
 		exists = owner
@@ -816,10 +800,10 @@ can_build_branch_office_on_planet = {
 			}
 		}
 	}
-	### 失控女仆
-	if = {
-		limit = { has_global_flag = flag_rogue_maid_mod_activated }
-		custom_tooltip = { # 对方禁止AI
+	
+	###	rmaid	|失控女仆|写得挺精致√
+	if = { limit = { has_global_flag = flag_rogue_maid_mod_activated }	# |rmaid安装|
+		custom_tooltip = { #对方禁止AI
 			fail_text = BRANCH_OFFICE_MAID_AI_OUTLAWED
 			exists = owner
 			OR = {
@@ -835,7 +819,7 @@ can_build_branch_office_on_planet = {
 				}
 			}
 		}
-		custom_tooltip = { # 对方禁止AI（共同体提示）
+		custom_tooltip = { #对方禁止AI（共同体提示）
 			fail_text = BRANCH_OFFICE_MAID_AI_OUTLAWED_WITH_COMMUNITY
 			exists = owner
 			OR = {
@@ -853,7 +837,7 @@ can_build_branch_office_on_planet = {
 				root = { is_galactic_emperor = yes }
 			}
 		}
-		custom_tooltip = { # 未建立大使馆
+		custom_tooltip = { #未建立大使馆
 			fail_text = BRANCH_OFFICE_MAID_NO_EMBASSY
 			exists = owner
 			OR = {
@@ -861,7 +845,7 @@ can_build_branch_office_on_planet = {
 				root = { has_embassy = prev.owner }
 			}
 		}
-		custom_tooltip = { # 好感不足
+		custom_tooltip = { #好感不足
 			fail_text = BRANCH_OFFICE_MAID_NOT_ENOUGH_FRIENDLY
 			exists = owner
 			OR = {
@@ -882,66 +866,6 @@ can_build_branch_office_on_planet = {
 						}
 					}
 					owner = { is_galactic_community_member = yes }
-				}
-			}
-		}
-	}
-	if = { #【！】 |禁止_巨企| 失控女仆兼容
-		limit = { has_global_flag = flag_rogue_maid_mod_activated }
-		custom_tooltip = {  ##_|禁止_巨企| +AAR		/ETCPM/hiveDLC/MCA/驴岛/wsg		/gsf/azl/SOFE	/Ecar
-			fail_text = BRANCH_OFFICE_NOT_ON_MEGACORP_PLANET
-			owner = { #scope切换到owner
-				OR = {
-					## 特殊允许|企业政府|	############
-					# AAR
-					is_subject_type = AAR_SBJ_subsidiary
-					# Ecar
-					AND = {
-						has_global_flag = ideological_revolution	# |Ecar激活|
-						OR = {
-							has_tradition = tr_future_economy
-							has_civic = civic_world_cooperative
-							has_valid_civic = civic_criminal_heritage
-							has_civic = civic_galactic_megacorp
-							has_civic = civic_galactic_sovereign
-							has_civic = civic_galactic_sovereign_megacorp
-							has_civic = civic_galactic_sovereign_people
-						}
-					}
-		
-					## 禁止所有|企业政府|	############
-					NOR = {
-						has_authority = auth_corporate
-						has_civic = civic_galactic_sovereign_megacorp
-						
-						#_|巨企国家|	ETCPM/hiveDLC/MCA/驴岛/wsg
-						# ETCPM
-						has_authority = auth_private
-						# hiveDLC
-						has_valid_civic = civic_mutualistic_behavior
-						has_valid_civic = civic_machine_trading
-						# MCA
-						has_authority = auth_corporate_fiefdom
-						has_authority = auth_cooperative
-						# 驴岛
-						has_civic = civic_business_union
-						# wsg
-						has_authority = auth_warshipgirls
-						
-						AND = {
-							has_authority = auth_shenhai
-							OR = {
-								has_country_flag = pantsu_shop_origin
-								has_civic = civic_sh_criminal_syndicate
-							}
-						}
-						# gsf
-						has_civic = civic_gk
-						# azl
-						has_authority = auth_azur_lane_1
-						# SOFE
-						has_valid_civic = civic_sofe_inner_strength
-					}
 				}
 			}
 		}
