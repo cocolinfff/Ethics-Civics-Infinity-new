@@ -1688,6 +1688,10 @@ ownership = {
 				factor = 10
 				has_valid_civic = civic_nazbol
 			}
+			modifier = {
+				factor = 10
+				has_policy_flag = economic_controlled_economy
+			}
 		}
 	}
 	option = {
@@ -1875,9 +1879,6 @@ family_structure = {
 		policy_flags = {
 			free_family
 		}
-		potential = {
-			is_gestalt = no
-		}
 		valid = {
 			OR = {
 				is_socialism = yes
@@ -1887,7 +1888,7 @@ family_structure = {
 		modifier = {
 			pop_family_structure_growth_mult = -0.5
 			planet_amenities_mult = 0.1
-			pop_housing_usage_mult = -0.1
+			pop_growth_speed = 0.05
 		}
 		AI_weight = {
 			factor = 2
@@ -1912,9 +1913,6 @@ family_structure = {
 		policy_flags = {
 			socialized_family
 		}
-		potential = {
-			is_gestalt = no
-		}
 		valid = {
 			OR = {
 				has_ethic = ethic_fanatic_socialism
@@ -1926,7 +1924,7 @@ family_structure = {
 		modifier = {
 			pop_family_structure_growth_mult = -1
 			planet_amenities_mult = 0.15
-			pop_housing_usage_mult = -0.15
+			pop_growth_speed = 0.1
 		}
 		AI_weight = {
 			modifier = {
@@ -2418,13 +2416,22 @@ economic_stance = {
 			}
 		}
 	}
-	# 指令式计划经济
+	# 计划经济
 	option = {
 		name = "economic_stance_planned"
 		potential = {
-			NOR = {
-				has_valid_civic = civic_network_of_the_mind
-				has_valid_civic = civic_network_of_the_mind_machine
+			OR = {
+				is_eci_megacorp = no
+				NOT = {
+					has_ethic = ethic_fanatic_capitalism
+					has_ethic = ethic_fanatic_authoritarian
+				}
+				AND = {
+					OR = {
+						has_policy_flag = tt_communist_road_2
+						has_policy_flag = tt_communist_road_3
+					}
+				}
 			}
 		}
 		policy_flags = {
@@ -2432,25 +2439,20 @@ economic_stance = {
 		}
 		modifier = {
 			country_edict_fund_mult = 0.1
-			pop_growth_speed = 0.15
-			pop_growth_speed_reduction = 0.05
-			planet_jobs_produces_mult = 0.05
-			job_labour_hero_per_pop = 0.05
-			trade_value_mult = -0.25
-			planet_district_industrial_build_speed_mult = 0.5
+			pop_growth_speed = 0.1
+			planet_jobs_produces_mult = 0.1
 			planet_jobs_worker_produces_mult = 0.05
+			planet_district_industrial_build_speed_mult = 0.5
+			job_core_party_members_per_pop = 0.02
 			country_trade_fee = 0.2
+			trade_value_mult = -0.25
+			pop_growth_speed_reduction = 0.05
 			planet_jobs_productive_upkeep_mult = 0.1
 		}
 		valid = {
-			OR = {
-				has_valid_civic = civic_socialistic
-				has_valid_civic = civic_forever_with_us
-				has_valid_civic = civic_nazbol
-				NOR = {
-					has_policy_flag = full_decentralization
-					has_policy_flag = high_decentralization
-				}
+			NOR = {
+				has_policy_flag = full_decentralization
+				has_policy_flag = high_decentralization
 			}
 			OR = {
 				NOR = {
@@ -2460,8 +2462,6 @@ economic_stance = {
 					}
 					has_policy_flag = private_ownership
 					has_policy_flag = reform_and_opening_up
-					has_valid_civic = civic_network_of_the_mind
-					has_valid_civic = civic_characteristic_socialism_pioneer
 				}
 				AND = {
 					OR = {
@@ -2493,23 +2493,76 @@ economic_stance = {
 			}
 		}
 	}
-	# 分布式计划经济
+	# 统制经济
+	option = {
+		name = "economic_stance_planned_megacorp"
+		potential = {
+			OR = {
+				is_eci_megacorp = yes
+				AND = {
+					has_ethic = ethic_fanatic_capitalism
+					has_ethic = ethic_fanatic_authoritarian
+				}
+			}
+			NOR = {
+				has_policy_flag = tt_communist_road_2
+				has_policy_flag = tt_communist_road_3
+			}
+		}
+		policy_flags = {
+			economic_controlled_economy
+		}
+		modifier = {
+			country_edict_fund_mult = 0.1
+			pop_growth_speed = 0.15
+			country_trade_fee = -0.1
+			trade_value_mult = 0.15
+			planet_district_industrial_build_speed_mult = 0.5
+			job_core_party_members_per_pop = 0.02
+			pop_growth_speed_reduction = 0.1
+			empire_size_pops_mult = 0.25
+		}
+		valid = {
+			NOR = {
+				has_policy_flag = full_decentralization
+				has_policy_flag = high_decentralization
+			}
+			NOR = {
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
+			}
+		}
+		AI_weight = {
+			modifier = {
+				factor = 10
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				factor = 20
+				OR = {
+					has_valid_civic = civic_peoples_republic
+					has_valid_civic = civic_glorious_pioneer
+				}
+			}
+			modifier = {
+				factor = 30
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+	}
+	# 共识经济
 	option = {
 		name = "economic_stance_planned_free"
 		potential = {
-			NOR = {
-				has_valid_civic = civic_network_of_the_mind
-				has_valid_civic = civic_network_of_the_mind_machine
-				has_valid_civic = civic_network_of_the_mind_true_hive
-			}
+			is_gestalt = no
 		}
 		policy_flags = {
 			economic_stance_planned
 		}
 		modifier = {
-			pop_growth_speed_reduction = -0.1
+			pop_growth_speed = 0.05
 			job_labour_hero_per_pop = 0.04
-			planet_jobs_produces_mult = 0.05
+			planet_jobs_produces_mult = 0.1
 			trade_value_mult = -0.1
 			country_trade_fee = 0.1
 		}
@@ -2520,8 +2573,7 @@ economic_stance = {
 					is_egalitarian = yes
 					OR = {
 						has_valid_civic = civic_shared_burden
-						has_valid_civic = civic_socialistic
-						has_valid_civic = civic_anarchism
+						has_valid_civic = civic_cyber_demos_cratos
 						has_valid_civic = civic_OGAS
 						AND = {
 							has_technology = tech_collective_self
@@ -2563,51 +2615,6 @@ economic_stance = {
 					has_policy_flag = tt_communist_road_4
 					has_policy_flag = tt_communist_road_5
 				}
-			}
-		}
-	}
-	# 计划经济（意识之海特供）
-	option = {
-		name = "economic_stance_planned_network_of_the_mind"
-		potential = {
-			OR = {
-				has_valid_civic = civic_network_of_the_mind
-				has_valid_civic = civic_network_of_the_mind_machine
-				has_valid_civic = civic_network_of_the_mind_true_hive
-			}
-		}
-		policy_flags = {
-			economic_stance_planned
-		}
-		modifier = {
-			pop_growth_speed = 0.1
-			planet_jobs_produces_mult = 0.2
-			trade_value_mult = -0.3
-			country_trade_fee = 0.2
-			pop_ethic_socialism_attraction_mult = 0.2
-		}
-		valid = {
-			NOR = {
-				has_ethic = ethic_capitalism
-				has_ethic = ethic_fanatic_capitalism
-				has_ethic = ethic_fanatic_egalitarian
-				has_policy_flag = reform_and_opening_up
-				has_policy_flag = full_decentralization
-				has_policy_flag = high_decentralization
-			}
-		}
-		AI_weight = {
-			modifier = {
-				factor = 20
-				has_ethic = ethic_fanatic_authoritarian
-			}
-			modifier = {
-				factor = 20
-				has_ethic = ethic_socialism
-			}
-			modifier = {
-				factor = 30
-				has_ethic = ethic_fanatic_socialism
 			}
 		}
 	}
@@ -3698,6 +3705,14 @@ local_power = {
 			modifier = {
 				factor = 10
 				has_ethic = "ethic_fanatic_socialism"
+			}
+			modifier = {
+				factor = 100
+				OR = {
+					has_valid_civic = civic_socialistic
+					has_valid_civic = civic_forever_with_us
+					has_valid_civic = civic_nazbol
+				}
 			}
 		}
 	}
