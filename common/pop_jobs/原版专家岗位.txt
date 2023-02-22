@@ -472,6 +472,66 @@ soldier = {
 	}
 }
 
+#环境调查员（原护林员） -> specialist
+ranger = {
+	category = specialist
+	condition_string = WORKER_JOB_TRIGGER
+	building_icon = holding_park_ranger_lodge
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
+
+	resources = {
+		category = planet_culture_workers
+		produces = {
+			society_research = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		pop_environment_tolerance = 0.05
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		modifier = { # 可控的动态权重
+			factor = value:job_weights_modifier|JOB|ranger|RESOURCE|society_research|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 1.5
+			has_job = ranger
+		}
+		modifier = {
+			factor = 10
+			owner = {
+				OR = {
+					has_valid_civic = civic_environmentalist
+					has_valid_civic = civic_environmentalist_corporate
+				}
+			}
+		}
+	}
+}
+
 #研究员
 researcher = {
 	category = specialist
