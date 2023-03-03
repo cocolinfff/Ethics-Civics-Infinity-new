@@ -147,6 +147,11 @@ labour_hero = {
 		category = planet_labour_hero
 
 		produces = {
+			trigger = {
+				owner = {
+					NOT = { has_valid_civic = civic_nazbol }
+				}
+			}
 			unity = 1
 		}
 
@@ -328,6 +333,10 @@ labour_hero = {
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_socialistic
 					}
+					NOR = {
+						has_policy_flag = economic_stance_planned
+						has_valid_civic = civic_nazbol
+					}
 				}
 			}
 			unity = 0.5
@@ -335,7 +344,10 @@ labour_hero = {
 		produces = {
 			trigger = {
 				owner = {
-					has_valid_civic = civic_shared_burden
+					OR = {
+						has_valid_civic = civic_shared_burden
+						has_valid_civic = civic_forever_with_us
+					}
 				}
 			}
 			physics_research = 0.25
@@ -352,10 +364,30 @@ labour_hero = {
 
 	planet_modifier = {
 		trade_value_add = 2
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				NOT = { has_valid_civic = civic_nazbol }
+			}
+		}
 		planet_jobs_worker_produces_mult = 0.02
 	}
 	triggered_planet_modifier = {
-		potential = { always = yes }
+		potential = {
+			owner = {
+				has_valid_civic = civic_nazbol
+			}
+		}
+		pop_citizen_happiness = 0.02
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				NOT = { has_valid_civic = civic_nazbol }
+			}
+		}
 		planet_amenities_add = 2
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
@@ -373,8 +405,44 @@ labour_hero = {
 				}
 			}
 		}
-		pop_environment_tolerance = -0.01
-		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
+		modifier = {
+			planet_jobs_produces_mult = 0.01
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_anarchism
+				NOT = { has_valid_civic = civic_nazbol }
+			}
+		}
+		modifier = {
+			planet_amenities_add = 1
+		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_nazbol
+			}
+		}
+		modifier = {
+			country_naval_cap_add = 2
+		}
+	}
+	triggered_country_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_anarchism
+				has_valid_civic = civic_nazbol
+			}
+		}
+		modifier = {
+			country_naval_cap_add = 1
+		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
 	# 共产主义社会
@@ -400,7 +468,7 @@ labour_hero = {
 	}
 
 	weight = {
-		weight = @worker_job_weight
+		weight = @worker_prio_job_weight
 		modifier = { # 可控的动态权重
 			factor = value:job_weights_modifier|JOB|miner|RESOURCE|minerals|
 			owner = { has_edict = dynamic_weight }
