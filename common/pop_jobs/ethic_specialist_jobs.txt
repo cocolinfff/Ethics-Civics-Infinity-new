@@ -76,21 +76,6 @@ foundry_specialist = {
 		}
 	}
 
-
-	triggered_country_modifier = { # 共产主义社会
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_shared_burden
-				has_tradition = tr_future_society
-				has_technology = tech_ascension_theory
-			}
-		}
-		modifier = {
-			country_admin_cap_add = 0.5
-		}
-	}
-
 	#污染
 	triggered_planet_modifier = {
 		potential = {
@@ -702,172 +687,6 @@ PR_manager = {
 	}
 }
 
-#科研模范
-research_pacesetter = {
-	category = specialist
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_research_lab_1
-	clothes_texture_index = 3
-	icon = labour_hero
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-	possible_precalc = can_fill_specialist_job
-	possible = {
-		complex_specialist_job_check_trigger = yes
-	}
-	resources = {
-		category = planet_researchers
-		produces = {
-			physics_research = 4
-			engineering_research = 4
-			society_research = 4
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					or = {
-						has_edict = scientific_spirit
-						has_edict = indefinite_patent_act
-					}
-				}
-			}
-			unity = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					or = {
-						has_valid_civic = civic_technocracy
-						has_valid_civic = civic_cyber_dictatorship
-						has_valid_civic = civic_science_directorate
-						has_valid_civic = civic_cyber_demos_cratos
-					}
-				}
-			}
-			unity = 1
-		}
-		upkeep = {
-			consumer_goods = 1
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_industry_pacesetter
-			}
-		}
-		modifier = {
-			planet_researchers_produces_mult = 0.1
-		}
-	}
-	weight = {
-		weight = @specialist_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_research_modifier|JOB|researcher|
-			owner = { has_edict = dynamic_weight }
-		}
-		modifier = {
-			factor = 0.2
-			has_citizenship_rights = no
-			NOT = {
-				has_trait = trait_mechanical
-			}
-		}
-		modifier = {
-			factor = 2
-			has_living_standard = {
-				type = living_standard_academic_privilege
-			}
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_erudite
-		}
-		modifier = {
-			factor = 2
-			OR = {
-				has_trait = trait_robot_logic_engines
-				has_trait = trait_intelligent
-			}
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_brainslug
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_natural_engineers
-				has_trait = trait_natural_physicists
-				has_trait = trait_natural_sociologists
-			}
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 0.65
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.5
-			has_job = researcher
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_latent_psionic
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_psionic
-		}
-		modifier = {
-			factor = 0.1
-			has_trait = trait_enigmatic_intelligence_failed
-		}
-		modifier = {
-			factor = 2
-			OR = {
-				has_trait = trait_enigmatic_intelligence
-				has_trait = trait_enigmatic_intelligence_poor
-			}
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_presapient_natural_intellectuals
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 0.8
-			is_enslaved = yes
-			has_slavery_type = {
-				type = slavery_indentured
-			}
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_void_dweller_1
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_necrophage
-		}
-	}
-}
-
 #工人模范
 model_worker = {
 	category = worker
@@ -1402,9 +1221,6 @@ mercenary = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_specialist_job
-	possible = {
-		ethic_is_not_enslaved = yes
-	}
 	
 	country_modifier = {
 		country_naval_cap_add = 4
@@ -2087,6 +1903,234 @@ xenobiologist = {
 		modifier = {
 			factor = 1.5
 			has_job = xenobiologist
+		}
+	}
+}
+
+#AI加强专家
+future_specialist = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	icon = administrator
+	building_icon = building_research_lab_1
+	clothes_texture_index = 3
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_ai = yes
+			is_gestalt = no
+		}
+	}
+
+	possible_precalc = can_fill_specialist_job
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			physics_research = 4
+			engineering_research = 4
+			society_research = 4
+			unity = 3
+		}
+		produces = {
+			trigger = {
+				#years_passed < 35
+				years_passed >= 20
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				#years_passed < 50
+				years_passed >= 40
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				#years_passed < 50
+				years_passed >= 60
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				#years_passed < 50
+				years_passed >= 80
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				#years_passed < 70
+				years_passed >= 100
+			}
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+			unity = 8
+		}
+		produces = {
+			trigger = {
+				#years_passed < 100
+				mid_game_years_passed > 0
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				end_game_years_passed > 0
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				is_difficulty = 2
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				is_difficulty = 3
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				is_difficulty = 4
+			}
+			physics_research = 4
+			engineering_research = 4
+			society_research = 4
+			unity = 3
+		}
+		produces = {
+			trigger = {
+				is_difficulty = 5
+			}
+			physics_research = 8
+			engineering_research = 8
+			society_research = 8
+			unity = 8
+		}
+
+		#弱者强化
+		produces = {
+			trigger = {
+				years_passed >= 50
+				owner = {
+					is_ai = yes
+					num_pops < 100
+				}
+			}
+			physics_research = 8
+			engineering_research = 8
+			society_research = 8
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				years_passed >= 80
+				owner = {
+					is_ai = yes
+					num_pops < 100
+				}
+			}
+			physics_research = 8
+			engineering_research = 8
+			society_research = 8
+		}
+
+		#利他主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_altruism
+				}
+			}
+			unity = 2
+		}
+
+		# Utopian living standards
+		produces = {
+			trigger = {
+				has_utopian_living_standard_type = yes
+			}
+			society_research = 2
+			physics_research = 2
+			engineering_research = 2
+		}
+
+		# Welfare
+		produces = {
+			trigger = {
+				OR = {
+					has_very_high_living_standard_type = yes
+					has_high_living_standard_type = yes
+					has_shared_burden_living_standard_type = yes
+				}
+			}
+			unity = 0.5
+		}
+
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+
+	country_modifier = {
+		country_admin_cap_add = 20
+		country_naval_cap_add = 5
+	}
+
+	planet_modifier = {
+		job_environmental_pollution_caused_mult = -0.1
+		pop_growth_speed_reduction = -0.05
+		planet_stability_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		trade_value_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		modifier = {
+			factor = 100
 		}
 	}
 }

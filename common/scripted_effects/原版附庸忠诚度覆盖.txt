@@ -1,0 +1,52 @@
+#分散的荫蔽
+refresh_subject_count_loyalty_penalty = {
+    every_subject = {
+        erase_modifier = { MOD = divided_patronage }
+    }
+    if = {
+        limit = {
+            NOR = {
+                has_civic = civic_feudal_realm
+                has_civic = civic_coalition_government
+                has_civic = civic_franchising
+                has_ascension_perk = ap_shared_destiny
+            }
+            subjects > 1
+        }
+        set_variable = { which = subjects_minus_one value = trigger:subjects }
+        subtract_variable = { which = subjects_minus_one value = 1 }
+        every_subject = {
+            add_modifier = {
+                modifier = divided_patronage
+                multiplier = PREV.subjects_minus_one
+            }
+        }
+        clear_variable = subjects_minus_one
+    }
+}
+
+#宗主思潮兼容
+add_ethics_compatibility_modifier = {
+    set_variable = {
+        which = ethics_compatibility_factor
+        value = 0
+    }
+    if = { limit = { is_pacifist = yes }		compare_and_modify_ethics_factor = { SAME = pacifist OPP = militarist } }
+    if = { limit = { is_militarist = yes }		compare_and_modify_ethics_factor = { SAME = militarist OPP = pacifist } }
+    if = { limit = { is_egalitarian = yes }		compare_and_modify_ethics_factor = { SAME = egalitarian OPP = authoritarian } }
+    if = { limit = { is_authoritarian = yes }	compare_and_modify_ethics_factor = { SAME = authoritarian OPP = egalitarian } }
+    if = { limit = { is_xenophile = yes }		compare_and_modify_ethics_factor = { SAME = xenophile OPP = xenophobe } }
+    if = { limit = { is_xenophobe = yes }		compare_and_modify_ethics_factor = { SAME = xenophobe OPP = xenophile } }
+    if = { limit = { is_materialist = yes }		compare_and_modify_ethics_factor = { SAME = materialist OPP = spiritualist } }
+    if = { limit = { is_spiritualist = yes }	compare_and_modify_ethics_factor = { SAME = spiritualist OPP = materialist } }
+    if = { limit = { is_socialism = yes }	compare_and_modify_ethics_factor = { SAME = socialism OPP = capitalism } }
+    if = { limit = { is_capitalism = yes }	compare_and_modify_ethics_factor = { SAME = capitalism OPP = socialism } }
+    if = {
+        limit = { NOT = { check_variable = { which = ethics_compatibility_factor value = 0 } } }
+        add_modifier = {
+            modifier = overlord_ethics_compatibility
+            multiplier = ethics_compatibility_factor
+        }
+    }
+    clear_variable = ethics_compatibility_factor
+}
