@@ -55,13 +55,36 @@ opinion_trade_enclave_vs_globalism = {
 
 opinion_artist_enclave_vs_cultural_heritage = {
 	trigger = {
-		has_valid_civic = civic_artist_collective
+		OR = {
+			has_valid_civic = civic_artist_collective
+			has_valid_civic = civic_art_country
+		}
 		FROM = {
 			has_valid_civic = "civic_art_country"
 		}
 	}
 	opinion = {
 		base = 50
+	}
+}
+
+opinion_notartist_enclave_vs_cultural_heritage = {
+	trigger = {
+		has_ethic = ethic_fanatic_materialist
+		OR = {
+			is_xenophobe = yes
+			is_militarist = yes
+		}
+		NOR = {
+			has_valid_civic = civic_artist_collective
+			has_valid_civic = civic_art_country
+		}
+		FROM = {
+			has_valid_civic = "civic_art_country"
+		}
+	}
+	opinion = {
+		base = -25
 	}
 }
 
@@ -1173,5 +1196,61 @@ triggered_pacifist_opinion_barbaric_despoilers = {
 	}
 	opinion = {
 		base = -50
+	}
+}
+
+triggered_opinion_moral_pacesetter = {
+	trigger = {
+		is_country_type = default
+		NOT = { has_civic = civic_moral_pacesetter }
+		FROM = {
+			has_civic = civic_moral_pacesetter
+			NOT = { is_overlord_to = root }
+			OR = {
+				is_subject = no
+				overlord = { NOT = { is_same_value = root } }
+			}
+		}
+	}
+	opinion = {
+		modifier = {
+			add = -50
+			is_war_leader = no
+		}
+		modifier = {
+			add = -100
+			is_war_leader = yes
+		}
+	}
+}
+
+triggered_opinion_moral_pacesetter_to_war = {
+	trigger = {
+		is_country_type = default
+		has_civic = civic_moral_pacesetter
+		FROM = { is_war_leader = yes }
+		NOT = { is_overlord_to = FROM }
+		OR = {
+			is_subject = no
+			overlord = { NOT = { is_same_value = from } }
+		}
+	}
+	opinion = {
+		base = -100
+	}
+}
+
+triggered_opinion_honorary_curator = {
+	trigger = {
+		is_country_type = default
+		FROM = {
+			OR = {
+				has_civic = civic_honorary_curator
+				has_civic = civic_corporate_honorary_curator
+			}
+		}
+	}
+	opinion = {
+		base = 30
 	}
 }
