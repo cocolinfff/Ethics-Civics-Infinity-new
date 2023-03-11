@@ -39,6 +39,7 @@ living_standard_chemical_bliss = {
 	}
 	potential = {
 		from = { has_technology = tech_subdermal_stimulation }
+		from = { is_community_society = no }
 		NOT = { has_trait = trait_hive_mind }
 		NOR = {
 			has_trait = trait_mechanical
@@ -137,6 +138,7 @@ living_standard_academic_privilege = {
 		exists = from
 		from = {
 			is_gestalt = no
+			is_community_society = no
 		}
 		NOT = {
 			from = {
@@ -271,6 +273,7 @@ living_standard_academic_privilege = {
 
 #乌托邦
 living_standard_utopian = {
+	token = living_standard_utopian
 	name = living_standard_utopian
 	triggered_pop_modifier = {
 		potential = {
@@ -350,75 +353,77 @@ living_standard_utopian = {
 		hidden_trigger = {
 			exists = from
 		}
-		custom_tooltip = {
-			fail_text = "requires_tr_future_economy"
-			from = {
-				OR = {
-					AND = {
+		OR = {
+			from = { has_policy_flag = tt_communist_road_5 }
+			AND = {
+				custom_tooltip = {
+					fail_text = "requires_tr_future_economy"
+					from = {
 						OR = {
-							has_tradition = tr_future_economy
-							has_tradition = tr_future_economy_soc
-							has_tradition = tr_future_economy_state_owned_enterprises
+							AND = {
+								OR = {
+									has_tradition = tr_future_economy
+									has_tradition = tr_future_economy_soc
+									has_tradition = tr_future_economy_state_owned_enterprises
+								}
+								has_technology = tech_ascension_theory
+							}
+							has_valid_civic = civic_transcendental_communism
+							has_valid_civic = civic_shared_burden
+							has_valid_civic = civic_nazbol
 						}
-						has_technology = tech_ascension_theory
 					}
-					has_valid_civic = civic_shared_burden
-					has_valid_civic = civic_nazbol
-					has_policy_flag = tt_communist_road_5
 				}
-			}
-		}
-		from = {
-			OR = {
-				AND = {
+				from = {
 					OR = {
-						is_egalitarian = yes
+						has_ethic = ethic_egalitarian
+						has_ethic = ethic_fanatic_egalitarian
+						has_valid_civic = civic_transcendental_communism
 						has_valid_civic = civic_shared_burden
 						has_valid_civic = civic_nazbol
 					}
 					NOT = { has_ethic = ethic_fanatic_capitalism }
 				}
-				has_policy_flag = tt_communist_road_5
-			}
-		}
-		NOR = {
-			custom_tooltip = {
-				AND = {
-					NOR = {
-						has_citizenship_type = { country = from type = citizenship_full }
-						has_citizenship_type = { country = from type = citizenship_full_machine }
+				NOR = {
+					custom_tooltip = {
+						AND = {
+							NOR = {
+								has_citizenship_type = { country = from type = citizenship_full }
+								has_citizenship_type = { country = from type = citizenship_full_machine }
+							}
+							from = { has_civic = civic_nazbol }
+						}
+						text = nazbol_full_citizenship_tooltip
 					}
-					from = { has_civic = civic_nazbol }
-				}
-				text = nazbol_full_citizenship_tooltip
-			}
-			custom_tooltip = {
-				has_citizenship_type = {
-					country = from
-					type = citizenship_slavery
-				}
-				text = is_slaves_tooltip
-			}
-			custom_tooltip = {
-				AND = {
-					OR = {
+					custom_tooltip = {
 						has_citizenship_type = {
 							country = from
-							type = citizenship_purge_machine
+							type = citizenship_slavery
 						}
-						has_citizenship_type = {
-							country = from
-							type = citizenship_purge
-						}
+						text = is_slaves_tooltip
 					}
-					NOT = {
-						has_purge_type = {
-							country = from
-							type = purge_neutering
+					custom_tooltip = {
+						AND = {
+							OR = {
+								has_citizenship_type = {
+									country = from
+									type = citizenship_purge_machine
+								}
+								has_citizenship_type = {
+									country = from
+									type = citizenship_purge
+								}
+							}
+							NOT = {
+								has_purge_type = {
+									country = from
+									type = purge_neutering
+								}
+							}
 						}
+						text = is_purged_not_neutered
 					}
 				}
-				text = is_purged_not_neutered
 			}
 		}
 		custom_tooltip = {
@@ -435,18 +440,11 @@ living_standard_utopian = {
 		factor = 15
 		modifier = {
 			factor = 100
-			from = {
-				OR = {
-					has_valid_civic = civic_shared_burden
-					has_policy_flag = tt_communist_road_5
-				}
-			}
+			has_valid_civic = civic_shared_burden
 		}
 		modifier = {
 			factor = 100
-			from = {
-				has_ascension_perk = ap_future_society
-			}
+			has_ascension_perk = ap_future_society
 		}
 		modifier = {
 			factor = 0
@@ -499,7 +497,12 @@ living_standard_decadent = {
 	potential = {
 		host_has_dlc = "Humanoids Species Pack"		
 		exists = from
-		NOT = { from = { has_valid_civic = civic_shared_burden } }
+		from = {
+			NOR = {
+				has_valid_civic = civic_transcendental_communism
+				has_valid_civic = civic_shared_burden
+			}
+		}
 		OR = {
 			from = { is_gestalt = no }
 			has_citizenship_type = { type = citizenship_slavery country = from }
@@ -642,6 +645,7 @@ living_standard_shared_burden = {
 			NOT = {
 				has_authority = auth_hive_mind
 			}
+			is_community_society = no
 			OR = {
 				NOT = { has_authority = auth_machine_intelligence }
 				has_valid_civic = civic_machine_liberator
@@ -887,11 +891,7 @@ living_standard_good = {
 		exists = from
 		from = {
 			is_gestalt = no
-		}
-		NOT = {
-			from = {
-				has_valid_civic = civic_shared_burden
-			}
+			is_community_society = no
 		}
 		NOT = {
 			from = {
@@ -1097,8 +1097,9 @@ living_standard_normal = {
 		from = {
 			is_gestalt = no
 		}
-		NOT = {
-			from = {
+		from = {
+			NOR = {
+				has_valid_civic = civic_transcendental_communism
 				has_valid_civic = civic_shared_burden
 			}
 		}
@@ -1428,7 +1429,12 @@ living_standard_subsistence = {
 
 	potential = {
 		exists = from
-		NOT = { from = { has_valid_civic = civic_shared_burden } }
+		from = {
+			NOR = {
+				has_valid_civic = civic_transcendental_communism
+				has_valid_civic = civic_shared_burden
+			}
+		}
 		OR = {
 			from = { is_gestalt = no }
 			has_citizenship_type = { type = citizenship_slavery country = from }
