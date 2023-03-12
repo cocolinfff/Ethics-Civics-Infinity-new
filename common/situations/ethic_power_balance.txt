@@ -1,0 +1,315 @@
+situation_power_balance = {
+    picture = GFX_evt_dark_alley
+    category = positive
+
+    desc = situation_administration_desc
+
+    on_start = {
+		rpb_update_initial = yes
+	}
+	#on_abort = {
+	#}
+    #on_fail = {
+    #    hidden_effect = {
+    #    	add_situation_progress = -1
+    #    }
+	#}
+
+    start_value = 100
+    stages = {
+        rea_circle_l3 = { # 左翼专政
+            icon = GFX_situation_stage_3
+            icon_background = GFX_situation_stage_frame_red
+			end = 10
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+
+			}
+			on_monthly = {
+			}
+        }
+		
+        rea_circle_l2 = { # 左翼当权
+            icon = GFX_situation_stage_2
+            icon_background = GFX_situation_stage_frame_red
+			end = 45
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+
+			}
+			on_monthly = {
+			}
+        }
+        rea_circle_l1 = { # 偏向左翼
+            icon = GFX_situation_stage_1
+            icon_background = GFX_situation_stage_frame_red
+			end = 80
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+			}
+			on_monthly = {
+			}
+        }
+        rea_circle_c = { # 中道政治
+            icon = GFX_situation_stage_2
+            icon_background = GFX_situation_stage_frame_green
+			end = 120
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+			}
+			on_monthly = {
+			}
+        }
+        rea_circle_r1 = { # 偏向右翼
+            icon = GFX_situation_stage_1
+            icon_background = GFX_situation_stage_frame_blue
+			end = 155
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+			}
+			on_monthly = {
+			}
+        }
+        rea_circle_r2 = { # 右翼当权
+            icon = GFX_situation_stage_2
+            icon_background = GFX_situation_stage_frame_blue
+			end = 190
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+			}
+			on_monthly = {
+			}
+        }
+        rea_circle_r3 = { # 右翼专政
+            icon = GFX_situation_stage_3
+            icon_background = GFX_situation_stage_frame_blue
+			end = 200
+            on_first_enter = {
+			}
+            hidden_effect = {
+            }
+			modifier = {
+			}
+			on_monthly = {
+			}
+        }
+    }
+
+    on_monthly = {
+		events = {
+            ethic_administration.1 # 行政机制月检
+        }
+	}
+
+	triggered_modifier = { # 超规模百分比惩罚 0~Infinite
+		potential = { check_variable = { which = rea_admin_overrate value > 0 } }
+		country_unity_produces_mult = -0.02 # 移植自超规模惩罚
+		planet_crime_no_happiness_mult = 0.01 # 移植自超规模惩罚
+		pop_government_ethic_attraction = -0.01 # 移植自超规模惩罚
+		mult = rea_admin_overrate
+	}
+
+	triggered_modifier = { # 规模不足百分比惩罚 0~100
+		potential = { check_variable = { which = rea_admin_coverrate_lack value > 0 } }
+		# 暂时禁用不完善内容
+		# rea_corruption_add = 0.01
+		mult = rea_admin_coverrate_lack
+	}
+
+	triggered_modifier = { # 规模充足百分比奖励 0~Infinite
+		potential = { check_variable = { which = rea_admin_coverrate_lack value < 0 } }
+		# 暂时禁用不完善内容
+		# rea_corruption_add = 0.01
+		planet_crime_mult = 0.0015 # 充分官僚带来的防止犯罪效果
+		mult = rea_admin_coverrate_lack
+	}
+
+    monthly_progress = {
+        base = 0
+
+		# 行政不足将诱导左转
+		# 体制问题因素
+
+		# 行政规模
+        #modifier = {
+        #    desc = rea_factor_empire_size
+        #    add = rea_situation_add_empire_size
+        #}
+
+        # 体制腐化
+        #modifier = {
+        #    desc = rea_factor_corruption
+        #    add = rea_situation_add_corruption
+        #}
+        # 平均犯罪度
+        #modifier = {
+        #    desc = rea_factor_crime
+        #    add = rea_situation_add_crime
+		#	NOT = { check_variable = { which = rea_situation_add_crime value = 0 } }
+        #}
+
+        # 措施因素
+        #modifier = {
+        #    desc = rea_factor_approach
+        #    add = rea_situation_add_approach
+		#	NOT = { check_variable = { which = rea_situation_add_approach value = 0 } }
+        #}
+
+        # 自然衰减
+        #modifier = {
+        #    desc = rea_factor_rebalance
+        #    add = value:rea_rebalance
+        #}
+    }
+
+    approach = { # 不做改变 tag:0
+        name = rea_approach_default
+        icon = GFX_situation_approach_this_is_fine
+	    icon_background = GFX_situation_approach_bg_yellow
+        default = yes
+        on_select = {
+            custom_tooltip = ethic_economic_free_tooltip
+            hidden_effect = {
+                rea_approach_set_default = yes
+            }
+        }
+		ai_weight = {
+			weight = 5
+		}
+    }
+
+    approach = { # 反腐倡廉 tag:1
+        name = rea_approach_decorrupt
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_yellow
+		allow = {
+			always = no # 暂时禁用
+		}
+        potential = {
+            owner = {
+                NOT = { has_ethic = ethic_fanatic_socialism }
+            }
+        }
+        modifier = {
+			rea_corruption_add = -0.2
+        }
+        on_select = {
+            hidden_effect = {
+                rea_approach_set_decorrupt = yes
+            }
+        }
+    }
+
+    approach = { # 鼓励官僚自主 tag:20
+        name = rea_approach_autonomy_b
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_yellow
+		allow = {
+			always = no # 暂时禁用
+		}
+        potential = {
+            owner = {
+                NOR = {
+                    has_ethic = ethic_socialism
+                    has_ethic = ethic_fanatic_socialism
+                }
+            }
+        }
+        modifier = {
+			rea_efficiency_mult = 0.15
+			rea_corruption_add = 0.1
+        }
+        on_select = {
+            hidden_effect = {
+                rea_approach_set_autonomy_b = yes
+            }
+        }
+    }
+
+    approach = { # 强化民主机制 tag:21
+        name = rea_approach_autonomy_m
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_yellow
+		allow = {
+			always = no # 暂时禁用
+		}
+        potential = {
+            owner = {
+                OR = {
+                    has_ethic = ethic_socialism
+                    has_ethic = ethic_fanatic_socialism
+                }
+            }
+        }
+        modifier = {
+			rea_efficiency_add = -0.1
+			rea_corruption_add = -0.1
+        }
+        on_select = {
+            hidden_effect = {
+                rea_approach_set_autonomy_m = yes
+            }
+        }
+    }
+
+    approach = { # 政府工作报告 tag:9
+        name = rea_approach_report
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_yellow
+        potential = {
+        }
+        resources = {
+            category = situations
+            cost = { # 制作报告也是要钱的
+                energy = 1
+            }
+        }
+        modifier = {
+        }
+        on_select = {
+			situation_event = { id = ethic_administration.9 }
+            hidden_effect = { # 自动复位
+				if = {
+					limit = { rea_approach_is_default = yes }
+					set_situation_approach = rea_approach_default
+				}
+				else_if = {
+					limit = { rea_approach_is_decorrupt = yes }
+					set_situation_approach = rea_approach_decorrupt
+				}
+				else_if = {
+					limit = { rea_approach_is_autonomy_b = yes }
+					set_situation_approach = rea_approach_autonomy_b
+				}
+				else_if = {
+					limit = { rea_approach_is_autonomy_m = yes }
+					set_situation_approach = rea_approach_autonomy_m
+				}
+            }
+        }
+    }
+
+    #on_progress_complete = {
+    #    hidden_effect = {
+    #        add_situation_progress = -1
+    #    }
+    #}
+}
