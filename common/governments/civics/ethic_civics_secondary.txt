@@ -1,9 +1,83 @@
 ##################
 #    次级民政
 ##################
-#世袭贵族
-civic_aristocratic_elite = {
-	description = civic_tooltip_aristocratic_elite_effects
+#金融精英
+civic_merchant_guilds = {
+	description = civic_tooltip_merchant_guilds_effects
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = {
+				value = auth_corporate
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_galactic_sovereign_megacorp
+				value = civic_family_business
+				value = civic_world_cooperative
+			}
+		}
+	}
+	possible = {
+		civics = {
+			NOR = {
+				text = civic_tooltip_not_network_of_the_mind
+				value = civic_network_of_the_mind
+				value = civic_network_of_the_mind_machine
+				value = civic_network_of_the_mind_true_hive
+			}
+			NOR = {
+				text = civic_tooltip_not_subtopic_civic
+				value = civic_aristocratic_elite
+				value = civic_coalition_government
+				value = civic_stratocracy
+				value = civic_byzantine_bureaucracy
+				value = civic_technocracy
+				value = civic_exalted_priesthood
+				value = civic_peoples_republic
+				value = civic_glorious_pioneer
+				value = civic_social_democracy
+			}
+		}
+		authority = {
+			NOR = {
+				value = auth_direct_democratic
+			}
+		}
+		ethics = {
+			OR = {
+				text = civic_tooltip_capitalism
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
+			}
+		}
+	}
+	modifier = {
+		job_mogul_per_pop = 0.02
+		pop_cat_ruler_political_power = 1
+	}
+	random_weight = {
+		base = 50
+		modifier = {
+			factor = 0
+			has_civic = civic_empty_vagrant
+			NOR = {
+				has_origin = origin_ev_both_choosen
+				has_civic = civic_ev_planet_and_fleet
+				has_ascension_perk = ev_land_planets
+			}
+		}
+	}
+}
+
+#工人宪法
+civic_peoples_republic = {
+	description = civic_tooltip_peoples_republic_effects
 	potential = {
 		ethics = {
 			NOT = {
@@ -26,27 +100,26 @@ civic_aristocratic_elite = {
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_authoritarian
+				text = civic_tooltip_socialism
+				value = ethic_socialism
+				value = ethic_fanatic_socialism
+			}
+			NOR = {
+				text = civic_tooltip_not_authoritarian
 				value = ethic_authoritarian
 				value = ethic_fanatic_authoritarian
 			}
 		}
 		civics = {
 			NOR = {
-				text = civic_tooltip_not_network_of_the_mind
-				value = civic_network_of_the_mind
-				value = civic_network_of_the_mind_machine
-				value = civic_network_of_the_mind_true_hive
-			}
-			NOR = {
 				text = civic_tooltip_not_subtopic_civic
+				value = civic_aristocratic_elite
 				value = civic_coalition_government
 				value = civic_stratocracy
 				value = civic_byzantine_bureaucracy
 				value = civic_technocracy
 				value = civic_exalted_priesthood
 				value = civic_merchant_guilds
-				value = civic_peoples_republic
 				value = civic_glorious_pioneer
 				value = civic_social_democracy
 			}
@@ -54,6 +127,10 @@ civic_aristocratic_elite = {
 	}
 	random_weight = {
 		base = 50
+		modifier = {
+			factor = 1.5
+			is_egalitarian = yes
+		}
 		modifier = {
 			factor = 0
 			has_civic = civic_empty_vagrant
@@ -65,25 +142,15 @@ civic_aristocratic_elite = {
 		}
 	}
 	modifier = {
-		job_noble_per_pop = 0.02
-		leaders_cost_mult = -0.25
+		pop_cat_worker_political_power = 2
+		job_labour_hero_per_pop = 0.02
+		pop_ethic_socialism_attraction_mult = 0.15
 	}
 }
 
-#联合政府
-civic_coalition_government = {
-	description = civic_tooltip_coalition_government_effects
-	swap_type = {
-		name = civic_coalition_government
-		description = "civic_tooltip_coalition_government_communist_effects"
-		trigger = {
-			is_community_society = yes
-		}
-		modifier = {
-			job_sovereign_representative_per_pop = -0.02
-			job_grassroot_cadre_per_pop = 0.03
-		}
-	}
+#思想设计师
+civic_glorious_pioneer = {
+	description = civic_tooltip_glorious_pioneer_effects
 	potential = {
 		ethics = {
 			NOT = {
@@ -105,10 +172,15 @@ civic_coalition_government = {
 	}
 	possible = {
 		ethics = {
+			OR = {
+				text = civic_tooltip_socialism
+				value = ethic_socialism
+				value = ethic_fanatic_socialism
+			}
 			NOR = {
-				text = civic_tooltip_not_authoritarian
-				value = ethic_authoritarian
-				value = ethic_fanatic_authoritarian
+				text = civic_tooltip_not_egalitarian
+				value = ethic_egalitarian
+				value = ethic_fanatic_egalitarian
 			}
 		}
 		civics = {
@@ -121,13 +193,13 @@ civic_coalition_government = {
 			NOR = {
 				text = civic_tooltip_not_subtopic_civic
 				value = civic_aristocratic_elite
+				value = civic_coalition_government
 				value = civic_stratocracy
 				value = civic_byzantine_bureaucracy
 				value = civic_technocracy
 				value = civic_exalted_priesthood
 				value = civic_merchant_guilds
 				value = civic_peoples_republic
-				value = civic_glorious_pioneer
 				value = civic_social_democracy
 			}
 		}
@@ -135,8 +207,12 @@ civic_coalition_government = {
 	random_weight = {
 		base = 50
 		modifier = {
-			factor = 10
-			has_origin = origin_void_dwellers
+			factor = 0.1
+			has_valid_civic = civic_welfare_state
+		}
+		modifier = {
+			factor = 1.5
+			is_authoritarian = yes
 		}
 		modifier = {
 			factor = 0
@@ -149,8 +225,10 @@ civic_coalition_government = {
 		}
 	}
 	modifier = {
-		job_sovereign_representative_per_pop = 0.02
-		empire_size_colonies_mult = -0.25
+		country_base_influence_produces_add = 0.5
+		job_core_party_members_per_pop = 0.02
+		pop_government_ethic_attraction = 0.15
+		country_pop_enslaved_mult = 0.05
 	}
 }
 
@@ -487,9 +565,9 @@ civic_exalted_priesthood = {
 	}
 }
 
-#金融精英
-civic_merchant_guilds = {
-	description = civic_tooltip_merchant_guilds_effects
+#世袭贵族
+civic_aristocratic_elite = {
+	description = civic_tooltip_aristocratic_elite_effects
 	potential = {
 		ethics = {
 			NOT = {
@@ -510,6 +588,13 @@ civic_merchant_guilds = {
 		}
 	}
 	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+		}
 		civics = {
 			NOR = {
 				text = civic_tooltip_not_network_of_the_mind
@@ -519,33 +604,17 @@ civic_merchant_guilds = {
 			}
 			NOR = {
 				text = civic_tooltip_not_subtopic_civic
-				value = civic_aristocratic_elite
 				value = civic_coalition_government
 				value = civic_stratocracy
 				value = civic_byzantine_bureaucracy
 				value = civic_technocracy
 				value = civic_exalted_priesthood
+				value = civic_merchant_guilds
 				value = civic_peoples_republic
 				value = civic_glorious_pioneer
 				value = civic_social_democracy
 			}
 		}
-		authority = {
-			NOR = {
-				value = auth_direct_democratic
-			}
-		}
-		ethics = {
-			OR = {
-				text = civic_tooltip_capitalism
-				value = ethic_capitalism
-				value = ethic_fanatic_capitalism
-			}
-		}
-	}
-	modifier = {
-		job_mogul_per_pop = 0.02
-		pop_cat_ruler_political_power = 1
 	}
 	random_weight = {
 		base = 50
@@ -559,11 +628,26 @@ civic_merchant_guilds = {
 			}
 		}
 	}
+	modifier = {
+		job_noble_per_pop = 0.02
+		leaders_cost_mult = -0.25
+	}
 }
 
-#工人宪法
-civic_peoples_republic = {
-	description = civic_tooltip_peoples_republic_effects
+#联合政府
+civic_coalition_government = {
+	description = civic_tooltip_coalition_government_effects
+	swap_type = {
+		name = civic_coalition_government
+		description = "civic_tooltip_coalition_government_communist_effects"
+		trigger = {
+			is_community_society = yes
+		}
+		modifier = {
+			job_sovereign_representative_per_pop = -0.02
+			job_grassroot_cadre_per_pop = 0.03
+		}
+	}
 	potential = {
 		ethics = {
 			NOT = {
@@ -585,11 +669,6 @@ civic_peoples_republic = {
 	}
 	possible = {
 		ethics = {
-			OR = {
-				text = civic_tooltip_socialism
-				value = ethic_socialism
-				value = ethic_fanatic_socialism
-			}
 			NOR = {
 				text = civic_tooltip_not_authoritarian
 				value = ethic_authoritarian
@@ -598,79 +677,6 @@ civic_peoples_republic = {
 		}
 		civics = {
 			NOR = {
-				text = civic_tooltip_not_subtopic_civic
-				value = civic_aristocratic_elite
-				value = civic_coalition_government
-				value = civic_stratocracy
-				value = civic_byzantine_bureaucracy
-				value = civic_technocracy
-				value = civic_exalted_priesthood
-				value = civic_merchant_guilds
-				value = civic_glorious_pioneer
-				value = civic_social_democracy
-			}
-		}
-	}
-	random_weight = {
-		base = 50
-		modifier = {
-			factor = 1.5
-			is_egalitarian = yes
-		}
-		modifier = {
-			factor = 0
-			has_civic = civic_empty_vagrant
-			NOR = {
-				has_origin = origin_ev_both_choosen
-				has_civic = civic_ev_planet_and_fleet
-				has_ascension_perk = ev_land_planets
-			}
-		}
-	}
-	modifier = {
-		pop_cat_worker_political_power = 2
-		job_labour_hero_per_pop = 0.02
-		pop_ethic_socialism_attraction_mult = 0.15
-	}
-}
-
-#思想设计师
-civic_glorious_pioneer = {
-	description = civic_tooltip_glorious_pioneer_effects
-	potential = {
-		ethics = {
-			NOT = {
-				value = ethic_gestalt_consciousness
-			}
-		}
-		authority = {
-			NOT = {
-				value = auth_corporate
-			}
-		}
-		civics = {
-			NOR = {
-				value = civic_galactic_sovereign_megacorp
-				value = civic_family_business
-				value = civic_world_cooperative
-			}
-		}
-	}
-	possible = {
-		ethics = {
-			OR = {
-				text = civic_tooltip_socialism
-				value = ethic_socialism
-				value = ethic_fanatic_socialism
-			}
-			NOR = {
-				text = civic_tooltip_not_egalitarian
-				value = ethic_egalitarian
-				value = ethic_fanatic_egalitarian
-			}
-		}
-		civics = {
-			NOR = {
 				text = civic_tooltip_not_network_of_the_mind
 				value = civic_network_of_the_mind
 				value = civic_network_of_the_mind_machine
@@ -679,13 +685,13 @@ civic_glorious_pioneer = {
 			NOR = {
 				text = civic_tooltip_not_subtopic_civic
 				value = civic_aristocratic_elite
-				value = civic_coalition_government
 				value = civic_stratocracy
 				value = civic_byzantine_bureaucracy
 				value = civic_technocracy
 				value = civic_exalted_priesthood
 				value = civic_merchant_guilds
 				value = civic_peoples_republic
+				value = civic_glorious_pioneer
 				value = civic_social_democracy
 			}
 		}
@@ -693,12 +699,8 @@ civic_glorious_pioneer = {
 	random_weight = {
 		base = 50
 		modifier = {
-			factor = 0.1
-			has_valid_civic = civic_welfare_state
-		}
-		modifier = {
-			factor = 1.5
-			is_authoritarian = yes
+			factor = 10
+			has_origin = origin_void_dwellers
 		}
 		modifier = {
 			factor = 0
@@ -711,10 +713,8 @@ civic_glorious_pioneer = {
 		}
 	}
 	modifier = {
-		country_base_influence_produces_add = 0.5
-		job_core_party_members_per_pop = 0.02
-		pop_government_ethic_attraction = 0.15
-		country_pop_enslaved_mult = 0.05
+		job_sovereign_representative_per_pop = 0.02
+		empire_size_colonies_mult = -0.25
 	}
 }
 
