@@ -1,5 +1,5 @@
 ##############################
-# 沙文主义派系
+# 至上派(VANILLA)-激进排外-纯意识形态
 ##############################
 supremacist = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,17 +14,9 @@ supremacist = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_xenophile
-			has_ethic = ethic_xenophile
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -36,25 +28,15 @@ supremacist = {
 		}
 	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
 	}
 	can_join_faction = {
-		is_shackled_robot = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_supremacist_i = yes
+			can_join_faction_supremacist_c = yes
+			can_join_faction_supremacist_j = yes
 		}
-		owner = {
-			NOR = {
-				has_ethic = ethic_pacifist
-				has_ethic = ethic_fanatic_pacifist
-			}
-		}
-		is_same_species = owner_species
 	}
 	attraction = {
 		base = 100
@@ -63,7 +45,6 @@ supremacist = {
 			exists = from
 			from = {
 				is_xenophobe = yes
-				is_militarist = yes
 			}
 		}
 		modifier = {
@@ -84,6 +65,19 @@ supremacist = {
 					exists = leader
 				}
 			}
+		}
+		modifier = {
+			factor = 0.1
+			NOT = {
+				is_same_species = owner_species
+			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
 		}
 	}
 	leader = {

@@ -1,5 +1,5 @@
 ##############################
-# 苦修士派系
+# 传统派(VANILLA)-温和唯心/排外-贵族/教士利益集团
 ##############################
 traditionalist = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,16 +14,9 @@ traditionalist = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_capitalism
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -35,17 +28,14 @@ traditionalist = {
 		}
 	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
-		is_robot_pop = no
 	}
 	can_join_faction = {
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_traditionalist_i = yes
+			can_join_faction_traditionalist_c = yes
+			can_join_faction_traditionalist_j = yes
 		}
 	}
 	attraction = {
@@ -76,6 +66,21 @@ traditionalist = {
 					exists = leader
 				}
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			has_job = priest
+			has_job = noble
+			has_job = knight_commander
+			has_job = supervisor
 		}
 	}
 	leader = {
@@ -495,7 +500,7 @@ traditionalist = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
+					from = { faction_approval < 0.5 }
 					owner = {
 						has_ethic = ethic_spiritualist
 					}

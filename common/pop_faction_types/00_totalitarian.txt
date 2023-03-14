@@ -1,5 +1,5 @@
 ##############################
-# 军警派系
+# 军警(ECI)-激进独裁-统治者/执法者利益集团
 ##############################
 totalitarian = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,16 +14,9 @@ totalitarian = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_egalitarian
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -34,20 +27,15 @@ totalitarian = {
 			}
 		}
 	}
-	can_join_faction = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
-		is_shackled_robot = no
+	can_join_pre_triggers = {
 		is_being_purged = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-		}
-		NOR = {
-			has_job = bureaucrat
-			has_job = manager
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_totalitarian_i = yes
+			can_join_faction_totalitarian_c = yes
+			can_join_faction_totalitarian_j = yes
 		}
 	}
 	attraction = {
@@ -85,6 +73,19 @@ totalitarian = {
 			NOT = {
 				is_same_species = owner_species
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			has_job = enforcer
+			has_job = telepath
 		}
 	}
 	leader = {

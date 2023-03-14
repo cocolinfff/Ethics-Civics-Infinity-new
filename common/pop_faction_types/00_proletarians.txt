@@ -1,5 +1,5 @@
 ##############################
-# 无产者派系
+# 无产者(ECI)-温和亲外/社会-劳工利益集团
 ##############################
 proletarians = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,17 +14,9 @@ proletarians = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_capitalism
-			has_ethic = ethic_fanatic_xenophobe
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -36,21 +28,18 @@ proletarians = {
 		}
 	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
 	}
 	can_join_faction = {
-		is_shackled_robot = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_proletarians_i = yes
+			can_join_faction_proletarians_c = yes
+			can_join_faction_proletarians_j = yes
 		}
 	}
 	attraction = {
-		base = 150
+		base = 100
 		modifier = {
 			factor = 1.5
 			exists = from
@@ -83,6 +72,18 @@ proletarians = {
 			NOT = {
 				is_same_species = owner_species
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhigh
+			is_pop_category = worker
 		}
 	}
 	leader = {
@@ -231,64 +232,6 @@ proletarians = {
 			}
 		}
 	}
-	#银河普遍主义
-	demand = {
-		# "XENOIST_UNIVERSALISM"
-		title = "XENOIST_UNIVERSALISM"
-		unfulfilled_title = "XENOIST_NO_UNIVERSALISM"
-		desc = "XENOIST_UNIVERSALISM_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 7
-				has_valid_civic = civic_free_haven
-				any_owned_pop = {
-					NOR = {
-						is_same_species = root.owner
-						has_trait = trait_mechanical
-						has_trait = trait_machine_unit
-						has_trait = trait_hive_mind
-					}
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				num_species > 7
-			}
-		}
-	}
-	#银河普遍主义
-	demand = {
-		# "XENOIST_UNIVERSALISM"
-		title = "XENOIST_UNIVERSALISM"
-		unfulfilled_title = "XENOIST_NO_UNIVERSALISM"
-		desc = "XENOIST_UNIVERSALISM_DESC"
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 10
-				has_valid_civic = civic_free_haven
-				any_owned_pop = {
-					NOR = {
-						is_same_species = root.owner
-						has_trait = trait_mechanical
-						has_trait = trait_machine_unit
-						has_trait = trait_hive_mind
-					}
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				num_species > 10
-			}
-		}
-	}
 	#银河解放者
 	demand = {
 		title = "LIBERATION_PHILOSOPHY"
@@ -433,33 +376,6 @@ proletarians = {
 		trigger = {
 			owner = {
 				has_federation = yes
-			}
-		}
-	}
-	#新的联络
-	demand = {
-		title = "XENOIST_RECENT_COMMS"
-		unfulfilled_title = "XENOIST_NO_RECENT_COMMS"
-		desc = "XENOIST_RECENT_COMMS_DESC"
-		fulfilled_effect = 5
-		potential = {
-			exists = owner
-			owner = {
-				any_country = {
-					NOT = {
-						has_communications = prev
-					}
-					OR = {
-						is_country_type = default
-						is_country_type = fallen_empire
-						is_country_type = awakened_fallen_empire
-					}
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = recent_comms_timed
 			}
 		}
 	}
@@ -632,7 +548,7 @@ proletarians = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
+					from = { faction_approval < 0.5 }
 					owner = {
 						has_ethic = ethic_xenophile
 					}

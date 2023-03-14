@@ -1,5 +1,5 @@
 ##############################
-# 学者派系
+# 学者(VANILLA)-激进唯物-科研利益集团
 ##############################
 technologist = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,17 +14,9 @@ technologist = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_xenophobe
-			has_ethic = ethic_xenophobe
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -36,18 +28,14 @@ technologist = {
 		}
 	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
 	}
 	can_join_faction = {
-		is_shackled_robot = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-			has_ethic = ethic_spiritualist
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_technologist_i = yes
+			can_join_faction_technologist_c = yes
+			can_join_faction_technologist_j = yes
 		}
 	}
 	attraction = {
@@ -82,6 +70,19 @@ technologist = {
 		modifier = {
 			factor = 2
 			is_robot_pop = yes
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			has_job = head_researcher
+			has_job = researcher
 		}
 	}
 	leader = {

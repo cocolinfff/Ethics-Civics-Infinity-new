@@ -1,5 +1,5 @@
 ##############################
-# 实业家派系
+# 实业家(ECI)-温和资本/亲外-生产类专家/经理利益集团
 ##############################
 
 industrialist = {
@@ -15,16 +15,9 @@ industrialist = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_socialism
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -35,50 +28,22 @@ industrialist = {
 			}
 		}
 	}
-	can_join_faction = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
-		is_shackled_robot = no
-		is_being_purged = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-		}
-		NOR = {
-			has_job = clerk
-			has_job = manager
-			has_job = preacher
-			has_job = labour_hero
-		}
-	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_industrialist_i = yes
+			can_join_faction_industrialist_c = yes
+			can_join_faction_industrialist_j = yes
+		}
 	}
 	attraction = {
 		base = 150
 		modifier = {
 			factor = 1.5
 			exists = from
-			from = {
-				is_capitalism = yes
-				is_xenophobe = yes
-			}
-		}
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				exists = leader
-				leader = {
-					leader_class = ruler
-				}
-			}
 			from = {
 				exists = owner
 				owner = {
@@ -109,6 +74,25 @@ industrialist = {
 			factor = 0.25
 			NOT = {
 				is_same_species = owner_species
+			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhigh
+			is_pop_category = specialist
+			OR = {
+				has_job = manager
+				has_job = chemist
+				has_job = translucer
+				has_job = gas_refiner
+				has_job = roboticist
 			}
 		}
 	}
@@ -394,14 +378,14 @@ industrialist = {
 				}
 				support > 0.10
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_industrial" }
+					NOT = { has_ethic = "ethic_fanatic_capitalism" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				parameter:empire = {
-					shift_ethic = ethic_industrial
+					shift_ethic = ethic_capitalism
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
@@ -429,9 +413,9 @@ industrialist = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.50
+					support < 0.5
 					owner = {
-						has_ethic = ethic_industrial
+						has_ethic = ethic_capitalism
 					}
 				}
 				modifier = {

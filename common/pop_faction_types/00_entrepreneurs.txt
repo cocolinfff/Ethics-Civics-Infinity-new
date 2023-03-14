@@ -1,5 +1,5 @@
 ##############################
-# 议员派系
+# 议员(ECI)-温和民主-议员利益集团（仅非威权国家
 ##############################
 entrepreneurs = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,17 +14,9 @@ entrepreneurs = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_socialism
-            has_authority = auth_direct_democratic
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -39,11 +31,11 @@ entrepreneurs = {
 		is_being_purged = no
 	}
 	can_join_faction = {
-		is_shackled_robot = no
-		is_enslaved = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_entrepreneurs_i = yes
+			can_join_faction_entrepreneurs_c = yes
+			can_join_faction_entrepreneurs_j = yes
 		}
 	}
 	attraction = {
@@ -81,6 +73,18 @@ entrepreneurs = {
 			NOT = {
 				is_same_species = owner_species
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhigh
+			has_job = politician
 		}
 	}
 	leader = {

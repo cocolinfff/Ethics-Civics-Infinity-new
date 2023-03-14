@@ -1,5 +1,5 @@
 ##############################
-# 群众派系
+# 工会(ECI)-激进社会/民主-工人利益集团
 ##############################
 socialists = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,15 +14,9 @@ socialists = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
-		NOT = {
-			has_ethic = ethic_gestalt_consciousness
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
 		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -33,22 +27,16 @@ socialists = {
 			}
 		}
 	}
-	can_join_faction = {
-		is_shackled_robot = no
-		is_being_purged = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-		}
-		NOR = {
-			is_pop_category = ruler
-			has_job = bureaucrat
-			has_job = manager
-			has_job = merchant
-		}
-	}
 	can_join_pre_triggers = {
 		is_being_purged = no
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_socialists_i = yes
+			can_join_faction_socialists_c = yes
+			can_join_faction_socialists_j = yes
+		}
 	}
 	attraction = {
 		base = 150
@@ -94,6 +82,18 @@ socialists = {
 					exists = leader
 				}
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			is_pop_category = worker
 		}
 	}
 	leader = {
@@ -212,23 +212,6 @@ socialists = {
 					has_valid_civic = civic_shared_burden
 					has_valid_civic = civic_socialistic
 					has_valid_civic = civic_peoples_republic
-				}
-			}
-		}
-	}
-	#计划经济
-	demand = {
-		title = "PLANNED_ECONOMY"
-		unfulfilled_title = "NO_PLANNED_ECONOMY"
-		desc = "PLANNED_ECONOMY_DESC"
-		fulfilled_effect = 10
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = economic_stance_planned
 				}
 			}
 		}

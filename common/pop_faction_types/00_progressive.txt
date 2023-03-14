@@ -1,5 +1,5 @@
 ##############################
-# 工会派系
+# 知识分子(VANILLA)-激进民主-科研/专家利益集团
 ##############################
 progressive = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,16 +14,9 @@ progressive = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_authoritarian
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -38,15 +31,11 @@ progressive = {
 		is_being_purged = no
 	}
 	can_join_faction = {
-		is_shackled_robot = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-		}
-		NOR = {
-			has_job = mogul
-			has_job = manager
-			has_job = merchant
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_progressive_i = yes
+			can_join_faction_progressive_c = yes
+			can_join_faction_progressive_j = yes
 		}
 	}
 	attraction = {
@@ -83,6 +72,20 @@ progressive = {
 			factor = 0.25
 			NOT = {
 				is_same_species = owner_species
+			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhigh
+			OR =	{
+				is_pop_category = specialist
 			}
 		}
 	}

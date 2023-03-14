@@ -1,5 +1,5 @@
 ##############################
-# 银行家派系
+# 银行家(ECI)-激进资本-大亨/商人利益集团
 ##############################
 bankers = {
 	election_header = "GFX_faction_header_yellow"
@@ -14,16 +14,9 @@ bankers = {
 	}
 	is_potential = {
 		days_passed > 30
-		has_encountered_other_species = yes
 		NOR = {
-			has_ethic = ethic_gestalt_consciousness
-			has_ethic = ethic_fanatic_socialism
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
-		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -34,30 +27,16 @@ bankers = {
 			}
 		}
 	}
-	can_join_faction = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
-		is_shackled_robot = no
-		is_being_purged = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-		}
-		NOR = {
-			has_job = miner
-			has_job = crystal_miner
-			has_job = gas_extractor
-			has_job = mote_harvester
-			has_job = artisan
-			has_job = foundry
-			has_job = labour_hero
-		}
-	}
 	can_join_pre_triggers = {
-		is_enslaved = no
 		is_being_purged = no
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_bankers_i = yes
+			can_join_faction_bankers_c = yes
+			can_join_faction_bankers_j = yes
+		}
 	}
 	attraction = {
 		base = 150
@@ -109,6 +88,19 @@ bankers = {
 			NOT = {
 				is_same_species = owner_species
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = from
+			from = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			has_job = mogul
+			has_job = merchant
 		}
 	}
 	leader = {
