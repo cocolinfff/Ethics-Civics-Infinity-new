@@ -1468,27 +1468,43 @@ orbital_bombardment = {
 }
 
 interference = {
+
 	potential = {
 		has_met_primitives = yes
 	}
+
 	option = {
-		name = "interference_passive"
+		name = "interference_not_allowed"
+
 		policy_flags = {
-			interference_passive
+			interference_not_allowed
 		}
+
 		on_enabled = {
 			hidden_effect = {
 				set_country_flag = encountered_first_primitive
 			}
 		}
+
 		in_breach_of = {
 			{
 				key = resolution_galacticstudies_advanced_xenostudies
 			}
+			{
+				key = resolution_pre_ftl_stances_equal_standing
+			}
+			{
+				key = resolution_pre_ftl_stances_exploitation
+			}
 		}
+
 		valid = {
 			OR = {
-				is_subject_type = signatory
+				custom_tooltip = {
+					text = is_a_signatory_vassal
+					any_agreement = { agreement_preset = preset_signatory }
+				}
+				is_active_resolution = resolution_pre_ftl_stances_non_interference
 				NOR = {
 					has_ethic = "ethic_fanatic_xenophobe"
 					has_valid_civic = "civic_fanatic_purifiers"
@@ -1497,6 +1513,7 @@ interference = {
 				}
 			}
 		}
+
 		AI_weight = {
 			modifier = {
 				factor = 0.1
@@ -1505,29 +1522,83 @@ interference = {
 					is_active_resolution = "resolution_galacticstudies_advanced_xenostudies"
 					is_active_resolution = "resolution_galacticstudies_ethical_guideline_refactoring"
 					is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
+					is_active_resolution = "resolution_pre_ftl_stances_equal_standing"
+					is_active_resolution = "resolution_pre_ftl_stances_exploitation"
 				}
 			}
 		}
 	}
+
+	option = {
+		name = "interference_subtle"
+
+		policy_flags = {
+			interference_subtle
+		}
+
+		on_enabled = {
+			hidden_effect = { set_country_flag = encountered_first_primitive }
+		}
+
+		valid = {
+			OR = {
+				custom_tooltip = {
+					text = is_a_signatory_vassal
+					any_agreement = { agreement_preset = preset_signatory }
+				}
+				NOR = {
+					has_ethic = "ethic_fanatic_xenophobe"
+					has_valid_civic = "civic_fanatic_purifiers"
+					has_valid_civic = "civic_hive_devouring_swarm"
+					has_valid_civic = "civic_machine_terminator"
+				}
+			}
+		}
+
+		AI_weight = {
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = infiltrator
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOT = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+
 	option = {
 		name = "interference_active"
+
 		policy_flags = {
 			interference_active
 		}
-		modifier = {
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_country_flag = encountered_first_primitive
+
+		in_breach_of = {
+			{
+				key = resolution_pre_ftl_stances_non_interference
 			}
 		}
+
+		on_enabled = {
+			hidden_effect = { set_country_flag = encountered_first_primitive }
+		}
+
 		valid = {
 			NOR = {
-				is_subject_type = signatory
+				custom_tooltip = {
+					text = is_a_signatory_vassal
+					any_agreement = { agreement_preset = preset_signatory }
+				}
 				has_valid_civic = "civic_fanatic_purifiers"
 				has_valid_civic = "civic_hive_devouring_swarm"
 			}
 		}
+
 		AI_weight = {
 			modifier = {
 				factor = 2
@@ -1544,54 +1615,62 @@ interference = {
 					has_ai_personality_behaviour = infiltrator
 					has_ai_personality_behaviour = dominator
 				}
-				NOT = {
-					is_galactic_community_member = yes
-					OR = {
-						is_active_resolution = "resolution_galacticstudies_advanced_xenostudies"
-						is_active_resolution = "resolution_galacticstudies_ethical_guideline_refactoring"
-						is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
-					}
+			}
+			modifier = {
+				factor = 0.1
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_galacticstudies_advanced_xenostudies"
+					is_active_resolution = "resolution_galacticstudies_ethical_guideline_refactoring"
+					is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
+					is_active_resolution = "resolution_pre_ftl_stances_non_interference"
 				}
 			}
 		}
 	}
 	option = {
-		name = "interference_full"
-		potential = {
+		name = "interference_aggressive"
+
+		in_breach_of = {
+			{
+				key = resolution_pre_ftl_stances_non_interference
+			}
+			{
+				key = resolution_pre_ftl_stances_equal_standing
+			}
 		}
+
 		valid = {
-			NOT = {
-				is_subject_type = signatory
+			custom_tooltip = {
+				success_text = is_not_a_signatory_vassal_success
+				fail_text = is_not_a_signatory_vassal_fail
+				NOT = { any_agreement = { agreement_preset = preset_signatory } }
 			}
 			NOR = {
 				has_ethic = "ethic_pacifist"
 				has_ethic = "ethic_fanatic_pacifist"
+				has_ethic = "ethic_xenophile"
+				has_ethic = "ethic_fanatic_xenophile"
+				has_valid_civic = civic_machine_exploration_protocol
 			}
 		}
 		on_enabled = {
-			hidden_effect = {
-				set_country_flag = encountered_first_primitive
-			}
+			hidden_effect = { set_country_flag = encountered_first_primitive }
 		}
 		policy_flags = {
-			interference_full
+			interference_aggressive
 		}
-		modifier = {
-		}
+		modifier = {}
 		AI_weight = {
 			modifier = {
 				factor = 3
 				has_valid_ai_personality = yes
-				OR = {
-					has_ai_personality_behaviour = infiltrator
-					has_ai_personality_behaviour = dominator
-				}
+				has_ai_personality_behaviour = dominator
 			}
 			modifier = {
 				factor = 0
 				has_valid_ai_personality = yes
-				NOR = {
-					has_ai_personality_behaviour = infiltrator
+				NOT = {
 					has_ai_personality_behaviour = dominator
 				}
 			}
@@ -1602,34 +1681,45 @@ interference = {
 					has_ethic = "ethic_fanatic_pacifist"
 				}
 			}
+			modifier = {
+				factor = 0.1
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_pre_ftl_stances_non_interference"
+					is_active_resolution = "resolution_pre_ftl_stances_equal_standing"
+				}
+			}
 		}
 	}
 }
 
 enlightenment = {
+
 	potential = {
 		has_met_primitives = yes
 	}
+
 	option = {
 		name = "enlightenment_not_allowed"
+
 		policy_flags = {
 			enlightenment_not_allowed
 		}
-		on_enabled = {
-			# custom_tooltip = "policy_allow_slavery_effect_disable"
-		}
+
 		AI_weight = {
 			weight = 1
 		}
 	}
+
 	option = {
-		name = "enlightenment_allowed"
+		name = "enlightenment_covert_only"
+
 		policy_flags = {
-			enlightenment_allowed
+			enlightenment_covert_only
 		}
-		modifier = {
-		}
+
 		valid = {
+			NOT = { has_policy_flag = interference_not_allowed }
 			NOR = {
 				has_ethic = "ethic_fanatic_xenophobe"
 				has_valid_civic = "civic_fanatic_purifiers"
@@ -1637,6 +1727,30 @@ enlightenment = {
 				has_valid_civic = "civic_machine_terminator"
 			}
 		}
+
+		AI_weight = {
+			weight = 1
+		}
+	}
+
+	option = {
+		name = "enlightenment_allowed"
+
+		policy_flags = {
+			enlightenment_allowed
+		}
+		modifier = {}
+
+		valid = {
+			NOT = { has_policy_flag = interference_not_allowed }
+			NOR = {
+				has_ethic = "ethic_fanatic_xenophobe"
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_hive_devouring_swarm"
+				has_valid_civic = "civic_machine_terminator"
+			}
+		}
+
 		AI_weight = {
 			modifier = {
 				factor = 2
@@ -1646,9 +1760,7 @@ enlightenment = {
 			modifier = {
 				factor = 0
 				has_valid_ai_personality = yes
-				NOT = {
-					has_ai_personality_behaviour = uplifter
-				}
+				NOT = { has_ai_personality_behaviour = uplifter }
 			}
 			modifier = {
 				factor = 0
