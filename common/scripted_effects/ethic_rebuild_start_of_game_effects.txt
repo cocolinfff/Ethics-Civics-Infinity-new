@@ -254,11 +254,52 @@ generate_start_pops = {
 
 	if = {
 		limit = { owner = { has_origin = origin_mechanists } }
-		owner = { create_built_robot_species = yes }
+		owner = {
+			create_built_robot_species = yes
+		}
 		while = {
 			count = 8
 			create_pop = {
 				species = last_created_species
+			}
+		}
+		every_owned_pop = {
+			limit = {
+				has_job = miner
+				is_robotic_species = yes
+			}
+			modify_species = {
+				species = this
+				add_trait = trait_robot_power_drills
+				add_trait = trait_robot_bulky
+				add_trait = trait_robot_high_maintenance
+				add_traits_at_start_of_list = yes
+			}
+		}
+		every_owned_pop = {
+			limit = {
+				has_job = farmer
+				is_robotic_species = yes
+			}
+			modify_species = {
+				species = this
+				add_trait = trait_robot_harvesters
+				add_trait = trait_robot_bulky
+				add_trait = trait_robot_high_maintenance
+				add_traits_at_start_of_list = yes
+			}
+		}
+		every_owned_pop = {
+			limit = {
+				has_job = technician
+				is_robotic_species = yes
+			}
+			modify_species = {
+				species = this
+				add_trait = trait_robot_superconductive
+				add_trait = trait_robot_bulky
+				add_trait = trait_robot_high_maintenance
+				add_traits_at_start_of_list = yes
 			}
 		}
 
@@ -336,7 +377,12 @@ generate_start_pops = {
 		}
 	}
 	if = {
-		limit = { owner = { is_megacorp = yes } }
+		limit = {
+			owner = {
+				is_megacorp = yes
+				has_reduced_pop_origin = no
+			}
+		}
 		while = {
 			limit = { num_pops < 28 }
 			create_pop = {
@@ -347,12 +393,52 @@ generate_start_pops = {
 	}
 	if = {
 		limit = {
+			owner = { has_origin = origin_broken_shackles }
+			num_pops < 6
+		}
+
+		while = {
+			limit = { num_pops < 6 }
+			create_pop = {
+				species = owner_main_species
+				ethos = random
+			}
+		}
+	}
+	if = {
+		limit = {
 			owner = {
 				is_regular_empire = yes
+				has_reduced_pop_origin = no
 			}
 		}
 		while = {
 			limit = { num_pops < 28 }
+			create_pop = {
+				species = owner_main_species
+				ethos = random
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_origin = origin_payback }
+			num_pops < 18
+		}
+		while = {
+			limit = { num_pops < 18 }
+			create_pop = {
+				species = owner_main_species
+				ethos = random
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_origin = origin_fear_of_the_dark }
+		}
+		while = {
+			count = 20
 			create_pop = {
 				species = owner_main_species
 				ethos = random
@@ -383,6 +469,35 @@ generate_start_pops = {
 			create_pop = {
 				species = owner_main_species
 				ethos = random
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = { has_origin = origin_true_yuht }
+		}
+		while = {
+			count = 30
+			create_pop = {
+				species = owner_main_species
+				ethos = random
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				is_eager_explorer_empire = yes
+				NOT = { has_origin = origin_true_yuht }
+			}
+		}
+		while = {
+			count = 10
+			random_owned_pop = {
+				limit = {
+					is_same_species = root.owner.species
+				}
+				kill_pop = yes
 			}
 		}
 	}
@@ -837,7 +952,7 @@ create_MSI_effect = {
 		civics = {
 			civic = civic_indentured_assets
 			civic = civic_public_relations_specialists
-			civic = civic_industrial_economy_corporate
+			civic = civic_learning_society_corporate
 		}
 		authority = auth_corporate
 		effect = {
@@ -879,5 +994,49 @@ create_MSI_effect = {
 		country_event = { id = game_start.9 }
 		owner_species = { set_species_homeworld = prevprev }
 		log = "MSI CREATED"
+	}
+}
+
+#黑暗森林入脑的傻子
+create_fear_of_the_dark_country = {
+	create_country = {
+		name = {
+			key = "NAME_fotd_seperatists"
+			variable_string = "\\[fotd_country.GetSpeciesName\\]"
+		}
+		authority = auth_democratic
+		civics = {
+			civic = civic_welfare_state
+			civic = civic_environmentalist
+			civic = civic_political_pluralism
+		}
+		species = event_target:fotd_country.species
+		ethos = {
+			ethic = ethic_fanatic_xenophobe
+			ethic = ethic_egalitarian
+		}
+
+		flag = random
+		origin = "origin_fear_of_the_dark" # Should only be visible if they become spacefaring
+		type = primitive
+		effect = {
+			set_country_flag = early_space_age
+			set_country_flag = fotd_seperatist_country@event_target:fotd_country
+			set_country_flag = fotd_seperatist_country
+			save_event_target_as = fotd_seperatist_country
+			establish_communications_no_message = event_target:fotd_country
+			set_faction_hostility = {
+				target = event_target:fotd_country
+				set_hostile = no
+				set_neutral = no
+				set_friendly = yes
+			}
+		}
+	}
+	event_target:fotd_country = {
+		add_intel = {
+			amount = 100
+			who = event_target:fotd_country
+		}
 	}
 }
