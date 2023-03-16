@@ -1,0 +1,1899 @@
+@distance = 50
+@base_moon_distance = 10
+
+# Pre-FTL Civilizations
+pre_ftl_init_01 = {
+	class = "rl_standard_stars"
+
+	usage = misc_system_init
+	usage_odds = {
+		base = 2.6
+		modifier = {
+			add = 0.4
+			has_utopia = no
+		}
+		modifier = {
+			factor = 0
+			is_fe_cluster = yes
+		}
+	}
+	primitive_system = yes	# usage odds modified by primitives setup slider
+
+	flags = { primitive_system }
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 20
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 3 }
+	}
+
+	change_orbit = 20
+
+	planet = {
+		count = 1
+		orbit_distance = 0
+		class = "rl_habitable_normal"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 25 }
+		#deposit_blockers = none
+
+		init_effect = {
+			prevent_anomaly = yes
+			generate_pre_ftls_on_planet = yes
+		}
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 1 max = 4 }
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 2 }
+	}
+}
+
+# Sol System (Pre-FTL Humans)
+pre_ftl_init_sol = {
+	name = "NAME_Sol"
+	class = "sc_g"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 145
+	}
+	asteroid_belt = {
+		type = icy_asteroid_belt
+		radius = 290
+	}
+
+	flags = { primitive_sol sol }
+
+	planet = {
+		name = "NAME_Sol"
+		class = "pc_g_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 30
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_molten"
+		orbit_distance = 40
+		orbit_angle = 15
+		size = 10
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_toxic"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 17
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_continental"
+		orbit_distance = 25
+		orbit_angle = 120
+		size = 18
+		has_ring = no
+		entity = "continental_planet_earth_entity"
+		deposit_blockers = none
+		modifiers = none
+		flags = { planet_earth }
+
+		init_effect = {
+			save_global_event_target_as = sol_system_earth
+			random_list = {
+				# 模拟香草地联
+				30 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						homeworld = THIS
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+					}
+					create_country = {
+						name = EMPIRE_DESIGN_humans1
+						authority = auth_oligarchic
+						day_zero_contact = no
+						civics = {
+							civic = civic_globalism
+							civic = civic_state_monopoly
+							civic = civic_coalition_government
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_fanatic_xenophile"
+							ethic = "ethic_pacifist"
+							ethic = "ethic_fanatic_capitalism"
+						}
+						origin = origin_default_pre_ftl
+						flag = {
+							icon = {
+								category = "human"
+								file = "flag_human_9.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "00_solid.dds"
+							}
+							colors = {
+								"blue"
+								"black"
+								"null"
+								"null"
+							}
+						}
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = early_space_age
+						set_country_flag = humans_early_space_age
+						set_pre_ftl_age = early_space_age
+					}
+					set_owner = last_created_country
+
+					create_pre_ftl_blockers = yes
+
+					create_army = {
+						name = "NAME_US_Armed_Forces_West"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_US_Armed_Forces_East"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Chinese_PLA"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Russian_Armed_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_EU_Combined_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_fleet = {
+						name = "NAME_ISS_II"
+						effect = {
+							set_owner = last_created_country
+							create_ship = {
+								name = "NAME_ISS_II"
+								design = "NAME_Space_Station"
+							}
+							set_location = PREV
+						}
+					}
+					while = {
+						count = @early_space_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_primitive_capital
+					add_building = building_urban_dwellings
+				}
+				# 废土地球
+				25 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						homeworld = THIS
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+					}
+					create_country = {
+						name = NAME_Ulysses_Consortium
+						authority = auth_corporate
+						day_zero_contact = no
+						civics = {
+							civic = civic_corpus
+							civic = civic_indentured_assets
+							civic = civic_corporate_cybercap
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_fanatic_materialist"
+							ethic = "ethic_authoritarian"
+							ethic = "ethic_fanatic_capitalism"
+						}
+						origin = origin_post_apocalyptic
+						flag = {
+							icon = {
+								category = "human"
+								file = "flag_human_9.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "circle.dds"
+							}
+							colors={
+								"dark_blue"
+								"green"
+								"null"
+								"null"
+							}
+						}
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = early_space_age
+						set_country_flag = humans_early_space_age
+						set_pre_ftl_age = early_space_age
+					}
+					set_owner = last_created_country
+
+					create_pre_ftl_blockers = yes
+
+					create_army = {
+						name = "NAME_US_Armed_Forces_West"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_US_Armed_Forces_East"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Chinese_PLA"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Russian_Armed_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_EU_Combined_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_fleet = {
+						name = "NAME_ISS_II"
+						effect = {
+							set_owner = last_created_country
+							create_ship = {
+								name = "NAME_ISS_II"
+								design = "NAME_Space_Station"
+							}
+							set_location = PREV
+						}
+					}
+					while = {
+						count = @early_space_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_primitive_capital
+					add_building = building_urban_dwellings
+
+					last_created_country = {
+						capital_scope = { starting_colony = pc_nuked }
+					}
+				}
+				# 人类帝国
+				10 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						homeworld = THIS
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+					}
+					create_country = {
+						name = NAME_Great_Human_Empire
+						authority = auth_imperial
+						day_zero_contact = no
+						civics = {
+							civic = civic_fanatic_purifiers
+							civic = civic_imperial_cult
+							civic = civic_defenders_faith
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_fanatic_xenophobe"
+							ethic = "ethic_authoritarian"
+							ethic = "ethic_fanatic_spiritualist"
+						}
+						origin = origin_remnants
+						flag = {
+							icon = {
+								category = "human"
+								file = "flag_human_9.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "00_solid.dds"
+							}
+							colors = {
+								"black"
+								"black"
+								"null"
+								"null"
+							}
+						}
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = early_space_age
+						set_country_flag = humans_early_space_age
+						set_pre_ftl_age = early_space_age
+					}
+					set_owner = last_created_country
+
+					create_pre_ftl_blockers = yes
+
+					while = {
+						count = 3
+						create_army = {
+							name = "NAME_Feudal_Levies"
+							owner = last_created_country
+							species = last_created_species
+							type = "defense_army"
+						}
+					}
+					create_fleet = {
+						effect = {
+							set_owner = last_created_country
+							create_ship = {
+								name = "NAME_ISS_II"
+								design = "NAME_Space_Station"
+							}
+							set_location = PREV
+						}
+					}
+					while = {
+						count = @early_space_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_primitive_capital
+					add_building = building_urban_dwellings
+				}
+				# 太阳苏维埃
+				5 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						homeworld = THIS
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+					}
+					create_country = {
+						name = NAME_Joint_Solar_System
+						authority = auth_direct_democratic
+						civics = {
+							civic = civic_socialistic
+							civic = civic_political_pluralism
+							civic = civic_coalition_government
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_fanatic_egalitarian"
+							ethic = "ethic_materialist"
+							ethic = "ethic_fanatic_socialism"
+						}
+						origin = origin_warpdrive_start
+						flag = {
+							icon = {
+								category = "human"
+								file = "flag_human_15.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "00_solid.dds"
+							}
+							colors = {
+								"red"
+								"yellow"
+								"null"
+								"null"
+							}
+						}
+						day_zero_contact = no
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = early_space_age
+						set_country_flag = humans_early_space_age
+						set_pre_ftl_age = early_space_age
+					}
+
+					set_owner = last_created_country
+
+					create_army = {
+						name = "NAME_Soviet_Red_Army"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Soviet_Red_Army"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Soviet_Red_Army"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Soviet_Red_Army"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Soviet_Red_Army"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_fleet = {
+						name = "NAME_ISS_II"
+						effect = {
+							set_owner = last_created_country
+							create_ship = {
+								name = "NAME_ISS_II"
+								design = "NAME_Space_Station"
+							}
+							set_location = PREV
+						}
+					}
+					while = {
+						count = @early_space_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_primitive_capital
+					add_building = building_urban_dwellings
+				}
+				# Early Space Age
+				15 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						homeworld = THIS
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+					}
+					create_country = {
+						name = random
+						authority = random
+						day_zero_contact = no
+						civics = {
+							civic = civic_increasing_urbanization
+							civic = civic_atmospheric_pollution
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_fanatic_xenophile"
+							ethic = "ethic_authoritarian"
+							ethic = "ethic_fanatic_capitalism"
+						}
+						origin = origin_default_pre_ftl
+						flag = {
+							icon = {
+								category = "human"
+								file = "flag_human_9.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "circle.dds"
+							}
+							colors={
+								"dark_blue"
+								"green"
+								"null"
+								"null"
+							}
+						}
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = early_space_age
+						set_country_flag = humans_early_space_age
+						set_pre_ftl_age = early_space_age
+					}
+					set_owner = last_created_country
+
+					create_pre_ftl_blockers = yes
+
+					create_army = {
+						name = "NAME_US_Armed_Forces_West"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_US_Armed_Forces_East"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Chinese_PLA"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_Russian_Armed_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_army = {
+						name = "NAME_EU_Combined_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "postatomic_army"
+					}
+					create_fleet = {
+						name = "NAME_ISS_II"
+						effect = {
+							set_owner = last_created_country
+							create_ship = {
+								name = "NAME_ISS_II"
+								design = "NAME_Space_Station"
+							}
+							set_location = PREV
+						}
+					}
+					while = {
+						count = @early_space_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_primitive_capital
+					add_building = building_urban_dwellings
+				}
+				# Industrial Age
+				10 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+						homeworld = this
+					}
+					create_country = {
+						name = random
+						authority = random
+						civics = {
+							civic = civic_increasing_urbanization
+							civic = civic_atmospheric_pollution
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_fanatic_materialist"
+							ethic = "ethic_fanatic_militarist"
+							ethic = "ethic_authoritarian"
+						}
+						origin = origin_default_pre_ftl
+						flag = {
+							icon = {
+								category = "human"
+								file = "flag_human_7.dds"
+							}
+							background= {
+								category = "backgrounds"
+								file = "circle.dds"
+							}
+							colors={
+								"dark_blue"
+								"red"
+								"null"
+								"null"
+							}
+						}
+						day_zero_contact = no
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = industrial_01
+						set_country_flag = machine_age
+						set_country_flag = humans_machine_age
+						set_pre_ftl_age = machine_age
+					}
+					set_owner = last_created_country
+
+					create_pre_ftl_blockers = yes
+
+					while = {
+						count = @industrial_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_farm
+					add_building = building_primitive_factory
+					add_building = building_primitive_mine
+					add_building = building_primitive_power_plant
+					add_building = building_primitive_capital
+					add_building = building_urban_dwellings
+
+					create_army = {
+						name = "NAME_German_Wehrmacht"
+						owner = last_created_country
+						species = last_created_species
+						type = "industrial_army"
+					}
+					create_army = {
+						name = "NAME_Soviet_Red_Army"
+						owner = last_created_country
+						species = last_created_species
+						type = "industrial_army"
+					}
+					create_army = {
+						name = "NAME_US_Armed_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "industrial_army"
+					}
+					create_army = {
+						name = "NAME_British_Armed_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "industrial_army"
+					}
+					create_army = {
+						name = "NAME_Imperial_Japanese_Forces"
+						owner = last_created_country
+						species = last_created_species
+						type = "industrial_army"
+					}
+				}
+				# Medieval
+				5 = {
+					create_species = {
+						name = NAME_Human
+						plural = NAME_Human_plural
+						class = "HUM"
+						portrait = "human"
+						homeworld = THIS
+						traits = {
+							trait="trait_thrifty"
+							trait="trait_conformists"
+							trait="trait_chikunailao"
+							trait="trait_unruly"
+							trait="trait_slow_learners"
+						}
+					}
+					create_country = {
+						name = random
+						authority = random
+						civics = {
+							civic = civic_landed_nobility
+							civic = civic_flat_world_theory
+						}
+						species = last_created_species
+						ethos = {
+							ethic = "ethic_xenophobe"
+							ethic = "ethic_spiritualist"
+							ethic = "ethic_fanatic_authoritarian"
+							ethic = "ethic_capitalism"
+						}
+						origin = origin_default_pre_ftl
+						flag = {
+							icon = {
+								category = "ornate"
+								file = "flag_ornate_11.dds"
+							}
+							background = {
+								category = "backgrounds"
+								file = "00_solid.dds"
+							}
+							colors = {
+								"dark_blue"
+								"dark_blue"
+								"null"
+								"null"
+							}
+						}
+						day_zero_contact = no
+						type = primitive
+					}
+					last_created_country = {
+						set_graphical_culture = preindustrial_01
+						set_country_flag = late_medieval_age
+						set_country_flag = humans_late_medieval_age
+						set_pre_ftl_age = late_medieval_age
+					}
+
+					set_owner = last_created_country
+
+					while = {
+						count = @late_medieval_age_pops
+						create_pop = {
+							species = last_created_species
+						}
+					}
+					add_building = building_primitive_dwellings
+					add_building = building_primitive_dwellings
+					add_building = building_stone_palace
+
+					while = {
+						count = 3
+						create_army = {
+							name = "NAME_Feudal_Levies"
+							owner = last_created_country
+							species = last_created_species
+							type = "primitive_army"
+						}
+					}
+				}
+			}
+		}
+
+		moon = {
+			class = "pc_barren_cold"
+			size = 5
+			orbit_distance = 12
+			orbit_angle = 40
+			has_ring = no
+			entity = "cold_barren_planet_luna_entity"
+		}
+	}
+
+	planet = {
+		class = "pc_barren"
+		orbit_distance = 25
+		orbit_angle = 60
+		size = 13
+		has_ring = no
+		entity = "barren_planet_mars_entity"
+		init_effect = {
+			add_modifier = {
+				modifier = "terraforming_candidate"
+				days = -1
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 40
+		orbit_angle = -160
+		size = 35
+		has_ring = no
+		entity = "gas_giant_jupiter_entity"
+		change_orbit = 6
+
+		moon = {
+			class = "pc_molten"
+			size = 6
+			orbit_distance = 10
+			orbit_angle = 110
+			has_ring = no
+		}
+		moon = {
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 2.5
+			orbit_angle = 10
+			has_ring = no
+		}
+		moon = {
+			class = "pc_frozen"
+			size = 9
+			orbit_distance = 2.5
+			orbit_angle = 80
+			has_ring = no
+		}
+		moon = {
+			class = "pc_frozen"
+			size = 7
+			orbit_distance = 2.5
+			orbit_angle = -155
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 170
+		size = 30
+		has_ring = yes
+		entity = "gas_giant_05_entity"
+		change_orbit = 7
+
+		moon = {
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 12
+			orbit_angle = 320
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = 125
+		size = 20
+		has_ring = no
+		entity = "gas_giant_03_entity"
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 25
+		orbit_angle = -195
+		size = 20
+		has_ring = no
+		entity = "gas_giant_02_entity"
+		change_orbit = 4
+
+		moon = {
+			class = "pc_frozen"
+			size = 6
+			orbit_distance = 7
+			orbit_angle = 115
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = -210
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -95
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = 285
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_ice_asteroid"
+		orbit_distance = 0
+		orbit_angle = -80
+		size = 5
+		has_ring = no
+	}
+}
+
+### The Sanctuary
+sanctuary_system = {
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 150
+	}
+	usage = misc_system_init
+	usage_odds = {
+		base = 2000000
+		modifier = {
+			factor = 0
+			is_fe_cluster = yes
+		}
+		modifier = {
+			factor = 0
+			has_star_flag = empire_cluster
+		}
+	}
+	max_instances = 1
+	flags = { sanctuary_system ring_world_built }
+	scaled_spawn_chance = 2	# scales by galaxy size (1000 stars = 10x base)
+
+	name = "NAME_Sanctuary"
+
+	class = "sc_g"
+
+	planet = {
+		class = star
+		orbit_distance = 0
+
+		init_effect = {
+			create_country = {
+				name = "NAME_Sanctuary"
+				type = faction
+			}
+			last_created_country = {
+				save_global_event_target_as = sanctuary
+				create_fleet = {
+					name = "NAME_Sanctuary_Core"
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = "NAME_Administrator"
+							design = "NAME_Sanctuary_Core"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = PREVPREV
+							distance = 25
+							angle = random
+						}
+						add_modifier = {
+							modifier = sanctuary_power
+							days = -1
+						}
+						save_event_target_as = sanctuary_core
+						set_fleet_flag = sanctuary_core
+					}
+				}
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = event_target:sanctuary_core
+							distance = 8
+							angle = 90
+						}
+					}
+				}
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = event_target:sanctuary_core
+							distance = 8
+							angle = 180
+						}
+					}
+				}
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = event_target:sanctuary_core
+							distance = 8
+							angle = 270
+						}
+					}
+				}
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = event_target:sanctuary_core
+							distance = 8
+							angle = 0
+						}
+					}
+				}
+			}
+		}
+	}
+
+	change_orbit = 45
+
+	planet = {
+		class = "pc_ringworld_habitable"
+		name = "NAME_Sanctuary_A"
+		orbit_angle = 30
+		orbit_distance = 0
+		deposit_blockers = none
+		modifiers = none
+
+		init_effect = {
+			prevent_anomaly = yes
+
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_1"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = PREVPREV
+							distance = 1
+							angle = random
+						}
+					}
+				}
+			}
+
+			generate_early_pre_ftls_on_planet = yes
+		}
+	}
+	planet = {
+		class = "pc_ringworld_tech"
+		name = "NAME_Sanctuary-B"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_seam"
+		name = "NAME_Sanctuary-C"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_habitable"
+		name = "NAME_Sanctuary-D"
+		orbit_angle = 30
+		orbit_distance = 0
+		deposit_blockers = none
+		modifiers = none
+
+		init_effect = {
+			prevent_anomaly = yes
+
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_1"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = PREVPREV
+							distance = 1
+							angle = random
+						}
+					}
+				}
+			}
+
+			generate_early_pre_ftls_on_planet = yes
+		}
+	}
+	planet = {
+		class = "pc_ringworld_tech"
+		name = "NAME_Sanctuary-E"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_seam"
+		name = "NAME_Sanctuary-F"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_habitable"
+		name = "NAME_Sanctuary-G"
+		orbit_angle = 30
+		orbit_distance = 0
+		deposit_blockers = none
+		modifiers = none
+
+		init_effect = {
+			prevent_anomaly = yes
+
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_1"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = PREVPREV
+							distance = 1
+							angle = random
+						}
+					}
+				}
+			}
+
+			generate_early_pre_ftls_on_planet = yes
+		}
+	}
+	planet = {
+		class = "pc_ringworld_tech"
+		name = "NAME_Sanctuary-H"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_seam_damaged"
+		name = "NAME_Sanctuary-I"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			create_ambient_object = {
+				type = "medium_debris_01_object"
+				location = THIS
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_habitable"
+		name = "NAME_Sanctuary-J"
+		orbit_angle = 30
+		orbit_distance = 0
+		deposit_blockers = none
+		modifiers = none
+
+		init_effect = {
+			prevent_anomaly = yes
+
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_1"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = {
+							target = PREVPREV
+							distance = 1
+							angle = random
+						}
+					}
+				}
+			}
+
+			generate_early_pre_ftls_on_planet = yes
+		}
+	}
+	planet = {
+		class = "pc_ringworld_tech"
+		name = "NAME_Sanctuary-K"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	planet = {
+		class = "pc_ringworld_seam"
+		name = "NAME_Sanctuary-L"
+		orbit_angle = 30
+		orbit_distance = 0
+
+		init_effect = {
+			last_created_country = {
+				create_fleet = {
+					settings = { spawn_debris = no }
+					effect = {
+						set_owner = event_target:sanctuary
+						create_ship = {
+							name = random
+							design = "NAME_Defensive_A_2"
+							graphical_culture = "fallen_empire_03"
+						}
+						set_location = PREVPREV
+					}
+				}
+			}
+		}
+	}
+
+	change_orbit = 105
+
+	planet = {
+		count = { min = 1 max = 4 }
+		class = pc_asteroid
+		orbit_distance = 0
+		orbit_angle = { min = 90 max = 270 }
+	}
+
+	change_orbit = 45
+
+	planet = {
+		class = pc_gas_giant
+		orbit_angle = { min = 90 max = 270 }
+		size = 25
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 1 max = 4 }
+			size = { min = 8 max = 20 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 6
+		}
+	}
+
+	change_orbit = 30
+
+	planet = {
+		count = { min = 0 max = 2 }
+		orbit_distance = 20
+		orbit_angle = { min = 90 max = 270 }
+	}
+}
+
+# Pre-FTL Hive-Minds
+pre_ftl_hive_init_01 = {
+	class = "rl_standard_stars"
+
+	usage = misc_system_init
+	usage_odds = {
+		base = 0.4
+		modifier = {
+			factor = 0
+			has_utopia = no
+		}
+		modifier = {
+			factor = 0
+			has_first_contact_dlc = no
+		}
+		modifier = {
+			factor = 0
+			is_fe_cluster = yes
+		}
+	}
+	primitive_system = yes	# usage odds modified by primitives setup slider
+
+	flags = { primitive_system }
+
+	planet = {
+		count = 1
+		class = star
+		orbit_distance = 0
+		orbit_angle = 1
+		size = { min = 20 max = 30 }
+		has_ring = no
+	}
+
+	change_orbit = 20
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 3 }
+	}
+
+	change_orbit = 20
+
+	planet = {
+		count = 1
+		orbit_distance = 0
+		class = "rl_habitable_normal"
+		orbit_angle = { min = 90 max = 270 }
+		size = { min = 12 max = 25 }
+		#deposit_blockers = none
+
+		init_effect = {
+			prevent_anomaly = yes
+			set_planet_flag = pre_ftl_hive_mind
+			generate_pre_ftl_hive_on_planet = yes
+		}
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 1 max = 4 }
+
+		change_orbit = @base_moon_distance
+
+		moon = {
+			count = { min = 0 max = 1 }
+			orbit_angle = { min = 90 max = 270 }
+			orbit_distance = 5
+		}
+	}
+
+	planet = {
+		orbit_distance = 20
+		count = { min = 0 max = 2 }
+	}
+}
+
+### Deneb System
+pre_ftl_deneb_system = {
+	name = "NAME_Deneb"
+	class = "sc_a"
+	asteroid_belt = {
+		type = rocky_asteroid_belt
+		radius = 90
+	}
+
+	init_effect = {
+		generate_home_system_resources = yes
+	}
+
+	flags = { deneb_system primitive_system }
+
+	max_instances = 1
+	usage = misc_system_init
+	usage_odds = {
+		base = 5
+		modifier = {
+			factor = 0
+			any_system = {
+				has_star_flag = deneb_system
+			}
+		}
+		modifier = {
+			factor = 0
+			is_fe_cluster = yes
+		}
+		modifier = {
+			factor = 0
+			has_first_contact_dlc = no
+		}
+	}
+	primitive_system = yes	# usage odds modified by primitives setup slider
+
+	planet = {
+		name = "NAME_Deneb"
+		class = "pc_a_star"
+		orbit_distance = 0
+		orbit_angle = 1
+		size = 32
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_molten"
+		orbit_distance = 60
+		orbit_angle = 45
+		size = 10
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_DT4-298"
+		class = "pc_asteroid"
+		orbit_distance = 30
+		orbit_angle = 340
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_LR-2129"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 160
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		name = "NAME_GR-345"
+		class = "pc_asteroid"
+		orbit_distance = 0
+		orbit_angle = 270
+		size = 5
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 30
+		orbit_angle = 200
+		size = 40
+		has_ring = no
+		entity = "gas_giant_02_entity"
+
+		moon = {
+			class = "pc_frozen"
+			size = 5
+			orbit_distance = 18
+			orbit_angle = 100
+			has_ring = no
+		}
+		moon = {
+			class = ideal_planet_class
+			orbit_distance = 5
+			orbit_angle = 340
+			size = 20
+			starting_planet = yes
+			has_ring = no
+			entity = "continental_planet_01_entity"
+			deposit_blockers = none
+			modifiers = none
+
+			init_effect = {
+				prevent_anomaly = yes
+				generate_pre_ftls_on_planet = yes
+			}
+		}
+	}
+
+	planet = {
+		class = "pc_barren_cold"
+		orbit_distance = 20
+		orbit_angle = 325
+		size = 10
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_gas_giant"
+		orbit_distance = 20
+		orbit_angle = 110
+		size = 30
+		has_ring = no
+		entity = "gas_giant_05_entity"
+
+		moon = {
+			class = "pc_frozen"
+			size = 8
+			orbit_distance = 14
+			orbit_angle = 14
+			has_ring = no
+		}
+	}
+
+	planet = {
+		class = "pc_barren"
+		orbit_distance = 20
+		orbit_angle = 35
+		size = 15
+		has_ring = no
+	}
+
+	planet = {
+		class = "pc_frozen"
+		orbit_distance = 20
+		orbit_angle = 150
+		size = 20
+		has_ring = no
+	}
+}
+
+# Shattered Ring
+pre_ftl_shattered_ring = {
+	flags = { ring_world_built shattered_ring_system }
+
+	scaled_spawn_chance = 5
+
+	max_instances = 1
+	usage = misc_system_init
+	usage_odds = {
+		base = 5
+		modifier = {
+			factor = 0
+			any_system = {
+				has_star_flag = shattered_ring_system
+			}
+		}
+		modifier = {
+			factor = 0
+			has_federations_dlc = no
+			has_first_contact_dlc = no
+		}
+		modifier = {
+			factor = 0
+			is_fe_cluster = yes
+		}
+	}
+	primitive_system = yes	# usage odds modified by primitives setup slider
+
+	init_effect = {
+		generate_home_system_resources = yes
+		spawn_megastructure = {
+			type = "ring_world_ruined"
+			orbit_angle = 0
+			orbit_distance = 45
+			init_effect = {
+				set_megastructure_flag = guaranteed_1
+			}
+		}
+		spawn_megastructure = {
+			type = "ring_world_ruined"
+			orbit_angle = 180
+			orbit_distance = 45
+		}
+	}
+
+	class = "sc_g"
+	planet = {
+		class = star
+		orbit_distance = 0
+		orbit_angle = 0
+	}
+
+	change_orbit = 45
+
+	planet = {
+		class = "pc_ringworld_tech"
+		name = "NAME_Ring_Section"
+		orbit_angle = 240
+		orbit_distance = 0
+	}
+
+	planet = {
+		class = "pc_ringworld_seam"
+		name = "NAME_Ring_Section"
+		orbit_angle = 30
+		orbit_distance = 0
+	}
+
+	planet = {
+		class = "pc_shattered_ring_habitable"
+		orbit_angle = 30
+		orbit_distance = 0
+		deposit_blockers = none
+		modifiers = none
+		starting_planet = yes
+		flags = { ignore_startup_effect megastructure }
+		init_effect = {
+			prevent_anomaly = yes
+			generate_pre_ftls_on_planet = yes
+
+			add_deposit = d_segment_rubble_1
+			add_deposit = d_segment_rubble_2
+			add_deposit = d_segment_rubble_3
+			add_deposit = d_segment_rubble_4
+			add_deposit = d_decrepit_tunnels_1
+			add_deposit = d_decrepit_tunnels_1
+			add_deposit = d_decrepit_tunnels_1
+		}
+	}
+
+	planet = {
+		class = "pc_ringworld_tech_damaged"
+		name = "NAME_Ring_Section"
+		orbit_angle = 120
+		orbit_distance = 0
+	}
+
+	planet = {
+		class = "pc_ringworld_seam_damaged"
+		name = "NAME_Irreparable_Damage"
+		orbit_angle = 30
+		orbit_distance = 0
+		flags = { ignore_startup_effect starting_mining_target starting_deposit}
+
+		init_effect = {
+			create_ambient_object = {
+				type = "medium_debris_01_object"
+				entity_offset_height = -15
+				location = this
+			}
+			last_created_ambient_object = {
+				set_location = {
+					target = prev
+					distance = 0
+					angle = 0
+				}
+			}
+			set_deposit = d_engineering_5
+			set_planet_flag = starting_research_target
+			set_planet_flag = starting_deposit
+		}
+	}
+
+	planet = {
+		class = "pc_shattered_2"
+		name = "NAME_The_Interloper"
+		orbit_distance = -5
+		orbit_angle = 0
+		size = 5
+		has_ring = no
+		flags = { ignore_startup_effect starting_mining_target starting_deposit}
+		init_effect = {
+			set_deposit = d_minerals_10
+		}
+	}
+
+	planet = {
+		class = "pc_ringworld_seam_damaged"
+		name = "NAME_Ring_Section"
+		orbit_angle = 30
+		orbit_distance = 5
+	}
+}
