@@ -1,4 +1,5 @@
-
+@factionattractionradical = 10
+@factionattractionmoderate = 5
 
 ethic_fanatic_authoritarian = {
 	cost = 2
@@ -28,7 +29,6 @@ ethic_fanatic_authoritarian = {
 		base = 150
 	}
 }
-
 ethic_authoritarian = {
 	cost = 1
 	category = "col"
@@ -65,20 +65,6 @@ ethic_authoritarian = {
 	}
 
 	pop_attraction_tag = {
-		desc = POP_ATTRACTION_FACTION_POS
-		trigger = {
-			NOR = {
-				has_ethic = ethic_authoritarian
-				has_ethic = ethic_fanatic_authoritarian
-			}
-			OR = {
-				leader_of_faction = civil_official 
-				leader_of_faction = totalitarian 
-			}
-		}
-	}
-
-	pop_attraction_tag = {
 		desc = POP_ATTRACTION_RULER_FACTION_POS
 		trigger = {
 			exists = ruler
@@ -87,6 +73,16 @@ ethic_authoritarian = {
 					leader_of_faction = civil_official 
 					leader_of_faction = totalitarian 
 				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_FACTION_POS
+		trigger = {
+			OR = {
+				has_faction = civil_official 
+				has_faction = totalitarian 
 			}
 		}
 	}
@@ -203,11 +199,10 @@ ethic_authoritarian = {
 		}
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_authoritarian
-				has_ethic = ethic_fanatic_authoritarian
+			OR = {
+				has_faction = civil_official 
+				has_faction = totalitarian 
 			}
-			has_faction = totalitarian
 		}
 		modifier = {
 			factor = 1.5
@@ -222,12 +217,12 @@ ethic_authoritarian = {
 			}
 		}
 		modifier = {
-			factor = 2
-			has_ethic = ethic_authoritarian
-		}
-		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_authoritarian
+		}
+		modifier = {
+			factor = 2
+			has_ethic = ethic_authoritarian
 		}
 		modifier = {
 			factor = 1.25
@@ -277,6 +272,21 @@ ethic_authoritarian = {
 				}
 			}
 		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			member_of_faction = totalitarian 
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			OR = {
+				member_of_faction = civil_official 
+				member_of_faction = pioneer 
+				member_of_faction = isolationist 
+				member_of_faction = imperialist 
+			}
+		}
+
 		modifier = {
 			factor = 0.75
 			OR = {
@@ -284,6 +294,15 @@ ethic_authoritarian = {
 				has_living_standard = { type = living_standard_good }
 				has_living_standard = { type = living_standard_shared_burden }
 			}
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			happiness < 35
+			is_pop_category = ruler
 		}
 	}
 }
@@ -317,7 +336,6 @@ ethic_fanatic_egalitarian = {
 		base = 150
 	}
 }
-
 ethic_egalitarian = {
 	cost = 1
 	category = "col"
@@ -357,14 +375,11 @@ ethic_egalitarian = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_egalitarian
-				has_ethic = ethic_fanatic_egalitarian
-			}
 			OR = {
-				leader_of_faction = progressive 
-				leader_of_faction = entrepreneurs 
-				leader_of_faction = manifesti 
+				has_faction = progressive 
+				has_faction = entrepreneurs 
+				has_faction = slaves 
+				has_faction = manifesti 
 			}
 		}
 	}
@@ -501,11 +516,12 @@ ethic_egalitarian = {
 		}
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_egalitarian
-				has_ethic = ethic_fanatic_egalitarian
+			OR = {
+				has_faction = progressive 
+				has_faction = entrepreneurs 
+				has_faction = slaves 
+				has_faction = manifesti 
 			}
-			has_faction = progressive
 		}
 		modifier = {
 			factor = 1.5
@@ -578,6 +594,23 @@ ethic_egalitarian = {
 			is_enslaved = yes
 			is_robot_pop = no
 		}
+
+		modifier = {
+			factor = @factionattractionradical
+			OR = {
+				member_of_faction = progressive 
+				member_of_faction = slaves 
+				member_of_faction = manifesti 
+			}
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			OR = {
+				member_of_faction = entrepreneurs 
+				member_of_faction = socialists 
+			}
+		}
+
 		modifier = {
 			factor = 1.25
 			OR = {
@@ -585,6 +618,15 @@ ethic_egalitarian = {
 				has_living_standard = { type = living_standard_good }
 				has_living_standard = { type = living_standard_shared_burden }
 			}
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			happiness < 35
+			is_pop_category = slaves
 		}
 	}
 }
@@ -620,7 +662,6 @@ ethic_fanatic_xenophobe = {
 		base = 150
 	}
 }
-
 ethic_xenophobe = {
 	cost = 1
 	category = "xen"
@@ -663,10 +704,6 @@ ethic_xenophobe = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_xenophobe
-				has_ethic = ethic_fanatic_xenophobe
-			}
 			OR = {
 				has_faction = supremacist
 				has_faction = isolationist
@@ -825,10 +862,6 @@ ethic_xenophobe = {
 		}
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_xenophobe
-				has_ethic = ethic_fanatic_xenophobe
-			}
 			OR = {
 				has_faction = supremacist
 				has_faction = isolationist
@@ -973,6 +1006,22 @@ ethic_xenophobe = {
 				}
 			}
 		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			member_of_faction = supremacist
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			OR = {
+				member_of_faction = isolationist 
+				member_of_faction = traditionalist 
+			}
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
 	}
 }
 
@@ -1007,7 +1056,6 @@ ethic_fanatic_xenophile = {
 		base = 100
 	}
 }
-
 ethic_xenophile = {
 	cost = 1
 	category = "xen"
@@ -1049,13 +1097,9 @@ ethic_xenophile = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_xenophile
-				has_ethic = ethic_fanatic_xenophile
-			}
 			OR = {
-				leader_of_faction = proletarians 
-				leader_of_faction = xenoist 
+				has_faction = proletarians 
+				has_faction = xenoist 
 			}
 		}
 	}
@@ -1203,11 +1247,10 @@ ethic_xenophile = {
 		}
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_xenophile
-				has_ethic = ethic_fanatic_xenophile
+			OR = {
+				has_faction = proletarians 
+				has_faction = xenoist 
 			}
-			has_faction = xenoist
 		}
 		modifier = {
 			factor = 1.5
@@ -1342,6 +1385,25 @@ ethic_xenophile = {
 			factor = 0.5
 			has_trait = trait_necrophage
 		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			OR = {
+				member_of_faction = compradors 
+				member_of_faction = slaves 
+			}
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			OR = {
+				member_of_faction = proletarians 
+				member_of_faction = xenoist 
+			}
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
 	}
 }
 
@@ -1372,7 +1434,6 @@ ethic_fanatic_militarist = {
 		base = 250
 	}
 }
-
 ethic_militarist = {
 	cost = 1
 	category = "mil"
@@ -1410,13 +1471,9 @@ ethic_militarist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_militarist
-				has_ethic = ethic_fanatic_militarist
-			}
 			OR = {
-				leader_of_faction = revolutionary 
-				leader_of_faction = imperialist 
+				has_faction = revolutionary 
+				has_faction = imperialist 
 			}
 		}
 	}
@@ -1550,11 +1607,10 @@ ethic_militarist = {
 
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_militarist
-				has_ethic = ethic_fanatic_militarist
+			OR = {
+				has_faction = revolutionary 
+				has_faction = imperialist 
 			}
-			has_faction = imperialist
 		}
 
 		modifier = {
@@ -1720,6 +1776,19 @@ ethic_militarist = {
 				NOT = { is_controlled_by = from.owner }
 			}
 		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			member_of_faction = imperialist 
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			member_of_faction = revolutionary
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
 	}
 }
 
@@ -1752,7 +1821,6 @@ ethic_fanatic_pacifist = {
 		base = 33		# rare ethic
 	}
 }
-
 ethic_pacifist = {
 	cost = 1
 	category = "mil"
@@ -1792,13 +1860,9 @@ ethic_pacifist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_pacifist
-				has_ethic = ethic_fanatic_pacifist
-			}
 			OR = {
-				leader_of_faction = prosperity 
-				leader_of_faction = philosopher 
+				has_faction = prosperity 
+				has_faction = philosopher 
 			}
 		}
 	}
@@ -1891,11 +1955,10 @@ ethic_pacifist = {
 		}
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_pacifist
-				has_ethic = ethic_fanatic_pacifist
+			OR = {
+				has_faction = prosperity 
+				has_faction = philosopher 
 			}
-			has_faction = prosperity
 		}
 		modifier = {
 			factor = 1.5
@@ -2015,6 +2078,30 @@ ethic_pacifist = {
 				}
 			}
 		}
+
+		modifier = {
+			factor = @factionattractionradical
+			member_of_faction = philosopher
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			OR = {
+				member_of_faction = prosperity
+				member_of_faction = civil_official
+			}
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			happiness < 35
+			exist = country
+			country = {
+				is_at_war = yes
+			}
+		}
 	}
 }
 
@@ -2045,7 +2132,6 @@ ethic_fanatic_spiritualist = {
 		base = 150
 	}
 }
-
 ethic_spiritualist = {
 	cost = 1
 	category = "spi"
@@ -2082,13 +2168,9 @@ ethic_spiritualist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_spiritualist
-				has_ethic = ethic_fanatic_spiritualist
-			}
 			OR = {
-				leader_of_faction = secular 
-				leader_of_faction = traditionalist 
+				has_faction = secular 
+				has_faction = traditionalist 
 			}
 		}
 	}
@@ -2217,11 +2299,10 @@ ethic_spiritualist = {
 		}
 		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_spiritualist
-				has_ethic = ethic_fanatic_spiritualist
+			OR = {
+				has_faction = secular 
+				has_faction = traditionalist 
 			}
-			has_faction = traditionalist
 		}
 		modifier = {
 			factor = 1.5
@@ -2314,6 +2395,22 @@ ethic_spiritualist = {
 			factor = 0.25
 			is_robot_pop = yes
 		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			member_of_faction = secular
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			OR = {
+				member_of_faction = traditionalist
+				member_of_faction = xenoist
+			}
+		}
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
+		}
 	}
 }
 
@@ -2347,7 +2444,6 @@ ethic_fanatic_materialist = {
 		base = 150
 	}
 }
-
 ethic_materialist = {
 	cost = 1
 	category = "spi"
@@ -2388,13 +2484,9 @@ ethic_materialist = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_materialist
-				has_ethic = ethic_fanatic_materialist
-			}
 			OR = {
-				leader_of_faction = technologist 
-				leader_of_faction = competitors 
+				has_faction = technologist 
+				has_faction = competitors 
 			}
 		}
 	}
@@ -2519,12 +2611,19 @@ ethic_materialist = {
 			}
 		}
 		modifier = {
+			factor = 3
+			has_ethic = ethic_fanatic_materialist
+		}
+		modifier = {
 			factor = 2
-			NOR = {
-				has_ethic = ethic_materialist
-				has_ethic = ethic_fanatic_materialist
+			has_ethic = ethic_materialist
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_faction = technologist 
+				has_faction = competitors 
 			}
-			has_faction = technologist
 		}
 		modifier = {
 			factor = 1.5
@@ -2533,23 +2632,15 @@ ethic_materialist = {
 			ruler = { leader_of_faction = technologist }
 		}
 		modifier = {
+			factor = 1.25
+			has_origin = origin_mechanists
+		}
+		modifier = {
 			factor = 1.5
 			has_federation = yes
 			federation = {
 				has_federation_type = research_federation
 			}
-		}
-		modifier = {
-			factor = 2
-			has_ethic = ethic_materialist
-		}
-		modifier = {
-			factor = 3
-			has_ethic = ethic_fanatic_materialist
-		}
-		modifier = {
-			factor = 1.25
-			has_origin = origin_mechanists
 		}
 		modifier = {
 			factor = 1.25
@@ -2610,6 +2701,20 @@ ethic_materialist = {
 		modifier = {
 			factor = 1.25
 			has_trait = "trait_natural_physicists"
+		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			member_of_faction = technologist
+		}
+		modifier = {
+			factor = @factionattractionmoderate
+			member_of_faction = competitors
+		}
+		
+		modifier = {
+			factor = @factionattractionradical
+			happiness < 35
 		}
 	}
 }
