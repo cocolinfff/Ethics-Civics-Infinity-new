@@ -1,6 +1,7 @@
 
 #MSI集团
 create_MSI_effect = {
+    #创建物种
     create_species = {
         name = random
         class = MSI_SLAVER
@@ -15,6 +16,7 @@ create_MSI_effect = {
         }
         allow_negative_traits = yes
     }
+    last_created_species = { save_global_event_target_as = origin_MSI_species }
 
     create_country = {
         name = "NAME_MSI_country"
@@ -44,14 +46,27 @@ create_MSI_effect = {
             ethic = ethic_fanatic_capitalism
         }
         civics = {
-            civic = civic_reeducated_labor
+            civic = civic_indentured_assets
             civic = civic_learning_society_corporate
-            civic = civic_industrial_economy_corporate
+            civic = civic_corporate_cybercap
         }
         authority = auth_corporate
         effect = {
             save_global_event_target_as = MSI_country
             set_country_flag = MSI
+            add_basic_resources_effect = { VALUE = 3000 }
+            add_manufactured_resources_effect = { VALUE = 1500 }
+            add_advanced_resources_effect = { VALUE = 1000 }
+            give_physics_tech_tier_1_effect = yes
+            give_physics_tech_tier_2_effect = yes
+            give_engineering_tech_tier_1_effect = yes
+            give_engineering_tech_tier_2_effect = yes
+            give_society_tech_tier_1_effect = yes
+            give_society_tech_tier_2_effect = yes
+
+            # 创建机器人
+            create_built_robot_species = yes
+            last_created_species = { save_global_event_target_as = origin_MSI_species_robot }
 
             every_country = {
                 limit = {
@@ -88,6 +103,69 @@ create_MSI_effect = {
         country_event = { id = game_start.9 }
         owner_species = { set_species_homeworld = prevprev }
         log = "MSI CREATED"
+    }
+}
+MSI_capital_planet_building_add_district = {
+    remove_building = building_capital
+    add_building = building_major_capital
+    add_building = building_master_archive
+    add_building = building_affluence_center
+    add_building = building_nano_forge
+    while = {
+        count = 3
+        add_district_and_planet_size_if_needed_effect = { district = district_city }
+    }
+    while = {
+        count = 3
+        add_district_and_planet_size_if_needed_effect = { district = district_industrial }
+    }
+}
+MSI_planet_building_add_district = {
+    remove_all_buildings = yes
+    remove_all_districts = yes
+    add_building = building_capital
+    add_building = building_robot_assembly_plant
+    add_building = building_information_tower
+    add_building = building_research_lab_1
+    add_building = building_commercial_zone
+    add_building = building_holo_theatres
+    add_building = building_factory_1
+    add_building = building_foundry_1
+
+    while = {
+        count = 3
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_city
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_mining
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_farming
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_generator
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_industrial
+        }
+    }
+}
+MSI_planet_pops = {
+    # 创建MSI人口
+    while = {
+        count = 15
+        create_pop = {
+            species = event_target:origin_MSI_species
+        }
+    }
+
+    # 创建机器人口
+    while = {
+        count = 25
+        create_pop = {
+            species = event_target:origin_MSI_species_robot
+        }
     }
 }
 
