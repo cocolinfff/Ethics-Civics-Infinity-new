@@ -5,40 +5,6 @@ event = {
 	hide_window = yes
 	is_triggered_only = yes
 	immediate = {
-		#every_country = {
-		#	if = {
-		#		limit = { #生效
-		#			check_modifier_value = {
-		#				modifier = country_resource_max_add 
-		#				value >= 15000
-		#			}
-		#		}
-		#	}
-		#	else_if = { #未生效
-		#		limit = { 
-		#			check_modifier_value = {
-		#				modifier = country_resource_max_add 
-		#				value < 15000
-		#			}
-		#		}
-		#		set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
-		#	}
-		#}
-		#every_country = {
-		#	capital_scope = {
-		#		if = {
-		#			limit = {
-		#				check_modifier_value = {
-		#					modifier = ethic_building_check
-		#					value = 0
-		#				}
-		#			}
-		#			owner = {
-		#				set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
-		#			}	
-		#		}
-		#	}	
-		#}
 		every_country = {
             add_resource = { energy = 100	}
 		    add_resource = { minerals = 100	}
@@ -76,6 +42,112 @@ event = {
 			add_basic_resources_effect = { VALUE = 1000 }
 			add_manufactured_resources_effect = { VALUE = 500 }
 			add_advanced_resources_effect = { VALUE = 25 }
+		}
+		if = {
+			limit = {
+				has_origin = origin_slavers
+			}
+			country_event = { id = ethic_start_set.10 }
+		}
+		#every_country = {
+		#	if = {
+		#		limit = { #生效
+		#			check_modifier_value = {
+		#				modifier = country_resource_max_add
+		#				value >= 15000
+		#			}
+		#		}
+		#	}
+		#	else_if = { #未生效
+		#		limit = {
+		#			check_modifier_value = {
+		#				modifier = country_resource_max_add
+		#				value < 15000
+		#			}
+		#		}
+		#		set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
+		#	}
+		#}
+		#every_country = {
+		#	capital_scope = {
+		#		if = {
+		#			limit = {
+		#				check_modifier_value = {
+		#					modifier = ethic_building_check
+		#					value = 0
+		#				}
+		#			}
+		#			owner = {
+		#				set_global_flag = ethic_building_deposit_on # 打开建筑地块修正
+		#			}
+		#		}
+		#	}
+		#}
+	}
+}
+
+#舰队
+country_event = {
+	id = ethic_start_set.10
+
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		every_owned_ship = {
+			limit = { is_ship_class = shipclass_military }
+			delete_ship = this
+		}
+		create_fleet_from_naval_cap = 0.2
+		create_fleet_from_naval_cap = 0.2
+		create_fleet_from_naval_cap = 0.2
+		if = {
+			limit = {
+				has_origin = origin_slavers
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = random
+						random_existing_design = science
+					}
+					set_fleet_stance = evasive
+					set_location = root.capital_scope.star
+					owner = {
+						create_leader = {
+							class = scientist
+							sub_type = survey
+							name = random
+							species = owner_main_species
+						}
+					}
+					set_leader = last_created_leader
+				}
+			}
+			create_fleet = {
+				name = "NAME_Payback_Warship_MSI"
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = "NAME_Payback_Warship_MSI"
+						design = "NAME_Payback_Warship_MSI"
+						graphical_culture = "slaver_01"
+						upgradable = no
+						effect = {
+							set_ship_flag = payback_flagship
+						}
+					}
+					set_location = root.capital_scope.star
+				}
+				settings = {
+					spawn_debris = no
+					can_upgrade = no
+					can_change_composition = no
+					uses_naval_capacity = no
+				}
+			}
 		}
 	}
 }

@@ -1028,6 +1028,28 @@ war_doctrine = {
 			}
 		}
 	}
+	#敌后游击
+	option = {
+		name = "guerrilla_behind_enemy_lines"
+		potential = {
+			OR = {
+				has_tradition = tr_supremacy_finish
+				has_tradition = tr_revolution_finish
+			}
+		}
+		valid = {
+			has_tradition = tr_revolution_finish
+		}
+		policy_flags = {
+		}
+		modifier = {
+			ship_disengage_opportunities_add = 2
+			ship_cloaking_strength_add = 3
+		}
+		AI_weight = {
+			factor = 10000
+		}
+	}
 	# 向死而生
 	option = {
 		name = "to_die"
@@ -1568,8 +1590,8 @@ ownership = {
 		}
 		modifier = {
 			trade_value_mult = 0.2
-			pop_cat_ruler_political_power = 2
-			pop_cat_specialist_political_power = 0.75
+			pop_cat_ruler_political_power = 1
+			pop_cat_specialist_political_power = 0.25
 			pop_category_rulers_consumer_goods_upkeep_add = 0.75
 			pop_category_specialists_consumer_goods_upkeep_add = 0.3
 			pop_category_workers_consumer_goods_upkeep_add = 0.1
@@ -1658,8 +1680,8 @@ ownership = {
 		modifier = {
 			pop_lifestyle_trade_mult = 0.25
 			pop_job_trade_mult = 0.15
-			pop_cat_ruler_political_power = 2
-			pop_cat_specialist_political_power = 1
+			pop_cat_ruler_political_power = 1
+			pop_cat_specialist_political_power = 0.5
 			pop_category_rulers_consumer_goods_upkeep_add = 0.75
 			pop_category_specialists_consumer_goods_upkeep_add = 0.25
 			pop_category_workers_consumer_goods_upkeep_add = 0.05
@@ -1688,8 +1710,8 @@ ownership = {
 			planet_administrators_unity_produces_add = 1
 			planet_enforcers_unity_produces_add = 0.5
 			planet_labour_hero_unity_produces_add = 0.5
-			pop_cat_ruler_political_power = 1
-			pop_cat_specialist_political_power = 0.5
+			pop_cat_ruler_political_power = 0.5
+			pop_cat_specialist_political_power = 0.3
 			pop_category_rulers_consumer_goods_upkeep_add = 0.5
 			pop_category_specialists_consumer_goods_upkeep_add = 0.33
 		}
@@ -1733,9 +1755,9 @@ ownership = {
 			job_noble_per_pop = 0.02
 			job_supervisor_per_pop = 0.03
 			pop_cat_ruler_happiness = 0.05
-			pop_cat_ruler_political_power = 5
-			pop_cat_specialist_political_power = 1
-			pop_cat_worker_political_power = -0.5
+			pop_cat_ruler_political_power = 2.5
+			pop_cat_specialist_political_power = 0.5
+			pop_cat_worker_political_power = -0.25
 			pop_category_rulers_consumer_goods_upkeep_add = 1
 			pop_category_specialists_consumer_goods_upkeep_add = 0.33
 			pop_category_workers_consumer_goods_upkeep_add = -0.1
@@ -2265,6 +2287,12 @@ economic_stance = {
 		name = "economic_stance_market_anarchism"
 		potential = {
 			has_valid_civic = civic_distributism
+			NOR = {
+				has_policy_flag = tt_communist_road_2
+				has_policy_flag = tt_communist_road_3
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
+			}
 		}
 		policy_flags = {
 			economic_stance_market
@@ -2282,30 +2310,12 @@ economic_stance = {
 		valid = {
 			NOR = {
 				AND = {
-					OR = {
-						has_ethic = ethic_socialism
-						has_ethic = ethic_fanatic_socialism
-					}
-					NOT = {
-						has_policy_flag = reform_and_opening_up
-					}
+					is_socialism = yes
+					NOT = { has_policy_flag = reform_and_opening_up }
 				}
 				has_ethic = ethic_fanatic_authoritarian
 				has_valid_civic = civic_state_monopoly
 				has_valid_civic = civic_welfare_state
-				any_owned_pop = {
-					has_living_standard = {
-						type = living_standard_shared_burden
-					}
-				}
-				AND = {
-					OR = {
-						has_policy_flag = tt_communist_road_2
-						has_policy_flag = tt_communist_road_3
-						has_policy_flag = tt_communist_road_4
-						has_policy_flag = tt_communist_road_5
-					}
-				}
 			}
 		}
 		AI_weight = {
@@ -2327,6 +2337,10 @@ economic_stance = {
 		potential = {
 			NOR = {
 				has_valid_civic = civic_distributism
+				has_policy_flag = tt_communist_road_2
+				has_policy_flag = tt_communist_road_3
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
 			}
 		}
 		policy_flags = {
@@ -2344,32 +2358,14 @@ economic_stance = {
 			pop_ethic_capitalism_attraction_mult = 0.2
 		}
 		valid = {
-			OR = {
-				has_valid_civic = civic_triple_the_profit
-				NOR = {
-					AND = {
-						is_socialism = yes
-						NOT = {
-							has_policy_flag = reform_and_opening_up
-						}
-					}
-					has_ethic = ethic_fanatic_authoritarian
-					has_valid_civic = civic_state_monopoly
-					has_valid_civic = civic_welfare_state
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_shared_burden
-						}
-					}
-					AND = {
-						OR = {
-							has_policy_flag = tt_communist_road_2
-							has_policy_flag = tt_communist_road_3
-							has_policy_flag = tt_communist_road_4
-							has_policy_flag = tt_communist_road_5
-						}
-					}
+			NOR = {
+				AND = {
+					is_socialism = yes
+					NOT = { has_policy_flag = reform_and_opening_up }
 				}
+				has_ethic = ethic_fanatic_authoritarian
+				has_valid_civic = civic_state_monopoly
+				has_valid_civic = civic_welfare_state
 			}
 		}
 		AI_weight = {
@@ -2395,21 +2391,17 @@ economic_stance = {
 		policy_flags = {
 			economic_stance_mixed
 		}
+		potential = {
+			NOR = {
+				has_policy_flag = tt_communist_road_3
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
+			}
+		}
 		valid = {
 			NOR = {
-				AND = {
-					has_valid_civic = civic_anarchism
-					NOT = {
-						has_ethic = ethic_fanatic_socialism
-					}
-				}
-				AND = {
-					OR = {
-						has_policy_flag = tt_communist_road_3
-						has_policy_flag = tt_communist_road_4
-						has_policy_flag = tt_communist_road_5
-					}
-				}
+				has_valid_civic = civic_anarchism
+				has_ethic = ethic_fanatic_socialism
 			}
 		}
 		modifier = {
@@ -2422,7 +2414,11 @@ economic_stance = {
 			factor = 10
 			modifier = {
 				factor = 0.1
-				has_ethic = ethic_fanatic_socialism
+				has_ethic = ethic_socialism
+			}
+			modifier = {
+				factor = 0.1
+				has_ethic = ethic_fanatic_egalitarian
 			}
 		}
 	}
@@ -2432,8 +2428,8 @@ economic_stance = {
 		potential = {
 			NOR = {
 				has_valid_civic = civic_anarchism
-				has_policy_flag = tt_communist_road_2
-				has_policy_flag = tt_communist_road_3
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
 			}
 		}
 		policy_flags = {
@@ -2450,26 +2446,18 @@ economic_stance = {
 		}
 		valid = {
 			OR = {
-				is_eci_megacorp = yes
-				AND = {
-					OR = {
-						is_capitalism = yes
-						has_valid_civic = civic_characteristic_socialism
-					}
-					OR = {
-						is_authoritarian = yes
-						is_militarist = yes
-						is_xenophile = yes
-					}
-				}
+				is_capitalism = yes
+				has_valid_civic = civic_characteristic_socialism_pioneer
+			}
+			OR = {
+				is_authoritarian = yes
+				is_militarist = yes
+				is_xenophile = yes
+				has_valid_civic = civic_triple_the_profit
 			}
 			NOR = {
 				has_policy_flag = full_decentralization
 				has_policy_flag = high_decentralization
-			}
-			NOR = {
-				has_policy_flag = tt_communist_road_4
-				has_policy_flag = tt_communist_road_5
 			}
 		}
 		AI_weight = {
@@ -2480,13 +2468,17 @@ economic_stance = {
 			modifier = {
 				factor = 20
 				OR = {
-					has_valid_civic = civic_peoples_republic
-					has_valid_civic = civic_glorious_pioneer
+					has_valid_civic = civic_characteristic_socialism
+					has_valid_civic = civic_characteristic_socialism_pioneer
 				}
 			}
 			modifier = {
 				factor = 30
-				has_ethic = ethic_fanatic_socialism
+				is_eci_megacorp = yes
+			}
+			modifier = {
+				factor = 30
+				has_valid_civic = civic_triple_the_profit
 			}
 		}
 	}
@@ -2518,10 +2510,6 @@ economic_stance = {
 			pop_growth_speed_reduction = 0.05
 		}
 		valid = {
-			NOR = {
-				has_policy_flag = full_decentralization
-				has_policy_flag = high_decentralization
-			}
 			OR = {
 				NOR = {
 					has_ethic = ethic_fanatic_egalitarian
@@ -3618,6 +3606,7 @@ local_power = {
 			has_technology = tech_planetary_government
 			NOR = {
 				has_valid_civic = civic_eternal_kingship
+				has_valid_civic = civic_socialistic
 				has_valid_civic = civic_ultimate_collective
 				has_valid_civic = civic_state_monopoly
 				has_valid_civic = civic_philosopher_king
@@ -3654,16 +3643,16 @@ local_power = {
 			modifier = {
 				factor = 10
 				has_valid_civic = civic_beacon_of_liberty
+				has_valid_civic = civic_coalition_government
+				has_valid_civic = civic_free_traders
+				has_valid_civic = civic_private_prospectors
 			}
 			modifier = {
 				factor = 50
 				OR = {
 					has_valid_civic = civic_anarchism
 					has_valid_civic = civic_sovereign_federation
-					has_valid_civic = civic_coalition_government
 					has_valid_civic = civic_feudal_realm
-					has_valid_civic = civic_free_traders
-					has_valid_civic = civic_private_prospectors
 				}
 			}
 		}
@@ -3728,10 +3717,7 @@ local_power = {
 			modifier = {
 				factor = 5
 				has_ethic = "ethic_egalitarian"
-				NOR = {
-					has_ethic = "ethic_socialism"
-					has_ethic = "ethic_fanatic_socialism"
-				}
+				is_socialism = no
 			}
 			modifier = {
 				factor = 15
@@ -4334,14 +4320,7 @@ local_power = {
 # 三权分立
 separation_of_powers = {
 	potential = {
-		NOT = {
-			has_ethic = ethic_gestalt_consciousness
-		}
 		has_valid_civic = civic_separation_of_powers
-		NOR = {
-			is_country_type = fallen_empire
-			is_country_type = awakened_fallen_empire
-		}
 		OR = {
 			NOT = {
 				is_country_type = default_ev
@@ -4359,7 +4338,7 @@ separation_of_powers = {
 		modifier = {
 			edicts_upkeep_mult = -0.15
 			planet_crime_mult = -0.15
-			country_admin_cap_mult = 0.1
+			country_admin_cap_mult = 0.15
 		}
 		ai_weight = {
 			modifier = {
@@ -4389,7 +4368,7 @@ separation_of_powers = {
 			improve_judicial_power
 		}
 		modifier = {
-			planet_stability_add = 5
+			planet_stability_add = 10
 			planet_crime_mult = -0.25
 			planet_enforcers_upkeep_mult = 0.25
 		}
@@ -4405,7 +4384,7 @@ separation_of_powers = {
 			improve_administrative_power
 		}
 		modifier = {
-			country_admin_cap_mult = 0.15
+			country_admin_cap_mult = 0.25
 			planet_jobs_produces_mult = 0.1
 			empire_size_pops_mult = 0.25
 		}
@@ -4471,8 +4450,8 @@ working_hours = {
 			planet_jobs_worker_produces_mult = 0.3
 			planet_building_build_speed_mult = 0.2
 			starbase_shipyard_build_speed_mult = 0.2
-			pop_cat_specialist_happiness = -0.05
-			pop_cat_worker_happiness = -0.1
+			pop_cat_specialist_happiness = -0.025
+			pop_cat_worker_happiness = -0.05
 			pop_growth_speed_reduction = 0.15
 		}
 		AI_weight = {
@@ -4511,8 +4490,8 @@ working_hours = {
 			planet_jobs_worker_produces_mult = 0.3
 			planet_building_build_speed_mult = 0.2
 			starbase_shipyard_build_speed_mult = 0.2
-			pop_cat_specialist_happiness = -0.1
-			pop_cat_worker_happiness = -0.15
+			pop_cat_specialist_happiness = -0.05
+			pop_cat_worker_happiness = -0.1
 			pop_growth_speed_reduction = 0.3
 		}
 		AI_weight = {
@@ -4553,8 +4532,8 @@ working_hours = {
 			planet_jobs_worker_produces_mult = 0.15
 			planet_building_build_speed_mult = 0.1
 			starbase_shipyard_build_speed_mult = 0.1
-			pop_cat_specialist_happiness = -0.05
-			pop_cat_worker_happiness = -0.1
+			pop_cat_specialist_happiness = -0.025
+			pop_cat_worker_happiness = -0.05
 			pop_growth_speed_reduction = 0.15
 		}
 		AI_weight = {
@@ -4615,8 +4594,8 @@ working_hours = {
 			planet_jobs_worker_produces_mult = 0.15
 			planet_building_build_speed_mult = 0.1
 			starbase_shipyard_build_speed_mult = 0.1
-			pop_cat_specialist_happiness = -0.05
-			pop_cat_worker_happiness = -0.05
+			pop_cat_specialist_happiness = -0.025
+			pop_cat_worker_happiness = -0.025
 			pop_growth_speed_reduction = 0.15
 		}
 		AI_weight = {
@@ -4681,7 +4660,7 @@ working_hours = {
 			short_working_hours
 		}
 		modifier = {
-			planet_resource_unity_mult = 0.075
+			planet_jobs_unity_produces_mult = 0.075
 			pop_growth_speed = 0.15
 			trade_value_mult = 0.1
 			planet_jobs_worker_produces_mult = -0.15
@@ -4737,7 +4716,7 @@ working_hours = {
 			free_working_hours
 		}
 		modifier = {
-			planet_resource_unity_mult = 0.15
+			planet_jobs_unity_produces_mult = 0.15
 			pop_growth_speed = 0.3
 			trade_value_mult = 0.2
 			planet_jobs_worker_produces_mult = -0.3
@@ -4783,7 +4762,7 @@ working_hours = {
 			future_working_hours_liberal
 		}
 		modifier = {
-			planet_resource_unity_mult = 0.15
+			planet_jobs_unity_produces_mult = 0.15
 			pop_growth_speed = 0.3
 			trade_value_mult = 0.2
 			planet_jobs_worker_produces_mult = -0.15
@@ -4845,8 +4824,9 @@ information_management = {
 		modifier = {
 			planet_crime_add = -10
 			intel_encryption_add = 1
+			ship_cloaking_strength_add = 1
 			pop_cat_specialist_happiness = -0.1
-			pop_cat_worker_happiness = -0.1
+			pop_cat_worker_happiness = -0.05
 		}
 		AI_weight = {
 			modifier = {
@@ -4874,6 +4854,7 @@ information_management = {
 			pop_cat_specialist_happiness = 0.1
 			pop_cat_worker_happiness = 0.05
 			intel_encryption_add = -1
+			ship_cloaking_strength_add = -1
 			planet_crime_mult = 0.1
 			pop_government_ethic_attraction = -0.1
 		}
@@ -4905,6 +4886,8 @@ information_management = {
 		modifier = {
 			pop_cat_specialist_happiness = 0.1
 			pop_cat_worker_happiness = -0.1
+			ship_cloaking_strength_add = -1
+			ship_cloaking_detection_add = 1
 			pop_ethic_capitalism_attraction_mult = 0.1
 		}
 		AI_weight = {
@@ -5086,6 +5069,7 @@ education = {
 			private_education
 		}
 		modifier = {
+			pop_cat_ruler_happiness = 0.1
 			planet_jobs_specialist_produces_mult = 0.1
 			planet_crime_mult = 0.1
 			pop_ethic_capitalism_attraction_mult = 0.1

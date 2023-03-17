@@ -592,7 +592,7 @@ situation_event = { # 计算情况改善-其它 26号
 		change_variable = { which = rec_economic_improve_temp value = rec_situation_add_approach }
 		
 		if = { # 宗主剥削
-			limit = { is_overlord = yes }
+			limit = { owner = { is_overlord = yes } }
 			rec_benefit_exploit_get = yes
 		}
 		else = {
@@ -600,8 +600,10 @@ situation_event = { # 计算情况改善-其它 26号
 		}
 		if = { # 附庸被剥削
 			limit = { # 仅当有市场经济宗主时
-				is_subject = yes
-				overlord = { rec_circle_access = yes }
+				owner = {
+					is_subject = yes
+					overlord = { rec_circle_access = yes }
+				}
 			}
 			change_variable = { which = rec_situation_add_exploit_temp value = rec_situation_improve }
 			multiply_variable = { which = rec_situation_add_exploit_temp value = -0.1 }
@@ -686,11 +688,11 @@ situation_event = { # 计算危机阈值 2号
 			change_variable = { which = rec_crisis_threshold value = -20 }
 		}
 		if = { # 发放代金券 +40阈值 暂时没做
-			limit = { has_edict = economic_distribute_tickets }
+			limit = { owner = { has_edict = economic_distribute_tickets } }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
 		if = { # 额外印钞 +40阈值 暂时没做
-			limit = { has_edict = economic_extra_printing }
+			limit = { owner = { has_edict = economic_extra_printing } }
 			change_variable = { which = rec_crisis_threshold value = 40 }
 		}
 		
@@ -768,14 +770,14 @@ situation_event = { # 计算危机阈值 2号
 }
 
 situation_event = { # 计算危机增长-有危机时 3号
-    id = ethic_economic.30
-    is_triggered_only = yes
-    hide_window = yes
-    immediate = {
+	id = ethic_economic.30
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
 		set_variable = { which = rec_crisis_add_temp value = 0 } # 初始化增长
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
-	
+
 		set_variable = { which = rec_crisis_add_market value = 0 }
 		if = { # 一般条件市场效应
 			limit={
@@ -783,7 +785,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 				situation_progress < 70
 			}
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_2 }
-            multiply_variable = { which = rec_crisis_add_market value = -2 }
+			multiply_variable = { which = rec_crisis_add_market value = -2 }
 		}
 		else_if = { # 高度繁荣市场效应
 			limit={
@@ -791,16 +793,16 @@ situation_event = { # 计算危机增长-有危机时 3号
 				situation_progress < 90
 			}
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_3 }
-            multiply_variable = { which = rec_crisis_add_market value = -2 }
+			multiply_variable = { which = rec_crisis_add_market value = -2 }
 		}
 		else_if = { # 经济危机市场效应
 			limit = { situation_progress < 10 }
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_1 }
-            multiply_variable = { which = rec_crisis_add_market value = -2 }
+			multiply_variable = { which = rec_crisis_add_market value = -2 }
 		}
 		else = { # 经济过热市场效应
 			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_4 }
-            multiply_variable = { which = rec_crisis_add_market value = -2 }
+			multiply_variable = { which = rec_crisis_add_market value = -2 }
 		} # 初始化增长
 		if = { # 市场变革
 			limit = { owner = { has_modifier = cm_market_revolution } }
@@ -810,19 +812,19 @@ situation_event = { # 计算危机增长-有危机时 3号
 			which = rec_crisis_add_market
 			value = 0.001
 		}
-		
+
 		set_variable = { which = rec_crisis_add_civic value = 0 }
 		change_variable = { which = rec_crisis_add_civic value = owner.modifier:rec_incrisis_civic_crisis_accumulate_add } # 加载scripted_modifier
 		if = { # 受控市场 -0.1增长
 			limit={ owner = { has_policy_flag = economic_stance_mixed } }
-			change_variable = { which = rec_crisis_add_civic value = -0.1 }
+			change_variable = { which = rec_crisis_add_civic value = -0.2 }
 		}
 		else_if = { # 统制经济 -0.3增长
 			limit={ owner = { has_policy_flag = economic_controlled_economy } }
 			change_variable = { which = rec_crisis_add_civic value = -0.3 }
 		}
-		if = { # 工人合作社 -0.2增长
-			limit={ owner = { has_policy_flag = economic_stance_mixed } }
+		if = { # 工人合作社 -0.4增长
+			limit={ owner = { has_valid_civic = civic_world_cooperative } }
 			change_variable = { which = rec_crisis_add_civic value = -0.2 }
 		}
 		if = { # 钓鱼佬/珊瑚礁 -0.2增长
@@ -847,34 +849,58 @@ situation_event = { # 计算危机增长-有危机时 3号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
+		if = { # MSI集团 -0.5增长
+			limit={
+				years_passed < 50
+				owner = {
+					has_origin = origin_slavers
+				}
+			}
+			change_variable = { which = rec_crisis_add_civic value = -0.5 }
+		}
+		if = { # 反抗的土著起源 -0.2增长
+			limit={
+				years_passed < 30
+				owner = {
+					OR = {
+						has_origin = origin_broken_shackles
+						has_origin = origin_payback
+					}
+				}
+			}
+			multiply_variable = { which = rec_crisis_add_civic value = -0.2 }
+		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_civic
 			value = 0.001
 		}
-		
+
 		round_variable_to_closest = {
 			which = rec_crisis_add_temp
 			value = 0.01
 		}
-    }
+	}
 }
+
 situation_event = { # 计算危机增长-无危机时-总结 3号
-    id = ethic_economic.31
-    is_triggered_only = yes
-    hide_window = yes
-    immediate = {
+	id = ethic_economic.31
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
 		set_variable = { which = rec_crisis_add_temp value = 0 } # 初始化增长
-		
+
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
 		multiply_variable = { which = rec_crisis_add_temp value = rec_crisis_mult_civic }
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_edict }
 		#multiply_variable = { which = rec_crisis_add_temp value = rec_crisis_mult_edict }
 		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_approach }
-		
+
 		situation_event = { id = ethic_economic.32 days = 5 }
-    }
+	}
 }
+}
+
 situation_event = { # 计算危机增长-无危机时-国策基础 8号
     id = ethic_economic.32
     is_triggered_only = yes
@@ -913,11 +939,11 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
 			}
 		   change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
-		if = { # 工人合作社 -0.4增长
+		if = { # 工人合作社 -0.2增长
 			limit={
 				owner = { has_valid_civic = civic_world_cooperative }
 			}
-			change_variable = { which = rec_crisis_add_civic value = -0.4 }
+			change_variable = { which = rec_crisis_add_civic value = -0.2 }
 		}
 		if = { # 钓鱼佬/珊瑚礁 -0.1增长
 			limit={
@@ -930,14 +956,24 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
+		if = { # MSI集团 -0.2增长
+			limit={
+				years_passed < 30
+				owner = {
+					has_origin = origin_slavers
+				}
+			}
+			change_variable = { which = rec_crisis_add_civic value = -0.2 }
+		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_civic
 			value = 0.001
 		}
-		
+
 		situation_event = { id = ethic_economic.33 days = 5 }
     }
 }
+
 situation_event = { # 计算危机增长-无危机时-政策乘数 13号
     id = ethic_economic.33
     is_triggered_only = yes
@@ -1021,17 +1057,18 @@ situation_event = { # 计算危机增长-无危机时-政策乘数 13号
 			}
             multiply_variable = { which = rec_crisis_mult_civic value = 0.9 }
         }
-        #if = { # 社会主义 *0.9增长
-        #    limit={
-        #        owner = {
-        #            OR = {
-        #                has_ethic = ethic_socialism
-        #                has_ethic = ethic_fanatic_socialism
-        #            }
-        #        }
-		#	}
-        #    multiply_variable = { which = rec_crisis_mult_civic value = 0.9 }
-        #}
+        if = { # 反抗的土著起源 *0.85增长
+            limit={
+				years_passed < 30
+                owner = {
+                    OR = {
+                        has_origin = origin_broken_shackles
+						has_origin = origin_payback
+                    }
+                }
+			}
+            multiply_variable = { which = rec_crisis_mult_civic value = 0.9 }
+        }
 		round_variable_to_closest = {
 			which = rec_crisis_mult_civic
 			value = 0.001

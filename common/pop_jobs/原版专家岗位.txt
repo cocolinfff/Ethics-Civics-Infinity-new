@@ -341,14 +341,24 @@ soldier = {
 	}
 	triggered_planet_modifier = {
 		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_military_junta }
+		}
+		planet_stability_add = 20
+		mult = planet.society_factor_pops
+	}
+	triggered_planet_modifier = {
+		potential = {
 			exists = planet
 			planet = {
-				has_modifier = martial_law
-				has_modifier = martial_law_martial_brotherhood
+				OR = {
+					has_modifier = martial_law
+					has_modifier = martial_law_martial_brotherhood
+				}
 			}
 		}
-		planet_stability_add = 120
-		mult = planet.society_factor_pops
+		planet_stability_add = 1
+		mult = planet.modifier:job_soldier_stability_add
 	}
 	triggered_pop_modifier = {
 		potential = {
@@ -573,8 +583,9 @@ researcher = {
 			trigger = {
 				exists = owner
 				owner = {
-					NOT = {
+					NOR = {
 						has_valid_civic = civic_science_knight
+						has_valid_civic = civic_cyber_dictatorship
 					}
 				}
 			}
@@ -586,7 +597,10 @@ researcher = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_valid_civic = civic_science_knight
+					OR = {
+						has_valid_civic = civic_science_knight
+						has_valid_civic = civic_cyber_dictatorship
+					}
 				}
 			}
 			physics_research = 2
@@ -644,10 +658,26 @@ researcher = {
 				planet = {
 					has_modifier = "ley_rift"
 				}
+				owner = {
+					NOT = { has_valid_civic = civic_cyber_dictatorship }
+				}
 			}
 			physics_research = 1.5
 			engineering_research = 1.5
 			society_research = 1.5
+		}
+		produces = {
+			trigger = {
+				planet = {
+					has_modifier = "ley_rift"
+				}
+				owner = {
+					has_valid_civic = civic_cyber_dictatorship
+				}
+			}
+			physics_research = 0.8
+			engineering_research = 0.8
+			society_research = 0.8
 		}
 		upkeep = {
 			trigger = {
@@ -947,7 +977,7 @@ priest = {
 		}
 		modifier = {
 			planet_amenities_add = 4
-			pop_growth_speed = 0.02
+			pop_growth_speed = 0.025
 		}
 	}
 	#神权政治
@@ -2328,7 +2358,7 @@ bureaucrat = {
 				}
 			}
 		}
-		planet_stability_add = 20
+		planet_stability_add = 40
 		mult = planet.society_factor_pops
 	}
 	weight = {
@@ -3767,6 +3797,95 @@ knight = {
 		}
 		modifier = {
 			mult = value:job_weights_research_modifier|JOB|researcher|
+		}
+	}
+}
+
+#考古工程师
+archaeoengineers = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_archaeostudies_faculty
+	clothes_texture_index = 3
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+	}
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			physics_research = 2
+			engineering_research = 2
+			society_research = 5
+		}
+		produces = {
+			trigger = {
+				planet = {
+					is_planet_class = pc_relic
+				}
+			}
+			minor_artifacts = 0.3
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			consumer_goods = 1
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_research_modifier|JOB|archaeoengineers|
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.5
+			has_job = archaeoengineers
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
 		}
 	}
 }

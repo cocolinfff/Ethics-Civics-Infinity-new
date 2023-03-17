@@ -14,6 +14,209 @@
 ############
 # STANDARD #
 ############
+
+constructor = {
+	max_speed = @speed_fast
+	acceleration = 0.3
+	rotation_speed = 0.2
+	max_hitpoints = @construction_hp
+	modifier = {
+		ship_evasion_add = @construction_evasion
+	}
+	size_multiplier = 1
+	fleet_slot_size = 1
+	section_slots = { "mid" = { locator = "part1" } }
+	num_target_locators = 0
+	is_space_station = no
+	icon = ship_size_constructor
+	base_buildtime = @construction_build_time
+
+	combat_disengage_chance = 1.0
+
+	enable_default_design = yes	#if yes, countries will have an auto-generated design at start
+	enable_3dview_in_ship_browser = yes #if yes, ship design will have a 3d view in the ship browser
+	prerequisites = { "tech_space_construction" }
+	is_civilian = yes
+	is_designable = yes
+	components_add_to_cost = no
+	class = shipclass_constructor
+	construction_type = starbase_shipyard
+	required_component_set = "power_core"
+	required_component_set = "ftl_components"
+	required_component_set = "thruster_components"
+	required_component_set = "sensor_components"
+	valid_target_aggressive_stance = no
+	auto_upgrade = yes
+
+	resources = {
+		category = ships
+		cost = {
+			alloys = 100
+		}
+
+		upkeep = {
+			energy = @construction_upkeep_energy
+			alloys = @construction_upkeep_alloys
+		}
+	}
+
+	potential_country = {
+		OR = {
+			has_technology = tech_warp_drive_1
+			has_technology = tech_warp_drive_2
+			has_technology = tech_warp_drive_3
+			has_technology = tech_hyper_drive_1
+			has_technology = tech_hyper_drive_2
+			has_technology = tech_hyper_drive_3
+			has_technology = tech_jump_drive_1
+			has_technology = tech_psi_jump_drive_1
+		}
+	}
+
+	ai_ship_data = {
+		min = value:desired_constructors_min
+		system_mult = 0.15
+		max = value:desired_constructors_max
+	}
+}
+
+colonizer = {
+	max_speed = @speed_very_slow
+	acceleration = 0.3
+	rotation_speed = 0.2
+	max_hitpoints = @colony_hp
+	modifier = {
+		ship_evasion_add = @colony_evasion
+	}
+	size_multiplier = 1
+	fleet_slot_size = 1
+	section_slots = { "mid" = { locator = "part1" } }
+	num_target_locators = 0
+	is_space_station = no
+	icon = ship_size_colonizer
+	base_buildtime = @colony_build_time
+
+	combat_disengage_chance = 0.5
+
+	enable_default_design = yes	#if yes, countries will have an auto-generated design at start
+	enable_3dview_in_ship_browser = yes #if yes, ship design will have a 3d view in the ship browser
+	prerequisites = { "tech_colonization_1" }
+	is_civilian = yes
+	is_designable = yes
+	components_add_to_cost = no
+	class = shipclass_colonizer
+	construction_type = starbase_shipyard
+	required_component_set = "power_core"
+	required_component_set = "ftl_components"
+	required_component_set = "thruster_components"
+	required_component_set = "sensor_components"
+	valid_target_aggressive_stance = no
+	auto_upgrade = yes
+
+	resources = {
+		category = colonies
+		cost = {
+			trigger = {
+				from = {
+					is_lithoid_empire = no
+					is_robot_empire = no
+					is_hive_empire = no
+				}
+			}
+			alloys = 200
+			food = 200
+			consumer_goods = 200
+		}
+		cost = {
+			trigger = {
+				from = {
+					is_lithoid_empire = yes
+					is_robot_empire = no
+					is_hive_empire = no
+				}
+			}
+			alloys = 200
+			minerals = 200
+			consumer_goods = 200
+		}
+		cost = {
+			trigger = {
+				from = {
+					is_robot_empire = yes
+				}
+			}
+			alloys = 400
+		}
+		cost = {
+			trigger = {
+				from = {
+					is_hive_empire = yes
+					is_lithoid_empire = no
+					NOT = { has_origin = origin_tree_of_life }
+				}
+			}
+			alloys = 200
+			food = 500
+		}
+		cost = {
+			trigger = {
+				from = {
+					is_hive_empire = yes
+					is_lithoid_empire = no
+					has_origin = origin_tree_of_life
+				}
+			}
+			alloys = 50
+			food = 1000
+		}
+		cost = {
+			trigger = {
+				from = {
+					is_hive_empire = yes
+					is_lithoid_empire = yes
+					has_origin = origin_tree_of_life
+				}
+			}
+			alloys = 50
+			food = 500
+			minerals = 500
+		}
+		cost = {
+			trigger = {
+				from = {
+					is_hive_empire = yes
+					is_lithoid_empire = yes
+					NOT = { has_origin = origin_tree_of_life }
+				}
+			}
+			alloys = 200
+			minerals = 500
+		}
+
+		upkeep = {
+			energy = @colony_upkeep_energy
+			alloys = @colony_upkeep_alloys
+		}
+	}
+
+	potential_country = {
+		OR = {
+			has_technology = tech_warp_drive_1
+			has_technology = tech_warp_drive_2
+			has_technology = tech_warp_drive_3
+			has_technology = tech_hyper_drive_1
+			has_technology = tech_hyper_drive_2
+			has_technology = tech_hyper_drive_3
+			has_technology = tech_jump_drive_1
+			has_technology = tech_psi_jump_drive_1
+		}
+	}
+
+	ai_ship_data = {
+		min = value:desired_colonizers
+	}
+}
+
 sponsored_colonizer = {
 	max_speed = @speed_very_slow
 	acceleration = 0.3
@@ -24,22 +227,18 @@ sponsored_colonizer = {
 	}
 	size_multiplier = 1
 	fleet_slot_size = 1
-	section_slots = {
-		"mid" = {
-			locator = "part1"
-		}
-	}
+	section_slots = { "mid" = { locator = "part1" } }
 	num_target_locators = 0
 	is_space_station = no
 	icon = ship_size_colonizer
 	base_buildtime = @colony_build_time
+
 	combat_disengage_chance = 0.5
+
 	enable_default_design = yes	#if yes, countries will have an auto-generated design at start
-	prerequisites = {
-		"tech_colonization_1"
-	}
+	prerequisites = { "tech_colonization_1" }
 	is_civilian = yes
-	is_designable = no
+	is_designable = yes
 	components_add_to_cost = no
 	class = shipclass_colonizer
 	construction_type = starbase_shipyard
@@ -49,16 +248,20 @@ sponsored_colonizer = {
 	required_component_set = "sensor_components"
 	valid_target_aggressive_stance = no
 	auto_upgrade = yes
+	use_shipnames_from = colonizer
+
 	resources = {
 		category = colonies
 		cost = {
 			energy = 500
 		}
+
 		upkeep = {
 			energy = @colony_upkeep_energy
 			alloys = @colony_upkeep_alloys
 		}
 	}
+
 	potential_country = {
 		OR = {
 			has_civic = civic_private_prospectors
@@ -68,8 +271,157 @@ sponsored_colonizer = {
 			has_civic = civic_exploration
 			has_civic = civic_corpus
 		}
+		OR = {
+			has_technology = tech_warp_drive_1
+			has_technology = tech_warp_drive_2
+			has_technology = tech_warp_drive_3
+			has_technology = tech_hyper_drive_1
+			has_technology = tech_hyper_drive_2
+			has_technology = tech_hyper_drive_3
+			has_technology = tech_jump_drive_1
+			has_technology = tech_psi_jump_drive_1
+		}
 	}
 	ai_ship_data = {
 		min = value:desired_colonizers_base
+	}
+}
+
+science = {
+	max_speed = @speed_very_fast
+	acceleration = 0.3
+	rotation_speed = 0.2
+	max_hitpoints = @science_hp
+	modifier = {
+		ship_evasion_add = @science_evasion
+	}
+	ship_modifier = {
+		ship_hyperlane_range_add = 1
+	}
+	size_multiplier = 1
+	fleet_slot_size = 1
+	section_slots = { "mid" = { locator = "part1" } }
+	num_target_locators = 0
+	is_space_station = no
+	icon = ship_size_science
+	base_buildtime = @science_build_time
+
+	combat_disengage_chance = 2.0
+
+	enable_default_design = yes	#if yes, countries will have an auto-generated design at start
+	enable_3dview_in_ship_browser = yes #if yes, ship design will have a 3d view in the ship browser
+	is_designable = yes
+	components_add_to_cost = no
+	prerequisites = { "tech_space_exploration" }
+	is_civilian = yes
+	class = shipclass_science_ship
+	construction_type = starbase_shipyard
+	required_component_set = "power_core"
+	required_component_set = "ftl_components"
+	required_component_set = "thruster_components"
+	required_component_set = "sensor_components"
+	required_component_set = "science_cloaking_components"
+	valid_target_aggressive_stance = no
+	auto_upgrade = yes
+
+	resources = {
+		category = ships
+		cost = {
+			alloys = 100
+		}
+		upkeep = {
+			energy = @science_upkeep_energy
+			alloys = @science_upkeep_alloys
+		}
+	}
+
+	potential_country = {
+		NOT = {
+			is_country_type = enclave_mercenary
+		}
+		OR = {
+			has_technology = tech_warp_drive_1
+			has_technology = tech_warp_drive_2
+			has_technology = tech_warp_drive_3
+			has_technology = tech_hyper_drive_1
+			has_technology = tech_hyper_drive_2
+			has_technology = tech_hyper_drive_3
+			has_technology = tech_jump_drive_1
+			has_technology = tech_psi_jump_drive_1
+		}
+	}
+
+	ai_ship_data = {
+		min = value:desired_science_ships
+		system_mult = value:desired_science_ships_system_mult
+		max = 5
+	}
+}
+
+# Stat-wise it's midway between a Titan and Juggernaut.
+payback_warship = {
+	graphical_culture = { "slaver_01" }
+	is_space_object = no
+	graphical_culture = yes
+	entity = payback_warship_frame_entity
+	formation_priority = @titan_formation_priority
+	max_speed = @speed_slow
+	acceleration = 0.2
+	rotation_speed = 0.15
+	collision_radius = @titan_collision_radius
+	max_hitpoints = @titan_hp
+	modifier = {
+		ship_evasion_add = @titan_evasion
+	}
+	section_slots = { "mid" = { locator = "root" } }
+	base_buildtime = @titan_build_time
+	resources = {
+		category = ships
+		upkeep = {
+			energy = @titan_upkeep_energy
+			alloys = @titan_upkeep_alloys
+		}
+	}
+	components_add_to_cost = no
+	construction_type = starbase_shipyard
+	potential_country = {
+		has_origin = origin_slavers
+	}
+
+	combat_disengage_chance = 1.25
+
+	size_multiplier = 16
+	fleet_slot_size = 8
+
+	hull_scale = 1.0
+
+	num_target_locators = 0
+	can_disable = no
+	is_designable = no
+	enable_default_design = no
+	is_space_station = no
+	icon = ship_size_military_16
+	ship_class_icon_frame = 35
+
+	default_behavior = carrier
+
+	use_shipnames_from = juggernaut
+
+	class = shipclass_military
+
+	required_component_set = "power_core"
+	required_component_set = "sensor_components"
+	required_component_set = "combat_computers"
+	required_component_set = "ftl_components"
+	required_component_set = "thruster_components"
+	required_component_set = "science_cloaking_components"
+
+	min_upgrade_cost = {
+		alloys = 50
+	}
+
+	ai_ship_data = {
+		min = 2
+		max = 4
 	}
 }

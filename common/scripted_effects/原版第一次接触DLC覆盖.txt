@@ -1,0 +1,216 @@
+
+#MSI集团
+create_MSI_effect = {
+    #创建物种
+    create_species = {
+        name = random
+        class = MSI_SLAVER
+        namelist = HUMAN3
+        portrait = random
+        traits = {
+            trait = "trait_pc_nuked_preference"
+            trait = "trait_charismatic"
+            trait = "trait_intelligent"
+            trait = "trait_decadent"
+            trait = "trait_wasteful"
+        }
+        allow_negative_traits = yes
+    }
+    last_created_species = { save_global_event_target_as = origin_MSI_species }
+
+    create_country = {
+        name = "NAME_MSI_country"
+        adjective = "ADJ_MSI_country"
+        species = last_created_species
+        type = default
+        flag = {
+            icon = {
+                category = "corporate"
+                file = "corporate_07.dds"
+            }
+            background= {
+                category = "backgrounds"
+                file = "pattern_01.dds"
+            }
+            colors={
+                "mist_blue"
+                "bright_purple"
+                "null"
+                "null"
+            }
+        }
+        origin = "origin_slavers"
+        ethos = {
+            ethic = ethic_authoritarian
+            ethic = ethic_fanatic_materialist
+            ethic = ethic_fanatic_capitalism
+        }
+        civics = {
+            civic = civic_indentured_assets
+            civic = civic_learning_society_corporate
+            civic = civic_corporate_cybercap
+        }
+        authority = auth_corporate
+        effect = {
+            save_global_event_target_as = MSI_country
+            set_country_flag = MSI
+            add_basic_resources_effect = { VALUE = 3000 }
+            add_manufactured_resources_effect = { VALUE = 1500 }
+            add_advanced_resources_effect = { VALUE = 1000 }
+            give_physics_tech_tier_1_effect = yes
+            give_physics_tech_tier_2_effect = yes
+            give_engineering_tech_tier_1_effect = yes
+            give_engineering_tech_tier_2_effect = yes
+            give_society_tech_tier_1_effect = yes
+            give_society_tech_tier_2_effect = yes
+
+            # 创建机器人
+            create_built_robot_species = yes
+            last_created_species = { save_global_event_target_as = origin_MSI_species_robot }
+
+            every_country = {
+                limit = {
+                    has_slave_origin = yes
+                    NOT = { has_country_flag = slavers_assigned }
+                }
+                set_country_flag = slavers_assigned
+                event_target:MSI_country = {
+                    set_country_flag = slavers_of_@prev
+                    set_country_flag = special_intro_for@prev
+                    add_opinion_modifier = {
+                        who = prev
+                        modifier = opinion_former_slaves
+                    }
+                }
+                species = { set_species_flag = victims_of_@event_target:MSI_country }
+                set_country_flag = victims_of_@event_target:MSI_country
+                add_opinion_modifier = {
+                    who = event_target:MSI_country
+                    modifier = opinion_slavers
+                }
+            }
+        }
+    }
+
+    create_colony = {
+        owner = event_target:MSI_country
+    }
+    generate_start_deposits_and_blockers = yes
+    generate_start_buildings_and_districts = yes
+    generate_start_pops = yes
+    event_target:MSI_country = {
+        create_starting_leaders = yes
+        country_event = { id = game_start.9 }
+        owner_species = { set_species_homeworld = prevprev }
+        log = "MSI CREATED"
+    }
+}
+MSI_capital_planet_building_add_district = {
+    remove_building = building_capital
+    add_building = building_major_capital
+    add_building = building_master_archive
+    add_building = building_affluence_center
+    add_building = building_nano_forge
+    while = {
+        count = 3
+        add_district_and_planet_size_if_needed_effect = { district = district_city }
+    }
+    while = {
+        count = 3
+        add_district_and_planet_size_if_needed_effect = { district = district_industrial }
+    }
+}
+MSI_planet_building_add_district = {
+    remove_all_buildings = yes
+    remove_all_districts = yes
+    add_building = building_capital
+    add_building = building_robot_assembly_plant
+    add_building = building_information_tower
+    add_building = building_research_lab_1
+    add_building = building_commercial_zone
+    add_building = building_holo_theatres
+    add_building = building_factory_1
+    add_building = building_foundry_1
+
+    while = {
+        count = 3
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_city
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_mining
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_farming
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_generator
+        }
+        add_district_and_planet_size_if_needed_effect = {
+            district = district_industrial
+        }
+    }
+}
+MSI_planet_pops = {
+    # 创建MSI人口
+    while = {
+        count = 15
+        create_pop = {
+            species = event_target:origin_MSI_species
+        }
+    }
+
+    # 创建机器人口
+    while = {
+        count = 25
+        create_pop = {
+            species = event_target:origin_MSI_species_robot
+        }
+    }
+}
+
+#黑暗森林入脑的傻子
+create_fear_of_the_dark_country = {
+    create_country = {
+        name = {
+            key = "NAME_fotd_seperatists"
+            variable_string = "\\[fotd_country.GetSpeciesName\\]"
+        }
+        authority = auth_democratic
+        civics = {
+            civic = civic_welfare_state
+            civic = civic_environmentalist
+            civic = civic_political_pluralism
+        }
+        species = event_target:fotd_country.species
+        ethos = {
+            ethic = ethic_fanatic_xenophobe
+            ethic = ethic_egalitarian
+            ethic = ethic_spiritualist
+            ethic = ethic_militarist
+        }
+
+        flag = random
+        origin = "origin_fear_of_the_dark" # Should only be visible if they become spacefaring
+        type = primitive
+        effect = {
+            set_country_flag = early_space_age
+            set_country_flag = fotd_seperatist_country@event_target:fotd_country
+            set_country_flag = fotd_seperatist_country
+            save_event_target_as = fotd_seperatist_country
+            establish_communications_no_message = event_target:fotd_country
+            set_faction_hostility = {
+                target = event_target:fotd_country
+                set_hostile = no
+                set_neutral = no
+                set_friendly = yes
+            }
+        }
+    }
+    event_target:fotd_country = {
+        add_intel = {
+            amount = 100
+            who = event_target:fotd_country
+        }
+    }
+}
