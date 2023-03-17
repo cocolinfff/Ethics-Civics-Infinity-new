@@ -1,9 +1,10 @@
 ##############################
-# 革命家派系
+# 革命派(ECI)-温和军国/激进社会-军队/游击队利益集团
 ##############################
 revolutionary = {
 	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_militarist
+	use_guiding_ethic_as_pop_filter = no
 	unique = yes
 	support_multiplier = 1
 	resources = {
@@ -13,16 +14,10 @@ revolutionary = {
 		}
 	}
 	is_potential = {
-		days_passed > 30
-		has_encountered_other_species = yes
-		NOT = {
-			has_ethic = ethic_gestalt_consciousness
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
+		days_passed > 120
 		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -34,17 +29,14 @@ revolutionary = {
 		}
 	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
 	}
 	can_join_faction = {
-		is_shackled_robot = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_revolutionary_i = yes
+			can_join_faction_revolutionary_c = yes
+			can_join_faction_revolutionary_j = yes
 		}
 	}
 	attraction = {
@@ -80,9 +72,43 @@ revolutionary = {
 			factor = 1.25
 			has_citizenship_rights = yes
 		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = root
+			root = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			has_job = conscript_uncapped
+		}
+		modifier = {
+			factor = @factionattractionmedium
+			OR = {
+				has_job = soldier
+				has_job = foundry
+			}
+		}
+		# 万众一心
+		modifier = {
+			factor = 0.1
+			exists = root
+			root = { faction_approval < 0.5 }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
+		}
 	}
 	leader = {
 		base = 100
+		modifier = { # Militarist
+			factor = 1.5
+			OR = {
+				leader_class = admiral
+				leader_class = general
+			}
+		}
 		modifier = {
 			factor = 0
 			is_event_leader = yes

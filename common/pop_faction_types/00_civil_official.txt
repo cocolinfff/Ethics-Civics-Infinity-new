@@ -1,10 +1,11 @@
 ##############################
-# 官僚派系
+# 文官(ECI)-温和独裁/和平-官僚利益集团
 ##############################
 
 civil_official = {
 	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_authoritarian
+	use_guiding_ethic_as_pop_filter = no
 	unique = yes
 	support_multiplier = 1
 	resources = {
@@ -14,16 +15,10 @@ civil_official = {
 		}
 	}
 	is_potential = {
-		days_passed > 30
-		has_encountered_other_species = yes
-		NOT = {
-			has_ethic = ethic_gestalt_consciousness
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
+		days_passed > 60
 		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -34,20 +29,15 @@ civil_official = {
 			}
 		}
 	}
-	can_join_faction = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
-		is_shackled_robot = no
+	can_join_pre_triggers = {
 		is_being_purged = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
-		}
-		NOR = {
-			has_job = soldier
-			has_job = enforcer
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_civil_official_i = yes
+			can_join_faction_civil_official_c = yes
+			can_join_faction_civil_official_j = yes
 		}
 	}
 	attraction = {
@@ -85,6 +75,29 @@ civil_official = {
 			NOT = {
 				is_same_species = owner_species
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = root
+			root = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			OR = {
+				has_job = bureaucrat
+				has_job = head_researcher
+			}
+		}
+		# 万众一心
+		modifier = {
+			factor = 0.1
+			exists = root
+			root = { faction_approval < 0.5 }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
 		}
 	}
 	leader = {
@@ -297,14 +310,14 @@ civil_official = {
 				}
 				support > 0.10
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_elitist" }
+					NOT = { has_ethic = "ethic_fanatic_authoritarian" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				parameter:empire = {
-					shift_ethic = ethic_elitist
+					shift_ethic = ethic_authoritarian
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
@@ -332,9 +345,9 @@ civil_official = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.50
+					support < 0.5
 					owner = {
-						has_ethic = ethic_elitist
+						has_ethic = ethic_authoritarian
 					}
 				}
 				modifier = {
