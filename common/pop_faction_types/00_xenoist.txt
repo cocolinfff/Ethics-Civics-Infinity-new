@@ -14,7 +14,7 @@ xenoist = {
 		}
 	}
 	is_potential = {
-		days_passed > 30
+		#days_passed > 30
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ xenoist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_xenophobe = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_xenoist_i = yes
 			can_join_faction_xenoist_c = yes
@@ -46,13 +47,12 @@ xenoist = {
 			exists = from
 			from = {
 				is_xenophile = yes
-				is_capitalism = yes
 			}
 		}
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -61,17 +61,18 @@ xenoist = {
 		}
 		modifier = {
 			factor = 0.75
-			exists = from
-			from = {
+			exists = root
+			root = {
 				NOT = {
 					exists = leader
 				}
 			}
 		}
-		modifier = {
-			factor = 2
-			NOT = {
-				is_same_species = owner_species
+		modifier = { # Art is far from workers and slaves
+			factor = 0.50
+			OR = {
+				is_pop_category = worker
+				is_enslaved = yes
 			}
 		}
 		# Angry
@@ -83,10 +84,12 @@ xenoist = {
 		}
 		# Stance from Job
 		modifier = {
-			factor = @factionattractionhighvery
-			has_job = entertainer
-			has_job = culture_worker
-			has_job = media_worker
+			factor = @factionattractionhigh
+			OR = {
+				has_job = entertainer
+				has_job = culture_worker
+				has_job = media_worker
+			}
 		}
 		# 万众一心
 		modifier = {
@@ -495,9 +498,9 @@ xenoist = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {

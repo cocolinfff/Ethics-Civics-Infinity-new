@@ -14,7 +14,7 @@ supremacist = {
 		}
 	}
 	is_potential = {
-		days_passed > 90
+		#days_passed > 90
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ supremacist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_xenophile = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_supremacist_i = yes
 			can_join_faction_supremacist_c = yes
@@ -50,8 +51,8 @@ supremacist = {
 		}
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -60,29 +61,39 @@ supremacist = {
 		}
 		modifier = {
 			factor = 0.75
-			exists = from
-			from = {
+			exists = root
+			root = {
 				NOT = {
 					exists = leader
 				}
 			}
 		}
-		modifier = {
-			factor = 0.1
-			NOT = {
+		modifier = { # Slaves don't care masters, please!
+			factor = 0.01
+			NOR = {
 				is_same_species = owner_species
+				is_enslaved = no
 			}
 		}
 		# Angry
 		modifier = {
 			factor = @factionattractionmedium
-			happiness < 0.5
-		}
-		modifier = {
-			factor = @factionattractionmedium
 			exists = root
 			root = { faction_approval < 0.5 }
 			happiness < 0.5
+		}
+		modifier = {
+			factor = @factionattractionhigh
+			OR = {
+				from = { is_xenophobe = yes }
+				happiness < 0.35
+			}
+		}
+		modifier = { # Utobian Soft
+			factor = 0
+			exists = from
+			has_living_standard = { country = from type = living_standard_utopian }
+			from = { is_xenophobe = no }
 		}
 		# 万众一心
 		modifier = {
@@ -463,9 +474,9 @@ supremacist = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {

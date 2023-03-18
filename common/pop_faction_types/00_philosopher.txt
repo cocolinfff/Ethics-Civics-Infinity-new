@@ -15,7 +15,7 @@ philosopher = {
 		}
 	}
 	is_potential = {
-		days_passed > 90
+		#days_passed > 90
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -34,6 +34,7 @@ philosopher = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_militarist = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_philosopher_i = yes
 			can_join_faction_philosopher_c = yes
@@ -42,16 +43,6 @@ philosopher = {
 	}
 	attraction = {
 		base = 100
-		modifier = { # Leading Government
-			factor = 1.25
-			exists = from
-			from = {
-				exists = leader
-				leader = {
-					leader_class = ruler
-				}
-			}
-		}
 		modifier = { # Official Stance
 			factor = 1.5
 			exists = from
@@ -62,10 +53,20 @@ philosopher = {
 				}
 			}
 		}
+		modifier = { # Leading Government
+			factor = 1.25
+			exists = root
+			root = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+		}
 		modifier = {
 			factor = 0.75
-			exists = from
-			from = {
+			exists = root
+			root = {
 				NOT = { exists = leader }
 			}
 		}
@@ -89,6 +90,12 @@ philosopher = {
 			exists = root
 			root = { faction_approval < 0.5 }
 			happiness < 0.5
+		}
+		modifier = { # Anti-war
+			factor = @factionattractionhigh
+			exists = from
+			from = { is_at_war = yes }
+			happiness < 0.35
 		}
 		# Stance from Job
 		modifier = {
@@ -457,16 +464,9 @@ philosopher = {
 					has_ascension_perk = ap_world_shaper					
 			}
 		}
-	}		
-	
-
-
-
-
-
-	
+	}	
 	on_create = {
-		pop_faction_event = { id = factions.1 }
+	# 	pop_faction_event = { id = factions.1 }
 	}
 
 	on_destroy = {

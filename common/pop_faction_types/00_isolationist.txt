@@ -14,7 +14,7 @@ isolationist = {
 		}
 	}
 	is_potential = {
-		days_passed > 60
+		#days_passed > 60
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ isolationist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_xenophile = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_isolationist_i = yes
 			can_join_faction_isolationist_c = yes
@@ -42,9 +43,13 @@ isolationist = {
 	attraction = {
 		base = 100
 		modifier = {
+			factor = 1.5
+			is_xenophobe = yes
+		}
+		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -53,34 +58,38 @@ isolationist = {
 		}
 		modifier = {
 			factor = 0.75
-			exists = from
-			from = {
+			exists = root
+			root = {
 				NOT = {
 					exists = leader
 				}
 			}
 		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_ethic = ethic_xenophobe
-				has_ethic = ethic_fanatic_xenophobe
-			}
-		}
 		# Angry
 		modifier = {
-			factor = @factionattractionmedium
+			factor = @factionattractionhigh
 			exists = root
 			root = { faction_approval < 0.5 }
 			happiness < 0.5
 		}
 		# Stance from Job
 		modifier = {
-			factor = @factionattractionmedium
+			factor = @factionattractionhigh
+			exists = from
+			OR = {
+				from = { is_xenophobe = yes }
+				happiness < 0.45
+			}
 			OR = {
 				is_pop_category = specialist
 				has_job = clerk
 			}
+		}
+		modifier = { # Utobian Soft
+			factor = 0
+			exists = from
+			has_living_standard = { country = from type = living_standard_utopian }
+			from = { is_xenophobe = no }
 		}
 		# 万众一心
 		modifier = {
@@ -447,9 +456,9 @@ isolationist = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {

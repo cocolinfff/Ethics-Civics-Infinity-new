@@ -14,7 +14,7 @@ totalitarian = {
 		}
 	}
 	is_potential = {
-		days_passed > 90
+		#days_passed > 90
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ totalitarian = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_egalitarian = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_totalitarian_i = yes
 			can_join_faction_totalitarian_c = yes
@@ -45,14 +46,16 @@ totalitarian = {
 			factor = 1.5
 			exists = from
 			from = {
-				is_authoritarian = yes
-				is_militarist = yes
+				OR = { # Totalitarian is about militarist
+					is_authoritarian = yes
+					is_militarist = yes
+				}
 			}
 		}
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -60,19 +63,12 @@ totalitarian = {
 			}
 		}
 		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
+			factor = 0.50 # Need a Leader
+			exists = root
+			root = {
 				NOT = {
 					exists = leader
 				}
-			}
-		}
-		# Should really check for citizenship instead
-		modifier = {
-			factor = 0.25
-			NOT = {
-				is_same_species = owner_species
 			}
 		}
 		# Angry
@@ -88,6 +84,7 @@ totalitarian = {
 			OR = {
 				has_job = enforcer
 				has_job = telepath
+				has_job = slave_overseer
 			}
 		}
 		# 万众一心
@@ -101,6 +98,10 @@ totalitarian = {
 	}
 	leader = {
 		base = 100
+		modifier = {
+			factor = 10
+			leader_class = ruler
+		}
 		modifier = {
 			factor = 0
 			is_event_leader = yes
@@ -397,9 +398,9 @@ totalitarian = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {
