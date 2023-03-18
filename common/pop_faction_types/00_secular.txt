@@ -1,9 +1,10 @@
 ##############################
-# 传教士派系
+# 教士(ECI)-激进唯心-教士利益集团
 ##############################
 secular = {
 	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_spiritualist
+	use_guiding_ethic_as_pop_filter = no
 	unique = yes
 	support_multiplier = 1
 	resources = {
@@ -13,16 +14,10 @@ secular = {
 		}
 	}
 	is_potential = {
-		days_passed > 30
-		has_encountered_other_species = yes
-		NOT = {
-			has_ethic = ethic_gestalt_consciousness
-		}
-		NOT = { has_country_flag = suppress_vanilla_factions }
+		days_passed > 90
 		NOR = {
-		    has_valid_civic = civic_network_of_the_mind
-		    has_valid_civic = civic_network_of_the_mind_machine
-		    has_valid_civic = civic_network_of_the_mind_true_hive
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
 		}
 	}
 	parameters = {
@@ -34,18 +29,14 @@ secular = {
 		}
 	}
 	can_join_pre_triggers = {
-		OR = {
-			is_enslaved = no
-			has_slavery_type = { country = owner type = slavery_indentured }
-		}
 		is_being_purged = no
-		is_robot_pop = no
 	}
 	can_join_faction = {
-		has_culture_shock = no
-		NOR = { 
-			has_trait = trait_nerve_stapled
-			has_trait = trait_zombie
+		can_join_faction_mentally = yes
+		OR = { # Only Same Ideology or Job
+			can_join_faction_secular_i = yes
+			can_join_faction_secular_c = yes
+			can_join_faction_secular_j = yes
 		}
 	}
 	attraction = {
@@ -76,6 +67,29 @@ secular = {
 					exists = leader
 				}
 			}
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = root
+			root = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		modifier = {
+			factor = @factionattractionhighvery
+			OR = {
+				has_job = priest
+				has_job = death_priest
+				has_job = telepath
+			}
+		}
+		# 万众一心
+		modifier = {
+			factor = 0.1
+			exists = root
+			root = { faction_approval < 0.5 }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
 		}
 	}
 	leader = {
