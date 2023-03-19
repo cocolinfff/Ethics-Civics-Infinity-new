@@ -14,7 +14,7 @@ revolutionary = {
 		}
 	}
 	is_potential = {
-		days_passed > 120
+		#days_passed > 120
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ revolutionary = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_capitalist = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_revolutionary_i = yes
 			can_join_faction_revolutionary_c = yes
@@ -45,29 +46,31 @@ revolutionary = {
 			factor = 1.5
 			exists = from
 			from = {
-				is_militarist = yes
-				is_egalitarian = yes
+				OR = {
+					is_socialism = yes
+					is_militarist = yes
+				}
 			}
 		}
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
 				}
 			}
 		}
-		modifier = {
-			factor = 0.75
-			exists = from
-			from = {
-				NOT = {
-					exists = leader
-				}
-			}
-		}
+		#modifier = { # Leader is not neccessary for rev.
+		#	factor = 0.75
+		#	exists = root
+		#	root = {
+		#		NOT = {
+		#			exists = leader
+		#		}
+		#	}
+		#}
 		modifier = {
 			factor = 1.25
 			has_citizenship_rights = yes
@@ -82,7 +85,10 @@ revolutionary = {
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhighvery
-			has_job = conscript_uncapped
+			OR = {
+				has_job = conscript
+				has_job = conscript_uncapped
+			}
 		}
 		modifier = {
 			factor = @factionattractionmedium
@@ -355,9 +361,9 @@ revolutionary = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {

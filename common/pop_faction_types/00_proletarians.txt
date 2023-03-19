@@ -14,7 +14,7 @@ proletarians = {
 		}
 	}
 	is_potential = {
-		days_passed > 60
+		#days_passed > 60
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ proletarians = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_xenophobe = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_proletarians_i = yes
 			can_join_faction_proletarians_c = yes
@@ -44,15 +45,15 @@ proletarians = {
 		modifier = {
 			factor = 1.5
 			exists = from
-			from = {
+			from = { # You Need Both
 				is_xenophile = yes
 				is_socialism = yes
 			}
 		}
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -61,8 +62,8 @@ proletarians = {
 		}
 		modifier = {
 			factor = 0.75
-			exists = from
-			from = {
+			exists = root
+			root = {
 				NOT = {
 					exists = leader
 				}
@@ -83,8 +84,19 @@ proletarians = {
 		}
 		# Stance from Job
 		modifier = {
-			factor = @factionattractionmedium
+			factor = @factionattractionhigh
 			is_pop_category = worker
+			is_enslaved = no
+			OR = {
+				has_citizenship_rights = no
+				AND = {
+					happiness < 0.65
+					exists = from
+					from = {
+						is_socialism = yes
+					}
+				}
+			}
 		}
 		# 万众一心
 		modifier = {
@@ -445,9 +457,9 @@ proletarians = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {

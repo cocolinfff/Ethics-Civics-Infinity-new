@@ -14,7 +14,7 @@ prosperity = {
 		}
 	}
 	is_potential = {
-		days_passed > 60
+		#days_passed > 60
 		NOR = {
 			is_gestalt = yes
 			has_country_flag = suppress_vanilla_factions
@@ -33,6 +33,7 @@ prosperity = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		is_militarist = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_prosperity_i = yes
 			can_join_faction_prosperity_c = yes
@@ -45,14 +46,16 @@ prosperity = {
 			factor = 1.5
 			exists = from
 			from = {
-				is_pacifist = yes
-				is_materialist = yes
+				OR = {
+					is_capitalist = yes
+					is_pacifist = yes
+				}
 			}
 		}
 		modifier = {
 			factor = 1.25
-			exists = from
-			from = {
+			exists = root
+			root = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -61,8 +64,8 @@ prosperity = {
 		}
 		modifier = {
 			factor = 0.75
-			exists = from
-			from = {
+			exists = root
+			root = {
 				NOT = {
 					exists = leader
 				}
@@ -89,13 +92,24 @@ prosperity = {
 			root = { faction_approval < 0.5 }
 			happiness < 0.5
 		}
+		modifier = { # Anti-war
+			factor = @factionattractionmedium
+			exists = from
+			from = { is_at_war = yes }
+			happiness < 0.65
+		}
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhighvery
 			OR = {
-				has_job = farmer
+				AND = {
+					has_job = farmer
+					NOT = { has_civic = civic_big_industrial_farming }
+				}
 				has_job = artisan
+				has_job = entertainer
 				has_job = angler
+				has_job = pearl_diver
 			}
 		}
 		# 万众一心
@@ -383,9 +397,9 @@ prosperity = {
 		}
 	}
 	on_create = {
-		pop_faction_event = {
-			id = factions.1
-		}
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
 	}
 	on_destroy = {
 		if = {
