@@ -46,7 +46,7 @@ situation_road_to_dissolution = {
 				country_unity_produces_mult = -0.2
 				pop_happiness = -0.05
 			}
-			end = 40
+			end = 400
 		}
 		revolt_severity_2 = {
 			icon = GFX_situation_stage_2
@@ -67,7 +67,7 @@ situation_road_to_dissolution = {
 				country_unity_produces_mult = -0.35
 				pop_happiness = -0.1
 			}
-			end = 70
+			end = 700
 		}
 		revolt_severity_3 = {
 			icon = GFX_situation_stage_3
@@ -88,7 +88,7 @@ situation_road_to_dissolution = {
 				country_unity_produces_mult = -0.5
 				pop_happiness = -0.25
 			}
-			end = 90
+			end = 900
 		}
 		revolt_severity_4 = {
 			icon = GFX_situation_stage_4
@@ -109,14 +109,14 @@ situation_road_to_dissolution = {
 				}
 			}
 			modifier = {
-				planet_jobs_produces_mult = -0.35
+				planet_jobs_produces_mult = -0.25
 				planet_jobs_food_produces_mult = -0.5
 				planet_jobs_consumer_goods_produces_mult = -0.5
 				country_unity_produces_mult = -0.95
 				pop_happiness = -0.5
 				planet_stability_add = -50
 			}
-			end = 100
+			end = 1000
 		}
 	}
 
@@ -142,85 +142,68 @@ situation_road_to_dissolution = {
 	#Note: if you alter this, you should consider whether to alter potential_revolt_situation_monthly_progress_estimation too
 	monthly_progress = {
 		base = 0
-		complex_trigger_modifier = {
-			desc = STRING_UNHAPPY_FACTION
-			trigger = count_pop_faction
-			trigger_scope = owner
-			parameters = {
-				limit = {
-					faction_approval < 0.4
-				}
-			}
-			mode = add
-			mult = 0.1
-		}
-		complex_trigger_modifier = {
-			desc = STRING_ANGRY_FACTION_2
-			trigger = count_pop_faction
-			trigger_scope = owner
-			parameters = {
-				limit = {
-					faction_approval < 0.2
-				}
-			}
-			mode = add
-			mult = 0.1
-		}
-		complex_trigger_modifier = {
-			desc = STRING_UNEMPLOYMENT
-			trigger = num_unemployed
-			trigger_scope = owner
-			mode = add
-			mult = 0.01
-		}
 		modifier = {
-			add = 0.5
+			add = 5
 			desc = STRING_ENERGY_DEFICIT
 			owner = {
 				has_deficit = energy
 			}
 		}
 		modifier = {
-			add = 0.3
+			add = 3
 			desc = STRING_MINERALS_DEFICIT
 			owner = {
 				has_deficit = minerals
 			}
 		}
 		modifier = {
-			add = 1
+			add = 10
 			desc = STRING_FOOD_DEFICIT
 			owner = {
 				has_deficit = food
 			}
 		}
 		modifier = {
-			add = 1
+			add = 10
 			desc = STRING_CONSUMER_GOODS_DEFICIT
 			owner = {
 				has_deficit = consumer_goods
 			}
 		}
 		modifier = {
-			add = 0.2
+			add = 2
 			desc = STRING_ALLOYS_DEFICIT
 			owner = {
 				has_deficit = alloys
 			}
 		}
 		modifier = {
-			add = 1
+			add = 10
 			desc = STRING_UNITY_DEFICIT
 			owner = {
 				has_deficit = unity
 			}
 		}
 		modifier = {
-			add = 10
+			add = 20
 			desc = STRING_COUNTRY_DEFAULTED
 			owner = {
 				has_modifier = country_defaulted
 			}
+		}
+		complex_trigger_modifier = {
+			trigger = count_owned_planet
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					is_colony = yes
+					planet_stability < 50
+					num_pops > 5
+				}
+			}
+			desc = STRING_UNREST_PLANETS_IN_COUNTRY
+			mode = add
+			mult = 1
 		}
 		complex_trigger_modifier = {
 			trigger = count_owned_planet
@@ -234,7 +217,115 @@ situation_road_to_dissolution = {
 			}
 			desc = STRING_REBELLIOUS_PLANETS_IN_COUNTRY
 			mode = add
+			mult = 2
+		}
+		complex_trigger_modifier = {
+			trigger = count_owned_pop
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					is_unemployed = yes
+				}
+			}
+			desc = STRING_UNEMPLOYMENT
+			mode = add
 			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			trigger = count_owned_pop
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					happiness < 0.2
+					pop_has_happiness = yes
+				}
+			}
+			desc = STRING_ANGRY_POPS
+			mode = add
+			mult = 1
+		}
+		complex_trigger_modifier = {
+			trigger = count_owned_pop
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					happiness < 0.4
+					happiness >= 0.2
+					pop_has_happiness = yes
+				}
+			}
+			desc = STRING_UNHAPPY_POPS
+			mode = add
+			mult = 0.5
+		}
+		complex_trigger_modifier = {
+			trigger = count_owned_pop
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					happiness < 0.6
+					happiness >= 0.4
+					pop_has_happiness = yes
+
+				}
+			}
+			desc = STRING_FAIR_POPS
+			mode = add
+			mult = 0.2
+		}
+		complex_trigger_modifier = {
+			trigger = count_owned_pop
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					happiness < 0.8
+					happiness >= 0.6
+					pop_has_happiness = yes
+
+				}
+			}
+			desc = STRING_GOOD_POPS
+			mode = add
+			mult = 0.1
+		}
+		complex_trigger_modifier = {
+			trigger = count_playable_country
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					has_origin = origin_red_satellite
+					has_loyalty < 0
+				}
+			}
+			desc = STRING_REBELLIOUS_SUBJECT
+			mode = add
+			mult = 2
+		}
+		complex_trigger_modifier = {
+			trigger = count_playable_country
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					has_origin = origin_red_satellite
+					has_overlord = no
+				}
+			}
+			desc = STRING_FROMER_SUBJECT
+			mode = add
+			mult = 5
+		}
+		complex_trigger_modifier = {
+			trigger = count_playable_country
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					has_origin = origin_red_satellite
+					overlord = { NOT = { has_origin = origin_red_satellite_overlord } }
+				}
+			}
+			desc = STRING_FROMER_SUBJECT
+			mode = add
+			mult = 5
 		}
 	}
 }
