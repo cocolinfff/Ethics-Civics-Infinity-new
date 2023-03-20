@@ -15,10 +15,35 @@ set_rebel_dynamic_flag = {
 
 generate_rebel_final = {
     hidden_effect = {
+        if = {
+            limit = { overlord = { has_origin = origin_red_satellite_overlord } }
+            set_subject_of = {
+                who = none
+            }
+            set_name = random
+        }
         random_list = {
-            100 = { # peace way
+            50 = { # peace way
+                modifier = {
+                    factor = 2
+                    any_situation = {
+                        has_situation_flag = rebel_positive
+                    }
+                }
+                modifier = {
+                    factor = 1.5
+                    any_situation = {
+                        has_situation_flag = rebel_quiet
+                    }
+                }
                 modifier = {
                     factor = 0.5
+                    any_situation = {
+                        has_situation_flag = ethic_rebel_negative
+                    }
+                }
+                modifier = {
+                    factor = 1.5
                     has_country_flag = ethic_pacifist_rebel_set
                 }
                 generate_politics_rebel = { ETHIC = $ETHIC$ }
@@ -26,8 +51,30 @@ generate_rebel_final = {
             }
             50 = {
                 modifier = {
-                    factor = 1.2
+                    factor = 2
                     has_country_flag = ethic_militarist_rebel_set
+                }
+                modifier = {
+                    factor = 2
+                    has_country_flag = ethic_egalitarian_rebel_set
+                    has_authority = auth_imperial
+                }
+                modifier = {
+                    factor = 2
+                    has_country_flag = ethic_socialism_rebel_set
+                    has_authority = auth_corporate
+                }
+                modifier = {
+                    factor = 2
+                    has_country_flag = ethic_egalitarian_rebel_set
+                    OR = {
+                        has_authority = auth_democratic
+                        has_authority = auth_direct_democratic
+                    }
+                }
+                modifier = {
+                    factor = 0
+                    num_owned_planets = 1
                 }
                 generate_war_rebel = { ETHIC = $ETHIC$ }
                 
@@ -40,7 +87,7 @@ generate_politics_rebel = {
     shift_ethic = ethic_$ETHIC$
     if = { limit = { has_country_flag = ethic_egalitarian_rebel_set } 
         change_government = {
-            authority = auth_dictatorial
+            authority = auth_democratic
             cooldown = yes
             remove_invalid_civics = yes
             civics = random
@@ -48,7 +95,7 @@ generate_politics_rebel = {
     }
     else_if = { limit = { has_country_flag = ethic_authoritarian_rebel_set }
         change_government = {
-            authority = auth_democratic
+            authority = auth_dictatorial
             cooldown = yes
             remove_invalid_civics = yes
             civics = random
@@ -59,12 +106,6 @@ generate_politics_rebel = {
             cooldown = yes
             remove_invalid_civics = yes
             civics = random
-        }
-    }
-    if = {
-        limit = { overlord = { has_origin = origin_red_satellite_overlord } }
-        set_subject_of = {
-            who = none
         }
     }
 }
@@ -88,7 +129,7 @@ generate_war_rebel = {
                 establish_communications_no_message = event_target:from_country
                 event_target:from_country = {
                     random_owned_planet = { 
-                        limit = { is_capital = no } 
+                        limit = { is_capital = no }
                         set_owner = event_target:rebel_country 
                         set_controller = event_target:rebel_country
                         save_event_target_as = rebel_country_capital
