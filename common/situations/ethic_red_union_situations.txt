@@ -44,51 +44,44 @@ situation_road_to_dissolution = {
 				planet_jobs_food_produces_mult = -0.05
 				planet_jobs_consumer_goods_produces_mult = -0.05
 				country_unity_produces_mult = -0.2
-				pop_happiness = -0.05
+				planet_amenities_reduction = 0.05
 			}
-			end = 300
+			end = 600
 		}
 		revolt_severity_2 = {
 			icon = GFX_situation_stage_2
 			icon_background = GFX_situation_stage_frame_red
-			#官僚主义成灾
+			#进入二段修正状态
 			on_first_enter = {
-				#成员国收到事件开启独立化
-				#every_subject = {
-					#country_event = {
-					#	id = red_origin.6010
-					#}
-				#}
+
 			}
 			modifier = {
 				planet_jobs_produces_mult = -0.1
 				planet_jobs_food_produces_mult = -0.15
 				planet_jobs_consumer_goods_produces_mult = -0.15
 				country_unity_produces_mult = -0.35
-				pop_happiness = -0.1
+				planet_amenities_reduction = 0.1
 			}
-			end = 700
+			end = 1400
 		}
 		revolt_severity_3 = {
 			icon = GFX_situation_stage_3
 			icon_background = GFX_situation_stage_frame_red
-			#抗议兴起
+			#东欧巨变将至
 			on_first_enter = {
-				#在成员国引爆自由化浪潮局势
-				#every_subject = {
-				#	country_event = {
-				#		id = red_origin.6020
-				#	}
-				#}
+				#在成员国引爆阴影中的资本主义者局势
+				every_subject = {
+					generate_rebel_situ = { ETHIC = capitalism }
+				}
 			}
 			modifier = {
 				planet_jobs_produces_mult = -0.15
 				planet_jobs_food_produces_mult = -0.25
 				planet_jobs_consumer_goods_produces_mult = -0.25
 				country_unity_produces_mult = -0.5
-				pop_happiness = -0.25
+				planet_amenities_reduction = 0.2
 			}
-			end = 900
+			end = 1800
 		}
 		revolt_severity_4 = {
 			icon = GFX_situation_stage_4
@@ -113,10 +106,9 @@ situation_road_to_dissolution = {
 				planet_jobs_food_produces_mult = -0.5
 				planet_jobs_consumer_goods_produces_mult = -0.5
 				country_unity_produces_mult = -0.95
-				pop_happiness = -0.5
-				planet_stability_add = -50
+				planet_amenities_reduction = 0.5
 			}
-			end = 1000
+			end = 2000
 		}
 	}
 
@@ -255,7 +247,7 @@ situation_road_to_dissolution = {
 			}
 			desc = STRING_UNEMPLOYMENT
 			mode = add
-			mult = 0.05
+			mult = 0.1
 		}
 		complex_trigger_modifier = {
 			trigger = count_owned_pop
@@ -292,7 +284,6 @@ situation_road_to_dissolution = {
 					happiness < 0.6
 					happiness >= 0.4
 					pop_has_happiness = yes
-
 				}
 			}
 			desc = STRING_FAIR_POPS
@@ -307,7 +298,7 @@ situation_road_to_dissolution = {
 					happiness < 0.8
 					happiness >= 0.6
 					pop_has_happiness = yes
-
+					NOT = { has_modifier = pop_recently_conquered }
 				}
 			}
 			desc = STRING_GOOD_POPS
@@ -320,10 +311,25 @@ situation_road_to_dissolution = {
 			parameters = {
 				limit = {
 					has_origin = origin_red_satellite
+					is_subject = yes
+					overlord = { has_origin = origin_red_satellite_overlord }
 					has_loyalty < 0
 				}
 			}
 			desc = STRING_REBELLIOUS_SUBJECT
+			mode = add
+			mult = 1
+		}
+		complex_trigger_modifier = {
+			trigger = count_playable_country
+			trigger_scope = owner
+			parameters = {
+				limit = {
+					has_origin = origin_red_satellite
+					is_subject = no
+				}
+			}
+			desc = STRING_INDENPEDENT_SUBJECT
 			mode = add
 			mult = 2
 		}
@@ -333,25 +339,13 @@ situation_road_to_dissolution = {
 			parameters = {
 				limit = {
 					has_origin = origin_red_satellite
-					has_overlord = no
-				}
-			}
-			desc = STRING_INDENPEDENT_SUBJECT
-			mode = add
-			mult = 4
-		}
-		complex_trigger_modifier = {
-			trigger = count_playable_country
-			trigger_scope = owner
-			parameters = {
-				limit = {
-					has_origin = origin_red_satellite
+					is_subject = yes
 					overlord = { NOT = { has_origin = origin_red_satellite_overlord } }
 				}
 			}
 			desc = STRING_FROMER_SUBJECT
 			mode = add
-			mult = 6
+			mult = 3
 		}
 	}
 }
