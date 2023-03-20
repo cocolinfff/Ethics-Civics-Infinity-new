@@ -96,12 +96,21 @@ pioneer = {
 		modifier = {
 			factor = @factionattractionhighvery
 			OR = {
+				AND = {
+					exists = from
+					from = { is_socialism = yes }
+				}
+				is_socialism = yes
+			}
+			OR = {
 				has_job = core_party_members
 				has_job = grassroot_cadre
 			}
 		}
-		modifier = {
+		modifier = { # Non-socialism Workers
 			factor = @factionattractionmedium
+			exists = from
+			from = { is_socialism = no }
 			is_pop_category = worker
 		}
 		# 万众一心
@@ -282,11 +291,8 @@ pioneer = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -298,7 +304,7 @@ pioneer = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
 					NOT = {
 						has_ethic = "ethic_fanatic_socialism"
@@ -350,27 +356,17 @@ pioneer = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_socialism
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
 								leader_of_faction = pioneer
 							}
-						}
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
 						}
 					}
 				}

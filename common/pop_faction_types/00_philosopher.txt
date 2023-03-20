@@ -92,7 +92,7 @@ philosopher = {
 			happiness < 0.5
 		}
 		modifier = { # Anti-war
-			factor = @factionattractionhigh
+			factor = @factionattractionmedium
 			exists = from
 			from = { is_at_war = yes }
 			happiness < 0.35
@@ -100,6 +100,16 @@ philosopher = {
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhigh
+			OR = {
+				AND = {
+					exists = from
+					from = { is_pacifist = yes }
+				}
+				OR = {
+					is_pacifist = yes
+					is_spiritualist = yes
+				}
+			}
 			OR = {
 				has_job = priest
 				has_job = culture_worker
@@ -495,11 +505,8 @@ philosopher = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -511,7 +518,7 @@ philosopher = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
 					NOT = {
 						has_ethic = "ethic_fanatic_pacifist"
@@ -563,33 +570,17 @@ philosopher = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_pacifist
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					owner = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
-				modifier = {
-					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
-								leader_of_faction = prosperity
+								leader_of_faction = philosopher
 							}
-						}
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
 						}
 					}
 				}

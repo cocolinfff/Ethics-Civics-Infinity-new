@@ -1,0 +1,204 @@
+##############################
+# pft_supporters 翼赞人-政府支持者
+##############################
+
+supporters = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = ethic_authoritarian
+	use_guiding_ethic_as_pop_filter = no
+	unique = yes
+	support_multiplier = 1
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.5
+		}
+	}
+	is_potential = {
+		#days_passed > 60
+		NOR = {
+			is_gestalt = yes
+			has_country_flag = suppress_vanilla_factions
+		}
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_pre_triggers = {
+		is_being_purged = no
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+	}
+	attraction = {
+		base = 100
+		modifier = {
+			factor = 1.25
+			exists = root
+			root = {
+				exists = leader
+				leader = {
+					leader_class = ruler
+				}
+			}
+		}
+		modifier = {
+			factor = 1.1
+			exists = from
+			from = {
+				has_policy_flag = directional_management
+			}
+		}
+		# Angry
+		modifier = {
+			factor = 0.1
+			happiness < 0.45
+		}
+		# Satisfied
+		modifier = {
+			factor = 1.15
+			happiness > 0.65
+		}
+		modifier = {
+			factor = 1.35
+			happiness > 0.85
+		}
+		modifier = {
+			factor = 1.65
+			happiness > 0.99
+		}
+	}
+	leader = {
+		base = 100
+		modifier = {
+			factor = 10
+			leader_class = ruler
+		}
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+
+	# No Demands
+	demand = { # Support Forever, but not thoroughly
+		title = "DEMAND_SUPPORTERS"
+		unfulfilled_title = "DEMAND_SUPPORTERS"
+		desc = "DEMAND_SUPPORTERS_DESC"
+		fulfilled_effect = 35
+		unfulfilled_effect = -0.001
+		potential = {
+			always = yes
+		}
+		trigger = {
+			always = yes
+		}
+	}
+	
+	on_create = {
+		# pop_faction_event = { id = factions.1 }
+	}
+
+	on_destroy = {
+	}
+	
+	actions = {
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					NOR = { 
+						has_modifier = suppressed_elitist
+						has_modifier = promoted_elitist 
+					}				
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					add_modifier = { modifier = promoted_elitist days = -1 }
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					has_modifier = promoted_elitist
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_elitist
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}		
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					NOR = { 
+						has_modifier = suppressed_elitist
+						has_modifier = promoted_elitist 
+					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_elitist days = -1 }
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+			
+			potential = {
+				exists = owner
+				parameter:empire = { 
+					has_modifier = suppressed_elitist
+				}
+			}
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_elitist
+				}
+			}
+			
+			ai_weight = {
+				base = 0
+			}
+		}	
+	}
+}

@@ -34,7 +34,7 @@ entrepreneurs = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_socialism = no
+		is_authoritarian = no
 		OR = { # Only Same Ideology or Job
 			can_join_faction_entrepreneurs_i = yes
 			can_join_faction_entrepreneurs_c = yes
@@ -89,6 +89,15 @@ entrepreneurs = {
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhigh
+			OR = {
+				AND = {
+					exists = from
+					from = { is_egalitarian = yes }
+				}
+				OR = {
+					is_egalitarian = yes
+				}
+			}
 			has_job = politician
 		}
 		# 万众一心
@@ -146,7 +155,7 @@ entrepreneurs = {
 					has_civic = civic_beacon_of_liberty
 					AND = {
 						OR = {
-							is_coalition_government = yes
+							has_civic = civic_coalition_government
 							has_civic = civic_sovereign_federation
 						}
 						NOR = {
@@ -403,11 +412,8 @@ entrepreneurs = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -419,10 +425,10 @@ entrepreneurs = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
 					NOT = {
-						has_ethic = "ethic_fanatic_egalitarian"
+						is_egalitarian = yes
 					}
 				}
 			}
@@ -471,33 +477,17 @@ entrepreneurs = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_egalitarian
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					owner = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
-				modifier = {
-					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
-								leader_of_faction = progressive
+								leader_of_faction = entrepreneurs
 							}
-						}
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
 						}
 					}
 				}

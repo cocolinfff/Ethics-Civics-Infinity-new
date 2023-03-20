@@ -100,7 +100,18 @@ prosperity = {
 		}
 		# Stance from Job
 		modifier = {
-			factor = @factionattractionhighvery
+			factor = @factionattractionhigh
+			OR = {
+				AND = {
+					exists = from
+					from = { is_pacifist = yes }
+				}
+				OR = {
+					is_pacifist = yes
+					is_capitalist = yes
+					is_xenophobe = yes
+				}
+			}
 			OR = {
 				AND = {
 					has_job = farmer
@@ -427,11 +438,8 @@ prosperity = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -443,10 +451,10 @@ prosperity = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
 					NOT = {
-						has_ethic = "ethic_fanatic_pacifist"
+						is_pacifist = yes
 					}
 				}
 			}
@@ -495,33 +503,17 @@ prosperity = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_pacifist
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					owner = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
-				modifier = {
-					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
 								leader_of_faction = prosperity
 							}
-						}
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
 						}
 					}
 				}

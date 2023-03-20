@@ -77,8 +77,14 @@ isolationist = {
 			factor = @factionattractionhigh
 			exists = from
 			OR = {
-				from = { is_xenophobe = yes }
-				happiness < 0.45
+				AND = {
+					exists = from
+					from = { is_xenophobe = yes }
+				}
+				AND = {
+					is_xenophobe = yes
+					happiness < 0.45
+				}
 			}
 			OR = {
 				is_pop_category = specialist
@@ -96,8 +102,8 @@ isolationist = {
 			factor = 0.1
 			exists = root
 			root = { faction_approval < 0.5 }
-			exists = owner
-			owner = { has_ascension_perk = ap_one_vision }
+			exists = from
+			from = { has_ascension_perk = ap_one_vision }
 		}
 	}
 	leader = {
@@ -486,11 +492,8 @@ isolationist = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -502,7 +505,7 @@ isolationist = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
 					NOT = {
 						has_ethic = "ethic_fanatic_xenophobe"
@@ -564,33 +567,17 @@ isolationist = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_xenophobe
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					owner = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
-				modifier = {
-					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
 								leader_of_faction = isolationist
 							}
-						}
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
 						}
 					}
 				}

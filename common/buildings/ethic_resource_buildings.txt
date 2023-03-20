@@ -1508,6 +1508,7 @@ building_resource_silo = {
 	}
 }
 
+#生物反应堆
 building_bio_reactor = {
 	base_buildtime = 240
 
@@ -1520,10 +1521,12 @@ building_bio_reactor = {
 				is_machine_empire = yes
 				is_mechanical_empire = yes
 				is_lithoid_empire = yes
+				is_primitive_society = yes
 			}
 			OR = {
 				owner = { is_ai = no }
 				owner = { country_uses_food = no }
+				owner = { is_primitive_society = yes }
 			}
 		}
 	}
@@ -1540,12 +1543,78 @@ building_bio_reactor = {
 			}
 			energy = 20
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_primitive_society = yes
+					NOT = { has_deficit = food }
+				}
+			}
+			energy = 10
+		}
 		upkeep = {
 			food = 25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_primitive_society = yes
+				}
+			}
+			food = 15
 		}
 	}
 
 	prerequisites = {
 		"tech_bio_reactor"
+	}
+}
+
+#矿坑
+building_primitive_mine_eci = {
+	can_demolish = yes
+	icon = building_primitive_mine
+
+	category = resource
+
+	potential = {
+		exists = owner
+		owner = {
+			is_primitive_society = yes
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			is_primitive_society = no
+		}
+	}
+
+	planet_modifier = {
+		job_primitive_miner_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_lithoid_empire = yes }
+		}
+
+		job_primitive_miner_add = 8
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_primitive_society = yes }
+		}
+
+		job_primitive_miner_add = 2
+	}
+
+	upgrades = {
 	}
 }

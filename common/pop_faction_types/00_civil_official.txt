@@ -83,6 +83,16 @@ civil_official = {
 		modifier = {
 			factor = @factionattractionhighvery
 			OR = {
+				AND = {
+					exists = from
+					from = { is_authoritarian = yes }
+				}
+				OR = {
+					is_authoritarian = yes
+					is_pacifist = yes
+				}
+			}
+			OR = {
 				has_job = bureaucrat
 				has_job = head_researcher
 				has_job = servant
@@ -127,7 +137,6 @@ civil_official = {
 		}
 	}
 	
-	
 	#寡头政府
 	demand = {
 		title = "FEW_RULERS"
@@ -146,7 +155,6 @@ civil_official = {
 			}
 		}
 	}	
-	
     #经济阶级
 	demand = {
 		title = "TOTALITARIAN_STRATIFICATION"
@@ -171,7 +179,6 @@ civil_official = {
 			}
 		}
 	}
-
     #精英主义
 	demand = {
 		title = "TOTALITARIAN_ELITISM"
@@ -200,7 +207,6 @@ civil_official = {
 			}
 		}
 	}
-	
 	#言论管制
 	demand = {
 		title = "PROGRESSIVE_STATE_MEDIA"
@@ -219,7 +225,6 @@ civil_official = {
 			}
 		}
 	}
-	
 	#高贵的统治者
 	demand = {
 		title = "TOTALITARIAN_ARISTOCRACY"
@@ -242,7 +247,6 @@ civil_official = {
 			}
 		}
 	}
-	
 	#官僚政治
 	demand = {
 		title = "BUREAUCRACY"
@@ -297,7 +301,7 @@ civil_official = {
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = { is_subject_type = dominion }
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
 				}
 			}
@@ -309,9 +313,9 @@ civil_official = {
 						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
-				support > 0.10
+				support > 0.15
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_authoritarian" }
+					NOT = { is_authoritarian = yes }
 				}
 			}
 
@@ -346,30 +350,20 @@ civil_official = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_authoritarian
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					NOT = { 
+					support < 0.45
+					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
-								leader_of_faction = conservatives
+								leader_of_faction = civil_official
 							}
 						}
 					}
 				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}					
-					}
-				}				
 			}
 		}
 		promote_faction = {
