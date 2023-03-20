@@ -1,7 +1,7 @@
 # from = country
 # this = species
 
-# Normal
+# 居留权
 citizenship_limited = {
 	new_pop_weight = 0.75
 
@@ -76,6 +76,15 @@ citizenship_limited = {
 			}
 		}
 		custom_tooltip = {
+			fail_text = too_alien
+			OR = {
+				is_same_species = from
+				from = {
+					NOT = { has_valid_civic = civic_glory_and_dream }
+				}
+			}
+		}
+		custom_tooltip = {
 			fail_text = yes_service_yes_citizenship
 			if = {
 				limit = {
@@ -119,7 +128,7 @@ citizenship_limited = {
 	}
 }
 
-# Slavery
+# 奴隶
 citizenship_slavery = {
 	is_slavery = yes
 	in_breach_of = {
@@ -183,6 +192,14 @@ citizenship_slavery = {
 				NOR = {
 					has_ethic = ethic_xenophile
 					has_ethic = ethic_fanatic_xenophile
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = is_broken_shackles_origin
+			NOT = {
+				from = {
+					has_origin = origin_broken_shackles
 				}
 			}
 		}
@@ -268,7 +285,7 @@ citizenship_slavery = {
 	}
 }
 
-# Special
+# 侍从
 citizenship_robot_servitude = {
 	is_robot_servant = yes
 
@@ -323,9 +340,8 @@ citizenship_robot_servitude = {
 	}
 }
 
+# 活体陈设
 living_organic_trophy = {
-	name = living_organic_trophy
-
 	triggered_pop_modifier = {
 		potential = {
 			NAND = {
@@ -375,6 +391,159 @@ living_organic_trophy = {
 
 	ai_will_do = {
 		factor = 100
+	}
+}
+
+# 不可接触者
+citizenship_purge = {
+	new_pop_weight = 0.0
+
+	is_purge = yes
+
+	potential = {
+		exists = from
+		NOT = { from = { has_authority = auth_machine_intelligence } }
+		OR = {
+			NOT = { has_trait = trait_mechanical }
+			from = { has_policy_flag = robots_outlawed }
+			AND = {
+				from = { has_authority = auth_hive_mind }
+				is_robotic_species = yes
+			}
+		}
+	}
+
+	allow = {
+		hidden_trigger = { exists = from }
+		if = {
+			limit = { is_lonely_hive_mind_pop = yes }
+			hidden_trigger = { always = yes }
+		}
+		else = {
+			custom_tooltip = {
+				fail_text = is_broken_shackles_origin
+				NOT = {
+					from = {
+						has_origin = origin_broken_shackles
+					}
+				}
+			}
+			custom_tooltip = {
+				fail_text = same_species_disallowed
+				NOT = { is_same_species = from }
+			}
+			custom_tooltip = {
+				fail_text = "presapients_not_purged_citizenship"
+				OR = {
+					is_sapient = yes
+					from = {
+						NOT = {
+							has_policy_flag = pre_sapients_protect
+							has_policy_flag = pre_sapients_allow
+							has_policy_flag = pre_sapients_eat
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOR = {
+						has_trait = trait_machine_unit
+						has_trait = trait_mechanical
+					}
+				}
+				custom_tooltip = {
+					fail_text = PURGING_NOT_ALLOWED
+					from = { allows_purge = yes }
+				}
+			}
+			custom_tooltip = {
+				fail_text = yes_service_yes_citizenship
+				if = {
+					limit = {
+						from = { has_valid_civic = civic_citizen_service }
+					}
+					NOT = { has_military_service_type = { type = military_service_full country = from } }
+				}
+			}
+		}
+	}
+	ai_will_do = {
+		factor = 20
+		modifier = {
+			factor = 0
+			has_trait = trait_machine_unit
+			from = {
+				has_authority = auth_machine_intelligence
+			}
+		}
+		modifier = {
+			factor = 0
+			from = {
+				has_valid_ai_personality = no
+				NOT = { has_authority = auth_hive_mind }
+			}
+		}
+		modifier = {
+			factor = 0
+			from = {
+				has_valid_ai_personality = yes
+				NOR = {
+					has_ai_personality_behaviour = purger
+					AND = {
+						has_ai_personality_behaviour = displacer
+						if = {
+							limit = {
+								has_origin = origin_necrophage
+							}
+							is_hive_empire = yes
+						}
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			from = {
+				has_authority = auth_machine_intelligence
+				has_government = gov_machine_industrial
+			}
+		}
+		modifier = {
+			factor = 0
+			from = {
+				has_authority = auth_hive_mind
+				NOT = { has_valid_civic = civic_hive_devouring_swarm }
+				NOT = { has_origin = origin_necrophage }
+				OR = {
+					has_valid_civic = civic_hive_one_mind
+					has_valid_civic = civic_hive_subsumed_will
+					root = { has_trait = trait_hive_mind }
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			from = {
+				has_origin = origin_syncretic_evolution
+			}
+		}
+		modifier = {
+			factor = 10
+			from = {
+				is_ai = yes
+				has_ascension_perk = ap_become_the_crisis
+			}
+		}
+		modifier = {
+			add = 1000
+			not = { has_species_flag = syncretic_species@from }
+			is_robotic = no
+			from = {
+				has_origin = origin_necrophage
+				is_xenophobe = yes
+			}
+		}
 	}
 }
 
@@ -604,6 +773,7 @@ citizenship_assimilation = {
 	}
 }
 
+# 机械融合
 citizenship_full_machine = {
 	is_full_citizenship = yes
 	
