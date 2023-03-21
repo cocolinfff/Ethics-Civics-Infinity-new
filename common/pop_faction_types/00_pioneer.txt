@@ -77,13 +77,22 @@ pioneer = {
 			}
 		}
 		modifier = {
-			factor = 0.50 # Need a Leader
+			factor = 0.50 # Great Leader is Neccessary
 			exists = root
 			root = {
 				NOT = {
 					exists = leader
 				}
 			}
+		}
+		# Actions
+		modifier = {
+			factor = @factionattractionpromote
+			has_pop_faction_flag = promote_faction
+		}
+		modifier = {
+			factor = @factionattractionsuppress
+			has_pop_faction_flag = suppress_faction
 		}
 		# Angry
 		modifier = {
@@ -167,7 +176,7 @@ pioneer = {
 		title = "PIONEER_POWER"
 		unfulfilled_title = "NO_PIONEER_POWER"
 		desc = "PIONEER_POWER_DESC"
-		fulfilled_effect = 10
+		fulfilled_effect = 11
 		potential = {
 			exists = owner
 			owner = {
@@ -283,9 +292,8 @@ pioneer = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			cost = {
-				unity = 5000
-			}
+			cost = { influence = 200 }
+			
 			potential = {
 				exists = owner
 				owner = {
@@ -376,90 +384,51 @@ pioneer = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_socialism
-						has_modifier = promoted_socialism
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
 			effect = {
-				parameter:empire = {
-					add_modifier = {
-						modifier = promoted_socialism
-						days = -1
-					}
-				}
+				set_pop_faction_flag = promote_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_socialism
-				}
+				has_pop_faction_flag = promote_faction
 			}
 			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_socialism
-				}
+				remove_pop_faction_flag = promote_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_socialism
-						has_modifier = promoted_socialism
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
 			effect = {
-				add_modifier = {
-					modifier = suppressed_faction
-					days = -1
-				}
-				parameter:empire = {
-					add_modifier = {
-						modifier = suppressed_socialism
-						days = -1
-					}
-				}
+				set_pop_faction_flag = suppress_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_socialism
-				}
+				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_socialism
-				}
+				remove_pop_faction_flag = remove_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 	}
 }

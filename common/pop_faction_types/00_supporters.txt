@@ -54,6 +54,15 @@ supporters = {
 				has_policy_flag = directional_management
 			}
 		}
+		# Actions
+		modifier = {
+			factor = @factionattractionpromote
+			has_pop_faction_flag = promote_faction
+		}
+		modifier = { # Refuse Support!
+			factor = 0
+			has_pop_faction_flag = suppress_faction
+		}
 		# Angry
 		modifier = {
 			factor = 0.1
@@ -63,14 +72,32 @@ supporters = {
 		modifier = {
 			factor = 1.15
 			happiness > 0.65
+			OR = {
+				member_of_faction = no
+				pop_faction = {
+					faction_approval < 65
+				}
+			}
 		}
 		modifier = {
-			factor = 1.35
+			factor = 1.25
 			happiness > 0.85
+			OR = {
+				member_of_faction = no
+				pop_faction = {
+					faction_approval < 75
+				}
+			}
 		}
 		modifier = {
-			factor = 1.65
+			factor = 1.45
 			happiness > 0.99
+			OR = {
+				member_of_faction = no
+				pop_faction = {
+					faction_approval < 85
+				}
+			}
 		}
 	}
 	leader = {
@@ -86,17 +113,19 @@ supporters = {
 	}
 
 	# No Demands
-	demand = { # Support Forever, but not thoroughly
+	demand = { # Support Forever, but not thoroughly?
 		title = "DEMAND_SUPPORTERS"
 		unfulfilled_title = "DEMAND_SUPPORTERS"
 		desc = "DEMAND_SUPPORTERS_DESC"
-		fulfilled_effect = 35
-		unfulfilled_effect = -0.001
+		fulfilled_effect = 50
+		unfulfilled_effect = 35
 		potential = {
-			always = yes
+			exists = owner
 		}
 		trigger = {
-			always = yes
+			owner = {
+				is_community_society = yes
+			}
 		}
 	}
 	
@@ -111,94 +140,52 @@ supporters = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
-			
 			potential = {
-				exists = owner
-				parameter:empire = { 
-					NOR = { 
-						has_modifier = suppressed_elitist
-						has_modifier = promoted_elitist 
-					}				
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
-
 			effect = {
-				parameter:empire = {
-					add_modifier = { modifier = promoted_elitist days = -1 }
-				}
+				set_pop_faction_flag = promote_faction
 			}
-			
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
-			
 			potential = {
-				exists = owner
-				parameter:empire = { 
-					has_modifier = promoted_elitist
-				}
+				has_pop_faction_flag = promote_faction
 			}
-
 			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_elitist
-				}
+				remove_pop_faction_flag = promote_faction
 			}
-			
-			ai_weight = {
-				base = 0
-			}
-		}		
+			ai_weight = { base = 0 }
+		}
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
-			
 			potential = {
-				exists = owner
-				parameter:empire = { 
-					NOR = { 
-						has_modifier = suppressed_elitist
-						has_modifier = promoted_elitist 
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
-
 			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_elitist days = -1 }
-				}
+				set_pop_faction_flag = suppress_faction
 			}
-			
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
-			
 			potential = {
-				exists = owner
-				parameter:empire = { 
-					has_modifier = suppressed_elitist
-				}
+				has_pop_faction_flag = suppress_faction
 			}
-
 			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_elitist
-				}
+				remove_pop_faction_flag = remove_faction
 			}
-			
-			ai_weight = {
-				base = 0
-			}
-		}	
+			ai_weight = { base = 0 }
+		}
 	}
 }
