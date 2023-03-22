@@ -578,6 +578,25 @@ media_worker = {
 			}
 			society_research = 3
 		}
+		#集体共识
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_policy_flag = freedom_utopia
+				}
+			}
+			society_research = 3
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_policy_flag = freedom_utopia }
+				exists = planet
+				planet = { has_building = building_hypercomms_forum }
+			}
+			unity = 1
+		}
 		#和平主义
 		produces = {
 			trigger = {
@@ -2261,6 +2280,222 @@ primitive_artisan = {
 					resource = consumer_goods
 					value < 5
 				}
+			}
+		}
+	}
+}
+
+#法师
+magician = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_mage_tower_1
+	clothes_texture_index = 3
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		ethic_is_not_enslaved = yes
+		ethic_battle_thrall_job_check_trigger = yes
+	}
+	resources = {
+		category = planet_researchers
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_valid_civic = civic_science_knight
+						has_valid_civic = civic_cyber_dictatorship
+					}
+				}
+			}
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_science_knight
+						has_valid_civic = civic_cyber_dictatorship
+					}
+				}
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+			mult = value:knight_commander_unity_output_modifier
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_edict = scientific_spirit
+						has_edict = indefinite_patent_act
+					}
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_futuristic_art
+					}
+				}
+			}
+			unity = 0.5
+		}
+		upkeep = {
+			consumer_goods = 2
+			sr_dark_matter = 0.5
+		}
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_science_knight
+			}
+		}
+		modifier = {
+			pop_cat_specialist_political_power = 3
+		}
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_edict = commercializing_academic_resources
+			}
+		}
+		modifier = {
+			pop_happiness = -0.1
+		}
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_edict = academic_resources_open_access
+			}
+		}
+		modifier = {
+			pop_happiness = 0.1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_valid_civic = civic_knowledge_seeker
+					has_policy_flag = dogma_bottom_line
+				}
+			}
+		}
+		modifier = {
+			planet_priests_produces_mult = -0.01
+		}
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_technocracy
+					has_valid_civic = civic_cyber_demos_cratos
+					has_valid_civic = civic_science_directorate
+					has_valid_civic = civic_cyber_dictatorship
+				}
+			}
+		}
+		modifier = {
+			country_edict_fund_add = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_industrial_automatation
+					has_valid_civic = civic_industrial_automatation_corporate
+				}
+			}
+		}
+		modifier = {
+			trade_value_add = 0.5
+		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_edict = commercializing_academic_resources
+			}
+		}
+		modifier = {
+			trade_value_add = 1
+		}
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_science_knight
+			}
+		}
+		job_squire_add = 2
+	}
+	weight = {
+		weight = @specialist_job_weight
+		modifier = {
+			# 可控的动态权重
+			factOR = value:job_weights_research_modifier|JOB|magician|
+			exists = owner
+			owner = {
+				has_edict = dynamic_weight
+			}
+		}
+		modifier = {
+			factOR = 0.2
+			has_citizenship_rights = no
+			NOT = {
+				has_trait = trait_mechanical
+			}
+		}
+		modifier = {
+			factOR = 2
+			has_living_standard = {
+				type = living_standard_academic_privilege
+			}
+		}
+		modifier = {
+			factOR = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factOR = 1.5
+			has_job = magician
+		}
+		modifier = {
+			factOR = 0.8
+			is_enslaved = yes
+			has_slavery_type = {
+				type = slavery_indentured
 			}
 		}
 	}
