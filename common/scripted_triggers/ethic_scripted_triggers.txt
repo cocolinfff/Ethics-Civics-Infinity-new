@@ -1,6 +1,15 @@
 ### region CIVIC CHECK
+# 没有统治者的社会
+is_not_rulers_society = {
+	OR = {
+		has_valid_civic = civic_anarchism
+		is_community_society = yes
+	}
+}
+
 # 是共产主义社会
 is_community_society = {
+	custom_tooltip = is_community_society
 	OR = {
 		has_valid_civic = civic_transcendental_communism
 		is_community_country = yes
@@ -138,8 +147,42 @@ has_pacifist_topic_civic = {
 # 是罪企
 is_criminal_syndicate = {
 	OR = {
-		has_valid_civic = civic_criminal_heritage
+		#_|巨企国家|	+ETCPM/hiveDLC/MCA/wsg/ev/多彩/Ecar
+		AND = {
+			OR = {
+				has_authority = auth_corporate
+
+				has_civic = civic_galactic_sovereign_megacorp
+				# ETCPM
+				has_authority = auth_private
+				# hiveDLC
+				has_valid_civic = civic_mutualistic_behavior
+				has_valid_civic = civic_machine_trading
+				# MCA
+				has_authority = auth_corporate_fiefdom
+				has_authority = auth_cooperative
+				# wsg
+				has_authority = auth_warshipgirls
+				# 多彩
+				has_authority = auth_brothel
+				# Ecar
+				has_civic = civic_family_business
+				has_civic = civic_world_cooperative
+			}
+			OR = {
+				has_valid_civic = civic_criminal_heritage
+
+				has_valid_civic = civic_ev_criminal_ship	# ev
+				has_valid_civic = civic_semen_pantyhose_brothel		# 多彩
+			}
+		}
+		# Ecar
 		has_valid_civic = civic_underworld_society
+		# azlr
+		AND = {
+			exists = event_target:elizabeth_leader
+			has_country_flag = azur_lane_leader_elizabeth
+		}
 	}
 }
 ### endregion
@@ -216,79 +259,124 @@ is_crisis_purged_precursor_check = {
 }
 
 ### endregion
-
-### region DISTRICT CHECK
-has_any_generator_district_or_building = {
-	OR = {
-		has_district = district_generator
-		has_district = district_hab_energy
-		has_district = district_generator_uncapped
-		has_district = district_rw_generator
-		has_building = building_betharian_power_plant
-		# PD
-		has_district = district_pdhab_energy
+#没有升级的消费品建筑
+not_has_building_factory = {
+	NOR = {
+		has_building = building_factory_2
+		has_building = building_factory_3
 	}
 }
 
-has_any_mining_district = {
-	OR = {
-		has_district = district_mining
-		has_district = district_hab_mining
-		has_district = district_mining_uncapped
-		# PD
-		has_district = district_pdhab_mining
+#没有升级的合金建筑
+not_has_building_foundry = {
+	NOR = {
+		has_building = building_foundry_2
+		has_building = building_foundry_3
 	}
 }
 
-has_any_farming_district_or_buildings = {
+#可以建造官僚办公楼
+allow_bureaucratic_building = { # NOT corporate & regular empire
+	owner = { is_regular_empire = yes }
+	NOT = {	has_modifier = slave_colony	}
 	OR = {
-		has_district = district_farming
-		has_district = district_rw_farming
-		has_district = district_farming_uncapped
-		has_building = building_hydroponics_farm
-		# PD
-		has_district = district_pdhab_food
+		owner = {
+			OR = {
+				has_policy_flag = full_decentralization
+				has_policy_flag = high_decentralization
+			}
+		}
+		AND = {
+			owner = {
+				OR = {
+					has_policy_flag = partial_decentralization
+					has_policy_flag = concentration_of_power
+				}
+			}
+			planet = {
+				OR = {
+					is_capital = yes
+					is_sector_capital = yes
+				}
+			}
+		}
+		AND = {
+			owner = {
+				OR = {
+					has_policy_flag = centralized_state
+					has_policy_flag = excessive_centralization
+				}
+			}
+			planet = { is_capital = yes }
+		}
 	}
 }
 
-has_any_arms_industry_district = {
-	OR = {
-		has_district = district_industrial
-		has_district = district_hab_industrial
-		has_district = district_rw_industrial
-		has_district = district_arcology_arms_industry
-		# PD
-		has_district = district_pdhab_industrial
+#ECI意义上的巨企（兼容其他MOD）
+is_eci_megacorp = {
+	owner = {
+		OR = {
+			has_authority = auth_corporate
+			has_civic = civic_galactic_sovereign_megacorp
+			has_civic = civic_family_business
+			has_civic = civic_world_cooperative
+		}
 	}
 }
 
-has_any_civilian_industry_district = {
-	OR = {
-		has_district = district_industrial
-		has_district = district_arcology_civilian_industry
-		has_district = district_rw_industrial
-		has_district = district_hab_industrial
-		has_district = district_pdhab_industrial
+#非官僚行政国家
+is_adminless_country = {
+	owner = {
+		OR = {
+			has_valid_civic = civic_OGAS
+			has_valid_civic = civic_cybercap
+			has_valid_civic = civic_corporate_cybercap
+			has_valid_civic = civic_anarchism
+			has_valid_civic = civic_barbaric_despoilers
+			is_community_society = yes
+		}
 	}
 }
 
-has_any_arms_industry_designation = {
-	OR = {
-		has_designation = col_foundry
-		has_designation = col_habitat_foundry
-		has_designation = col_ring_foundry
-		has_designation = col_ecu_foundry
-		has_designation = col_dome_foundry
+#民主廉政国家
+is_clean_government_country = {
+	owner = {
+		OR = {
+			has_valid_civic = civic_democracy_and_clean_government
+			has_valid_civic = civic_business_reporting_administration
+		}
 	}
 }
 
-has_any_civilian_industry_designation = {
-	OR = {
-		has_designation = col_factory
-		has_designation = col_habitat_factory
-		has_designation = col_ring_factory
-		has_designation = col_ecu_factory
-		has_designation = col_dome_factory
+#婚姻市场
+is_marriage_market_country = {
+	exists = owner
+	owner = {
+		OR = {
+			has_valid_civic = civic_marriage_market
+			has_valid_civic = civic_marriage_market_corporate
+		}
 	}
 }
-### endregion
+
+#房产市场
+is_real_estate_market_country = {
+	exists = owner
+	owner = {
+		OR = {
+			has_valid_civic = civic_real_estate_market
+			has_valid_civic = civic_real_estate_market_corporate
+		}
+	}
+}
+
+#耕战一体
+is_army_production_country = {
+	exists = owner
+	owner = {
+		OR = {
+			has_valid_civic = civic_army_production
+			has_valid_civic = civic_army_production_corporate
+		}
+	}
+}

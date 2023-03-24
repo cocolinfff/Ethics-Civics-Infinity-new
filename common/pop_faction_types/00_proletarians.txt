@@ -75,6 +75,15 @@ proletarians = {
 				is_same_species = owner_species
 			}
 		}
+		# Actions
+		modifier = {
+			factor = @factionattractionpromote
+			has_pop_faction_flag = promote_faction
+		}
+		modifier = {
+			factor = @factionattractionsuppress
+			has_pop_faction_flag = suppress_faction
+		}
 		# Angry
 		modifier = {
 			factor = @factionattractionmedium
@@ -83,7 +92,7 @@ proletarians = {
 			happiness < 0.5
 		}
 		# Stance from Job
-		modifier = {
+		modifier = { # Don't Need Empire-Pop Ideology Check
 			factor = @factionattractionhigh
 			is_pop_category = worker
 			is_enslaved = no
@@ -479,19 +488,15 @@ proletarians = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			cost = {
-				unity = 5000
-			}
+			cost = { influence = 200 }
+			
 			potential = {
 				exists = owner
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -503,11 +508,9 @@ proletarians = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
-					NOT = {
-						has_ethic = "ethic_fanatic_xenophile"
-					}
+					is_xenophode = yes
 				}
 			}
 			effect = {
@@ -555,33 +558,17 @@ proletarians = {
 				base = 1
 				modifier = {
 					factor = 0
-					from = { faction_approval < 0.5 }
-					owner = {
-						has_ethic = ethic_xenophile
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					owner = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
-				modifier = {
-					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
 							ruler = {
-								leader_of_faction = xenoist
+								leader_of_faction = proletarian
 							}
-						}
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
 						}
 					}
 				}
@@ -591,90 +578,51 @@ proletarians = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_xenophile
-						has_modifier = promoted_xenophile
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
 			effect = {
-				parameter:empire = {
-					add_modifier = {
-						modifier = promoted_xenophile
-						days = -1
-					}
-				}
+				set_pop_faction_flag = promote_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_xenophile
-				}
+				has_pop_faction_flag = promote_faction
 			}
 			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_xenophile
-				}
+				remove_pop_faction_flag = promote_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_xenophile
-						has_modifier = promoted_xenophile
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
 			effect = {
-				add_modifier = {
-					modifier = suppressed_faction
-					days = -1
-				}
-				parameter:empire = {
-					add_modifier = {
-						modifier = suppressed_xenophile
-						days = -1
-					}
-				}
+				set_pop_faction_flag = suppress_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_xenophile
-				}
+				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_xenophile
-				}
+				remove_pop_faction_flag = remove_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 	}
 }

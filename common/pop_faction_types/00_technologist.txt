@@ -72,6 +72,15 @@ technologist = {
 			factor = 2
 			is_robot_pop = yes
 		}
+		# Actions
+		modifier = {
+			factor = @factionattractionpromote
+			has_pop_faction_flag = promote_faction
+		}
+		modifier = {
+			factor = @factionattractionsuppress
+			has_pop_faction_flag = suppress_faction
+		}
 		# Angry
 		modifier = {
 			factor = @factionattractionmedium
@@ -82,6 +91,15 @@ technologist = {
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhighvery
+			OR = {
+				AND = {
+					exists = from
+					from = { is_materialist = yes }
+				}
+				OR = {
+					is_materialist = yes
+				}
+			}
 			OR = {
 				has_job = head_researcher
 				has_job = researcher
@@ -389,19 +407,15 @@ technologist = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			cost = {
-				unity = 5000
-			}
+			cost = { influence = 200 }
+			
 			potential = {
 				exists = owner
 				owner = {
 					OR = {
 						is_subject = no
-						NOT = {
-							is_subject_type = dominion
-						}
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
 					}
-					NOT = { has_origin = origin_red_satellite_overlord }
 				}
 			}
 			valid = {
@@ -413,7 +427,7 @@ technologist = {
 						}
 					}
 				}
-				support > 0.1
+				support > 0.15
 				parameter:empire = {
 					NOT = {
 						has_ethic = "ethic_fanatic_materialist"
@@ -465,19 +479,11 @@ technologist = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.5
-					owner = {
-						has_ethic = ethic_materialist
-					}
+					support < 0.25
 				}
 				modifier = {
 					factor = 0
-					owner = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
-				modifier = {
-					factor = 0
+					support < 0.45
 					NOT = {
 						owner = {
 							exists = ruler
@@ -487,104 +493,57 @@ technologist = {
 						}
 					}
 				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
 			}
 		}
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_materialist
-						has_modifier = promoted_materialist
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
 			effect = {
-				parameter:empire = {
-					add_modifier = {
-						modifier = promoted_materialist
-						days = -1
-					}
-				}
+				set_pop_faction_flag = promote_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_materialist
-				}
+				has_pop_faction_flag = promote_faction
 			}
 			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_materialist
-				}
+				remove_pop_faction_flag = promote_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_materialist
-						has_modifier = promoted_materialist
-					}
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
 				}
 			}
 			effect = {
-				add_modifier = {
-					modifier = suppressed_faction
-					days = -1
-				}
-				parameter:empire = {
-					add_modifier = {
-						modifier = suppressed_materialist
-						days = -1
-					}
-				}
+				set_pop_faction_flag = suppress_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
 			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_materialist
-				}
+				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_materialist
-				}
+				remove_pop_faction_flag = remove_faction
 			}
-			ai_weight = {
-				base = 0
-			}
+			ai_weight = { base = 0 }
 		}
 	}
 }
