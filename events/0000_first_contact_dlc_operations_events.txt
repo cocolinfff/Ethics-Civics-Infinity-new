@@ -1,0 +1,3623 @@
+############################################
+#
+# First Contact Espionage Events
+# Written by Giada Zavarise, Gemma Thomson,
+# Niamh Calderwood & Victor Haeggman
+#
+############################################
+
+namespace = preftl_operation
+
+# Number of days before a single event should (ideally) stand a chance of coming up again. See also @RandomPreFTLOperationEventTimer for 'regular' Espionage.
+@RandomPreFTLOperationEventTimer = 600
+@RandomPreFTLOperationEventTimerLong = 1000
+
+# Default "nothing to report" event
+espionage_operation_event = {
+	id = preftl_operation.100
+	hide_window = yes
+	is_triggered_only = yes
+}
+
+######################################
+# INFILTRATION: INFILTRATE GOVERNMENT
+######################################
+# this = operation; from = target (country)
+
+# Final Stage
+espionage_operation_event = {
+	id = preftl_operation.1000
+	title = preftl_operation.1000.name
+	desc = { # Standard report
+		trigger = {
+			check_variable = {
+				which = pre_ftl_operation_success
+				value = 0
+			}
+		}
+		text = preftl_operation.1000.desc.okay
+	}
+	desc = { # Good report
+		trigger = {
+			check_variable = {
+				which = pre_ftl_operation_success
+				value > 0
+			}
+		}
+		text = preftl_operation.1000.desc.good
+	}
+	desc = { # Poor report
+		trigger = {
+			check_variable = {
+				which = pre_ftl_operation_success
+				value < 0
+			}
+		}
+		text = preftl_operation.1000.desc.poor
+	}
+	picture = GFX_evt_infiltration_neutral
+	show_sound = event_espionage_concluded
+	espionage_operation = yes
+	is_triggered_only = yes
+
+	immediate = {
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = LAUNCH_OPERATION
+		hidden_effect = {
+			target = {
+				species = { save_event_target_as = infiltrated_country_species }
+				capital_scope = { save_event_target_as = infiltrated_country_planet }
+			}
+			evaluate_pre_ftl_operation_success = {
+				EVENT_GREAT = preftl_operation.1005
+				EVENT_GOOD = preftl_operation.1006
+				EVENT_DEFAULT = preftl_operation.1007
+				EVENT_POOR = preftl_operation.1008
+			}
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+
+# Annexation Finalé (great)
+country_event = {
+	id = preftl_operation.1005
+	title = preftl_operation.1005.name
+	desc = preftl_operation.1005.desc
+	picture = GFX_evt_two_sided_deal
+	show_sound = event_celebration
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	immediate = {
+		from.target = {
+			infiltrate_government_annexation_effect = yes
+		}	
+	}
+
+	option = {
+		name = EXCELLENT
+		custom_tooltip = preftl_operation.1005.tt
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = from.target
+			}
+			from.target = { destroy_country = yes }
+		}
+	}
+}
+
+# Annexation Finalé (good)
+country_event = {
+	id = preftl_operation.1006
+	title = preftl_operation.1006.name
+	desc = preftl_operation.1006.desc
+	picture = GFX_evt_hostile_infiltration
+	show_sound = event_criminal_activity
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	immediate = {
+		from.target = {
+			infiltrate_government_annexation_effect = yes
+		}
+	}
+
+	option = {
+		name = GOOD
+		custom_tooltip = preftl_operation.1005.tt
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = from.target
+			}
+			from.target = { destroy_country = yes }
+		}
+	}
+}
+
+# Annexation Finalé (standard)
+country_event = {
+	id = preftl_operation.1007
+	title = preftl_operation.1007.name
+	desc = preftl_operation.1007.desc
+	picture = GFX_evt_hostile_infiltration
+	show_sound = event_criminal_activity
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	immediate = {
+		from.target = {
+			infiltrate_government_annexation_effect = yes
+		}
+	}
+
+	option = {
+		name = OK
+		custom_tooltip = preftl_operation.1005.tt
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = from.target
+			}
+			from.target = { destroy_country = yes }
+		}
+	}
+}
+# Annexation Finalé (poor)
+country_event = {
+	id = preftl_operation.1008
+	title = preftl_operation.1008.name
+	desc = preftl_operation.1008.desc
+	picture = GFX_evt_infiltration_failure
+	show_sound = event_criminal_activity
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	option = {
+		name = CURSES
+		custom_tooltip = preftl_operation.failed_annaxation.tt
+		set_timed_country_flag = {
+			flag = failed_infiltration@from.target
+			days = 1800
+		}
+		from = {
+			target = {
+				if = {
+					limit = {
+						has_awareness < 100
+					}
+					add_awareness = 40
+				}
+				if = {
+					limit = {
+						has_awareness >= 60
+					}
+					add_opinion_modifier = {
+						who = root
+						modifier = attempted_infiltration
+					}
+				}
+			}
+			hidden_effect = {
+				evaluate_pre_ftl_espionage_violation_effect = yes
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+#####################################
+# INFILTRATION: INDOCTRINATE SOCIETY
+#####################################
+# this = operation; from = target (country)
+
+# Final Stage
+espionage_operation_event = {
+	id = preftl_operation.1015
+	title = preftl_operation.1015.name
+	desc = preftl_operation.1015.desc
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	immediate = {
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = LAUNCH_OPERATION
+		hidden_effect = {
+			if = { # Pre-Industrialization outcomes
+				limit = {
+					target = {
+						is_pre_industrial = yes
+					}
+				}
+				evaluate_pre_ftl_operation_success = {
+					EVENT_DEFAULT = preftl_operation.1016
+					EVENT_GREAT = preftl_operation.1017
+					EVENT_GOOD = preftl_operation.1017
+					EVENT_POOR = preftl_operation.1018
+				}
+			}
+			else = { # Post-Industrialization outcomes
+				evaluate_pre_ftl_operation_success = {
+					EVENT_DEFAULT = preftl_operation.1019
+					EVENT_GREAT = preftl_operation.1020
+					EVENT_GOOD = preftl_operation.1020
+					EVENT_POOR = preftl_operation.1021
+				}
+			}
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+
+# Pre-Industrialization Finalé (standard)
+# Note the the post-industrial version of this event inherits everything from this event except its 'desc' texts
+country_event = {
+	id = preftl_operation.1016
+	title = preftl_operation.1016.name
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				shifting_pre_ftl_ethic_to_authoritarian =	{ text = preftl_operation.1016.autho.desc }
+				shifting_pre_ftl_ethic_to_egalitarian =		{ text = preftl_operation.1016.egali.desc }
+				shifting_pre_ftl_ethic_to_materialist =		{ text = preftl_operation.1016.mater.desc }
+				shifting_pre_ftl_ethic_to_militarist =		{ text = preftl_operation.1016.milit.desc }
+				shifting_pre_ftl_ethic_to_pacifist =		{ text = preftl_operation.1016.pacif.desc }
+				shifting_pre_ftl_ethic_to_xenophile =		{ text = preftl_operation.1016.phile.desc }
+				shifting_pre_ftl_ethic_to_xenophobe =		{ text = preftl_operation.1016.phobe.desc }
+				shifting_pre_ftl_ethic_to_spiritualist =	{ text = preftl_operation.1016.spiri.desc }
+				shifting_pre_ftl_ethic_to_socialism =		{ text = preftl_operation.1016.socia.desc }
+				shifting_pre_ftl_ethic_to_capitalism =	{ text = preftl_operation.1016.capit.desc }
+				default = { text = preftl_operation.1016.mater.desc }
+			}
+		}
+	}
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_espionage_concluded
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	immediate = {
+		pre_ftl_indoctrinate_operation_result = { BONUS = 0 } # see scripted value 'pre_ftl_pops_shifting_ethic'
+	}
+
+	option = {
+		name = GOOD
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -15 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+# Pre-Industrialization Finalé (good or excellent)
+# Note the the post-industrial version of this event inherits everything from this event except its 'desc' texts
+country_event = {
+	id = preftl_operation.1017
+	title = preftl_operation.1016.name
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				shifting_pre_ftl_ethic_to_authoritarian =	{ text = preftl_operation.1017.autho.desc }
+				shifting_pre_ftl_ethic_to_egalitarian =		{ text = preftl_operation.1017.egali.desc }
+				shifting_pre_ftl_ethic_to_materialist =		{ text = preftl_operation.1017.mater.desc }
+				shifting_pre_ftl_ethic_to_militarist =		{ text = preftl_operation.1017.milit.desc }
+				shifting_pre_ftl_ethic_to_pacifist =		{ text = preftl_operation.1017.pacif.desc }
+				shifting_pre_ftl_ethic_to_xenophile =		{ text = preftl_operation.1017.phile.desc }
+				shifting_pre_ftl_ethic_to_xenophobe =		{ text = preftl_operation.1017.phobe.desc }
+				shifting_pre_ftl_ethic_to_spiritualist =	{ text = preftl_operation.1017.spiri.desc }
+				shifting_pre_ftl_ethic_to_socialism =		{ text = preftl_operation.1017.socia.desc }
+				shifting_pre_ftl_ethic_to_capitalism =	{ text = preftl_operation.1017.capit.desc }
+				default = { text = preftl_operation.1017.mater.desc }
+			}
+		}
+	}
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_espionage_concluded
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	immediate = {
+		pre_ftl_indoctrinate_operation_result = { BONUS = 3 }
+	}
+
+	option = {
+		name = EXCELLENT
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -5 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+# Pre-Industrialization Finalé (poor)
+# Note the the post-industrial version of this event inherits everything from this event except its 'desc' texts
+country_event = {
+	id = preftl_operation.1018
+	title = preftl_operation.1016.name
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				shifting_pre_ftl_ethic_to_authoritarian =	{ text = preftl_operation.1018.autho.desc }
+				shifting_pre_ftl_ethic_to_egalitarian =		{ text = preftl_operation.1018.egali.desc }
+				shifting_pre_ftl_ethic_to_materialist =		{ text = preftl_operation.1018.mater.desc }
+				shifting_pre_ftl_ethic_to_militarist =		{ text = preftl_operation.1018.milit.desc }
+				shifting_pre_ftl_ethic_to_pacifist =		{ text = preftl_operation.1018.pacif.desc }
+				shifting_pre_ftl_ethic_to_xenophile =		{ text = preftl_operation.1018.phile.desc }
+				shifting_pre_ftl_ethic_to_xenophobe =		{ text = preftl_operation.1018.phobe.desc }
+				shifting_pre_ftl_ethic_to_spiritualist =	{ text = preftl_operation.1018.spiri.desc }
+				shifting_pre_ftl_ethic_to_socialism =		{ text = preftl_operation.1018.socia.desc }
+				shifting_pre_ftl_ethic_to_capitalism =	{ text = preftl_operation.1018.capit.desc }
+				default = { text = preftl_operation.1018.mater.desc }
+			}
+		}
+	}
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_espionage_concluded
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	immediate = {
+		pre_ftl_indoctrinate_operation_result = { BONUS = -4 }
+	}
+
+	option = {
+		name = EXCELLENT
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -5 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+# Post-Industrial Finalé (standard)
+country_event = {
+	id = preftl_operation.1019
+	base = preftl_operation.1016
+	desc_clear = yes
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				shifting_pre_ftl_ethic_to_authoritarian =	{ text = preftl_operation.1019.autho.desc }
+				shifting_pre_ftl_ethic_to_egalitarian =		{ text = preftl_operation.1019.egali.desc }
+				shifting_pre_ftl_ethic_to_materialist =		{ text = preftl_operation.1019.mater.desc }
+				shifting_pre_ftl_ethic_to_militarist =		{ text = preftl_operation.1019.milit.desc }
+				shifting_pre_ftl_ethic_to_pacifist =		{ text = preftl_operation.1019.pacif.desc }
+				shifting_pre_ftl_ethic_to_xenophile =		{ text = preftl_operation.1019.phile.desc }
+				shifting_pre_ftl_ethic_to_xenophobe =		{ text = preftl_operation.1019.phobe.desc }
+				shifting_pre_ftl_ethic_to_spiritualist =	{ text = preftl_operation.1019.spiri.desc }
+				shifting_pre_ftl_ethic_to_socialism =		{ text = preftl_operation.1019.socia.desc }
+				shifting_pre_ftl_ethic_to_capitalism =	{ text = preftl_operation.1019.capit.desc }
+				default = { text = preftl_operation.1019.mater.desc }
+			}
+		}
+	}
+}
+# Post-Industrial Finalé (good or excellent)
+country_event = {
+	id = preftl_operation.1020
+	base = preftl_operation.1017
+	desc_clear = yes
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				shifting_pre_ftl_ethic_to_authoritarian =	{ text = preftl_operation.1020.autho.desc }
+				shifting_pre_ftl_ethic_to_egalitarian =		{ text = preftl_operation.1020.egali.desc }
+				shifting_pre_ftl_ethic_to_materialist =		{ text = preftl_operation.1020.mater.desc }
+				shifting_pre_ftl_ethic_to_militarist =		{ text = preftl_operation.1020.milit.desc }
+				shifting_pre_ftl_ethic_to_pacifist =		{ text = preftl_operation.1020.pacif.desc }
+				shifting_pre_ftl_ethic_to_xenophile =		{ text = preftl_operation.1020.phile.desc }
+				shifting_pre_ftl_ethic_to_xenophobe =		{ text = preftl_operation.1020.phobe.desc }
+				shifting_pre_ftl_ethic_to_spiritualist =	{ text = preftl_operation.1020.spiri.desc }
+				shifting_pre_ftl_ethic_to_socialism =		{ text = preftl_operation.1020.socia.desc }
+				shifting_pre_ftl_ethic_to_capitalism =	{ text = preftl_operation.1020.capit.desc }
+				default = { text = preftl_operation.1020.mater.desc }
+			}
+		}
+	}
+}
+# Post-Industrial Finalé (standard)
+country_event = {
+	id = preftl_operation.1021
+	base = preftl_operation.1018
+	desc_clear = yes
+	desc = {
+		trigger = {
+			switch = {
+				trigger = has_country_flag
+				shifting_pre_ftl_ethic_to_authoritarian =	{ text = preftl_operation.1021.autho.desc }
+				shifting_pre_ftl_ethic_to_egalitarian =		{ text = preftl_operation.1021.egali.desc }
+				shifting_pre_ftl_ethic_to_materialist =		{ text = preftl_operation.1021.mater.desc }
+				shifting_pre_ftl_ethic_to_militarist =		{ text = preftl_operation.1021.milit.desc }
+				shifting_pre_ftl_ethic_to_pacifist =		{ text = preftl_operation.1021.pacif.desc }
+				shifting_pre_ftl_ethic_to_xenophile =		{ text = preftl_operation.1021.phile.desc }
+				shifting_pre_ftl_ethic_to_xenophobe =		{ text = preftl_operation.1021.phobe.desc }
+				shifting_pre_ftl_ethic_to_spiritualist =	{ text = preftl_operation.1021.spiri.desc }
+				shifting_pre_ftl_ethic_to_socialism =		{ text = preftl_operation.1021.socia.desc }
+				shifting_pre_ftl_ethic_to_capitalism =	{ text = preftl_operation.1021.capit.desc }
+				default = { text = preftl_operation.1021.mater.desc }
+			}
+		}
+	}
+}
+
+#########################################
+# INFILTRATION: PLANT ADVANCED KNOWLEDGE
+#########################################
+# this = operation; from = target (country)
+
+# Final Stage
+espionage_operation_event = {
+	id = preftl_operation.1045
+	title = preftl_operation.1045.name
+	desc = preftl_operation.1045.desc
+	picture = GFX_evt_spymaster
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	immediate = {
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = LAUNCH_OPERATION
+		hidden_effect = {
+			evaluate_pre_ftl_operation_success = {
+				EVENT_GREAT = preftl_operation.1046
+				EVENT_GOOD = preftl_operation.1047
+				EVENT_DEFAULT = preftl_operation.1048
+				EVENT_POOR = preftl_operation.1049
+			}
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+
+# Finalé (excellent progress)
+country_event = {
+	id = preftl_operation.1046
+	title = preftl_operation.1046.name
+	desc = preftl_operation.1046.desc
+	picture = GFX_evt_friendly_enlightenment
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 15
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress =  value:pre_ftl_gain_tech_progress|BONUS|96|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = 10 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+# Finalé (good progress)
+country_event = {
+	id = preftl_operation.1047
+	title = preftl_operation.1047.name
+	desc = preftl_operation.1047.desc
+	picture = GFX_evt_friendly_enlightenment
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 12.5
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress = value:pre_ftl_gain_tech_progress|BONUS|48|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = 5 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+# Finalé (standard outcome)
+country_event = {
+	id = preftl_operation.1048
+	title = preftl_operation.1048.name
+	desc = preftl_operation.1048.desc
+	picture = GFX_evt_friendly_enlightenment
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 10
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress = value:pre_ftl_gain_tech_progress|BONUS|0|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -5 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+# Finalé (poor progress)
+country_event = {
+	id = preftl_operation.1049
+	title = preftl_operation.1049.name
+	desc = preftl_operation.1049.desc
+	picture = GFX_evt_communication_event
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 5
+			}
+		}
+	}
+
+	option = {
+		name = OK
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress = value:pre_ftl_gain_tech_progress|BONUS|-96|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -10 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+
+###################################
+# INFILTRATION: INCREASE AWARENESS
+###################################
+# this = operation; from = target (country)
+
+# Final Stage
+espionage_operation_event = {
+	id = preftl_operation.1025
+	title = preftl_operation.1025.name
+	espionage_operation = yes
+	desc = preftl_operation.1025.desc
+	picture = GFX_evt_spymaster
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = LAUNCH_OPERATION
+		hidden_effect = {
+			evaluate_pre_ftl_operation_success = {
+				EVENT_DEFAULT = preftl_operation.1026
+				EVENT_GREAT = preftl_operation.1027
+				EVENT_GOOD = preftl_operation.1027
+				EVENT_POOR = preftl_operation.1028
+			}
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+
+# Finalé (standard)
+country_event = {
+	id = preftl_operation.1026
+	title = preftl_operation.1026.name
+	desc = {
+		# Note that loc. uses '[this.GetName]' for the desc but '[from.target.GetName]' for the title, as the switch moves us to 'from.target' scope
+		trigger = {
+			hidden:from.target = {
+				switch = {
+					trigger = current_awareness_level
+					full = { text = preftl_operation.1026.desc.full }
+					high = { text = preftl_operation.1026.desc.high }
+					medium  = { text = preftl_operation.1026.desc.medium }
+					low  = { text = preftl_operation.1026.desc.low }
+					default  = { text = preftl_operation.1026.desc.medium }
+					# No "none" option because every outcome raises Awareness from 0
+				}
+			}
+		}
+	}
+	picture = {
+		trigger = {
+			hidden:from.target = {
+				current_awareness_level = full
+			}
+		}
+		picture = GFX_evt_diplomatic_visit
+	}
+	picture = {
+		trigger = {
+			hidden:from.target = {
+				OR = {
+					current_awareness_level = high
+					current_awareness_level = medium
+				}
+			}
+		}
+		picture = GFX_evt_failed_observation
+	}
+	picture = {
+		trigger = {
+			hidden:from.target = {
+				current_awareness_level <= low
+			}
+		}
+		picture = GFX_evt_slingshot_stars
+	}
+	location = from.target.capital_scope
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		# Note that at present, good and standard outcomes increase Awareness by the same amount so as to keep the outcome predictable.
+		from.target = {
+			add_awareness = 20 # TODO_BYRON: balance numbers
+		}
+	}
+ 
+	# Full Awareness
+	option = {
+		name = EXCELLENT
+		trigger = {
+			from.target = {
+				current_awareness_level = full
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = first_contact.6000
+				scopes = { from = from.target }
+			}
+		}
+	}
+	# Some Awareness
+	option = {
+		name = EXCELLENT
+		trigger = {
+			from.target = {
+				NOT = { current_awareness_level = full }
+			}
+		}
+		tooltip = {
+			from.target = {
+				add_awareness = 20
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -15 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+# Finalé (good or excellent)
+country_event = {
+	id = preftl_operation.1027
+	base = preftl_operation.1026
+	desc_clear = yes
+	desc = {
+		# Note that loc. uses '[this.GetName]' for the desc but '[from.target.GetName]' for the title, as the switch moves us to 'from.target' scope
+		trigger = {
+			hidden:from.target = {
+				switch = {
+					trigger = current_awareness_level
+					full = { text = preftl_operation.1027.desc.full }
+					high = { text = preftl_operation.1027.desc.high }
+					medium  = { text = preftl_operation.1027.desc.medium }
+					low  = { text = preftl_operation.1027.desc.low }
+					default  = { text = preftl_operation.1027.desc.medium }
+					# No "none" option because every outcome raises Awareness from 0
+				}
+			}
+		}
+	}
+
+	# Raises Awareness the same amount as in a standard outcome (see preftl_operation.1026)
+
+	# No tangible bonuses for a better outcome, so options are also inherited
+}
+
+# Finalé (poor)
+country_event = {
+	id = preftl_operation.1028
+	base = preftl_operation.1026
+	desc_clear = yes
+	option_clear = yes
+	desc = {
+		# Note that loc. uses '[this.GetName]' for the desc but '[from.target.GetName]' for the title, as the switch moves us to 'from.target' scope
+		trigger = {
+			hidden:from.target = {
+				switch = {
+					trigger = current_awareness_level
+					full = { text = preftl_operation.1028.desc.full }
+					high = { text = preftl_operation.1028.desc.high }
+					medium  = { text = preftl_operation.1028.desc.medium }
+					low  = { text = preftl_operation.1028.desc.low }
+					default  = { text = preftl_operation.1028.desc.medium }
+					# No "none" option because every outcome raises Awareness from 0
+				}
+			}
+		}
+	}
+
+	immediate = {
+		from.target = {
+			add_awareness = 15 # TODO_BYRON: balance numbers
+		}
+	}
+
+	# Full Awareness
+	option = {
+		name = OK
+		trigger = {
+			from.target = {
+				current_awareness_level = full
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = first_contact.6000
+				scopes = { from = from.target }
+			}
+		}
+	}
+	# Some Awareness
+	option = {
+		name = OK
+		trigger = {
+			from.target = {
+				NOT = { current_awareness_level = full }
+			}
+		}
+		tooltip = {
+			from.target = {
+				add_awareness = 15
+			}
+		}
+	}
+}
+
+######################################
+# INFILTRATION: SPREAD DISINFORMATION
+######################################
+# this = operation; from = target (country)
+
+# Final Stage
+espionage_operation_event = {
+	id = preftl_operation.1035
+	title = preftl_operation.1035.name
+	espionage_operation = yes
+	desc = preftl_operation.1035.desc
+	picture = GFX_evt_spymaster
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		set_espionage_operation_progress_locked = yes
+		target = {
+			save_event_target_as = pre_ftl_civ
+			capital_scope = {
+				save_event_target_as = pre_ftl_planet
+			}
+		}
+	}
+
+	option = {
+		name = LAUNCH_OPERATION
+		hidden_effect = {
+			evaluate_pre_ftl_operation_success = {
+				EVENT_DEFAULT = preftl_operation.1036
+				EVENT_GREAT = preftl_operation.1037
+				EVENT_GOOD = preftl_operation.1038
+				EVENT_POOR = preftl_operation.1039
+			}
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+
+# Disinformation EVENT_DEFAULT
+country_event = {
+	id = preftl_operation.1036
+	title = preftl_operation.1036.name
+	desc = {
+		trigger = {
+			hidden:from.target = {
+				# why does the loc use [this.GetName] for the desc but [from.target.GetName] for the title?
+				# Because we're already in from.target scope when evaluating the switch
+				switch = {
+					trigger = current_awareness_level
+					none = { text = preftl_operation.1036.desc.none }
+					low = { text = preftl_operation.1036.desc.low }
+					medium  = { text = preftl_operation.1036.desc.medium }
+					default  = { text = preftl_operation.1036.desc.medium }
+					# no high and full cases, because you can't lower from full to high
+				}
+			}
+		}
+	}
+	picture = { # they now have no awareness
+			trigger = {
+				from.target = {
+					current_awareness_level = none
+				}
+			}
+			picture = GFX_evt_ship_in_orbit_2
+		}
+	picture = { # they aren't fully aware yet
+		trigger = {
+			from.target = {
+				OR = {
+					current_awareness_level = low
+					current_awareness_level = medium
+					current_awareness_level = high
+				}
+			}
+		}
+		picture = GFX_evt_failed_observation
+	}
+	location = from.target.capital_scope
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	option = {
+		name = EXCELLENT
+		from.target = {
+			add_awareness = -20 # TODO_BYRON: balance numbers
+		}
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -15 } # TODO_CD: balance this value
+		}
+	}
+
+	after = {
+		destroy_espionage_operation = from
+	}
+}
+
+# Disinformation EVENT_GREAT
+country_event = {
+	id = preftl_operation.1037
+	title = preftl_operation.1037.name
+	desc = {
+		trigger = {
+			hidden:from.target = {
+				# why does the loc use [this.GetName] for the desc but [from.target.GetName] for the title?
+				# Because we're already in from.target scope when evaluating the switch
+				switch = {
+					trigger = current_awareness_level
+					none = { text = preftl_operation.1037.desc.none }
+					low = { text = preftl_operation.1037.desc.low }
+					medium  = { text = preftl_operation.1037.desc.medium }
+					default  = { text = preftl_operation.1037.desc.medium }
+					# no high and full cases, because you can't lower from full to high
+				}
+			}
+		}
+	}
+	picture = { # they now have no awareness
+		trigger = {
+			from.target = {
+				current_awareness_level = none
+			}
+		}
+		picture = GFX_evt_ship_in_orbit_2
+	}
+	picture = { # they aren't fully aware yet
+		trigger = {
+			from.target = {
+				OR = {
+					current_awareness_level = low
+					current_awareness_level = medium
+					current_awareness_level = high
+				}
+			}
+		}
+		picture = GFX_evt_failed_observation
+	}
+	location = from.target.capital_scope
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 15
+			}
+		}
+	}
+	
+	option = {
+		name = EXCELLENT
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress =  value:pre_ftl_gain_tech_progress|BONUS|96|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = 10 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+# Disinformation EVENT_GOOD
+country_event = {
+	id = preftl_operation.1038
+	title = preftl_operation.1038.name
+	desc = {
+		trigger = {
+			hidden:from.target = {
+				# why does the loc use [this.GetName] for the desc but [from.target.GetName] for the title?
+				# Because we're already in from.target scope when evaluating the switch
+				switch = {
+					trigger = current_awareness_level
+					none = { text = preftl_operation.1038.desc.none }
+					low = { text = preftl_operation.1038.desc.low }
+					medium  = { text = preftl_operation.1038.desc.medium }
+					default  = { text = preftl_operation.1038.desc.medium }
+					# no high and full cases, because you can't lower from full to high
+				}
+			}
+		}
+	}
+	picture = { # they now have no awareness
+		trigger = {
+			from.target = {
+				current_awareness_level = none
+			}
+		}
+		picture = GFX_evt_ship_in_orbit_2
+	}
+	picture = { # they aren't fully aware yet
+		trigger = {
+			from.target = {
+				OR = {
+					current_awareness_level = low
+					current_awareness_level = medium
+					current_awareness_level = high
+				}
+			}
+		}
+		picture = GFX_evt_failed_observation
+	}
+	location = from.target.capital_scope
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 12.5
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress = value:pre_ftl_gain_tech_progress|BONUS|48|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = 5 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+# Disinformation EVENT_POOR
+country_event = {
+	id = preftl_operation.1039
+	title = preftl_operation.1039.name
+	desc = {
+		trigger = {
+			hidden:from.target = {
+				# why does the loc use [this.GetName] for the desc but [from.target.GetName] for the title?
+				# Because we're already in from.target scope when evaluating the switch
+				switch = {
+					trigger = current_awareness_level
+					none = { text = preftl_operation.1039.desc.none }
+					low = { text = preftl_operation.1039.desc.low }
+					medium  = { text = preftl_operation.1039.desc.medium }
+					default  = { text = preftl_operation.1039.desc.medium }
+					# no high and full cases, because you can't lower from full to high
+				}
+			}
+		}
+	}
+	picture = { # they now have no awareness
+		trigger = {
+			from.target = {
+				current_awareness_level = none
+			}
+		}
+		picture = GFX_evt_ship_in_orbit_2
+	}
+	picture = { # they aren't fully aware yet
+		trigger = {
+			from.target = {
+				OR = {
+					current_awareness_level = low
+					current_awareness_level = medium
+					current_awareness_level = high
+				}
+			}
+		}
+		picture = GFX_evt_failed_observation
+	}
+	location = from.target.capital_scope
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+
+	immediate = {
+		from.target = {
+			save_event_target_as = pre_ftl_country
+			set_variable = {
+				which = TechProgressPercentage
+				value = 5
+			}
+		}
+	}
+
+	option = {
+		name = OK
+		custom_tooltip = tech_progress_gain_tt
+		hidden_effect = {
+			from.target = {
+				random_situation = {
+					limit = { is_situation_type = pre_ftl_tech_progress_situation }
+					add_situation_progress = value:pre_ftl_gain_tech_progress|BONUS|-96|
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			spynetwork = {
+				add_spy_network_level_on_success_effect = { VALUE = -10 }
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+############################
+# OPERATION INFILTRATE HIVE
+############################
+
+# Final Stage
+espionage_operation_event = {
+	id = preftl_operation.1060
+	title = preftl_operation.1060.name
+	desc = { # Standard report
+		trigger = {
+			check_variable = {
+				which = pre_ftl_operation_success
+				value = 0
+			}
+		}
+		text = preftl_operation.1060.desc.okay
+	}
+	desc = { # Good report
+		trigger = {
+			check_variable = {
+				which = pre_ftl_operation_success
+				value > 0
+			}
+		}
+		text = preftl_operation.1060.desc.good
+	}
+	desc = { # Poor report
+		trigger = {
+			check_variable = {
+				which = pre_ftl_operation_success
+				value < 0
+			}
+		}
+		text = preftl_operation.1060.desc.poor
+	}
+	picture = GFX_evt_infiltration_neutral
+	show_sound = event_espionage_concluded
+	espionage_operation = yes
+	is_triggered_only = yes
+
+	immediate = {
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = LAUNCH_OPERATION
+		hidden_effect = {
+			target = {
+				species = { save_event_target_as = infiltrated_country_species }
+				capital_scope = { save_event_target_as = infiltrated_country_planet }
+			}
+			# Planet is annexed
+			evaluate_pre_ftl_operation_success = {
+				EVENT_GREAT = preftl_operation.1065
+				EVENT_GOOD = preftl_operation.1066
+				EVENT_DEFAULT = preftl_operation.1067
+				EVENT_POOR = preftl_operation.1068
+			}
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+
+# Hive Annexation Finalé (Great)
+country_event = {
+	id = preftl_operation.1065
+	title = preftl_operation.1065.name
+	desc = preftl_operation.1065.desc
+	picture = GFX_evt_two_sided_deal
+	show_sound = event_celebration
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	immediate = {
+		from.target = {
+			infiltrate_government_annexation_effect = yes
+		}	
+	}
+
+	option = {
+		name = EXCELLENT
+		custom_tooltip = preftl_operation.1005.tt
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = from.target
+			}
+			from.target = { destroy_country = yes }
+		}
+	}
+}
+
+# Hive Annexation Finalé (Good)
+country_event = {
+	id = preftl_operation.1066
+	title = preftl_operation.1066.name
+	desc = preftl_operation.1066.desc
+	picture = GFX_evt_hostile_infiltration
+	show_sound = event_criminal_activity
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	immediate = {
+		from.target = {
+			infiltrate_government_annexation_effect = yes
+		}
+	}
+
+	option = {
+		name = GOOD
+		custom_tooltip = preftl_operation.1005.tt
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = from.target
+			}
+			from.target = { destroy_country = yes }
+		}
+	}
+}
+
+# Hive Annexation Finalé (Neutral)
+country_event = {
+	id = preftl_operation.1067
+	title = preftl_operation.1067.name
+	desc = preftl_operation.1067.desc
+	picture = GFX_evt_hostile_infiltration
+	show_sound = event_criminal_activity
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	immediate = {
+		from.target = {
+			capital_scope = {
+				while = {
+					count = 3
+					random_owned_pop = {
+						kill_pop = yes
+					}
+				}
+			}
+			infiltrate_government_annexation_effect = yes
+		}
+	}
+
+	option = {
+		name = OK
+		custom_tooltip = preftl_operation.1005.tt
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = from.target
+			}
+			from.target = { destroy_country = yes }
+		}
+	}
+}
+
+# Hive Annexation Finalé (Poor)
+country_event = {
+	id = preftl_operation.1068
+	title = preftl_operation.1068.name
+	desc = preftl_operation.1068.desc
+	picture = GFX_evt_infiltration_failure
+	show_sound = event_criminal_activity
+	location = from.target.capital_scope
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from.target
+	}
+
+	option = {
+		name = UNFORTUNATE
+		custom_tooltip = preftl_operation.failed_annaxation.tt
+		set_timed_country_flag = {
+			flag = failed_infiltration@from.target
+			days = 1800
+		}
+		from = {
+			target = {
+				if = {
+					limit = {
+						has_awareness < 100
+					}
+					add_awareness = 40
+				}
+				if = {
+					limit = {
+						has_awareness >= 60
+					}
+					add_opinion_modifier = {
+						who = root
+						modifier = attempted_infiltration
+					}
+				}
+			}
+			hidden_effect = {
+				evaluate_pre_ftl_espionage_violation_effect = yes
+			}
+			destroy_espionage_operation = this
+		}
+	}
+}
+
+###########################
+# OPERATIONS RANDOM EVENTS
+###########################
+# this = operation; from = target (country)
+
+### SORCERY!
+# via on_plant_advanced_knowledge_roll_failed / preftl_operation.1040
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3000
+	title = preftl_operation.3000.name
+	desc = preftl_operation.3000.desc
+	picture = GFX_evt_infiltration_neutral
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_sorcery }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_sorcery # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_preftl_espionage_sorcery
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Embrace your paranormality
+	option = {
+		name = preftl_operation.3000.a
+		if = {
+			limit = {
+				from.target = {
+					current_awareness_level < full
+				}
+			}
+			custom_tooltip = operation_awareness_risk
+			hidden_effect = {
+				from.target = {
+					set_timed_country_flag = {
+						flag = awareness_risk@prev.owner
+						years = 1
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			from = {
+				espionage_operation_event = {
+					id = preftl_operation.3001
+					days = 20 random = 10
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	# Relocate
+	option = {
+		name = preftl_operation.3000.b
+		allow = {
+			from.spynetwork = {
+				has_available_spy_power >= 10
+			}
+		}
+		from.spynetwork = {
+			add_spy_network_level = -10
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					NOT = { has_ai_personality_behaviour = infiltrator }
+				}
+			}
+		}
+	}
+	# Challenge their beliefs
+	option = {
+		name = preftl_operation.3000.c
+		hidden_effect = {
+			from = {
+				random_list = {
+					10 = {
+						modifier = {
+							factor = 0.5
+							target = { is_spiritualist = yes }
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3002 # Embrace logical arguments
+							days = 30 random = 20
+						}
+					}
+					10 = {
+						modifier = {
+							factor = 0.1
+							target = { is_materialist = yes }
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3003 # Operative killed
+							days = 10 random = 5
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Embraced paranormality; locals gain Awareness
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3001
+	title = preftl_operation.3001.name
+	desc = preftl_operation.3001.desc
+	picture = GFX_evt_hostile_infiltration
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = 1
+			}
+		}
+	}
+
+	option = {
+		name = OK
+		from.target = {
+			add_awareness = 20
+		}
+	}
+
+	after = {
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Challenged beliefs: success (applied reasoning)
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3002
+	title = preftl_operation.3002.name
+	desc = preftl_operation.3002.desc
+	picture = GFX_evt_overt_indoctrination
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = 2
+			}
+		}
+	}
+
+	option = {
+		name = {
+			trigger = {
+				from.owner = { is_materialist = yes }
+			}
+			text = EXCELLENT
+		}
+		name = {
+			trigger = {
+				from.owner = { is_materialist = no }
+			}
+			text = OK
+		}
+		from.target = {
+			add_modifier = {
+				modifier = materialist_attraction
+				days = 7200 # 20 years
+			}
+		}
+	}
+
+	after = {
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Challenged beliefs: failure (operative killed)
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3003
+	title = preftl_operation.3003.name
+	desc = preftl_operation.3003.desc
+	picture = GFX_evt_infiltration_failure
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = -2
+			}
+		}
+	}
+
+	option = {
+		name = UNFORTUNATE
+	}
+
+	after = {
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+
+### PARIAH
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3010
+	title = preftl_operation.3010.name
+	desc = preftl_operation.3010.desc
+	picture = GFX_evt_infiltration_neutral
+	show_sound = event_spymaster
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_pariah }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_pariah # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_preftl_espionage_pariah
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Flaunt some wealth
+	option = {
+		name = preftl_operation.3010.a
+		trigger = {
+			from.target = {
+				pre_ftl_ancient_era = no
+			}
+		}
+		allow = {
+			from.owner = {
+				resource_stockpile_compare = {
+					resource = energy
+					value >= 800
+				}
+			}
+		}
+		from.owner = {
+			add_resource = { energy = -800 }
+		}
+		hidden_effect = {
+			from = {
+				random_list = {
+					10 = {
+						modifier = {
+							factor = 3
+							target = { has_civic = civic_landed_nobility }
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3011 # Quirky works (success)
+							days = 30 random = 15
+						}
+					}
+					10 = {
+						espionage_operation_event = {
+							id = preftl_operation.3012 # Shunned further (failure)
+							days = 15 random = 5
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				from.owner = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+		}
+	}
+	# Be more eccentric
+	option = {
+		name = preftl_operation.3010.b
+		hidden_effect = {
+			from = {
+				random_list = {
+					10 = {
+						modifier = {
+							factor = 3
+							target = { has_civic = civic_flat_world_theory }
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3011 # Quirky works (success)
+							days = 30 random = 15
+						}
+					}
+					30 = {
+						modifier = {
+							factor = 1.5
+							target = { is_authoritarian = yes }
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3012 # Shunned further (failure)
+							days = 15 random = 5
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	# Study harder
+	option = {
+		name = preftl_operation.3010.c
+		from.spynetwork = {
+			add_spy_network_level = -5
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Quirky works (success)
+espionage_operation_event = {
+	id = preftl_operation.3011
+	title = preftl_operation.3011.name
+	desc = preftl_operation.3011.desc
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_celebration
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = 1
+			}
+			target = {
+				set_country_flag = pariah_lesson_learned@prev.owner
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		from = {
+			spynetwork = {
+				add_spy_network_level = 5
+			}
+			set_espionage_operation_progress_locked = no
+			owner = {
+				add_monthly_resource_mult = {
+					resource = society_research
+					value = @tier2researchreward
+					min = @tier2researchmin
+					max = @tier2researchmax
+				}
+			}
+		}
+	}
+}
+# Shunned further (failure)
+espionage_operation_event = {
+	id = preftl_operation.3012
+	title = preftl_operation.3012.name
+	desc = preftl_operation.3012.desc
+	picture = GFX_evt_friendly_infiltration
+	show_sound = event_celebration
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = -1
+			}
+			target = {
+				set_country_flag = pariah_lesson_learned@prev.owner
+			}
+		}
+	}
+
+	option = {
+		name = OK
+		from = {
+			add_modifier = {
+				modifier = operation_pariahs
+				days = 90
+			}
+			set_espionage_operation_progress_locked = no
+			owner = {
+				add_monthly_resource_mult = {
+					resource = society_research
+					value = @tier1researchreward
+					min = @tier1researchmin
+					max = @tier1researchmax
+				}
+			}
+		}
+	}
+}
+
+### DISTRACTED AGENT
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3020
+	title = preftl_operation.3020.name
+	desc = preftl_operation.3020.desc
+	picture = GFX_evt_spymaster
+	show_sound = event_administrative_work
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_distracted }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_distracted # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_preftl_espionage_distracted
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Deny request
+	option = {
+		name = preftl_operation.3020.a
+		from = {
+			add_modifier = {
+				modifier = operation_no_more_distractions
+				days = 90
+			}
+			spynetwork = {
+				add_spy_network_level = 3
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+		}
+	}
+	# Allow change to research
+	option = {
+		name = preftl_operation.3020.b
+		allow = {
+			from.spynetwork = {
+				has_available_spy_power >= 10
+			}
+		}
+		from = {
+			spynetwork = {
+				add_spy_network_level = -10
+			}
+			target.capital_scope.observation_outpost = {
+				add_modifier = {
+					modifier = observation_distraction_insights
+					years = 2
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					OR = {
+						has_ai_personality_behaviour = infiltrator
+						has_ai_personality_behaviour = uplifter
+					}
+				}
+			}
+		}
+	}
+
+	after = {
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+
+### MIMICRY
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3030
+	title = preftl_operation.3030.name
+	desc = preftl_operation.3030.desc
+	picture = GFX_evt_hive_mind_pre_ftl
+	show_sound = event_administrative_work
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_mimicry }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_mimicry # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_preftl_espionage_mimicry
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Work with this
+	option = {
+		name = preftl_operation.3030.a
+		trigger = {
+			from.target = {
+				current_awareness_level < high
+			}
+		}
+		from.spynetwork = {
+			add_modifier = {
+				modifier = spynetwork_hive_mimicry
+				years = 5 # Should match the duration of the timed flag below
+			}
+		}
+		custom_tooltip = operation_awareness_risk
+		hidden_effect = {
+			from.target = {
+				set_timed_country_flag = {
+					flag = awareness_risk@prev.owner
+					years = 5 # Should match the duration of the modifier above
+				}
+			}
+			from = {
+				set_espionage_operation_progress_locked = no
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from = {
+					OR = {
+						AND = {
+							owner = { has_ai_personality_behaviour = infiltrator }
+							target = { current_awareness_level <= low }
+						}
+						has_ai_personality_behaviour = uplifter
+					}
+				}
+			}
+		}
+	}
+	# Be more careful
+	option = {
+		name = preftl_operation.3030.b
+		custom_tooltip = preftl_operation.3030.b.tt
+		trigger = {
+			from.target = {
+				current_awareness_level < high
+			}
+		}
+		allow = {
+			from.spynetwork = {
+				has_available_spy_power >= 5
+			}
+		}
+		from = {
+			spynetwork = {
+				add_spy_network_level = -5
+			}
+			set_espionage_operation_progress_locked = no
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from = {
+					owner = { has_ai_personality_behaviour = infiltrator }
+					target = { current_awareness_level > low }
+				}
+			}
+		}
+	}
+	# Take no action
+	option = {
+		name = preftl_operation.3030.c
+		trigger = {
+			from.target = {
+				current_awareness_level >= high
+			}
+		}
+		from.target = {
+			add_modifier = {
+				modifier = espionage_hive_mimicry
+				years = 5
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+		}
+	}
+	# Abort
+	option = {
+		name = preftl_operation.3030.d
+		from = {
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+### ACADEMIC SHENANIGANS
+# from = operation
+# Note that some of these events use strings with outdated IDs, around the preftl_operation.1100 range.
+espionage_operation_event = {
+	id = preftl_operation.3040
+	title = preftl_operation.1100.name
+	desc = preftl_operation.1100.desc
+	picture = GFX_evt_acquire_asset
+	show_sound = event_default
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_academic }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_academic # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_op_academia
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Eliminate the competition
+	option = {
+		name = preftl_operation.1100.a
+		allow = {
+			from.spynetwork = {
+				has_available_spy_power > 5
+			}
+		}
+		hidden_effect = {
+			random_list = {
+				1 = { # Failure
+					espionage_operation_event = {
+						id = preftl_operation.3041
+						days = 30 random = 15
+					}
+				}
+				1 = { # Success (especially for those familiar with assassination)
+					modifier = {
+						factor = 3
+						from.owner = {
+							OR = {
+								has_tradition = tr_subterfuge_adopt
+								has_valid_civic = civic_cutthroat_politics
+							}
+						}
+					}
+					espionage_operation_event = {
+						id = preftl_operation.3042
+						days = 30 random = 15
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				from.owner = {
+					OR = {
+						has_ai_personality_behaviour = dominator
+						AND = {
+							has_ai_personality_behaviour = infiltrator
+							has_tradition = tr_subterfuge_adopt
+						}
+					}
+				}
+			}
+		}
+	}
+	# Offer funding
+	option = {
+		name = preftl_operation.1100.b
+		allow = {
+			from.owner = {
+				resource_stockpile_compare = {
+					resource = energy
+					value >= 300
+				}
+			}
+		}
+		from.owner = {
+			add_resource = { energy = -300 }
+		}
+		hidden_effect = {
+			random_list = {
+				1 = { # Failure
+					espionage_operation_event = {
+						id = preftl_operation.3043
+						days = 20 random = 10
+					}
+				}
+				1 = { # Success (especially for those familiar with bribery)
+					modifier = {
+						factor = 3
+						from.owner = {
+							OR = {
+								has_authority = auth_corporate
+								has_valid_civic = civic_corporate_dominion
+								has_valid_civic = civic_cutthroat_politics
+								has_tradition = tr_mercantile_insider_trading
+							}
+						}
+					}
+					espionage_operation_event = {
+						id = preftl_operation.3044
+						days = 20 random = 10
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				from.owner = {
+					OR = {
+						has_ai_personality_behaviour = uplifter
+						has_ai_personality_behaviour = infiltrator
+					}
+				}
+			}
+		}
+	}
+	# Let them bicker
+	option = {
+		name = preftl_operation.1100.c
+		hidden_effect = {
+			random_list = {
+				1 = { # Setback
+					espionage_operation_event = {
+						id = preftl_operation.3045
+						days = 15 random = 10
+					}
+				}
+				1 = { # Breakthrough
+					modifier = {
+						factor = 2
+						from.target = {
+							is_materialist = yes
+						}
+					}
+					espionage_operation_event = {
+						id = preftl_operation.3046
+						days = 15 random = 10
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	after = {
+		set_espionage_operation_progress_locked = no
+	}
+}
+# Eliminate the competition: failure
+espionage_operation_event = {
+	id = preftl_operation.3041
+	title = preftl_operation.1101.name
+	desc = preftl_operation.3041.desc
+	picture = GFX_evt_acquire_asset
+	show_sound = event_default
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = -1
+			}
+		}
+	}
+
+	option = {
+		name = CURSES
+		from = {
+			set_espionage_operation_progress_locked = no
+			spynetwork = {
+				add_spy_network_level = -5
+			}
+		}
+	}
+}
+# Eliminate the competition: success
+espionage_operation_event = {
+	id = preftl_operation.3042
+	title = preftl_operation.1101.name
+	desc = preftl_operation.3042.desc
+	picture = GFX_evt_cover_blown
+	show_sound = event_default
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = 1
+			}
+		}
+	}
+
+	option = {
+		name = preftl_operation.3042.a
+		custom_tooltip = operation_random_event_resolved_good
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Bribery: caught
+espionage_operation_event = {
+	id = preftl_operation.3043
+	title = preftl_operation.1103.name
+	desc = preftl_operation.3043.desc
+	picture = GFX_evt_bribery
+	show_sound = event_default
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = -1
+			}
+		}
+	}
+
+	option = {
+		name = CURSES
+		custom_tooltip = operation_random_event_resolved_poor
+	}
+}
+# Bribery: success
+espionage_operation_event = {
+	id = preftl_operation.3044
+	title = preftl_operation.1103.name
+	desc = preftl_operation.3044.desc
+	picture = GFX_evt_bribery
+	show_sound = event_default
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = 1
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		from = {
+			set_espionage_operation_progress_locked = no
+			add_modifier = {
+				modifier = operation_academic_bribery
+				days = -1
+			}
+		}
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Bickering: setback
+espionage_operation_event = {
+	id = preftl_operation.3045
+	title = preftl_operation.1105.name
+	desc = preftl_operation.3045.desc
+	espionage_operation = yes
+	picture = GFX_evt_acquire_asset
+	show_sound = event_default
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = -1
+			}
+		}
+	}
+
+	option = {
+		name = UNFORTUNATE
+		custom_tooltip = operation_random_event_resolved_poor
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Bickering: breakthrough
+espionage_operation_event = {
+	id = preftl_operation.3046
+	title = preftl_operation.1105.name
+	desc = preftl_operation.3046.desc
+	espionage_operation = yes
+	picture = GFX_evt_three_sided_deal
+	show_sound = event_default
+	is_triggered_only = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			target.capital_scope = {
+				save_event_target_as = pre_ftl_planet # used in Observation Insights
+			}
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = 1
+			}
+			if = {
+				limit = {
+					target = {
+						current_awareness_level < low
+					}
+				}
+				owner = {
+					set_country_flag = society_insights
+					set_predictive_observation_insight = {
+						VALUE = 10
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = MARVELOUS
+		from = {
+			owner = {
+				if = {
+					limit = {
+						prev.target = {
+							current_awareness_level < low
+						}
+					}
+					add_observation_insight_effect = {
+						VALUE = 10
+						OUTPOST = event_target:pre_ftl_planet.observation_outpost 
+					}
+				}
+				locked_random_list = {
+					1 = {
+						add_monthly_resource_mult = {
+							resource = engineering_research
+							value = @tier1researchreward
+							min = @tier1researchmin
+							max = @tier1researchmax
+						}
+					}
+					1 = {
+						add_monthly_resource_mult = {
+							resource = physics_research
+							value = @tier1researchreward
+							min = @tier1researchmin
+							max = @tier1researchmax
+						}
+					}
+				}
+			}
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+
+### SPYMASTER EXPOSED / BLACKMAIL
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3050
+	title = preftl_operation.3050.name
+	desc = preftl_operation.3050.desc
+	picture = GFX_evt_acquire_asset
+	show_sound = event_administrative_work
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_preftl_espionage_blackmail
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Await more news
+	option = {
+		trigger = {
+			from.owner = {
+				NOT = { has_policy_flag = interference_aggressive }
+			}
+		}
+		name = {
+			trigger = {
+				from.owner = { is_gestalt = no }
+			}
+			text = preftl_operation.3050.a
+		}
+		name = {
+			trigger = {
+				from.owner = { is_gestalt = yes }
+			}
+			text = preftl_operation.3050.a.gestalt
+		}
+		from = {
+			spynetwork = {
+				add_modifier = {
+					modifier = spynetwork_extra_containment
+					days = 720 # 2 years
+				}
+			}
+			set_espionage_operation_progress_locked = no
+			hidden_effect = {
+				espionage_operation_event = {
+					id = preftl_operation.3055 # "Blackmail"
+					days = 14
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 6 # Similar to that of 'abort'
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+	# Hunt the Witness (likely during Infiltrate Government)
+	option = {
+		name = preftl_operation.3050.b
+		trigger = {
+			from.owner = {
+				has_policy_flag = interference_aggressive
+			}
+		}
+		allow = {
+			from = {
+				spynetwork = {
+					has_available_spy_power >= 5
+				}
+			}
+		}
+		from = {
+			spynetwork = {
+				add_spy_network_level = -5
+			}
+			set_espionage_operation_progress_locked = no
+			hidden_effect = {
+				set_espionage_operation_flag = blackmail_attempted_assassination
+				random_list = {
+					4 = { # succeed
+						espionage_operation_event = {
+							id = preftl_operation.3051 # "Witness Eliminated"
+							days = 5
+						}
+					}
+					1 = { # fail
+						modifier = {
+							factor = 2
+							target = {
+								is_pre_industrial = no
+							}
+						}
+						modifier = {
+							factor = 2
+							target = {
+								current_awareness_level > medium
+							}
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3055 # "Blackmail"
+							days = 5
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+		}
+	}
+	# Abort
+	option = {
+		name = preftl_operation.3050.c
+		destroy_espionage_operation = from
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 3 # Similar to that of 'await more news'
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+	# Confess to the Galactic Community
+	option = {
+		name = preftl_operation.3050.d
+		trigger = {
+			from.owner = {
+				is_galactic_community_formed = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = resolution_pre_ftl_stances_non_interference
+					is_active_resolution = resolution_pre_ftl_stances_equal_standing
+				}
+			}
+		}
+		from = {
+			hidden_effect = {
+				self_reported_pre_ftl_espionage_violation_effect = yes
+			}
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+					is_egalitarian = yes
+				}
+			}
+		}
+	}
+}
+# Witness Eliminated
+espionage_operation_event = {
+	id = preftl_operation.3051
+	title = preftl_operation.3051.name
+	desc = preftl_operation.3051.desc
+	picture = GFX_evt_cover_blown
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		from = {
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Blackmail
+espionage_operation_event = {
+	id = preftl_operation.3055
+	title = preftl_operation.3055.name
+	desc = preftl_operation.3055.desc
+	picture = GFX_evt_acquire_asset
+	show_sound = event_administrative_work
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+		}
+	}
+
+	# Abort
+	option = {
+		name = preftl_operation.3055.a
+		from = {
+			target = {
+				if = {
+					limit = {
+						has_awareness < 90
+					}
+					add_awareness = 10
+				}
+			}
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+	# Assassinate the witness
+	option = {
+		name = preftl_operation.3055.b
+		trigger = {
+			from = {
+				NOT = { has_espionage_operation_flag = blackmail_attempted_assassination }
+			}
+		}
+		allow = {
+			from = {
+				owner = {
+					has_policy_flag = interference_aggressive
+				}
+				spynetwork = {
+					has_available_spy_power >= 5
+				}
+			}
+		}
+		from = {
+			spynetwork = {
+				remove_modifier = spynetwork_extra_containment
+				add_spy_network_level = -5
+			}
+			target = {
+				if = {
+					limit = {
+						has_awareness < 90
+					}
+					add_awareness = 10
+				}
+			}
+			evaluate_pre_ftl_espionage_violation_effect = yes # Important that this follows the increase in Awareness
+			set_espionage_operation_progress_locked = no
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				from.owner = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+		}
+	}
+	# Submit to the witness' demands
+	option = {
+		name = preftl_operation.3055.c
+		custom_tooltip = preftl_operation.3055.c.tt
+		from = {
+			spynetwork = {
+				if = {
+					limit = {
+						has_modifier = spynetwork_extra_containment
+					}
+					remove_modifier = spynetwork_extra_containment
+				}
+				add_modifier = {
+					modifier = spynetwork_blackmailed
+					years = 10
+				}
+			}
+			set_espionage_operation_progress_locked = no
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+				}
+			}
+		}
+	}
+}
+
+### STRICKEN
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3060
+	title = preftl_operation.3060.name
+	desc = {
+		trigger = {
+			from.target = {
+				NOT = { has_authority = auth_hive_mind }
+			}
+		}
+		text = preftl_operation.3060.desc
+	}
+	desc = {
+		trigger = {
+			from.target = {
+				has_authority = auth_hive_mind
+			}
+		}
+		text = preftl_operation.3060.hive.desc
+	}
+	picture = GFX_evt_emergency_workers
+	show_sound = event_structural_collapse
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = recent_preftl_espionage_stricken
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+
+	# Rescue mission (+ modifier)
+	option = {
+		name = preftl_operation.3060.a
+		trigger = {
+			from = {
+				NOR = { # as increased Awareness should constitute failure
+					has_espionage_type = operation_increase_awareness
+					has_espionage_type = operation_indoctrinate_society
+					has_espionage_type = operation_plant_advanced_knowledge
+				}
+			}
+		}
+		allow = {
+			from.spynetwork = {
+				has_available_spy_power >= 5
+			}
+		}
+		from = {
+			spynetwork = {
+				add_spy_network_level = -5
+			}
+			add_modifier = {
+				modifier = operation_stricken_operatives
+				days = 100
+			}
+			set_espionage_operation_progress_locked = no
+			hidden_effect = {
+				random_list = {
+					2 = { # Success
+						modifier = {
+							factor = 2
+							target = {
+								is_pre_industrial = yes
+							}
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3061
+							days = 15 random = 10
+						}
+					}
+					1 = { # Failure
+						modifier = {
+							factor = 2
+							target = {
+								has_country_flag = early_space_age
+							}
+						}
+						modifier = {
+							factor = 2
+							owner = {
+								espionage_operation_disguise_disadvantage = yes
+							}
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3063
+							days = 15 random = 10
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+				}
+			}
+		}
+	}
+	# Hope cover holds (+ modifier)
+	option = {
+		name = preftl_operation.3060.b
+		trigger = {
+			from = {
+				NOR = { # as increased Awareness should constitute failure
+					has_espionage_type = operation_increase_awareness
+					has_espionage_type = operation_indoctrinate_society
+					has_espionage_type = operation_plant_advanced_knowledge
+				}
+			}
+		}
+		from = {
+			add_modifier = {
+				modifier = operation_stricken_operatives
+				days = 100
+			}
+			set_espionage_operation_progress_locked = no
+			hidden_effect = {
+				random_list = {
+					2 = { # Success
+						modifier = {
+							factor = 3
+							owner = {
+								espionage_operation_disguise_disadvantage = no
+							}
+						}
+						espionage_operation_event = {
+							id = preftl_operation.3062
+							days = 20 random = 10
+						}
+					}
+					1 = { # Failure
+						espionage_operation_event = {
+							id = preftl_operation.3064
+							days = 20 random = 10
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					OR = {
+						has_ai_personality_behaviour = uplifter
+						has_ai_personality_behaviour = infiltrator
+					}
+				}
+			}
+		}
+	}
+	# Abort
+	option = {
+		name = preftl_operation.3060.c
+		from = {
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from = {
+					NOR = {
+						has_espionage_type = operation_infiltrate_government
+						has_espionage_type = operation_infiltrate_hive
+					}
+					owner = { has_ai_personality_behaviour = infiltrator }
+				}
+			}
+		}
+	}
+	# Break cover; appeal to locals (will be negative)
+	option = {
+		name = preftl_operation.3060.d
+		trigger = {
+			from = {
+				OR = {
+					has_espionage_type = operation_increase_awareness
+					has_espionage_type = operation_indoctrinate_society
+					has_espionage_type = operation_plant_advanced_knowledge
+				}
+				target = {
+					OR = {
+						is_xenophobe = yes
+						AND = {
+							current_awareness_level < high
+							is_xenophile = no
+						}
+					}
+				}
+			}
+		}
+		allow = {
+			hidden:from.owner = {
+				NAND = {
+					is_galactic_community_formed = yes
+					is_galactic_community_member = yes
+					is_active_resolution = resolution_pre_ftl_stances_non_interference
+				}
+			}
+		}
+		custom_tooltip = preftl_operation.3060.d.negative.tt
+		from = {
+			target = {
+				add_awareness = 10
+			}
+			set_espionage_operation_progress_locked = no
+			hidden_effect = {
+				change_variable = {
+					which = pre_ftl_operation_success
+					value = -2
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+					is_xenophile = yes
+				}
+			}
+			modifier = {
+				factor = 0
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+	# Break cover; appeal to locals (will be positive)
+	option = {
+		name = preftl_operation.3060.d
+		trigger = {
+			from = {
+				OR = {
+					has_espionage_type = operation_increase_awareness
+					has_espionage_type = operation_indoctrinate_society
+					has_espionage_type = operation_plant_advanced_knowledge
+				}
+				target = {
+					OR = {
+						is_xenophile = yes
+						AND = {
+							current_awareness_level = high
+							is_xenophobe = no
+						}
+					}
+				}
+			}
+		}
+		allow = {
+			hidden:from.owner = {
+				NAND = {
+					is_galactic_community_formed = yes
+					is_galactic_community_member = yes
+					is_active_resolution = resolution_pre_ftl_stances_non_interference
+				}
+			}
+		}
+		custom_tooltip = preftl_operation.3060.d.positive.tt
+		from = {
+			target = {
+				add_awareness = 15
+			}
+			set_espionage_operation_progress_locked = no
+			hidden_effect = {
+				change_variable = {
+					which = pre_ftl_operation_success
+					value = 1
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+				}
+			}
+			modifier = {
+				factor = 0
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+}
+# Rescue mission: success
+espionage_operation_event = {
+	id = preftl_operation.3061
+	title = preftl_operation.3060.name
+	desc = preftl_operation.3061.success.desc
+	picture = GFX_evt_infiltration_neutral
+	show_sound = event_espionage_concluded
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+		}
+	}
+
+	option = {
+		name = GOOD
+		from = {
+			remove_modifier = operation_stricken_operatives
+			set_espionage_operation_progress_locked = no
+		}
+	}
+}
+# Hope cover holds: success
+espionage_operation_event = {
+	id = preftl_operation.3062
+	base = preftl_operation.3061
+	desc_clear = yes
+	desc = preftl_operation.3062.success.desc
+}
+# Rescue mission: failure
+espionage_operation_event = {
+	id = preftl_operation.3063
+	title = preftl_operation.3060.name
+	desc = preftl_operation.3061.failure.desc
+	picture = GFX_evt_infiltration_failure
+	show_sound = event_yellow_alert
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		exists = from
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			change_variable = {
+				which = pre_ftl_operation_success
+				value = -2
+			}
+		}
+	}
+
+	# Awareness raised
+	option = {
+		name = CURSES
+		custom_tooltip = operation_random_event_resolved_poor
+		from = {
+			target = {
+				if = { # target won't wind up becoming Fully Aware
+					limit = {
+						has_awareness <= 75
+					}
+					add_awareness = 20
+				}
+				if = {
+					limit = {
+						current_awareness_level > low
+					}
+					add_opinion_modifier = {
+						who = prev.owner
+						modifier = attempted_infiltration
+					}
+				}
+			}
+			hidden_effect = {
+				evaluate_pre_ftl_espionage_violation_effect = yes
+			}
+			set_espionage_operation_progress_locked = no
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+	# Confess to the Galactic Community
+	option = {
+		name = preftl_operation.3061.a
+		trigger = {
+			from.owner = {
+				is_galactic_community_formed = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = resolution_pre_ftl_stances_non_interference
+					is_active_resolution = resolution_pre_ftl_stances_equal_standing
+				}
+			}
+		}
+		from = {
+			hidden_effect = {
+				self_reported_pre_ftl_espionage_violation_effect = yes
+			}
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+}
+# Hope cover holds: failure
+espionage_operation_event = {
+	id = preftl_operation.3064
+	base = preftl_operation.3063
+	desc_clear = yes
+	desc = {
+		trigger = {
+			from.target = {
+				current_awareness_level = full
+			}
+		}
+		text = preftl_operation.3062.failure.aware.desc
+	}
+	desc = {
+		trigger = {
+			from.target = {
+				current_awareness_level < full
+			}
+		}
+		text = preftl_operation.3062.failure.unaware.desc
+	}
+}
+
+### MIXED SIGNALS
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3100
+	title = preftl_operation.3100.name
+	desc = preftl_operation.3100.desc
+	picture = GFX_evt_hive_mind_pre_ftl
+	show_sound = event_yellow_alert
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_mixed_signals }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_mixed_signals # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = fired_preftl_espionage_mixed_signals
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+				set_country_flag = society_insights
+				set_predictive_observation_insight = {
+					VALUE = 10
+				}
+			}
+		}
+	}
+
+	# Study the reactions
+	option = {
+		name = preftl_operation.3100.a
+		trigger = {
+			from.target = {
+				current_awareness_level < full
+			}
+		}
+		from.owner = {
+			add_observation_insight_effect = {
+				VALUE = 10
+				OUTPOST = root.target.capital_scope.observation_outpost 
+			}
+		}
+		custom_tooltip = operation_awareness_risk
+		hidden_effect = {
+			from.target = {
+				set_timed_country_flag = {
+					flag = awareness_risk@prev.owner
+					years = 5 # Should match the duration of the modifier above
+				}
+			}
+			from = {
+				set_espionage_operation_progress_locked = no
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					OR = {
+						has_ai_personality_behaviour = uplifter
+						has_ai_personality_behaviour = dominator
+					}
+				}
+			}
+		}
+	}
+	# Be more careful
+	option = {
+		name = preftl_operation.3100.b
+		custom_tooltip = preftl_operation.3100.b.tt
+		allow = {
+			from.spynetwork = {
+				has_available_spy_power >= 5
+			}
+		}
+		from = {
+			spynetwork = {
+				add_spy_network_level = -5
+				add_modifier = {
+					modifier = spynetwork_hive_no_pheromones
+					years = 5
+				}
+			}
+			target = {
+				if = {
+					limit = {
+						current_awareness_level < full
+					}
+					add_awareness = -5
+				}	
+			}
+			set_espionage_operation_progress_locked = no
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+	# Take no action
+	option = {
+		name = preftl_operation.3030.c
+		from.target = {
+			if = {
+				limit = {
+					current_awareness_level < full
+				}
+				add_awareness = 10
+			}
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	# Abort
+	option = {
+		name = preftl_operation.3030.d
+		from = {
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from = {
+					owner = {
+						has_ai_personality_behaviour = infiltrator
+					}
+					target = {
+						current_awareness_level > low
+					}
+				}
+			}
+		}
+	}
+}
+
+### TECHNOLOGICAL CONTAMINATION
+# from = operation
+espionage_operation_event = {
+	id = preftl_operation.3105
+	title = preftl_operation.3105.name
+	desc = preftl_operation.3105.desc
+	picture = GFX_evt_alien_abduction
+	show_sound = event_yellow_alert
+	is_triggered_only = yes
+	espionage_operation = yes
+
+	trigger = {
+		from = {
+			NOT = { has_espionage_operation_flag = fired_preftl_espionage_technological_contamination }
+		}
+	}
+
+	immediate = {
+		from = {
+			set_espionage_operation_progress_locked = yes
+			set_espionage_operation_flag = fired_preftl_espionage_technological_contamination # prevent firing again for this instance of an Operation
+			owner = {
+				set_timed_country_flag = { # discourage (not prevent) firing again during any Operation, for a while
+					flag = fired_preftl_espionage_technological_contamination
+					days = @RandomPreFTLOperationEventTimerLong
+				}
+			}
+		}
+	}
+	# Let the drones rummage
+	option = {
+		name = preftl_operation.3105.a
+		custom_tooltip = preftl_operation.3105.a.tt
+		from.target = {
+			if = {
+				limit = {
+					current_awareness_level < full
+				}
+				add_awareness = -5
+			}
+		}
+		hidden_effect = {
+			from = {
+				set_espionage_operation_progress_locked = no
+				target = {
+					random_situation = {
+						limit = {
+							is_situation_type = pre_ftl_tech_progress_situation
+						}
+						add_situation_progress = 384 #20%
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = uplifter
+				}
+			}
+		}
+	}
+	# Activate the technology
+	option = {
+		name = preftl_operation.3105.b
+		custom_tooltip = preftl_operation.3105.b.tt
+		from.target = {
+			add_awareness = 15
+		}
+		hidden_effect = {
+			set_espionage_operation_progress_locked = no
+			from.target = {
+				advance_pre_ftl_tech = yes
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				from.owner = {
+					has_ai_personality_behaviour = dominator
+				}
+			}
+			modifier = {
+				factor = 0
+				from.owner = {
+					has_ai_personality_behaviour = infiltrator
+				}
+			}
+		}
+	}
+	# Abort
+	option = {
+		name = preftl_operation.3105.c
+		from = {
+			if = {
+				limit = {
+					spynetwork = {
+						has_available_spy_power >= 5
+					}
+				}
+				spynetwork = {
+					add_spy_network_level = -5
+				}
+			}
+			destroy_espionage_operation = this
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
