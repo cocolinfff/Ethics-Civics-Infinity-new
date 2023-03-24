@@ -42,7 +42,7 @@ compradors = {
 		}
 	}
 	attraction = {
-		base = 100
+		base = 150 # Attractive
 		modifier = {
 			factor = 1.75
 			exists = root
@@ -112,24 +112,232 @@ compradors = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_xenophile_outraged_gc
+
+	# 诉求
+		demand = { # 中央集权
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = excessive_centralization
+					}
+				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_country_flag = faction_xenophile_outraged_gc
+
+		demand = { # 私有化
+			title = "DEMAND_OWNERSHIP_PRIVATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_PRIVATE"
+			desc = "DEMAND_OWNERSHIP_PRIVATE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = private_ownership
+				}
 			}
 		}
-	}
+
+		demand = { # 投资市场
+			title = "DEMAND_INVEST_MARKET"
+			unfulfilled_title = "DEMAND_INVEST_MARKET"
+			desc = "DEMAND_INVEST_MARKET_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_normal
+				}
+			}
+		}
+		
+		demand = { # 高工时
+			title = "DEMAND_WORKHOUR_CAPITALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
+			desc = "DEMAND_WORKHOUR_CAPITALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_WORKHOUR_CAPITALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
+			desc = "DEMAND_WORKHOUR_CAPITALISM_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15 
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 反福利
+			title = "DEMAND_LIVING_STRUGGLE"
+			unfulfilled_title = "DEMAND_LIVING_STRUGGLE"
+			desc = "DEMAND_LIVING_STRUGGLE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_utopian }
+							has_living_standard = { type = living_standard_shared_burden }
+							has_living_standard = { type = living_standard_good }
+						}
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		
+		demand = { # 物竞天择
+			title = "DEMAND_WELFARE_FREE"
+			unfulfilled_title = "DEMAND_WELFARE_FREE"
+			desc = "DEMAND_WELFARE_FREE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = public_healthcare
+						has_policy_flag = public_education
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		
+		demand = { # 接受难民
+			title = "DEMAND_REFUGEE_ALL"
+			unfulfilled_title = "DEMAND_REFUGEE_ALL"
+			desc = "DEMAND_REFUGEE_ALL_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOT = { has_policy_flag = refugees_not_allowed }
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = refugees_allowed
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_REFUGEE_ALL"
+			unfulfilled_title = "DEMAND_REFUGEE_ALL"
+			desc = "DEMAND_REFUGEE_ALL_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = refugees_not_allowed
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 生育自由
+			title = "DEMAND_BIRTH_NO"
+			unfulfilled_title = "DEMAND_BIRTH_NO"
+			desc = "DEMAND_BIRTH_NO_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = population_controls_not_allowed
+				}
+			}
+		}
+
+		demand = { # 自由移民
+			title = "DEMAND_IMMIGRATION_NO"
+			unfulfilled_title = "DEMAND_IMMIGRATION_NO"
+			desc = "DEMAND_IMMIGRATION_NO_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = resettlement_not_allowed
+				}
+			}
+		}
+		
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+		}
+
 	on_create = {
 		pop_faction_event = {
 			id = factions.1

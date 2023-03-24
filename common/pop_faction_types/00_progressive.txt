@@ -41,7 +41,7 @@ progressive = {
 		}
 	}
 	attraction = {
-		base = 150
+		base = 100
 		modifier = {
 			factor = 1.5
 			exists = from
@@ -128,221 +128,274 @@ progressive = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_egalitarian_outraged_gc
-			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = faction_egalitarian_outraged_gc
-			}
-		}
-	}
-	#无奴隶制
-	demand = {
-		title = "PROGRESSIVE_NO_SLAVERY"
-		unfulfilled_title = "PROGRESSIVE_SLAVERY"
-		desc = "PROGRESSIVE_NO_SLAVERY_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -15
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = slavery_not_allowed
-					has_policy_flag = slavery_allowed
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_policy_flag = slavery_allowed
-				}
-			}
-		}
-	}
-	#言论自由
-	demand = {
-		title = "PROGRESSIVE_FREE_MEDIA"
-		unfulfilled_title = "NO_PROGRESSIVE_FREE_MEDIA"
-		desc = "PROGRESSIVE_FREE_MEDIA_DESC"
-		fulfilled_effect = 10
-		potential = {
-		}
-		trigger = {
-			exists = owner
-			owner = {
-				has_policy_flag = freedom_of_speech
-			}
-		}
-	}
-	#思想控制
-	demand = {
-		title = "NO_THOUGHT_CONTROL"
-		unfulfilled_title = "THOUGHT_CONTROL"
-		desc = "NO_THOUGHT_CONTROL_DESC"
-		unfulfilled_effect = -15
-		potential = {
-			exists = owner
-			owner = {
+	
+	# 诉求
+		demand = { # 民主政府
+			title = "DEMAND_GOVERNMENT_DEMOCRACY"
+			unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
+			desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
 				exists = owner
-				OR = {
-					has_edict = edict_tracking_implants
-					has_edict = edict_enhanced_surveillance
+				owner = {
+					NOR = {
+						has_authority = auth_dictatorial
+						has_authority = auth_imperial
+					}
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_edict = edict_tracking_implants
-					has_edict = edict_thought_enforcement
-				}
-			}
-		}
-	}
-	#民主政治
-	demand = {
-		title = "DEMOCRATIC_RIGHTS"
-		unfulfilled_title = "NO_DEMOCRATIC_RIGHTS"
-		desc = "DEMOCRATIC_RIGHTS_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -15
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			exists = owner
-			owner = {
-				OR = {
-					has_authority = auth_direct_democratic
+			trigger = {
+				owner = {
 					has_authority = auth_democratic
 				}
 			}
 		}
-	}
-	#社会福利
-	demand = {
-		title = "SOCIAL_WELFARE"
-		unfulfilled_title = "NO_SOCIAL_WELFARE"
-		desc = "SOCIAL_WELFARE_DESC"
-		fulfilled_effect = 10
-		potential = {
-			exists = owner
+		demand = { # 投票权
+			title = "DEMAND_GOVERNMENT_ELECTION"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELECTION"
+			desc = "DEMAND_GOVERNMENT_ELECTION_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_authority = auth_dictatorial
+						has_authority = auth_imperial
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
 		}
-		trigger = {
-			owner = {
-				OR = {
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_good
-						}
+
+		demand = { # 适当分权
+			title = "DEMAND_CENTRALIZE_LOW"
+			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
+			desc = "DEMAND_CENTRALIZE_LOW_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = concentration_of_power
+						has_policy_flag = partial_decentralization
 					}
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_shared_burden
-						}
-					}
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_utopian
+				}
+			}
+		}
+
+		demand = { # 投资创新
+			title = "DEMAND_INVEST_RESEARCH"
+			unfulfilled_title = "DEMAND_INVEST_RESEARCH"
+			desc = "DEMAND_INVEST_RESEARCH_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_innovation
+				}
+			}
+		}
+
+		demand = { # 学术优待
+			title = "DEMAND_LIVING_ACADEMY"
+			unfulfilled_title = "DEMAND_LIVING_ACADEMY"
+			desc = "DEMAND_LIVING_ACADEMY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					OR = {
+						any_owned_pop = {
+							has_living_standard = {
+								type = living_standard_academic_privilege
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-	#社会不公
-	demand = {
-		title = "SOCIAL_SECURITY"
-		unfulfilled_title = "NO_SOCIAL_SECURITY"
-		desc = "SOCIAL_SECURITY_DESC"
-		unfulfilled_effect = -15
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_stratified
-						}
+
+		demand = { # 言论自由
+			title = "DEMAND_SPEECH_FREE"
+			unfulfilled_title = "DEMAND_SPEECH_FREE"
+			desc = "DEMAND_SPEECH_FREE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOT = { has_policy_flag = strict_control }
+				}
+			}
+			trigger = {
+				has_policy_flag = freedom_of_speech
+			}
+		}
+		demand = {
+			title = "DEMAND_SPEECH_FREE"
+			unfulfilled_title = "DEMAND_SPEECH_FREE"
+			desc = "DEMAND_SPEECH_FREE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = strict_control
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 接受难民
+			title = "DEMAND_REFUGEE_ALL"
+			unfulfilled_title = "DEMAND_REFUGEE_ALL"
+			desc = "DEMAND_REFUGEE_ALL_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOT = { has_policy_flag = refugees_not_allowed }
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = refugees_allowed
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_REFUGEE_ALL"
+			unfulfilled_title = "DEMAND_REFUGEE_ALL"
+			desc = "DEMAND_REFUGEE_ALL_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = refugees_not_allowed
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 自由移民
+			title = "DEMAND_IMMIGRATION_NO"
+			unfulfilled_title = "DEMAND_IMMIGRATION_NO"
+			desc = "DEMAND_IMMIGRATION_NO_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = resettlement_not_allowed
+				}
+			}
+		}
+
+		#思想控制
+		demand = {
+			title = "NO_THOUGHT_CONTROL"
+			unfulfilled_title = "THOUGHT_CONTROL"
+			desc = "NO_THOUGHT_CONTROL_DESC"
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+				owner = {
+					exists = owner
+					OR = {
+						has_edict = edict_tracking_implants
+						has_edict = edict_enhanced_surveillance
 					}
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_academic_privilege
-						}
+				}
+			}
+			trigger = {
+				owner = {
+					NOR = {
+						has_edict = edict_tracking_implants
+						has_edict = edict_thought_enforcement
 					}
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				NOR = {
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_stratified
-						}
-					}
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_academic_privilege
-						}
-					}
-				}
-			}
-		}
-	}
-	#自由社会
-	demand = {
-		title = "FREE_SOCIETY"
-		unfulfilled_title = "NO_FREE_SOCIETY"
-		desc = "FREE_SOCIETY_DESC"
-		fulfilled_effect = 15
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_anarchism
-			}
-		}
-		trigger = {
-			owner = {
-				OR = {
+		#自由社会
+		demand = {
+			title = "FREE_SOCIETY"
+			unfulfilled_title = "NO_FREE_SOCIETY"
+			desc = "FREE_SOCIETY_DESC"
+			fulfilled_effect = 15
+			potential = {
+				exists = owner
+				owner = {
 					has_valid_civic = civic_anarchism
 				}
 			}
-		}
-	}
-	#合作外交
-	demand = {
-		title = "COOPERATIVE_DIPLO_STANCE"
-		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
-		desc = "COOPERATIVE_DIPLO_STANCE_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				is_homicidal = no
-				is_country_type = default
-				has_policy_flag = diplo_stance_cooperative
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_anarchism
+					}
+				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_policy_flag = diplo_stance_cooperative
+		
+		demand = { # 合作外交
+			title = "DEMAND_DEPLO_COOP"
+			unfulfilled_title = "DEMAND_DEPLO_COOP"
+			desc = "DEMAND_DEPLO_COOP_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+			trigger = {
+				always = yes
 			}
 		}
-	}
+
+		demand = { # OUTRAGED
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_egalitarian_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_egalitarian_outraged_gc
+				}
+			}
+		}
+
 	on_create = {
 		# pop_faction_event = {
 		# 	id = factions.1

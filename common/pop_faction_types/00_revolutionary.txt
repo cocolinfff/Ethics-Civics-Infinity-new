@@ -141,246 +141,293 @@ revolutionary = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_militarist_outraged_gc
+	
+	# 诉求
+		demand = { # 投票权
+			title = "DEMAND_GOVERNMENT_ELECTION"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELECTION"
+			desc = "DEMAND_GOVERNMENT_ELECTION_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+				owner = {
+					AND = {
+						is_socialism = no
+						is_egalitarian = no
+					}
+					NOR = {
+						has_authority = auth_dictatorial
+						has_authority = auth_imperial
+					}
+				}
+			}
+			trigger = {
+				always = no
 			}
 		}
-		trigger = {
-			owner = {
-				has_country_flag = faction_militarist_outraged_gc
+		
+		demand = { # 低工时
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
 			}
-		}
-	}
-	#侵略性外交
-	demand = {
-		title = "IMPERIALIST_NO_PHILOSOPHY"
-		unfulfilled_title = "IMPERIALIST_PHILOSOPHY"
-		desc = "IMPERIALIST_NO_PHILOSOPHY_DESC"
-		unfulfilled_effect = -30
-		potential = {
-			exists = owner
-			owner = {
-				any_relation = {
-					has_communications = root.owner
-					is_country_type = default
-					NOT = {
-						exists = overlord
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
 					}
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_policy_flag = unrestricted_wars
+		demand = {
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15 
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 社会福利
+			title = "DEMAND_LIVING_WELFARE"
+			unfulfilled_title = "DEMAND_LIVING_WELFARE"
+			desc = "DEMAND_LIVING_WELFARE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_normal }
+							has_living_standard = { type = living_standard_good }
+						}
+					}
 				}
 			}
 		}
-	}
-	#银河解放者
-	demand = {
-		title = "LIBERATION_PHILOSOPHY"
-		unfulfilled_title = "LIBERATION_NO_PHILOSOPHY"
-		desc = "LIBERATION_PHILOSOPHY_DESC"
-		fulfilled_effect = 20
-		potential = {
-			exists = owner
+		
+		demand = { # 公立医疗
+			title = "DEMAND_HEALTH_PUBLIC"
+			unfulfilled_title = "DEMAND_HEALTH_PUBLIC"
+			desc = "DEMAND_HEALTH_PUBLIC_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = public_healthcare
+				}
+			}
 		}
-		trigger = {
-			owner = {
-				OR = {
+
+		demand = { # 军事教育
+			title = "DEMAND_EDUCATION_MILITARY"
+			unfulfilled_title = "DEMAND_EDUCATION_MILITARY"
+			desc = "DEMAND_EDUCATION_MILITARY_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = military_education
+				}
+			}
+		}
+
+		demand = { # 大规模征兵
+			title = "DEMAND_CONSCRIPTION_HIGH"
+			unfulfilled_title = "DEMAND_CONSCRIPTION_HIGH"
+			desc = "DEMAND_CONSCRIPTION_HIGH_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = extensive_conscription
+						has_policy_flag = all_people_are_soldiers
+					}
+				}
+			}
+		}
+
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_militarist_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_militarist_outraged_gc
+				}
+			}
+		}
+		#侵略性外交
+		demand = {
+			title = "IMPERIALIST_NO_PHILOSOPHY"
+			unfulfilled_title = "IMPERIALIST_PHILOSOPHY"
+			desc = "IMPERIALIST_NO_PHILOSOPHY_DESC"
+			unfulfilled_effect = -30
+			potential = {
+				exists = owner
+				owner = {
+					any_relation = {
+						has_communications = root.owner
+						is_country_type = default
+						NOT = {
+							exists = overlord
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					NOR = {
+						has_policy_flag = unrestricted_wars
+					}
+				}
+			}
+		}
+		#银河解放者
+		demand = {
+			title = "LIBERATION_PHILOSOPHY"
+			unfulfilled_title = "LIBERATION_NO_PHILOSOPHY"
+			desc = "LIBERATION_PHILOSOPHY_DESC"
+			fulfilled_effect = 20
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
 					has_policy_flag = liberation_wars
 				}
 			}
 		}
-	}
-	#革命联盟
-	demand = {
-		title = "IMPERIALIST_DEFENSIVE_PACTS"
-		unfulfilled_title = "NO_IMPERIALIST_DEFENSIVE_PACTS"
-		desc = "IMPERIALIST_DEFENSIVE_PACTS_DESC"
-		fulfilled_effect = 15
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 2
+		#革命联盟
+		demand = {
+			title = "IMPERIALIST_DEFENSIVE_PACTS"
+			unfulfilled_title = "NO_IMPERIALIST_DEFENSIVE_PACTS"
+			desc = "IMPERIALIST_DEFENSIVE_PACTS_DESC"
+			fulfilled_effect = 15
+			potential = {
+				exists = owner
+				owner = {
+					num_communications > 2
+				}
 			}
-		}
-		trigger = {
-			owner = {
-				has_federation = yes
-				federation = {
-					has_federation_type = military_federation
+			trigger = {
+				owner = {
+					has_federation = yes
+					federation = {
+						has_federation_type = military_federation
+					}
 				}
 			}
 		}
-	}
-	#革命理念
-	demand = {
-		title = "REVOLUTIONARY_IDEA"
-		unfulfilled_title = "NO_REVOLUTIONARY_IDEA"
-		desc = "REVOLUTIONARY_IDEA_DESC"
-		fulfilled_effect = 10
-		potential = {
-			exists = owner
-			owner = {
-			    OR = {
-					has_valid_civic = civic_liberator
-				}			
+		#革命理念
+		demand = {
+			title = "REVOLUTIONARY_IDEA"
+			unfulfilled_title = "NO_REVOLUTIONARY_IDEA"
+			desc = "REVOLUTIONARY_IDEA_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_liberator
+					}			
+				}
+			}
+			trigger = {
+				always = yes
 			}
 		}
-		trigger = {
-			owner = {
-			    OR = {
-					has_valid_civic = civic_liberator
-				}	
+		#革命传统
+		demand = {
+			title = "REVOLUTION_TRADITION"
+			unfulfilled_title = "NO_REVOLUTION_TRADITION"
+			desc = "REVOLUTION_TRADITION_DESC"
+			fulfilled_effect = 15
+			potential = {
+				exists = owner
 			}
-		}
-	}
-	#无奴隶制
-	demand = {
-		title = "PROGRESSIVE_NO_SLAVERY"
-		unfulfilled_title = "PROGRESSIVE_SLAVERY"
-		desc = "PROGRESSIVE_NO_SLAVERY_DESC"
-		fulfilled_effect = 15
-		unfulfilled_effect = -15
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = slavery_allowed
-			}
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_policy_flag = slavery_allowed
+			trigger = {
+				owner = {
+					has_tradition = tr_revolution_adopt
 				}
 			}
 		}
-	}
-	#革命传统
-	demand = {
-		title = "REVOLUTION_TRADITION"
-		unfulfilled_title = "NO_REVOLUTION_TRADITION"
-		desc = "REVOLUTION_TRADITION_DESC"
-		fulfilled_effect = 15
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_tradition = tr_revolution_adopt
-			}
-		}
-	}
-	#屈居人下
-	demand = {
-		title = "IMPERIALIST_UNDERLING"
-		unfulfilled_title = "IMPERIALIST_NOT_UNDERLING"
-		desc = "IMPERIALIST_UNDERLING_DESC"
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				is_subject = yes
-			}
-		}
-		trigger = {
-			owner = {
-				is_subject = yes
-			}
-		}
-	}
-	#文物的军用
-	demand = {
-		title = "IMPERIALIST_MILITARY_APPLICATIONS"
-		unfulfilled_title = "IMPERIALIST_NO_MILITARY_APPLICATIONS"
-		desc = "IMPERIALIST_MILITARY_APPLICATIONS_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				host_has_dlc = "Ancient Relics Story Pack"
-				has_technology = tech_arcane_deciphering
-				OR = {
-					has_modifier = artifact_find_military_application_army
-					has_modifier = artifact_find_military_application_shield_damage
-					has_modifier = artifact_find_military_application_armor_damage
+		#文物的军用
+		demand = {
+			title = "IMPERIALIST_MILITARY_APPLICATIONS"
+			unfulfilled_title = "IMPERIALIST_NO_MILITARY_APPLICATIONS"
+			desc = "IMPERIALIST_MILITARY_APPLICATIONS_DESC"
+			fulfilled_effect = 5
+			potential = {
+				exists = owner
+				owner = {
+					host_has_dlc = "Ancient Relics Story Pack"
+					has_technology = tech_arcane_deciphering
+					OR = {
+						has_modifier = artifact_find_military_application_army
+						has_modifier = artifact_find_military_application_shield_damage
+						has_modifier = artifact_find_military_application_armor_damage
+					}
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_modifier = artifact_find_military_application_army
-					has_modifier = artifact_find_military_application_shield_damage
-					has_modifier = artifact_find_military_application_armor_damage
-				}
+			trigger = {
+				always = yes
 			}
 		}
-	}
-	#浪费文物
-	demand = {
-		title = "IMPERIALIST_PEACEFUL_APPLICATIONS"
-		unfulfilled_title = "IMPERIALIST_NO_PEACEFUL_APPLICATIONS"
-		desc = "IMPERIALIST_PEACEFUL_APPLICATIONS_DESC"
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				host_has_dlc = "Ancient Relics Story Pack"
-				has_technology = tech_arcane_deciphering
-				OR = {
-					has_modifier = artifact_find_peaceful_application_happy_bios
-					has_modifier = artifact_find_peaceful_application_consumer_goods
-					has_modifier = artifact_find_peaceful_application_amenities
-					has_modifier = artifact_find_peaceful_application_leader_improvement
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_modifier = artifact_find_peaceful_application_happy_bios
-					has_modifier = artifact_find_peaceful_application_consumer_goods
-					has_modifier = artifact_find_peaceful_application_amenities
-					has_modifier = artifact_find_peaceful_application_leader_improvement
-				}
-			}
-		}
-	}
-	#合作外交
-	demand = {
-		title = "COOPERATIVE_DIPLO_STANCE"
-		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
-		desc = "COOPERATIVE_DIPLO_STANCE_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				is_homicidal = no
-				is_country_type = default
-				has_policy_flag = diplo_stance_cooperative
-			}
-		}
-		trigger = {
-			owner = {
-				has_policy_flag = diplo_stance_cooperative
-			}
-		}
-	}
+	
 	on_create = {
 		# pop_faction_event = {
 		# 	id = factions.1

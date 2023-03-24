@@ -142,154 +142,359 @@ supremacist = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_xenophobe_supremacist_outraged_gc
+	
+	# 诉求
+		demand = { # 极权！
+			title = "DEMAND_CENTRALIZE_FULL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_FULL"
+			desc = "DEMAND_CENTRALIZE_FULL_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = partial_decentralization
+						has_policy_flag = high_decentralization
+						has_policy_flag = full_decentralization
+					}
+				}
 			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = faction_xenophobe_supremacist_outraged_gc
-			}
-		}
-	}
-	demand = {
-		title = "SUPREMACIST_RULER_SAME_SPECIES"
-		unfulfilled_title = "SUPREMACIST_RULER_NOT_SAME_SPECIES"
-		desc = "SUPREMACIST_RULER_NOT_SAME_SPECIES_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -30
-		potential = {
-			exists = owner
-			owner = {
-				NOT = {
-					has_valid_civic = civic_fanatic_purifiers
+			trigger = {
+				owner = {
+					has_policy_flag = excessive_centralization
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				exists = ruler
-				ruler = {
-					is_same_species = owner_species
+		demand = {
+			title = "DEMAND_CENTRALIZE_FULL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_FULL"
+			desc = "DEMAND_CENTRALIZE_FULL_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = partial_decentralization
+						has_policy_flag = high_decentralization
+						has_policy_flag = full_decentralization
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 统制经济
+			title = "DEMAND_ECONOMY_CORPORATE"
+			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
+			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_controlled_economy
 				}
 			}
 		}
-	}
-	demand = {
-		title = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION"
-		unfulfilled_title = "SUPREMACIST_ISOLATIONIST_FEDERATION"
-		desc = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -20
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 0
+		
+		demand = { # 投资军工
+			title = "DEMAND_INVEST_ALLOY"
+			unfulfilled_title = "DEMAND_INVEST_ALLOY"
+			desc = "DEMAND_INVEST_ALLOY_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
 			}
-		}
-		trigger = {
-			owner = {
-				has_federation = no
-			}
-		}
-	}
-	demand = {
-		title = "SUPREMACIST_UNRESTRICTED_STUDY"
-		unfulfilled_title = "SUPREMACIST_NO_UNRESTRICTED_STUDY"
-		desc = "SUPREMACIST_UNRESTRICTED_STUDY_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -10
-		potential = {
-			exists = owner
-			owner = {
-				NOT = {
-					has_valid_civic = civic_fanatic_purifiers
-				}
-				any_relation = {
-					#has_communications = root
-					is_country_type = primitive
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_alloys
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_policy_flag = interference_full
+
+		demand = { # 禁止异议
+			title = "DEMAND_SPEECH_STRICT"
+			unfulfilled_title = "DEMAND_SPEECH_STRICT"
+			desc = "DEMAND_SPEECH_STRICT_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOT = { has_policy_flag = freedom_of_speech }
+				}
+			}
+			trigger = {
+				has_policy_flag = strict_control
 			}
 		}
-	}
-	demand = {
-		title = "SUPREMACIST_NO_FREE_ALIENS"
-		unfulfilled_title = "SUPREMACIST_HAS_FREE_ALIENS"
-		desc = "SUPREMACIST_ALIEN_SLAVES_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -10
-		potential = {
-			exists = owner
-			owner = {
-				NOT = {
-					has_valid_civic = civic_fanatic_purifiers
+		demand = {
+			title = "DEMAND_SPEECH_STRICT"
+			unfulfilled_title = "DEMAND_SPEECH_STRICT"
+			desc = "DEMAND_SPEECH_STRICT_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = freedom_of_speech
 				}
-				any_owned_pop = {
+			}
+			trigger = {
+				always = no
+			}
+		}
+		
+		demand = { # 种族奴
+			title = "DEMAND_SLAVERY_XENO"
+			unfulfilled_title = "DEMAND_SLAVERY_XENO"
+			desc = "DEMAND_SLAVERY_XENO_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					any_owned_species = {
+						has_citizenship_type = { type = citizenship_slavery }
+					}
+				}
+			}
+			trigger = {
+				always = yes
+			}
+		}
+
+		demand = { # 收留同族
+			title = "DEMAND_REFUGEE_OWNER"
+			unfulfilled_title = "DEMAND_REFUGEE_OWNER"
+			desc = "DEMAND_REFUGEE_OWNER_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = refugees_only_citizens
+				}
+			}
+		}
+		
+		demand = { # 灭绝
+			title = "DEMAND_PURGE_ALLOW"
+			unfulfilled_title = "DEMAND_PURGE_ALLOW"
+			desc = "DEMAND_PURGE_ALLOW_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = purge_allowed
+				}
+			}
+		}
+
+		demand = { # 人口控制
+			title = "DEMAND_BIRTH_LIMIT"
+			unfulfilled_title = "DEMAND_BIRTH_LIMIT"
+			desc = "DEMAND_BIRTH_LIMIT_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = population_controls_allowed
+				}
+			}
+		}
+		
+		demand = { # 大规模征兵
+			title = "DEMAND_CONSCRIPTION_HIGH"
+			unfulfilled_title = "DEMAND_CONSCRIPTION_HIGH"
+			desc = "DEMAND_CONSCRIPTION_HIGH_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = extensive_conscription
+						has_policy_flag = all_people_are_soldiers
+					}
+				}
+			}
+		}
+
+		demand = { # 压迫附庸
+			title = "DEMAND_OVERLORD_HARD"
+			unfulfilled_title = "DEMAND_OVERLORD_HARD"
+			desc = "DEMAND_OVERLORD_HARD_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_overlord = yes
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = oppressive_terms
+				}
+			}
+		}
+
+		#强硬外交
+		demand = {
+			title = "STRONG_DIPLO_STANCE"
+			unfulfilled_title = "STRONG_DIPLO_STANCE"
+			desc = "STRONG_DIPLO_STANCE_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					OR = {
+						has_policy_flag = diplo_stance_belligerent
+						has_policy_flag = diplo_stance_supremacist
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = diplo_stance_belligerent
+						has_policy_flag = diplo_stance_supremacist
+					}
+				}
+			}
+		}
+		#软弱外交
+		demand = {
+			title = "WEAK_DIPLO_STANCE"
+			unfulfilled_title = "WEAK_DIPLO_STANCE"
+			desc = "WEAK_DIPLO_STANCE_DESC"
+			fulfilled_effect = 0.01
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+			trigger = {
+				owner = {
 					NOT = {
+						has_policy_flag = diplo_stance_cooperative
+					}
+				}
+			}
+		}
+
+		demand = { # OUTRAGED
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_xenophobe_supremacist_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_xenophobe_supremacist_outraged_gc
+				}
+			}
+		}
+
+		demand = { # 本族领袖
+			title = "SUPREMACIST_RULER_SAME_SPECIES"
+			unfulfilled_title = "SUPREMACIST_RULER_NOT_SAME_SPECIES"
+			desc = "SUPREMACIST_RULER_NOT_SAME_SPECIES_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -30
+			potential = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_valid_civic = civic_fanatic_purifiers
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					exists = ruler
+					ruler = {
 						is_same_species = owner_species
 					}
-					is_robot_pop = no
-					is_sapient = yes
-					is_being_purged = no
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				NOT = {
-					any_owned_pop = {
-						NOT = {
-							is_same_species = root.owner
-						}
-						is_robot_pop = no
-						is_sapient = yes
-						has_citizenship_type = {
-							type = citizenship_full
-						}
+		demand = { # 无联邦
+			title = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION"
+			unfulfilled_title = "SUPREMACIST_ISOLATIONIST_FEDERATION"
+			desc = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -20
+			potential = {
+				exists = owner
+				owner = {
+					num_communications > 0
+				}
+			}
+			trigger = {
+				owner = {
+					has_federation = no
+				}
+			}
+		}
+		demand = { # 反移民协议
+			title = "SUPREMACIST_NO_MIGRATION_TREATIES"
+			unfulfilled_title = "SUPREMACIST_MIGRATION_TREATIES"
+			desc = "SUPREMACIST_NO_MIGRATION_TREATIES_DESC"
+			unfulfilled_effect = -10
+			fulfilled_effect = 0.001
+			potential = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_valid_civic = civic_fanatic_purifiers
 					}
+					num_communications > 2
 				}
 			}
-		}
-	}
-	demand = {
-		title = "SUPREMACIST_NO_MIGRATION_TREATIES"
-		unfulfilled_title = "SUPREMACIST_MIGRATION_TREATIES"
-		desc = "SUPREMACIST_NO_MIGRATION_TREATIES_DESC"
-		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				NOT = {
-					has_valid_civic = civic_fanatic_purifiers
-				}
-				num_communications > 2
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
-					any_country = {
-						is_country_type = default
-						has_communications = root.owner
-						OR = {
-							has_diplo_migration_treaty = root.owner
-							root = {
-								owner = {
-									has_diplo_migration_treaty = prevprev
+			trigger = {
+				owner = {
+					NOT = {
+						any_country = {
+							is_country_type = default
+							has_communications = root.owner
+							OR = {
+								has_diplo_migration_treaty = root.owner
+								root = {
+									owner = {
+										has_diplo_migration_treaty = prevprev
+									}
 								}
 							}
 						}
@@ -297,197 +502,129 @@ supremacist = {
 				}
 			}
 		}
-	}
-	demand = {
-		title = "SUPREMACIST_DOMINATION"
-		desc = "SUPREMACIST_DOMINATION_DESC"
-		unfulfilled_title = "SUPREMACIST_NO_DOMINATION"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				NOT = {
+		
+		demand = { # 屈居人下
+			title = "IMPERIALIST_UNDERLING"
+			unfulfilled_title = "IMPERIALIST_NOT_UNDERLING"
+			desc = "IMPERIALIST_UNDERLING_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -25
+			potential = {
+				exists = owner
+				owner = {
+					is_subject = yes
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		demand = { # 进攻方
+			title = "SUPREMACIST_DOMINATION"
+			desc = "SUPREMACIST_DOMINATION_DESC"
+			unfulfilled_title = "SUPREMACIST_NO_DOMINATION"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_valid_civic = civic_fanatic_purifiers
+					}
+					any_relation = {
+						is_country_type = default
+						has_communications = root.owner
+						NOT = {
+							is_in_federation_with = root.owner
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = entered_war_as_attacker
+				}
+			}
+		}
+		demand = { # 民政
+			title = "SUPREMACIST_FANATIC_PURIFIERS"
+			unfulfilled_title = "SUPREMACIST_NOT_FANATIC_PURIFIERS"
+			desc = "SUPREMACIST_FANATIC_PURIFIERS_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+				owner = {
 					has_valid_civic = civic_fanatic_purifiers
 				}
-				any_relation = {
-					is_country_type = default
-					has_communications = root.owner
-					NOT = {
-						is_in_federation_with = root.owner
+			}
+			trigger = {
+				always = yes
+			}
+		}
+		demand = { # 民政
+			title = "SUPREMACIST_GIANT_MASSACRE"
+			unfulfilled_title = "SUPREMACIST_NO_GIANT_MASSACRE"
+			desc = "SUPREMACIST_GIANT_MASSACRE_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+				owner = {
+					host_has_dlc = "Leviathans Story Pack"
+					any_country = {
+						OR = {
+							is_country_type = guardian
+							is_country_type = guardian_dragon
+							is_country_type = guardian_stellarite
+							is_country_type = guardian_wraith
+							is_country_type = guardian_hiver
+							is_country_type = guardian_horror
+							is_country_type = guardian_fortress
+							is_country_type = guardian_dreadnought
+							is_country_type = guardian_sphere
+							is_country_type = guardian_scavenger_bot
+							is_country_type = guardian_elderly_tiyanki
+							is_country_type = guardian_hatchling
+						}
+						has_communications = prev
 					}
+					has_country_flag = killed_guardian
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = entered_war_as_attacker
+			trigger = {
+				always = yes
 			}
 		}
-	}
-	demand = {
-		title = "SUPREMACIST_FANATIC_PURIFIERS"
-		unfulfilled_title = "SUPREMACIST_NOT_FANATIC_PURIFIERS"
-		desc = "SUPREMACIST_FANATIC_PURIFIERS_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_fanatic_purifiers
-			}
-		}
-		trigger = {
-			owner = {
-				has_valid_civic = civic_fanatic_purifiers
-			}
-		}
-	}
-	demand = {
-		title = "SUPREMACIST_GIANT_MASSACRE"
-		unfulfilled_title = "SUPREMACIST_NO_GIANT_MASSACRE"
-		desc = "SUPREMACIST_GIANT_MASSACRE_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				host_has_dlc = "Leviathans Story Pack"
-				any_country = {
-					OR = {
-						is_country_type = guardian
-						is_country_type = guardian_dragon
-						is_country_type = guardian_stellarite
-						is_country_type = guardian_wraith
-						is_country_type = guardian_hiver
-						is_country_type = guardian_horror
-						is_country_type = guardian_fortress
-						is_country_type = guardian_dreadnought
-						is_country_type = guardian_sphere
-						is_country_type = guardian_scavenger_bot
-						is_country_type = guardian_elderly_tiyanki
-						is_country_type = guardian_hatchling
-					}
-					has_communications = prev
+		demand = { # 至上
+			title = "SUPREMACIST_PROCLAIM_SUPREMACY"
+			unfulfilled_title = "SUPREMACIST_NO_PROCLAIM_SUPREMACY"
+			desc = "SUPREMACIST_PROCLAIM_SUPREMACY_DESC"
+			fulfilled_effect = 5
+			potential = {
+				exists = owner
+				owner = {
+					has_modifier = proclaim_superiority
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = killed_guardian
+			trigger = {
+				always = yes
 			}
 		}
-	}
-	demand = {
-		title = "SUPREMACIST_PROCLAIM_SUPREMACY"
-		unfulfilled_title = "SUPREMACIST_NO_PROCLAIM_SUPREMACY"
-		desc = "SUPREMACIST_PROCLAIM_SUPREMACY_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_modifier = proclaim_superiority
-			}
-		}
-		trigger = {
-			owner = {
-				has_modifier = proclaim_superiority
-			}
-		}
-	}
-	demand = {
-		title = "SUPREMACIST_CELEBRATE_DIVERSITY"
-		unfulfilled_title = "SUPREMACIST_NO_CELEBRATE_DIVERSITY"
-		desc = "SUPREMACIST_CELEBRATE_DIVERSITY_DESC"
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_modifier = celebrate_diversity
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
+		demand = { # 多元？
+			title = "SUPREMACIST_CELEBRATE_DIVERSITY"
+			unfulfilled_title = "SUPREMACIST_NO_CELEBRATE_DIVERSITY"
+			desc = "SUPREMACIST_CELEBRATE_DIVERSITY_DESC"
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
 					has_modifier = celebrate_diversity
 				}
 			}
-		}
-	}
-	demand = {
-		title = "STRONG_DIPLO_STANCE"
-		unfulfilled_title = "STRONG_DIPLO_STANCE"
-		desc = "STRONG_DIPLO_STANCE_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				is_homicidal = no
-				is_country_type = default
-				OR = {
-					has_policy_flag = diplo_stance_belligerent
-					has_policy_flag = diplo_stance_supremacist
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = diplo_stance_belligerent
-					has_policy_flag = diplo_stance_supremacist
-				}
-			}
-		}
-	}
-	demand = {
-		title = "WEAK_DIPLO_STANCE"
-		unfulfilled_title = "WEAK_DIPLO_STANCE"
-		desc = "WEAK_DIPLO_STANCE_DESC"
-		fulfilled_effect = 0.01
-		unfulfilled_effect = -10
-		potential = {
-			exists = owner
-			owner = {
-				is_homicidal = no
-				is_country_type = default
-				has_policy_flag = diplo_stance_cooperative
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
-					has_policy_flag = diplo_stance_cooperative
-				}
-			}
-		}
-	}
-	demand = {
-		title = "SUPREMACIST_AGGRESSIVE_FIRST_CONTACT_POLICY"
-		unfulfilled_title = "SUPREMACIST_NO_AGGRESSIVE_FIRST_CONTACT_POLICY"
-		desc = "SUPREMACIST_NO_AGGRESSIVE_FIRST_CONTACT_POLICY_DESC"
-
-		unfulfilled_effect = -5
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					years_passed <= 75
-					has_country_flag = recent_first_contact_process_started
-				}
+			trigger = {
+				always = no
 			}
 		}
 
-		trigger = {
-			owner = {
-				has_policy_flag = first_contact_attack_allowed
-			}
-		}
-	}
 	on_create = {
 		# pop_faction_event = {
 		# 	id = factions.1

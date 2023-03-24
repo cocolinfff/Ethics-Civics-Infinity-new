@@ -42,7 +42,7 @@ industrialist = {
 		}
 	}
 	attraction = {
-		base = 150
+		base = 100
 		modifier = {
 			factor = 1.5
 			exists = from
@@ -129,218 +129,385 @@ industrialist = {
 			is_event_leader = yes
 		}
 	}
-
-		
-	
     
-	#消费者利益
-	demand = {
-		title = "CONSUMER_MARKETS"
-		unfulfilled_title = "CONSUMER_MARKETS"
-		desc = "CONSUMER_MARKETS_DESC"
-
-		fulfilled_effect = 10
-
-		potential = {
-			exists = owner			
-		}
-
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = trade_conversion_consumer_goods
+	# 诉求
+		demand = { # 寡头政府
+			title = "DEMAND_GOVERNMENT_OLIGARCHY"
+			unfulfilled_title = "DEMAND_GOVERNMENT_OLIGARCHY"
+			desc = "DEMAND_GOVERNMENT_OLIGARCHY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_megacorp = no
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_oligarchic
 				}
 			}
 		}
-	}
-	#国库充盈（原版）
-	demand = {
-		title = "PROSPERITY_LIQUIDITY"
-		unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
-		desc = "PROSPERITY_LIQUIDITY_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			# TODO get a reasonable trigger for counting colonies?
-			exists = owner
-			owner = {
-				any_owned_planet = {
-					NOT = {
-						is_same_value = root.capital_scope
+		demand = { # 企业政府
+			title = "DEMAND_GOVERNMENT_ENTERPRISE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ENTERPRISE"
+			desc = "DEMAND_GOVERNMENT_ENTERPRISE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Not Show
+			potential = {
+				exists = owner
+				owner = {
+					is_megacorp = yes
+				}
+			}
+			trigger = {
+				always = yes
+			}
+		}
+
+		demand = { # 联邦化
+			title = "DEMAND_CENTRALIZE_FEDERAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_FEDERAL"
+			desc = "DEMAND_CENTRALIZE_FEDERAL_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = partial_decentralization
+						has_policy_flag = high_decentralization
 					}
-					root = {
-						owner = {
-							any_owned_planet = {
-								NOR = {
-									is_same_value = prevprevprev
-									is_same_value = root.owner.capital_scope
+				}
+			}
+		}
+		
+		demand = { # 私有化
+			title = "DEMAND_OWNERSHIP_PRIVATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_PRIVATE"
+			desc = "DEMAND_OWNERSHIP_PRIVATE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = private_ownership
+				}
+			}
+		}
+
+		demand = { # 贸易联盟
+			title = "DEMAND_INVEST_TRADE"
+			unfulfilled_title = "DEMAND_INVEST_TRADE"
+			desc = "DEMAND_INVEST_TRADE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					has_federation = yes
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = trade_conversion_trade_league
+						has_policy_flag = trade_conversion_trade_league_innovation
+					}
+				}
+			}
+		}
+
+		demand = { # 高工时
+			title = "DEMAND_WORKHOUR_CAPITALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
+			desc = "DEMAND_WORKHOUR_CAPITALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_WORKHOUR_CAPITALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
+			desc = "DEMAND_WORKHOUR_CAPITALISM_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15 
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 反福利
+			title = "DEMAND_LIVING_STRUGGLE"
+			unfulfilled_title = "DEMAND_LIVING_STRUGGLE"
+			desc = "DEMAND_LIVING_STRUGGLE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_utopian }
+							has_living_standard = { type = living_standard_shared_burden }
+							has_living_standard = { type = living_standard_good }
+						}
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 物竞天择
+			title = "DEMAND_WELFARE_FREE"
+			unfulfilled_title = "DEMAND_WELFARE_FREE"
+			desc = "DEMAND_WELFARE_FREE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = public_healthcare
+						has_policy_flag = public_education
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 无视环保
+			title = "DEMAND_ECOPROTECT_FREE"
+			unfulfilled_title = "DEMAND_ECOPROTECT_FREE"
+			desc = "DEMAND_ECOPROTECT_FREE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = industrial_unlimited
+				}
+			}
+		}
+
+		demand = { # 机器劳工
+			title = "DEMAND_ROBOT_WORK"
+			unfulfilled_title = "DEMAND_ROBOT_WORK"
+			desc = "DEMAND_ROBOT_WORK_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = robots_allowed
+					NOT = { has_policy_flag = ai_servitude }
+				}
+			}
+		}
+
+		demand = { # 契约奴
+			title = "DEMAND_SLAVERY_CAPITALISM"
+			unfulfilled_title = "DEMAND_SLAVERY_CAPITALISM"
+			desc = "DEMAND_SLAVERY_CAPITALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					any_owned_species = {
+						has_slavery_type = { type = slavery_indentured }
+					}
+				}
+			}
+		}
+
+		#消费者利益
+		demand = {
+			title = "CONSUMER_MARKETS"
+			unfulfilled_title = "CONSUMER_MARKETS"
+			desc = "CONSUMER_MARKETS_DESC"
+
+			fulfilled_effect = 10
+
+			potential = {
+				exists = owner			
+			}
+
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = trade_conversion_consumer_goods
+					}
+				}
+			}
+		}
+		#国库充盈（原版）
+		demand = {
+			title = "PROSPERITY_LIQUIDITY"
+			unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
+			desc = "PROSPERITY_LIQUIDITY_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				# TODO get a reasonable trigger for counting colonies?
+				exists = owner
+				owner = {
+					any_owned_planet = {
+						NOT = {
+							is_same_value = root.capital_scope
+						}
+						root = {
+							owner = {
+								any_owned_planet = {
+									NOR = {
+										is_same_value = prevprevprev
+										is_same_value = root.owner.capital_scope
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				resource_stockpile_compare = {
-					resource = energy
-					value >= 5000
-				}
-			}
-		}
-	}
-	#激进工业化
-	demand = {
-		title = "RADICAL_INDUSTRIALIZATION"
-		unfulfilled_title = "NO_RADICAL_INDUSTRIALIZATION"
-		desc = "RADICAL_INDUSTRIALIZATION_DESC"
-		fulfilled_effect = 10
-		potential = {
-			exists = owner
-			owner = {
-			    OR = {
-				    has_valid_civic = civic_industrial_economy
-				    has_valid_civic = civic_industrial_economy_corporate
-				}
-			}
-		}
-		trigger = {
-			owner = {
-			    OR = {
-				    has_valid_civic = civic_industrial_economy
-				    has_valid_civic = civic_industrial_economy_corporate
-				}
-			}
-		}
-	}
-	#企业游说
-	demand = {
-		title = "ALLOWED_LOBBY"
-		unfulfilled_title = "NO_ALLOWED_LOBBY"
-		desc = "ALLOWED_LOBBY_DESC"
-		fulfilled_effect = 15
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_merchant_guilds
-					has_valid_civic = civic_state_monopoly
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_valid_civic = civic_merchant_guilds
-					has_valid_civic = civic_state_monopoly
-				}
-			}
-		}
-	}
-	#物竞天择
-	demand = {
-		title = "PROGRESSIVE_NO_WELFARE"
-		unfulfilled_title = "NO_PROGRESSIVE_NO_WELFARE"
-		desc = "PROGRESSIVE_NO_WELFARE_DESC"
-		unfulfilled_effect = -15
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_good
-						}
-					}
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_shared_burden
-						}
-					}
-					any_owned_pop = {
-						has_living_standard = {
-							type = living_standard_utopian
-						}
+			trigger = {
+				owner = {
+					resource_stockpile_compare = {
+						resource = energy
+						value >= 5000
 					}
 				}
 			}
 		}
-	}
-	#自由市场
-	demand = {
-		title = "FREE_MARKET_ECONOMY"
-		unfulfilled_title = "NO_FREE_MARKET_ECONOMY"
-		desc = "FREE_MARKET_ECONOMY_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -5
-		potential = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_policy_flag = economic_stance_market
+		#激进工业化
+		demand = {
+			title = "RADICAL_INDUSTRIALIZATION"
+			unfulfilled_title = "NO_RADICAL_INDUSTRIALIZATION"
+			desc = "RADICAL_INDUSTRIALIZATION_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_industrial_economy
+						has_valid_civic = civic_industrial_economy_corporate
+					}
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = economic_stance_market
-				}
+			trigger = {
+				always = yes
 			}
 		}
-	}
-	#计划经济
-	demand = {
-		title = "NO_PLANNED_ECONOMY"
-		unfulfilled_title = "PLANNED_ECONOMY"
-		desc = "NO_PLANNED_ECONOMY_DESC"
-		unfulfilled_effect = -15
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = economic_stance_planned
+		#企业游说
+		demand = {
+			title = "ALLOWED_LOBBY"
+			unfulfilled_title = "NO_ALLOWED_LOBBY"
+			desc = "ALLOWED_LOBBY_DESC"
+			fulfilled_effect = 15
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_merchant_guilds
+						has_valid_civic = civic_state_monopoly
+					}
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_policy_flag = economic_stance_planned
-				}
+			trigger = {
+				always = yes
 			}
 		}
-	}
-	#工业化星球
-	demand = {
-		title = "INDUSTRY_ASCENSION_2"
-		unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
-		desc = "INDUSTRY_ASCENSION_2_DESC"
+		#工业化星球
+		demand = {
+			title = "INDUSTRY_ASCENSION_2"
+			unfulfilled_title = "NO_INDUSTRY_ASCENSION_2"
+			desc = "INDUSTRY_ASCENSION_2_DESC"
 
-		fulfilled_effect = 10
+			fulfilled_effect = 10
 
-		potential = {
-			exists = owner
-			owner = {
-				years_passed > 50
-				has_technology = tech_mega_engineering
+			potential = {
+				exists = owner
+				owner = {
+					years_passed > 50
+					has_technology = tech_mega_engineering
+				}
+			}
+
+			trigger = {
+				owner = {
+					has_ascension_perk = ap_master_builders
+				}
+			}
+		}
+		demand = { # 跨国贸易
+			title = "DEMAND_TREATIY_COMMERCIAL"
+			unfulfilled_title = "DEMAND_TREATIY_COMMERCIAL"
+			desc = "DEMAND_TREATIY_COMMERCIAL_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					num_communications > 2
+				}
+			}
+			trigger = {
+				owner = {
+					count_country = {
+						count > 1
+						limit = {
+							exists = this
+							root.owner = {
+								has_commercial_pact = prev
+							}
+						}
+					}
+				}
 			}
 		}
 
-		trigger = {
-			owner = {
-				has_ascension_perk = ap_master_builders
-			}
-		}
-	}	
 	on_create = {
 		# pop_faction_event = { id = factions.1 }
 	}
-
 	on_destroy = {
 		if = {
 			limit = {

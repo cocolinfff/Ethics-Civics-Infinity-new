@@ -41,7 +41,7 @@ traditionalist = {
 		}
 	}
 	attraction = {
-		base = 150
+		base = 100
 		modifier = {
 			factor = 1.5
 			exists = from
@@ -124,297 +124,441 @@ traditionalist = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_spiritualist_outraged_gc
+
+	# 诉求
+		demand = { # 君主制
+			title = "DEMAND_GOVERNMENT_MONARCHY"
+			unfulfilled_title = "DEMAND_GOVERNMENT_MONARCHY"
+			desc = "DEMAND_GOVERNMENT_MONARCHY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					has_authority = auth_imperial
+				}
+			}
+			trigger = {
+				always = yes
 			}
 		}
-		trigger = {
-			owner = {
-				has_country_flag = faction_spiritualist_outraged_gc
+		demand = { # 反民粹
+			title = "DEMAND_GOVERNMENT_ANTIPOP"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ANTIPOP"
+			desc = "DEMAND_GOVERNMENT_ANTIPOP_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					has_authority = auth_direct_democratic
+				}
+			}
+			trigger = {
+				always = no
 			}
 		}
-	}
-	#有机生命
-	demand = {
-		title = "TRADITIONALIST_NO_ROBOTS"
-		unfulfilled_title = "TRADITIONALIST_ROBOTS"
-		desc = "TRADITIONALIST_NO_ROBOTS_DESC"
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				NOT = {
-					has_origin = origin_machine_cult
+
+		demand = { # 中央集权
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = excessive_centralization
+					}
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_policy_flag = robots_outlawed
+		
+		demand = { # 宗族经济
+			title = "DEMAND_OWNERSHIP_FAMILY"
+			unfulfilled_title = "DEMAND_OWNERSHIP_FAMILY"
+			desc = "DEMAND_OWNERSHIP_FAMILY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = family_ownership
+				}
 			}
 		}
-	}
-	#合成人无人权
-	demand = {
-		title = "TRADITIONALIST_NO_ROBOT_RIGHTS"
-		unfulfilled_title = "TRADITIONALIST_ROBOT_RIGHTS"
-		desc = "TRADITIONALIST_NO_ROBOT_RIGHTS_DESC"
-		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				can_set_ai_policy = yes
-				NOT = {
+
+		demand = { # 投资文化
+			title = "DEMAND_INVEST_CULTURAL"
+			unfulfilled_title = "DEMAND_INVEST_CULTURAL"
+			desc = "DEMAND_INVEST_CULTURAL_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_culture
+				}
+			}
+		}
+		
+		demand = { # 经济阶级
+			title = "DEMAND_LIVING_CLASS"
+			unfulfilled_title = "DEMAND_LIVING_CLASS"
+			desc = "DEMAND_LIVING_CLASS_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						has_living_standard = { type = living_standard_stratified }
+					}
+				}
+			}
+		}
+		
+		demand = { # 科研道德
+			title = "DEMAND_RESEARCH_MORAL"
+			unfulfilled_title = "DEMAND_RESEARCH_MORAL"
+			desc = "DEMAND_RESEARCH_MORAL_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = research_without_bottom_line
+						has_policy_flag = rational_bottom_line
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = moral_bottom_line
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_RESEARCH_MORAL"
+			unfulfilled_title = "DEMAND_RESEARCH_MORAL"
+			desc = "DEMAND_RESEARCH_MORAL_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				owner = {
+					OR = {
+						has_policy_flag = research_without_bottom_line
+						has_policy_flag = rational_bottom_line
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		
+		demand = { # 反AI人权
+			title = "DEMAND_AI_DERIGHT"
+			unfulfilled_title = "DEMAND_AI_DERIGHT"
+			desc = "DEMAND_AI_DERIGHT_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = robots_allowed
 					has_policy_flag = ai_full_rights
 				}
-				NOT = {
+			}
+			trigger = {
+				always = no
+			}
+		}
+		
+		demand = { # 定向管控 （社）
+			title = "DEMAND_SPEECH_DIRECT"
+			unfulfilled_title = "DEMAND_SPEECH_DIRECT"
+			desc = "DEMAND_SPEECH_DIRECT_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+				}
+			}
+			trigger = {
+				has_policy_flag = directional_management
+			}
+		}
+		
+		demand = { # 排斥难民
+			title = "DEMAND_REFUGEE_NO"
+			unfulfilled_title = "DEMAND_REFUGEE_NO"
+			desc = "DEMAND_REFUGEE_NO_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_policy_flag = refugees_allowed
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = refugees_not_allowed
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_REFUGEE_NO"
+			unfulfilled_title = "DEMAND_REFUGEE_NO"
+			desc = "DEMAND_REFUGEE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = refugees_allowed
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		
+		demand = { # 驱逐
+			title = "DEMAND_PURGE_EXPEL"
+			unfulfilled_title = "DEMAND_PURGE_EXPEL"
+			desc = "DEMAND_PURGE_EXPEL_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = purge_displacement_only
+				}
+			}
+		}
+
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_spiritualist_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_spiritualist_outraged_gc
+				}
+			}
+		}
+		#灵能追溯
+		demand = {
+			title = "TRADITIONALIST_PSIONIC_PURSUIT"
+			unfulfilled_title = "TRADITIONALIST_NO_PSIONIC_PURSUIT"
+			desc = "TRADITIONALIST_PSIONIC_PURSUIT_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				host_has_dlc = "Utopia"
+				exists = owner
+				owner = {
+					OR = {
+						num_ascension_perks > 0
+						num_ascension_perk_slots > 0
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_ascension_perk = ap_mind_over_matter
+				}
+			}
+		}
+		#近神之人
+		demand = {
+			title = "TRADITIONALIST_MACHINE_CULT"
+			unfulfilled_title = "NO_TRADITIONALIST_MACHINE_CULT"
+			desc = "TRADITIONALIST_MACHINE_CULT_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+				owner = {
 					has_origin = origin_machine_cult
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
-					has_policy_flag = ai_servitude
-				}
-			}
-		}
-	}
-	#合成人无人权
-	demand = {
-		title = "TRADITIONALIST_NO_FULL_ROBOT_RIGHTS"
-		unfulfilled_title = "TRADITIONALIST_FULL_ROBOT_RIGHTS"
-		desc = "TRADITIONALIST_NO_FULL_ROBOT_RIGHTS_DESC"
-		unfulfilled_effect = -20
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				can_set_ai_policy = yes
-				has_policy_flag = ai_full_rights
-				NOT = {
-					has_origin = origin_machine_cult
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
-					has_policy_flag = ai_full_rights
-				}
-			}
-		}
-	}
-	#虔信政治
-	demand = {
-		title = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT"
-		unfulfilled_title = "TRADITIONALIST_SECULAR_GOVERNMENT"
-		desc = "TRADITIONALIST_SPIRITUALIST_GOVERNMENT_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -5
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_ethic = ethic_fanatic_spiritualist
-					has_ethic = ethic_spiritualist
-				}
-			}
-		}
-	}
-	#灵能追溯
-	demand = {
-		title = "TRADITIONALIST_PSIONIC_PURSUIT"
-		unfulfilled_title = "TRADITIONALIST_NO_PSIONIC_PURSUIT"
-		desc = "TRADITIONALIST_PSIONIC_PURSUIT_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			host_has_dlc = "Utopia"
-			exists = owner
-			owner = {
-				OR = {
-					num_ascension_perks > 0
-					num_ascension_perk_slots > 0
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				has_ascension_perk = ap_mind_over_matter
-			}
-		}
-	}
-	#近神之人
-	demand = {
-		title = "TRADITIONALIST_MACHINE_CULT"
-		unfulfilled_title = "NO_TRADITIONALIST_MACHINE_CULT"
-		desc = "TRADITIONALIST_MACHINE_CULT_DESC"
-		fulfilled_effect = 10
-		potential = {
-			exists = owner
-			owner = {
-				has_origin = origin_machine_cult
-			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = flesh_weakened
-			}
-		}
-	}
-	#血肉为大
-	demand = {
-		title = "TRADITIONALIST_FLESH_IS_STRONG"
-		unfulfilled_title = "TRADITIONALIST_FLESH_IS_WEAK"
-		desc = "TRADITIONALIST_FLESH_IS_STRONG_DESC"
-		unfulfilled_effect = -30
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_ascension_perk = ap_the_flesh_is_weak
-				NOT = {
-					has_origin = origin_machine_cult
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
+			trigger = {
+				owner = {
 					has_country_flag = flesh_weakened
 				}
 			}
 		}
-	}
-	#同一性
-	demand = {
-		title = "TRADITIONALIST_SPIRITUALIST_POPS"
-		unfulfilled_title = "TRADITIONALIST_FEW_SPIRITUALIST_POPS"
-		desc = "TRADITIONALIST_SPIRITUALIST_POPS_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			exists = owner
-			owner = {
-				pop_percentage = {
-					percentage > 0.09
-					limit = {
-						pop_has_ethic = ethic_spiritualist
+		#血肉为大
+		demand = {
+			title = "TRADITIONALIST_FLESH_IS_STRONG"
+			unfulfilled_title = "TRADITIONALIST_FLESH_IS_WEAK"
+			desc = "TRADITIONALIST_FLESH_IS_STRONG_DESC"
+			unfulfilled_effect = -30
+			fulfilled_effect = 0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_the_flesh_is_weak
+					NOT = {
+						has_origin = origin_machine_cult
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					NOT = {
+						has_country_flag = flesh_weakened
 					}
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				pop_percentage = {
-					percentage > 0.24
-					limit = {
-						pop_has_ethic = ethic_spiritualist
+		#同一性
+		demand = {
+			title = "TRADITIONALIST_SPIRITUALIST_POPS"
+			unfulfilled_title = "TRADITIONALIST_FEW_SPIRITUALIST_POPS"
+			desc = "TRADITIONALIST_SPIRITUALIST_POPS_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				exists = owner
+				owner = {
+					pop_percentage = {
+						percentage > 0.09
+						limit = {
+							pop_has_ethic = ethic_spiritualist
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					pop_percentage = {
+						percentage > 0.24
+						limit = {
+							pop_has_ethic = ethic_spiritualist
+						}
 					}
 				}
 			}
 		}
-	}
-	#四面楚歌的少数派
-	demand = {
-		title = "TRADITIONALIST_UNSPIRITUALIST"
-		unfulfilled_title = "TRADITIONALIST_NOT_UNSPIRITUALIST"
-		desc = "TRADITIONALIST_UNSPIRITUALIST_DESC"
-		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				pop_percentage = {
-					percentage < 0.25
-					limit = {
-						pop_has_ethic = ethic_spiritualist
+		#四面楚歌的少数派
+		demand = {
+			title = "TRADITIONALIST_UNSPIRITUALIST"
+			unfulfilled_title = "TRADITIONALIST_NOT_UNSPIRITUALIST"
+			desc = "TRADITIONALIST_UNSPIRITUALIST_DESC"
+			unfulfilled_effect = -10
+			fulfilled_effect = 0.001
+			potential = {
+				exists = owner
+				owner = {
+					pop_percentage = {
+						percentage < 0.25
+						limit = {
+							pop_has_ethic = ethic_spiritualist
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					pop_percentage = {
+						percentage > 0.09
+						limit = {
+							pop_has_ethic = ethic_spiritualist
+						}
 					}
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				pop_percentage = {
-					percentage > 0.09
-					limit = {
-						pop_has_ethic = ethic_spiritualist
-					}
+		#虚境恩赐
+		demand = {
+			title = "TRADITIONALIST_SHROUD_BOON"
+			unfulfilled_title = "TRADITIONALIST_NO_SHROUD_BOON"
+			desc = "TRADITIONALIST_SHROUD_BOON_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = positive_shroud_outcome
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = positive_shroud_outcome
 				}
 			}
 		}
-	}
-	#虚境恩赐
-	demand = {
-		title = "TRADITIONALIST_SHROUD_BOON"
-		unfulfilled_title = "TRADITIONALIST_NO_SHROUD_BOON"
-		desc = "TRADITIONALIST_SHROUD_BOON_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = positive_shroud_outcome
+		#虚境诅咒
+		demand = {
+			title = "TRADITIONALIST_SHROUD_CURSE"
+			unfulfilled_title = "TRADITIONALIST_NO_SHROUD_CURSE"
+			desc = "TRADITIONALIST_SHROUD_CURSE_DESC"
+			fulfilled_effect = -5
+			unfulfilled_effect = 0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = negative_shroud_outcome
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = negative_shroud_outcome
+				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_country_flag = positive_shroud_outcome
+		#沉湎余晖
+		demand = {
+			title = "TRADITIONALIST_RELIGIOUS_FINDING"
+			unfulfilled_title = "TRADITIONALIST_NO_RELIGIOUS_FINDING"
+			desc = "TRADITIONALIST_RELIGIOUS_FINDING_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_modifier = proclaim_religious_finding
+				}
+			}
+			trigger = {
+				owner = {
+					has_modifier = proclaim_religious_finding
+				}
 			}
 		}
-	}
-	#虚境诅咒
-	demand = {
-		title = "TRADITIONALIST_SHROUD_CURSE"
-		unfulfilled_title = "TRADITIONALIST_NO_SHROUD_CURSE"
-		desc = "TRADITIONALIST_SHROUD_CURSE_DESC"
-		fulfilled_effect = -5
-		unfulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = negative_shroud_outcome
-			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = negative_shroud_outcome
-			}
-		}
-	}
-	#沉湎余晖
-	demand = {
-		title = "TRADITIONALIST_RELIGIOUS_FINDING"
-		unfulfilled_title = "TRADITIONALIST_NO_RELIGIOUS_FINDING"
-		desc = "TRADITIONALIST_RELIGIOUS_FINDING_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_modifier = proclaim_religious_finding
-			}
-		}
-		trigger = {
-			owner = {
-				has_modifier = proclaim_religious_finding
-			}
-		}
-	}
+
 	on_create = {
 		# pop_faction_event = {
 		# 	id = factions.1

@@ -133,338 +133,365 @@ proletarians = {
 			is_event_leader = yes
 		}
 	}
-	demand = {
-		title = "FACTION_OUTRAGED_GC"
-		unfulfilled_title = "FACTION_OUTRAGED_GC"
-		desc = "FACTION_OUTRAGED_GC_DESC"
-		fulfilled_effect = -20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = faction_xenophile_outraged_gc
+	
+	# 诉求
+		demand = { # 投资社会
+			title = "DEMAND_INVEST_SOCIETY"
+			unfulfilled_title = "DEMAND_INVEST_SOCIETY"
+			desc = "DEMAND_INVEST_SOCIETY_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_growth_dev
+				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_country_flag = faction_xenophile_outraged_gc
-			}
-		}
-	}
-	#无物种级奴役
-	demand = {
-		# "XENOIST_NO_SLAVES"
-		title = "XENOIST_NO_SLAVES"
-		unfulfilled_title = "XENOIST_SLAVES"
-		desc = "XENOIST_NO_SLAVES_DESC"
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				any_owned_pop = {
+		
+		demand = { # 低工时
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
 					NOR = {
-						is_same_species = root.owner
-						is_robot_pop = yes
-						is_sapient = no
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
 					}
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				NOT = {
-					#has_policy_flag = slavery_allowed
+		demand = {
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15 
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 社会福利
+			title = "DEMAND_LIVING_WELFARE"
+			unfulfilled_title = "DEMAND_LIVING_WELFARE"
+			desc = "DEMAND_LIVING_WELFARE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
 					any_owned_pop = {
-						has_citizenship_type = {
-							country = prev
-							type = citizenship_slavery
+						NOR = {
+							has_living_standard = { type = living_standard_normal }
+							has_living_standard = { type = living_standard_good }
 						}
 					}
 				}
 			}
+			trigger = {
+				always = no
+			}
 		}
-	}
-	#无净化运动
-	demand = {
-		# "XENOIST_NO_PURGE"
-		title = "XENOIST_NO_PURGE"
-		unfulfilled_title = "XENOIST_PURGE"
-		desc = "XENOIST_NO_PURGE_DESC"
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				NOR = {
-					has_policy_flag = purge_displacement_only
-					has_policy_flag = purge_allowed
+
+		demand = { # 公立医疗
+			title = "DEMAND_HEALTH_PUBLIC"
+			unfulfilled_title = "DEMAND_HEALTH_PUBLIC"
+			desc = "DEMAND_HEALTH_PUBLIC_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = public_healthcare
 				}
 			}
 		}
-	}
-	#多元文化社会
-	demand = {
-		# "XENOIST_MULTICULTURALISM"
-		title = "XENOIST_MULTICULTURALISM"
-		unfulfilled_title = "XENOIST_NO_MULTICULTURALISM"
-		desc = "XENOIST_MULTICULTURALISM_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 3
-				any_owned_pop = {
-					NOR = {
-						is_same_species = root.owner
-						has_trait = trait_mechanical
-						has_trait = trait_machine_unit
-						has_trait = trait_hive_mind
+		
+		demand = { # 公立教育
+			title = "DEMAND_EDUCATION_PUBLIC"
+			unfulfilled_title = "DEMAND_EDUCATION_PUBLIC"
+			desc = "DEMAND_EDUCATION_PUBLIC_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = public_education
+				}
+			}
+		}
+		
+		demand = { # 废奴 （有奴隶种族时）
+			title = "DEMAND_SLAVERY_BAN"
+			unfulfilled_title = "DEMAND_SLAVERY_BAN"
+			desc = "DEMAND_SLAVERY_BAN_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					any_owned_species = {
+						has_citizenship_type = { type = citizenship_slavery }
 					}
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				num_species > 3
-			}
-		}
-	}
-	#银河普遍主义
-	demand = {
-		# "XENOIST_UNIVERSALISM"
-		title = "XENOIST_UNIVERSALISM"
-		unfulfilled_title = "XENOIST_NO_UNIVERSALISM"
-		desc = "XENOIST_UNIVERSALISM_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 5
-				has_valid_civic = civic_free_haven
-				any_owned_pop = {
-					NOR = {
-						is_same_species = root.owner
-						has_trait = trait_mechanical
-						has_trait = trait_machine_unit
-						has_trait = trait_hive_mind
-					}
+			trigger = {
+				owner = {
+					has_policy_flag = slavery_not_allowed
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				num_species > 5
+
+		demand = { # 接受难民
+			title = "DEMAND_REFUGEE_ALL"
+			unfulfilled_title = "DEMAND_REFUGEE_ALL"
+			desc = "DEMAND_REFUGEE_ALL_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOT = { has_policy_flag = refugees_not_allowed }
+				}
 			}
-		}
-	}
-	#银河解放者
-	demand = {
-		title = "LIBERATION_PHILOSOPHY"
-		unfulfilled_title = "LIBERATION_NO_PHILOSOPHY"
-		desc = "LIBERATION_PHILOSOPHY_DESC"
-		fulfilled_effect = 20
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = liberation_wars
+			trigger = {
+				owner = {
+					has_policy_flag = refugees_allowed
 				}
 			}
 		}
-	}
-	#欢迎所有难民
-	demand = {
-		# "XENOIST_REFUGEES_WELCOME"
-		title = "XENOIST_REFUGEES_WELCOME"
-		unfulfilled_title = "XENOIST_REFUGEES_UNWELCOME"
-		desc = "XENOIST_REFUGEES_WELCOME_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -10
-		potential = {
-			exists = owner
-			owner = {
-				any_relation = {
-					has_communications = root.owner
+		demand = {
+			title = "DEMAND_REFUGEE_ALL"
+			unfulfilled_title = "DEMAND_REFUGEE_ALL"
+			desc = "DEMAND_REFUGEE_ALL_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					has_policy_flag = refugees_not_allowed
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 反对净化
+			title = "DEMAND_PURGE_NO"
+			unfulfilled_title = "DEMAND_PURGE_NO"
+			desc = "DEMAND_PURGE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = purge_not_allowed
+				}
+			}
+		}
+
+		demand = { # 合作外交
+			title = "DEMAND_DEPLO_COOP"
+			unfulfilled_title = "DEMAND_DEPLO_COOP"
+			desc = "DEMAND_DEPLO_COOP_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
 					is_country_type = default
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+			trigger = {
+				always = yes
+			}
+		}
+
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_policy_flag = refugees_allowed
-			}
-		}
-	}
-	#近期提升
-	demand = {
-		title = "XENOIST_RECENT_UPLIFT"
-		unfulfilled_title = "XENOIST_NO_RECENT_UPLIFT"
-		desc = "XENOIST_RECENT_UPLIFT_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_technology = tech_epigenetic_triggers
-			}
-		}
-		trigger = {
-			owner = {
-				has_country_flag = recent_uplift_timed
-			}
-		}
-	}
-	#近期启蒙
-	demand = {
-		title = "XENOIST_RECENT_ENLIGHTENMENT"
-		unfulfilled_title = "XENOIST_NO_RECENT_ENLIGHTENMENT"
-		desc = "XENOIST_RECENT_ENLIGHTENMENT_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					any_owned_ship = {
-						is_ship_size = observation_station
+		#多元文化社会
+		demand = {
+			# "XENOIST_MULTICULTURALISM"
+			title = "XENOIST_MULTICULTURALISM"
+			unfulfilled_title = "XENOIST_NO_MULTICULTURALISM"
+			desc = "XENOIST_MULTICULTURALISM_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					num_communications > 3
+					any_owned_pop = {
+						NOR = {
+							is_same_species = root.owner
+							has_trait = trait_mechanical
+							has_trait = trait_machine_unit
+							has_trait = trait_hive_mind
+						}
 					}
+				}
+			}
+			trigger = {
+				owner = {
+					num_species > 3
+				}
+			}
+		}
+		#近期提升
+		demand = {
+			title = "XENOIST_RECENT_UPLIFT"
+			unfulfilled_title = "XENOIST_NO_RECENT_UPLIFT"
+			desc = "XENOIST_RECENT_UPLIFT_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_technology = tech_epigenetic_triggers
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = recent_uplift_timed
+				}
+			}
+		}
+		#近期启蒙
+		demand = {
+			title = "XENOIST_RECENT_ENLIGHTENMENT"
+			unfulfilled_title = "XENOIST_NO_RECENT_ENLIGHTENMENT"
+			desc = "XENOIST_RECENT_ENLIGHTENMENT_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						any_owned_ship = {
+							is_ship_size = observation_station
+						}
+						has_country_flag = recent_enlightenment_timed
+						# fixes demand disappearing when fulfilled (station dismantles)
+					}
+				}
+			}
+			trigger = {
+				owner = {
 					has_country_flag = recent_enlightenment_timed
-					# fixes demand disappearing when fulfilled (station dismantles)
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				has_country_flag = recent_enlightenment_timed
+		#联邦之路
+		demand = {
+			title = "XENOIST_FEDERATED"
+			unfulfilled_title = "XENOIST_NOT_FEDERATED"
+			desc = "XENOIST_FEDERATED_DESC"
+			fulfilled_effect = 20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					num_communications > 3
+					NOT = {
+						has_valid_civic = civic_peacekeepers
+					}
+				}
 			}
-		}
-	}
-	#反对圈地
-	demand = {
-		title = "XENOIST_NO_PRIMITIVE_INVASION"		# Landgrab Opposition
-		unfulfilled_title = "XENOIST_NO_PRIMITIVE_INVASION"
-		desc = "XENOIST_NO_PRIMITIVE_INVASION_DESC"
-		unfulfilled_effect = -15
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = encountered_first_primitive
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
-					has_country_flag = recent_primitive_invasion
+			trigger = {
+				owner = {
+					has_federation = yes
 				}
 			}
 		}
-	}
-	#联邦之路
-	demand = {
-		title = "XENOIST_FEDERATED"
-		unfulfilled_title = "XENOIST_NOT_FEDERATED"
-		desc = "XENOIST_FEDERATED_DESC"
-		fulfilled_effect = 20
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 3
-				NOT = {
+		#联邦之路
+		demand = {
+			title = "XENOIST_FEDERATED"
+			unfulfilled_title = "XENOIST_NOT_FEDERATED"
+			desc = "XENOIST_FEDERATED_DESC"
+			fulfilled_effect = 30
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					num_communications > 3
 					has_valid_civic = civic_peacekeepers
 				}
 			}
-		}
-		trigger = {
-			owner = {
-				has_federation = yes
-			}
-		}
-	}
-	#联邦之路
-	demand = {
-		title = "XENOIST_FEDERATED"
-		unfulfilled_title = "XENOIST_NOT_FEDERATED"
-		desc = "XENOIST_FEDERATED_DESC"
-		fulfilled_effect = 30
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 3
-				has_valid_civic = civic_peacekeepers
-			}
-		}
-		trigger = {
-			owner = {
-				has_federation = yes
-			}
-		}
-	}
-	#展示多样性
-	demand = {
-		title = "XENOIST_CELEBRATE_DIVERSITY"
-		unfulfilled_title = "XENOIST_NO_CELEBRATE_DIVERSITY"
-		desc = "XENOIST_CELEBRATE_DIVERSITY_DESC"
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_modifier = celebrate_diversity
-			}
-		}
-		trigger = {
-			owner = {
-				has_modifier = celebrate_diversity
-			}
-		}
-	}
-	#焚书运动
-	demand = {
-		title = "XENOIST_PROCLAIM_SUPREMACY"
-		unfulfilled_title = "XENOIST_NO_PROCLAIM_SUPREMACY"
-		desc = "XENOIST_PROCLAIM_SUPREMACY_DESC"
-		unfulfilled_effect = -5
-		fulfilled_effect = 0.001
-		potential = {
-			exists = owner
-			owner = {
-				has_modifier = proclaim_superiority
-			}
-		}
-		trigger = {
-			owner = {
-				NOT = {
-					has_modifier = proclaim_superiority
+			trigger = {
+				owner = {
+					has_federation = yes
 				}
 			}
 		}
-	}
-	#合作外交
-	demand = {
-		title = "COOPERATIVE_DIPLO_STANCE"
-		unfulfilled_title = "COOPERATIVE_DIPLO_STANCE"
-		desc = "COOPERATIVE_DIPLO_STANCE_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -10
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_policy_flag = diplo_stance_cooperative
+		#展示多样性
+		demand = {
+			title = "XENOIST_CELEBRATE_DIVERSITY"
+			unfulfilled_title = "XENOIST_NO_CELEBRATE_DIVERSITY"
+			desc = "XENOIST_CELEBRATE_DIVERSITY_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_modifier = celebrate_diversity
+				}
+			}
+			trigger = {
+				owner = {
+					has_modifier = celebrate_diversity
+				}
 			}
 		}
-	}
+	
 	on_create = {
 		# pop_faction_event = {
 		# 	id = factions.1
