@@ -1105,7 +1105,7 @@ action_offer_federation_association_status = {
 # Creates a federation between two empires or invites an empire to an existing federation. Requires unanimous vote from the federation, if one exists already.
 # Usable by regular empires only. Raises trust over time.
 action_invite_to_federation = {
-	icon = "GFX_diplomacy_status_federation""GFX_diplomacy_status_federation"
+	icon = "GFX_diplomacy_status_federation"
 	requires_actor_peace = yes
 	requires_recipient_peace = yes
 	requires_alliance_vote = yes
@@ -1123,9 +1123,42 @@ action_invite_to_federation = {
 			is_fallen_machine_empire = no
 			from = { is_fallen_machine_empire = no }
 		}
+		hidden_trigger = {
+			if = {
+				limit = {
+					FROM = {
+						is_subject = yes
+					}
+				}
+				has_federation = yes
+				is_overlord_to = FROM
+			}
+		}
 	}
 
 	possible = {
+		if = {
+			limit = {
+				has_federation = no
+				is_subject = yes
+			}
+			custom_tooltip = {
+				fail_text = requires_not_subject_to_start_federation
+				OR = {
+					is_subject = no
+					overlord = { is_same_value = from }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = requires_not_subject_or_overlord_asking
+			from = {
+				OR = {
+					is_subject = no
+					overlord = { is_same_value = root }
+				}
+			}
+		}
 		if = {
 			limit = {
 				has_federation = no
