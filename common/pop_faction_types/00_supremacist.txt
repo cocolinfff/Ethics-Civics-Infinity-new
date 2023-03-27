@@ -33,7 +33,7 @@ supremacist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_xenophile = no
+		NOT = { has_ethic = ethic_xenophile }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_supremacist_i = yes
 			can_join_faction_supremacist_c = yes
@@ -42,13 +42,6 @@ supremacist = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				is_xenophobe = yes
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -67,6 +60,10 @@ supremacist = {
 					exists = leader
 				}
 			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_xenophobe
 		}
 		modifier = { # Slaves don't care masters, please!
 			factor = 0.01
@@ -145,9 +142,9 @@ supremacist = {
 	
 	# 诉求
 		demand = { # 极权！
-			title = "DEMAND_CENTRALIZE_FULL"
-			unfulfilled_title = "DEMAND_CENTRALIZE_FULL"
-			desc = "DEMAND_CENTRALIZE_FULL_DESC"
+			title = "DEMAND_CENTRALIZE_TOTAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_TOTAL"
+			desc = "DEMAND_CENTRALIZE_TOTAL_DESC"
 			fulfilled_effect = 10
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
@@ -167,9 +164,9 @@ supremacist = {
 			}
 		}
 		demand = {
-			title = "DEMAND_CENTRALIZE_FULL"
-			unfulfilled_title = "DEMAND_CENTRALIZE_FULL"
-			desc = "DEMAND_CENTRALIZE_FULL_NO_DESC"
+			title = "DEMAND_CENTRALIZE_TOTAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_TOTAL"
+			desc = "DEMAND_CENTRALIZE_TOTAL_DESC"
 			#fulfilled_effect = 0 # Yellow
 			unfulfilled_effect = -10
 			potential = {
@@ -187,7 +184,7 @@ supremacist = {
 			}
 		}
 
-		demand = { # 统制经济
+		demand = { # 法团统制
 			title = "DEMAND_ECONOMY_CORPORATE"
 			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
 			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
@@ -195,10 +192,39 @@ supremacist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = economic_controlled_economy
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_stance_planned_free
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = economic_controlled_economy
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_ECONOMY_CORPORATE"
+			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
+			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = economic_controlled_economy
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_stance_planned_free
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_planned
 				}
 			}
 		}
@@ -232,7 +258,6 @@ supremacist = {
 				}
 			}
 			trigger = {
-				exists = owner
 				owner = {
 					has_policy_flag = strict_control
 				}
@@ -341,6 +366,50 @@ supremacist = {
 			}
 		}
 
+		demand = { # 强硬外交
+			title = "DEMAND_DIPLOMA_AGGRESIVE"
+			unfulfilled_title = "DEMAND_DIPLOMA_AGGRESIVE"
+			desc = "DEMAND_DIPLOMA_AGGRESIVE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					NOT = {
+						has_policy_flag = diplo_stance_cooperative
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = diplo_stance_belligerent
+						has_policy_flag = diplo_stance_supremacist
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_DIPLOMA_AGGRESIVE"
+			unfulfilled_title = "DEMAND_DIPLOMA_AGGRESIVE"
+			desc = "DEMAND_DIPLOMA_AGGRESIVE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
 		demand = { # 压迫附庸
 			title = "DEMAND_OVERLORD_HARD"
 			unfulfilled_title = "DEMAND_OVERLORD_HARD"
@@ -360,56 +429,6 @@ supremacist = {
 			}
 		}
 
-		#强硬外交
-		demand = {
-			title = "STRONG_DIPLO_STANCE"
-			unfulfilled_title = "STRONG_DIPLO_STANCE"
-			desc = "STRONG_DIPLO_STANCE_DESC"
-			fulfilled_effect = 10
-			unfulfilled_effect = -0.001
-			potential = {
-				exists = owner
-				owner = {
-					is_homicidal = no
-					is_country_type = default
-					OR = {
-						has_policy_flag = diplo_stance_belligerent
-						has_policy_flag = diplo_stance_supremacist
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					OR = {
-						has_policy_flag = diplo_stance_belligerent
-						has_policy_flag = diplo_stance_supremacist
-					}
-				}
-			}
-		}
-		#软弱外交
-		demand = {
-			title = "WEAK_DIPLO_STANCE"
-			unfulfilled_title = "WEAK_DIPLO_STANCE"
-			desc = "WEAK_DIPLO_STANCE_DESC"
-			fulfilled_effect = 0.01
-			unfulfilled_effect = -10
-			potential = {
-				exists = owner
-				owner = {
-					is_homicidal = no
-					is_country_type = default
-					has_policy_flag = diplo_stance_cooperative
-				}
-			}
-			trigger = {
-				owner = {
-					NOT = {
-						has_policy_flag = diplo_stance_cooperative
-					}
-				}
-			}
-		}
 
 		demand = { # OUTRAGED
 			title = "FACTION_OUTRAGED_GC"

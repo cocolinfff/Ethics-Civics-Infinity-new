@@ -33,7 +33,7 @@ pioneer = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_capitalist = no
+		NOT = { has_ethic = ethic_capitalism }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_pioneer_i = yes
 			can_join_faction_pioneer_c = yes
@@ -42,14 +42,6 @@ pioneer = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = { # You Need Both
-				is_socialism = yes
-				is_authoritarian = yes
-			}
-		}
 		modifier = {
 			factor = 1.5
 			exists = root
@@ -85,6 +77,21 @@ pioneer = {
 				}
 			}
 		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_authoritarian
+			}
+		}
+		modifier = { # Transform to Unionist
+			factor = 0.1
+			has_ethic = ethic_egalitarian
+			exists = from
+			from = {
+				is_socialism = yes
+			}
+		}
 		# Actions
 		modifier = {
 			factor = @factionattractionpromote
@@ -116,11 +123,19 @@ pioneer = {
 				has_job = grassroot_cadre
 			}
 		}
-		modifier = { # Non-socialism Workers
+		modifier = { # NSoc.Workers & Soc.Specialists
 			factor = @factionattractionmedium
 			exists = from
-			from = { is_socialism = no }
-			is_pop_category = worker
+			OR = {
+				AND = {
+					from = { is_socialism = no }
+					is_pop_category = worker
+				}
+				AND = {
+					from = { is_socialism = yes }
+					is_pop_category = specialist
+				}
+			}
 		}
 		# 万众一心
 		modifier = {
@@ -140,321 +155,485 @@ pioneer = {
 	}
 
 	# 诉求
-	demand = { # 精英政治
-		title = "DEMAND_GOVERNMENT_ELITE"
-		unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
-		desc = "DEMAND_GOVERNMENT_ELITE_DESC"
-		fulfilled_effect = 10
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = { is_socialism = yes }
+		demand = { # 大众政治 (非社的先锋队是支持民主制的，只是内部不一定民主)
+			title = "DEMAND_GOVERNMENT_POPULAR"
+			unfulfilled_title = "DEMAND_GOVERNMENT_POPULAR"
+			desc = "DEMAND_GOVERNMENT_POPULAR_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					OR = {
+						has_authority = auth_direct_democratic
+						has_authority = auth_oligarchic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_direct_democratic
+				}
+			}
 		}
-		trigger = {
-			owner = {
-				OR = {
+		demand = {
+			title = "DEMAND_GOVERNMENT_POPULAR"
+			unfulfilled_title = "DEMAND_GOVERNMENT_POPULAR"
+			desc = "DEMAND_GOVERNMENT_POPULAR_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					NOR = {
+						has_authority = auth_direct_democratic
+						has_authority = auth_oligarchic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_democratic
+				}
+			}
+		}
+		demand = { # 精英政治 (社的先锋队捍卫自己的权力)
+			title = "DEMAND_GOVERNMENT_ELITE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
+			desc = "DEMAND_GOVERNMENT_ELITE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+					OR = {
+						has_authority = auth_oligarchic
+						has_authority = auth_imperial
+						has_authority = auth_democratic
+					}
+				}
+			}
+			trigger = {
+				owner = {
 					has_authority = auth_oligarchic
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_ELITE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
+			desc = "DEMAND_GOVERNMENT_ELITE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+					NOR = {
+						has_authority = auth_oligarchic
+						has_authority = auth_imperial
+						has_authority = auth_democratic
+					}
+				}
+			}
+			trigger = {
+				owner = {
 					has_authority = auth_dictatorial
 				}
 			}
 		}
-	}
 
-	demand = { # 中央集权
-		title = "DEMAND_CENTRALIZE_HIGH"
-		unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
-		desc = "DEMAND_CENTRALIZE_HIGH_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = -10 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = concentration_of_power
-					has_policy_flag = centralized_state
-					has_policy_flag = excessive_centralization
-				}
-			}
-		}
-	}
-
-	demand = { # 国有化
-		title = "DEMAND_OWNERSHIP_STATE"
-		unfulfilled_title = "DEMAND_OWNERSHIP_STATE"
-		desc = "DEMAND_OWNERSHIP_STATE_DESC"
-		fulfilled_effect = 10
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_policy_flag = national_ownership
-			}
-		}
-	}
-
-	demand = { # 计划经济
-		title = "DEMAND_ECONOMY_PLANCENTRE"
-		unfulfilled_title = "DEMAND_ECONOMY_PLANCENTRE"
-		desc = "DEMAND_ECONOMY_PLANCENTRE_DESC"
-		fulfilled_effect = 10
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_policy_flag = economic_stance_planned
-			}
-		}
-	}
-
-	demand = { # 发展生产
-		title = "DEMAND_INVEST_PRODUCE"
-		unfulfilled_title = "DEMAND_INVEST_PRODUCE"
-		desc = "DEMAND_INVEST_PRODUCE_DESC"
-		fulfilled_effect = 5
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = trade_conversion_development
-					has_policy_flag = trade_conversion_industrial_progress
-				}
-			}
-		}
-	}
-
-	demand = { # 低工时 (非社)
-		title = "DEMAND_WORKHOUR_SOCIALISM"
-		unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-		desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = no
-				NOR = {
-					has_policy_flag = future_working_hours_authoritarian
-					has_policy_flag = long_working_hours
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				OR = {
-					has_policy_flag = future_working_hours_liberal
-					has_policy_flag = free_working_hours
-				}
-			}
-		}
-	}
-	demand = { # 充分休息 (社)
-		title = "DEMAND_WORKHOUR_SOCIALISM"
-		unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-		desc = "DEMAND_WORKHOUR_SOCIALISM_NO_DESC"
-		fulfilled_effect = 10
-		unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = yes
-			}
-		}
-		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_policy_flag = future_working_hours_authoritarian
-					has_policy_flag = long_working_hours
-				}
-			}
-		}
-	}
-
-	demand = { # 经济平等
-		title = "DEMAND_LIVING_EQUALITY"
-		unfulfilled_title = "DEMAND_LIVING_EQUALITY"
-		desc = "DEMAND_LIVING_EQUALITY_DESC"
-		fulfilled_effect = 10
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				any_owned_pop = {
+		demand = { # 中央集权
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
 					OR = {
-						has_living_standard = { type = living_standard_shared_burden }
-						has_living_standard = { type = living_standard_utopian }
+						has_policy_flag = centralized_state
+						has_policy_flag = partial_decentralization
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = centralized_state
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = partial_decentralization
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = excessive_centralization
+						has_policy_flag = concentration_of_power
 					}
 				}
 			}
 		}
-	}
 
-	demand = { # 公立医疗
-		title = "DEMAND_HEALTH_PUBLIC"
-		unfulfilled_title = "DEMAND_HEALTH_PUBLIC"
-		desc = "DEMAND_HEALTH_PUBLIC_DESC"
-		fulfilled_effect = 5
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_policy_flag = public_healthcare
+		demand = { # 国有化
+			title = "DEMAND_OWNERSHIP_STATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_STATE"
+			desc = "DEMAND_OWNERSHIP_STATE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = national_ownership
+						has_policy_flag = labor_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = national_ownership
+				}
 			}
 		}
-	}
-
-	demand = { # 公立教育
-		title = "DEMAND_EDUCATION_PUBLIC"
-		unfulfilled_title = "DEMAND_EDUCATION_PUBLIC"
-		desc = "DEMAND_EDUCATION_PUBLIC_DESC"
-		fulfilled_effect = 5
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_policy_flag = public_education
+		demand = {
+			title = "DEMAND_OWNERSHIP_STATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_STATE"
+			desc = "DEMAND_OWNERSHIP_STATE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = national_ownership
+						has_policy_flag = labor_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = private_ownership
+				}
 			}
 		}
-	}
 
-	demand = { # 言论自由
-		title = "DEMAND_SPEECH_FREE"
-		unfulfilled_title = "DEMAND_SPEECH_FREE"
-		desc = "DEMAND_SPEECH_FREE_DESC"
-		fulfilled_effect = 5
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = no
+		demand = { # 共识经济 (社非市)
+			title = "DEMAND_ECONOMY_PLANCENTRE"
+			unfulfilled_title = "DEMAND_ECONOMY_PLANCENTRE"
+			desc = "DEMAND_ECONOMY_PLANCENTRE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = economic_stance_planned
+						has_policy_flag = economic_stance_planned_free
+						has_policy_flag = economic_stance_mixed
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_planned
+				}
 			}
 		}
-		trigger = {
-			exists = owner
-			owner = {
+		demand = {
+			title = "DEMAND_ECONOMY_PLANCENTRE"
+			unfulfilled_title = "DEMAND_ECONOMY_PLANCENTRE"
+			desc = "DEMAND_ECONOMY_PLANCENTRE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = economic_stance_planned
+						has_policy_flag = economic_stance_planned_free
+						has_policy_flag = economic_stance_mixed
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_controlled_economy
+				}
+			}
+		}
+
+		demand = { # 投资社会
+			title = "DEMAND_INVEST_SOCIETY"
+			unfulfilled_title = "DEMAND_INVEST_SOCIETY"
+			desc = "DEMAND_INVEST_SOCIETY_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_growth_dev
+				}
+			}
+		}
+		
+		demand = { # 低工时 (非社)
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					NOR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15 
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					OR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = long_working_hours
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 社会福利
+			title = "DEMAND_LIVING_WELFARE"
+			unfulfilled_title = "DEMAND_LIVING_WELFARE"
+			desc = "DEMAND_LIVING_WELFARE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_normal }
+							has_living_standard = { type = living_standard_good }
+						}
+					}
+				}
+			}
+		}
+		demand = { # 经济平等
+			title = "DEMAND_LIVING_EQUALITY"
+			unfulfilled_title = "DEMAND_LIVING_EQUALITY"
+			desc = "DEMAND_LIVING_EQUALITY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_shared_burden }
+							has_living_standard = { type = living_standard_utopian }
+						}
+					}
+				}
+			}
+		}
+
+		demand = { # 公立医疗
+			title = "DEMAND_HEALTH_PUBLIC"
+			unfulfilled_title = "DEMAND_HEALTH_PUBLIC"
+			desc = "DEMAND_HEALTH_PUBLIC_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = public_healthcare
+				}
+			}
+		}
+
+		demand = { # 公立教育
+			title = "DEMAND_EDUCATION_PUBLIC"
+			unfulfilled_title = "DEMAND_EDUCATION_PUBLIC"
+			desc = "DEMAND_EDUCATION_PUBLIC_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = public_education
+				}
+			}
+		}
+		
+		demand = { # 言论自由
+			title = "DEMAND_SPEECH_FREE"
+			unfulfilled_title = "DEMAND_SPEECH_FREE"
+			desc = "DEMAND_SPEECH_FREE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					NOT = { has_policy_flag = strict_control }
+				}
+			}
+			trigger = {
 				has_policy_flag = freedom_of_speech
 			}
 		}
-	}
-	demand = {
-		title = "DEMAND_SPEECH_STRICT"
-		unfulfilled_title = "DEMAND_SPEECH_STRICT"
-		desc = "DEMAND_SPEECH_STRICT_NO_DESC"
-		fulfilled_effect = -10
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = no
-				has_policy_flag = strict_control
-			}
-		}
-		trigger = {
-			exists = owner
-			owner = {
-				has_policy_flag = strict_control
-			}
-		}
-	}
-	demand = { # 定向管控 （社）
-		title = "DEMAND_SPEECH_DIRECT"
-		unfulfilled_title = "DEMAND_SPEECH_DIRECT"
-		desc = "DEMAND_SPEECH_DIRECT_DESC"
-		fulfilled_effect = 10
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = yes
-				NOR = {
+		demand = {
+			title = "DEMAND_SPEECH_FREE"
+			unfulfilled_title = "DEMAND_SPEECH_FREE"
+			desc = "DEMAND_SPEECH_FREE_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
 					has_policy_flag = strict_control
-					has_policy_flag = freedom_utopia
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		demand = { # 定向管控 （社）
+			title = "DEMAND_SPEECH_DIRECT"
+			unfulfilled_title = "DEMAND_SPEECH_DIRECT"
+			desc = "DEMAND_SPEECH_DIRECT_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = directional_management
 				}
 			}
 		}
-		trigger = {
-			exists = owner
-			owner = {
-				has_policy_flag = directional_management
+		
+		#教育津贴
+		demand = {
+			title = "EDUCATION_CAMPAIGN"
+			unfulfilled_title = "NO_EDUCATION_CAMPAIGN"
+			desc = "EDUCATION_CAMPAIGN_DESC"
+			fulfilled_effect = 15
+			potential = {
+				exists = owner
 			}
-		}
-	}
-	demand = { # 凝聚共识 （社）
-		title = "DEMAND_SPEECH_UTOPIA"
-		unfulfilled_title = "DEMAND_SPEECH_UTOPIA"
-		desc = "DEMAND_SPEECH_UTOPIA_DESC"
-		fulfilled_effect = 15
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = {
-				is_socialism = yes
-				has_policy_flag = freedom_utopia
-			}
-		}
-		trigger = {
-			exists = owner
-			owner = {
-				has_policy_flag = freedom_utopia
-			}
-		}
-	}
-
-	#教育津贴
-	demand = {
-		title = "EDUCATION_CAMPAIGN"
-		unfulfilled_title = "NO_EDUCATION_CAMPAIGN"
-		desc = "EDUCATION_CAMPAIGN_DESC"
-		fulfilled_effect = 15
-		potential = {
-			exists = owner
-		}
-		trigger = {
-			owner = {
-				has_edict = education_campaign
-			}
-		}
-	}
-	#强化先锋队
-	demand = {
-		title = "PIONEER_POWER"
-		unfulfilled_title = "NO_PIONEER_POWER"
-		desc = "PIONEER_POWER_DESC"
-		fulfilled_effect = 10
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_ultimate_collective
-					has_valid_civic = civic_glorious_pioneer
+			trigger = {
+				owner = {
+					has_edict = education_campaign
 				}
 			}
 		}
-		trigger = {
-			owner = {
-				OR = {
-					has_valid_civic = civic_ultimate_collective
-					has_valid_civic = civic_glorious_pioneer
+		#强化先锋队
+		demand = {
+			title = "PIONEER_POWER"
+			unfulfilled_title = "NO_PIONEER_POWER"
+			desc = "PIONEER_POWER_DESC"
+			fulfilled_effect = 11
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_ultimate_collective
+						has_valid_civic = civic_glorious_pioneer
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_ultimate_collective
+						has_valid_civic = civic_glorious_pioneer
+					}
 				}
 			}
 		}
-	}
-
 	
+		demand = { # 革命外交
+			title = "DEMAND_DIPLOMA_REVOLUTION"
+			unfulfilled_title = "DEMAND_DIPLOMA_REVOLUTION"
+			desc = "DEMAND_DIPLOMA_REVOLUTION_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = diplo_stance_revolution
+				}
+			}
+		}
+
 	on_create = {
 		# pop_faction_event = {
 		# 	id = factions.1

@@ -33,7 +33,7 @@ isolationist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_xenophile = no
+		NOT = { has_ethic = ethic_xenophile }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_isolationist_i = yes
 			can_join_faction_isolationist_c = yes
@@ -42,10 +42,6 @@ isolationist = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			is_xenophobe = yes
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -63,6 +59,13 @@ isolationist = {
 				NOT = {
 					exists = leader
 				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_xenophobe
+				has_ethic = ethic_authoritarian
 			}
 		}
 		# Actions
@@ -124,24 +127,52 @@ isolationist = {
 	}
 
 	# 诉求
-		demand = { # 反民主
-			title = "DEMAND_GOVERNMENT_ANTIPOP"
-			unfulfilled_title = "DEMAND_GOVERNMENT_ANTIPOP"
-			desc = "DEMAND_GOVERNMENT_ANTIPOP_DESC"
-			#fulfilled_effect = 0 # Yellow
+		demand = { # 精英政治
+			title = "DEMAND_GOVERNMENT_ELITE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
+			desc = "DEMAND_GOVERNMENT_ELITE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_authority = auth_oligarchic
+						has_authority = auth_imperial
+						has_authority = auth_democratic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_oligarchic
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_ELITE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
+			desc = "DEMAND_GOVERNMENT_ELITE_DESC"
+			fulfilled_effect = 5
 			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
-					has_authority = auth_direct_democratic
+					NOR = {
+						has_authority = auth_oligarchic
+						has_authority = auth_imperial
+						has_authority = auth_democratic
+					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					has_authority = auth_dictatorial
+				}
 			}
 		}
 		
-		demand = { # 统制经济
+		demand = { # 法团统制
 			title = "DEMAND_ECONOMY_CORPORATE"
 			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
 			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
@@ -149,6 +180,13 @@ isolationist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = economic_controlled_economy
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_stance_planned_free
+					}
+				}
 			}
 			trigger = {
 				owner = {
@@ -156,19 +194,25 @@ isolationist = {
 				}
 			}
 		}
-		
-		demand = { # 投资市场
-			title = "DEMAND_INVEST_MARKET"
-			unfulfilled_title = "DEMAND_INVEST_MARKET"
-			desc = "DEMAND_INVEST_MARKET_DESC"
+		demand = {
+			title = "DEMAND_ECONOMY_CORPORATE"
+			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
+			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
 			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
 			potential = {
 				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = economic_controlled_economy
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_stance_planned_free
+					}
+				}
 			}
 			trigger = {
 				owner = {
-					has_policy_flag = trade_conversion_normal
+					has_policy_flag = economic_stance_planned
 				}
 			}
 		}
@@ -207,7 +251,7 @@ isolationist = {
 			}
 		}
 
-		demand = { # 定向管控 （社）
+		demand = { # 定向管控
 			title = "DEMAND_SPEECH_DIRECT"
 			unfulfilled_title = "DEMAND_SPEECH_DIRECT"
 			desc = "DEMAND_SPEECH_DIRECT_DESC"
@@ -215,14 +259,9 @@ isolationist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
-				owner = {
-					is_socialism = yes
-				}
 			}
 			trigger = {
-				owner = {
-					has_policy_flag = directional_management
-				}
+				owner = { has_policy_flag = directional_management }
 			}
 		}
 		
@@ -292,6 +331,51 @@ isolationist = {
 				owner = {
 					has_policy_flag = population_controls_allowed
 				}
+			}
+		}
+		
+		demand = { # 孤立外交
+			title = "DEMAND_DIPLOMA_ISOLATION"
+			unfulfilled_title = "DEMAND_DIPLOMA_ISOLATION"
+			desc = "DEMAND_DIPLOMA_ISOLATION_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					NOR = {
+						has_policy_flag = diplo_stance_cooperative
+						has_policy_flag = diplo_stance_mercantile
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = diplo_stance_isolationist
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_DIPLOMA_ISOLATION"
+			unfulfilled_title = "DEMAND_DIPLOMA_ISOLATION"
+			desc = "DEMAND_DIPLOMA_ISOLATION_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					OR = {
+						has_policy_flag = diplo_stance_cooperative
+						has_policy_flag = diplo_stance_mercantile
+					}
+				}
+			}
+			trigger = {
+				always = no
 			}
 		}
 
@@ -422,72 +506,6 @@ isolationist = {
 				}
 			}
 		}
-		demand = { # 10年和平
-			title = "ISOLATIONIST_PEACE1"
-			unfulfilled_title = "ISOLATIONIST_NO_PEACE1"
-			desc = "ISOLATIONIST_PEACE_DESC1"
-			fulfilled_effect = 5
-			unfulfilled_effect = -0.001
-			potential = {
-				exists = owner
-				owner = {
-					num_communications > 0
-				}
-			}
-			trigger = {
-				owner = {
-					years_of_peace = {
-						value > 9
-					}
-					years_of_peace = {
-						value < 25
-					}
-				}
-			}
-		}
-		demand = { # 25年和平
-			title = "ISOLATIONIST_PEACE2"
-			unfulfilled_title = "ISOLATIONIST_NO_PEACE2"
-			desc = "ISOLATIONIST_PEACE_DESC2"
-			fulfilled_effect = 10
-			unfulfilled_effect = -0.001
-			potential = {
-				exists = owner
-				owner = {
-					num_communications > 0
-					years_of_peace = {
-						value > 9
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					years_of_peace = {
-						value > 24
-					}
-				}
-			}
-		}
-		demand = { # 外交孤立
-			title = "ISOLATIONIST_DIPLO_STANCE"
-			unfulfilled_title = "ISOLATIONIST_DIPLO_STANCE"
-			desc = "ISOLATIONIST_DIPLO_STANCE_DESC"
-			fulfilled_effect = 10
-			unfulfilled_effect = -10
-			potential = {
-				exists = owner
-				owner = {
-					is_homicidal = no
-					is_country_type = default
-					is_megacorp = no
-				}
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = diplo_stance_isolationist
-				}
-			}
-		}
 		demand = { #第一次接触
 			title = "ISOLATIONIST_REPEAL_PROACTIVE_FIRST_CONTACT_POLICY"
 			unfulfilled_title = "ISOLATIONIST_NO_PROACTIVE_FIRST_CONTACT_POLICY"
@@ -508,7 +526,7 @@ isolationist = {
 
 			trigger = {
 				owner = {
-					NOT = { has_policy_flag = first_contact_proactive }
+					NOT = { has_policy_flag = first_contact_attack_not_allowed }
 				}
 			}
 		}

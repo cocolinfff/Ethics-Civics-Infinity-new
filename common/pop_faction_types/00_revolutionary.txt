@@ -33,7 +33,10 @@ revolutionary = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_capitalist = no
+		NOR = {
+			has_ethic = ethic_pacifist
+			has_ethic = ethic_capitalism
+		}
 		OR = { # Only Same Ideology or Job
 			can_join_faction_revolutionary_i = yes
 			can_join_faction_revolutionary_c = yes
@@ -42,16 +45,6 @@ revolutionary = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				OR = {
-					is_socialism = yes
-					is_militarist = yes
-				}
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -62,15 +55,22 @@ revolutionary = {
 				}
 			}
 		}
-		#modifier = { # Leader is not neccessary for Rev.
-		#	factor = 0.75
-		#	exists = root
-		#	root = {
-		#		NOT = {
-		#			exists = leader
-		#		}
-		#	}
-		#}
+		modifier = {
+			factor = 0.75
+			exists = root
+			root = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_militarist
+				has_ethic = ethic_socialism
+			}
+		}
 		# Actions
 		modifier = {
 			factor = @factionattractionpromote
@@ -93,7 +93,7 @@ revolutionary = {
 			OR = {
 				AND = {
 					exists = from
-					from = { is_militarist = yes }
+					from = { is_socialism = yes }
 				}
 				is_socialism = yes
 			}
@@ -107,11 +107,9 @@ revolutionary = {
 			OR = {
 				AND = {
 					exists = from
-					from = { is_militarist = yes }
+					from = { is_socialism = yes }
 				}
-				OR = {
-					is_socialism = yes
-				}
+				is_socialism = yes
 			}
 			OR = {
 				has_job = soldier
@@ -152,10 +150,7 @@ revolutionary = {
 			potential = {
 				exists = owner
 				owner = {
-					AND = {
-						is_socialism = no
-						is_egalitarian = no
-					}
+					is_socialism = no
 					NOR = {
 						has_authority = auth_dictatorial
 						has_authority = auth_imperial
@@ -200,7 +195,7 @@ revolutionary = {
 			potential = {
 				exists = owner
 				owner = {
-					NOR = {
+					OR = {
 						has_policy_flag = future_working_hours_authoritarian
 						has_policy_flag = long_working_hours
 					}
@@ -288,6 +283,30 @@ revolutionary = {
 						has_policy_flag = extensive_conscription
 						has_policy_flag = all_people_are_soldiers
 					}
+				}
+			}
+		}
+
+		demand = { # 革命外交
+			title = "DEMAND_DIPLOMA_REVOLUTION"
+			unfulfilled_title = "DEMAND_DIPLOMA_REVOLUTION"
+			desc = "DEMAND_DIPLOMA_REVOLUTION_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					OR = {
+						is_egalitarian = yes
+						is_socialism = yes
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = diplo_stance_revolution
 				}
 			}
 		}

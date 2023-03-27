@@ -33,7 +33,7 @@ secular = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_materialist = no
+		NOT = { has_ethic = ethic_materialist }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_secular_i = yes
 			can_join_faction_secular_c = yes
@@ -42,13 +42,6 @@ secular = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 3.5 # Religious Attraction (1.5 for most factions
-			exists = from
-			from = {
-				is_spiritualist = yes
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -67,6 +60,17 @@ secular = {
 					exists = leader
 				}
 			}
+		}
+		modifier = {
+			factor = 1.5 # Official Religion
+			exists = from
+			from = {
+				is_spiritualist = yes
+			}
+		}
+		modifier = {
+			factor = 3.5 # Religious Attraction (2 for most factions
+			has_ethic = ethic_spiritualist
 		}
 		# Actions
 		modifier = {
@@ -124,7 +128,7 @@ secular = {
 	}
 	
 	# 诉求
-		demand = { # 适当分权
+		demand = { # 适当集权
 			title = "DEMAND_CENTRALIZE_LOW"
 			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
 			desc = "DEMAND_CENTRALIZE_LOW_DESC"
@@ -132,6 +136,31 @@ secular = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = centralized_state
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_LOW"
+			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
+			desc = "DEMAND_CENTRALIZE_LOW_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = centralized_state
+					}
+				}
 			}
 			trigger = {
 				owner = {
@@ -182,8 +211,8 @@ secular = {
 		}
 
 		demand = { # 教会教育
-			title = "DEMAND_EDUCATION_CHRUCH"
-			unfulfilled_title = "DEMAND_EDUCATION_CHRUCH"
+			title = "DEMAND_EDUCATION_CHURCH"
+			unfulfilled_title = "DEMAND_EDUCATION_CHURCH"
 			desc = "DEMAND_EDUCATION_CHURCH_DESC"
 			fulfilled_effect = 5
 			#unfulfilled_effect = 0 # Yellow
@@ -214,8 +243,8 @@ secular = {
 		}
 
 		demand = { # 科研教条
-			title = "DEMAND_RESEARCH_DOCTRINE"
-			unfulfilled_title = "DEMAND_RESEARCH_DOCTRINE"
+			title = "DEMAND_RESEARCH_DOGMA"
+			unfulfilled_title = "DEMAND_RESEARCH_DOGMA"
 			desc = "DEMAND_RESEARCH_DOGMA_DESC"
 			fulfilled_effect = 5
 			#unfulfilled_effect = 0 # Yellow
@@ -235,8 +264,8 @@ secular = {
 			}
 		}
 		demand = {
-			title = "DEMAND_RESEARCH_DOCTRINE"
-			unfulfilled_title = "DEMAND_RESEARCH_DOCTRINE"
+			title = "DEMAND_RESEARCH_DOGMA"
+			unfulfilled_title = "DEMAND_RESEARCH_DOGMA"
 			desc = "DEMAND_RESEARCH_DOGMA_NO_DESC"
 			#fulfilled_effect = 0 # Yellow
 			unfulfilled_effect = -10
@@ -346,9 +375,7 @@ secular = {
 				}
 			}
 			trigger = {
-				owner = {
-					has_policy_flag = strict_control
-				}
+				has_policy_flag = strict_control
 			}
 		}
 		demand = {
@@ -458,9 +485,9 @@ secular = {
 		}
 		
 		demand = { # 世俗圣徒
-			title = "TOTALITARIAN_SECULAR_CONTROL"
-			unfulfilled_title = "TOTALITARIAN_NO_SECULAR_CONTROL"
-			desc = "TOTALITARIAN_SECULAR_CONTROL_DESC"
+			title = "SECULAR_SAINTS"
+			unfulfilled_title = "NO_SECULAR_SAINTS"
+			desc = "SECULAR_SAINTS_DESC"
 			fulfilled_effect = 10
 			potential = {
 				exists = owner

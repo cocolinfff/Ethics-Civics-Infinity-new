@@ -33,7 +33,7 @@ traditionalist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_materialist = no
+		NOT = { has_ethic = ethic_materialist }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_traditionalist_i = yes
 			can_join_faction_traditionalist_c = yes
@@ -42,16 +42,6 @@ traditionalist = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				OR = {
-					is_spiritualist = yes
-					is_xenophobe = yes
-				}
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -70,6 +60,10 @@ traditionalist = {
 					exists = leader
 				}
 			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_spiritualist
 		}
 		# Actions
 		modifier = {
@@ -126,36 +120,46 @@ traditionalist = {
 	}
 
 	# 诉求
-		demand = { # 君主制
+		demand = { # 君主制 (君主，或者专制，总之不支持民主)
 			title = "DEMAND_GOVERNMENT_MONARCHY"
 			unfulfilled_title = "DEMAND_GOVERNMENT_MONARCHY"
 			desc = "DEMAND_GOVERNMENT_MONARCHY_DESC"
 			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
+			unfulfilled_effect = 5
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_authority = auth_imperial
+						has_authority = auth_oligarchic
+					}
+				}
+			}
+			trigger = {
 				owner = {
 					has_authority = auth_imperial
 				}
 			}
-			trigger = {
-				always = yes
-			}
 		}
-		demand = { # 反民粹
-			title = "DEMAND_GOVERNMENT_ANTIPOP"
-			unfulfilled_title = "DEMAND_GOVERNMENT_ANTIPOP"
-			desc = "DEMAND_GOVERNMENT_ANTIPOP_DESC"
+		demand = {
+			title = "DEMAND_GOVERNMENT_MONARCHY"
+			unfulfilled_title = "DEMAND_GOVERNMENT_MONARCHY"
+			desc = "DEMAND_GOVERNMENT_MONARCHY_DESC"
 			#fulfilled_effect = 0 # Yellow
 			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
-					has_authority = auth_direct_democratic
+					NOR = {
+						has_authority = auth_imperial
+						has_authority = auth_oligarchic
+					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					has_authority = auth_dictatorial
+				}
 			}
 		}
 
@@ -167,12 +171,39 @@ traditionalist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = partial_decentralization
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = centralized_state
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = partial_decentralization
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					OR = {
-						has_policy_flag = centralized_state
 						has_policy_flag = excessive_centralization
+						has_policy_flag = concentration_of_power
 					}
 				}
 			}
@@ -187,12 +218,36 @@ traditionalist = {
 			potential = {
 				exists = owner
 				owner = {
-					is_socialism = no
+					OR = {
+						has_policy_flag = family_ownership
+						has_policy_flag = private_ownership
+					}
 				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = family_ownership
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_OWNERSHIP_FAMILY"
+			unfulfilled_title = "DEMAND_OWNERSHIP_FAMILY"
+			desc = "DEMAND_OWNERSHIP_FAMILY_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = family_ownership
+						has_policy_flag = private_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = national_ownership
 				}
 			}
 		}
@@ -289,7 +344,7 @@ traditionalist = {
 			}
 		}
 		
-		demand = { # 定向管控 （社）
+		demand = { # 定向管控
 			title = "DEMAND_SPEECH_DIRECT"
 			unfulfilled_title = "DEMAND_SPEECH_DIRECT"
 			desc = "DEMAND_SPEECH_DIRECT_DESC"
@@ -297,12 +352,8 @@ traditionalist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
-				owner = {
-					is_socialism = yes
-				}
 			}
 			trigger = {
-				exists = owner
 				owner = {
 					has_policy_flag = directional_management
 				}
