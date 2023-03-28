@@ -312,7 +312,7 @@ entrepreneurs = {
 			}
 		}
 
-		demand = { # 高工时 （资）
+		demand = { # 高工时 (资)
 			title = "DEMAND_WORKHOUR_CAPITALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
 			desc = "DEMAND_WORKHOUR_CAPITALISM_DESC"
@@ -322,9 +322,10 @@ entrepreneurs = {
 				exists = owner
 				owner = {
 					is_capitalism = yes
-					NOR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
+					OR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = limit_of_working_hours
+						has_policy_flag = standard_working_hours
 					}
 				}
 			}
@@ -332,7 +333,7 @@ entrepreneurs = {
 				owner = {
 					OR = {
 						has_policy_flag = future_working_hours_authoritarian
-						has_policy_flag = long_working_hours
+						has_policy_flag = limit_of_working_hours
 					}
 				}
 			}
@@ -340,24 +341,27 @@ entrepreneurs = {
 		demand = {
 			title = "DEMAND_WORKHOUR_CAPITALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
-			desc = "DEMAND_WORKHOUR_CAPITALISM_NO_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -15 
+			desc = "DEMAND_WORKHOUR_CAPITALISM_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
 					is_capitalism = yes
-					OR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
+					NOR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = limit_of_working_hours
+						has_policy_flag = standard_working_hours
 					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					has_policy_flag = long_working_hours
+				}
 			}
 		}
-		demand = { # 低工时 (非资)
+		demand = { # 低工时 （非资）
 			title = "DEMAND_WORKHOUR_SOCIALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
 			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
@@ -367,9 +371,10 @@ entrepreneurs = {
 				exists = owner
 				owner = {
 					is_capitalism = no
-					NOR = {
-						has_policy_flag = future_working_hours_authoritarian
-						has_policy_flag = long_working_hours
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+						has_policy_flag = standard_working_hours
 					}
 				}
 			}
@@ -385,21 +390,24 @@ entrepreneurs = {
 		demand = {
 			title = "DEMAND_WORKHOUR_SOCIALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-			desc = "DEMAND_WORKHOUR_SOCIALISM_NO_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -15 
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10 
 			potential = {
 				exists = owner
 				owner = {
 					is_capitalism = no
-					OR = {
-						has_policy_flag = future_working_hours_authoritarian
-						has_policy_flag = long_working_hours
+					NOR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+						has_policy_flag = standard_working_hours
 					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					has_policy_flag = short_working_hours
+				}
 			}
 		}
 
@@ -413,15 +421,48 @@ entrepreneurs = {
 				exists = owner
 				owner = {
 					has_ethic = ethic_fanatic_socialism
+					is_ai = no # 仅玩家，减少卡顿
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_utopian }
+							has_living_standard = { type = living_standard_good }
+							has_living_standard = { type = living_standard_normal }
+						}
+					}
 				}
 			}
 			trigger = {
 				owner = {
 					any_owned_pop = {
-						OR = {
-							has_living_standard = { type = living_standard_shared_burden }
+						has_living_standard = { type = living_standard_utopian }
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_LIVING_EQUALITY"
+			unfulfilled_title = "DEMAND_LIVING_EQUALITY"
+			desc = "DEMAND_LIVING_EQUALITY_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_socialism
+					is_ai = no # 仅玩家，减少卡顿
+					any_owned_pop = {
+						NOR = {
 							has_living_standard = { type = living_standard_utopian }
+							has_living_standard = { type = living_standard_good }
+							has_living_standard = { type = living_standard_normal }
 						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						has_living_standard = { type = living_standard_shared_burden }
 					}
 				}
 			}
