@@ -291,7 +291,7 @@ bankers = {
 			}
 		}
 
-		demand = { # 投资市场
+		demand = { # 减税
 			title = "DEMAND_INVEST_MARKET"
 			unfulfilled_title = "DEMAND_INVEST_MARKET"
 			desc = "DEMAND_INVEST_MARKET_DESC"
@@ -334,26 +334,58 @@ bankers = {
 			}
 		}
 
-		demand = { # 反福利
+		demand = { # 剥削
 			title = "DEMAND_LIVING_STRUGGLE"
 			unfulfilled_title = "DEMAND_LIVING_STRUGGLE"
 			desc = "DEMAND_LIVING_STRUGGLE_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -10
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
 				owner = {
+					is_ai = no # 仅玩家，减少卡顿
 					any_owned_pop = {
 						OR = {
-							has_living_standard = { type = living_standard_utopian }
-							has_living_standard = { type = living_standard_shared_burden }
-							has_living_standard = { type = living_standard_good }
+							has_living_standard = { type = living_standard_subsistence }
+							has_living_standard = { type = living_standard_academic_privilege }
+							has_living_standard = { type = living_standard_normal }
 						}
 					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					any_owned_pop = {
+						has_living_standard = { type = living_standard_subsistence }
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_LIVING_STRUGGLE"
+			unfulfilled_title = "DEMAND_LIVING_STRUGGLE"
+			desc = "DEMAND_LIVING_STRUGGLE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_ai = no # 仅玩家，减少卡顿
+					any_owned_pop = {
+						NOR = {
+							has_living_standard = { type = living_standard_subsistence }
+							has_living_standard = { type = living_standard_academic_privilege }
+							has_living_standard = { type = living_standard_normal }
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						has_living_standard = { type = living_standard_stratified }
+					}
+				}
 			}
 		}
 
@@ -382,13 +414,16 @@ bankers = {
 			unfulfilled_title = "DEMAND_DIPLOMA_TRADE"
 			desc = "DEMAND_DIPLOMA_TRADE_DESC"
 			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
 			potential = {
 				exists = owner
 				owner = {
 					is_homicidal = no
 					is_country_type = default
-					NOT = { has_policy_flag = diplo_stance_isolationist }
+					OR = {
+						has_policy_flag = diplo_stance_mercantile
+						has_policy_flag = diplo_stance_isolationist
+					}
 				}
 			}
 			trigger = {
@@ -400,19 +435,21 @@ bankers = {
 		demand = {
 			title = "DEMAND_DIPLOMA_TRADE"
 			unfulfilled_title = "DEMAND_DIPLOMA_TRADE"
-			desc = "DEMAND_DIPLOMA_TRADE_NO_DESC"
+			desc = "DEMAND_DIPLOMA_TRADE_DESC"
 			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -5
 			potential = {
 				exists = owner
 				owner = {
 					is_homicidal = no
 					is_country_type = default
-					has_policy_flag = diplo_stance_isolationist
+					NOR = {
+						has_policy_flag = diplo_stance_mercantile
+						has_policy_flag = diplo_stance_isolationist
+					}
 				}
 			}
 			trigger = {
-				always = no
+				always = yes
 			}
 		}
 
