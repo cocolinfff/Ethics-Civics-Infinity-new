@@ -33,7 +33,10 @@ proletarians = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_xenophobe = no
+		NOR = {
+			has_ethic = ethic_capitalism
+			has_ethic = ethic_xenophobe
+		}
 		OR = { # Only Same Ideology or Job
 			can_join_faction_proletarians_i = yes
 			can_join_faction_proletarians_c = yes
@@ -42,14 +45,6 @@ proletarians = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = { # You Need Both
-				is_xenophile = yes
-				is_socialism = yes
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -70,9 +65,16 @@ proletarians = {
 			}
 		}
 		modifier = {
-			factor = 2
+			factor = 2.0
 			NOT = {
 				is_same_species = owner_species
+			}
+		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_xenophile
+				has_ethic = ethic_socialism
 			}
 		}
 		# Actions
@@ -184,7 +186,7 @@ proletarians = {
 			potential = {
 				exists = owner
 				owner = {
-					NOR = {
+					OR = {
 						has_policy_flag = future_working_hours_authoritarian
 						has_policy_flag = long_working_hours
 					}
@@ -322,9 +324,9 @@ proletarians = {
 		}
 
 		demand = { # 合作外交
-			title = "DEMAND_DIPLOMA_COOP"
-			unfulfilled_title = "DEMAND_DIPLOMA_COOP"
-			desc = "DEMAND_DIPLOMA_COOP_DESC"
+			title = "DEMAND_DEPLO_COOP"
+			unfulfilled_title = "DEMAND_DEPLO_COOP"
+			desc = "DEMAND_DEPLO_COOP_DESC"
 			fulfilled_effect = 5
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
@@ -332,11 +334,31 @@ proletarians = {
 				owner = {
 					is_homicidal = no
 					is_country_type = default
-					has_policy_flag = diplo_stance_cooperative
+					NOT = { has_policy_flag = diplo_stance_isolationist }
 				}
 			}
 			trigger = {
-				always = yes
+				owner = {
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_DIPLOMA_COOP"
+			unfulfilled_title = "DEMAND_DIPLOMA_COOP"
+			desc = "DEMAND_DIPLOMA_COOP_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_isolationist
+				}
+			}
+			trigger = {
+				always = no
 			}
 		}
 
@@ -537,7 +559,7 @@ proletarians = {
 				}
 				support > 0.15
 				parameter:empire = {
-					is_xenophode = yes
+					is_xenophobe = yes
 				}
 			}
 			effect = {
@@ -594,7 +616,7 @@ proletarians = {
 						owner = {
 							exists = ruler
 							ruler = {
-								leader_of_faction = proletarian
+								leader_of_faction = proletarians
 							}
 						}
 					}

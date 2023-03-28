@@ -34,7 +34,7 @@ philosopher = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_militarist = no
+		NOT = { has_ethic = ethic_militarist }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_philosopher_i = yes
 			can_join_faction_philosopher_c = yes
@@ -43,16 +43,6 @@ philosopher = {
 	}
 	attraction = {
 		base = 100
-		modifier = { # Official Stance
-			factor = 1.5
-			exists = from
-			from = {
-				OR = {
-					is_pacifist = yes
-					is_spiritualist = yes
-				}
-			}
-		}
 		modifier = { # Leading Government
 			factor = 1.25
 			exists = root
@@ -71,10 +61,10 @@ philosopher = {
 			}
 		}
 		modifier = {
-			factor = 1.5
+			factor = 2.0
 			OR = {
 				has_ethic = ethic_pacifist
-				has_ethic = ethic_fanatic_pacifist
+				has_ethic = ethic_spiritualist
 			}
 		}
 		# Should really check for citizenship instead
@@ -150,20 +140,45 @@ philosopher = {
 	}
 	
 	# 诉求
-		demand = { # 联邦化
-			title = "DEMAND_CENTRALIZE_FEDERAL"
-			unfulfilled_title = "DEMAND_CENTRALIZE_FEDERAL"
-			desc = "DEMAND_CENTRALIZE_FEDERAL_DESC"
+		demand = { # 适当集权
+			title = "DEMAND_CENTRALIZE_LOW"
+			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
+			desc = "DEMAND_CENTRALIZE_LOW_DESC"
 			fulfilled_effect = 10
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = centralized_state
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_LOW"
+			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
+			desc = "DEMAND_CENTRALIZE_LOW_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = centralized_state
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					OR = {
+						has_policy_flag = concentration_of_power
 						has_policy_flag = partial_decentralization
-						has_policy_flag = high_decentralization
 					}
 				}
 			}
@@ -527,32 +542,6 @@ philosopher = {
 						has_deposit = d_mountain_range
 						has_deposit = d_dangerous_wildlife_blocker
 					}
-				}
-			}
-		}	
-		#自然共存
-		demand = {
-			title = "ECOSYSTEM_DIVERSITY"
-			unfulfilled_title = "ECOSYSTEM_DIVERSITY"
-			desc = "ECOSYSTEM_DIVERSITY_DESC"
-
-			fulfilled_effect = 15
-
-			potential = {
-				exists = owner
-			}
-
-			trigger = {
-				owner = {
-					any_owned_planet = { is_planet_class = pc_ocean }
-					any_owned_planet = { is_planet_class = pc_continental }
-					any_owned_planet = { is_planet_class = pc_tropical }
-					any_owned_planet = { is_planet_class = pc_alpine }
-					any_owned_planet = { is_planet_class = pc_arctic }
-					any_owned_planet = { is_planet_class = pc_tundra }
-					any_owned_planet = { is_planet_class = pc_arid }
-					any_owned_planet = { is_planet_class = pc_desert }
-					any_owned_planet = { is_planet_class = pc_savannah }
 				}
 			}
 		}

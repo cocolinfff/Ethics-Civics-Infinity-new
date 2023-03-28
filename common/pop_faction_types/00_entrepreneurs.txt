@@ -37,7 +37,7 @@ entrepreneurs = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_authoritarian = no
+		NOT = { has_ethic = ethic_authoritarian }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_entrepreneurs_i = yes
 			can_join_faction_entrepreneurs_c = yes
@@ -46,16 +46,6 @@ entrepreneurs = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				OR = {
-					is_egalitarian = yes
-					is_capitalism = yes
-				}
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -74,6 +64,10 @@ entrepreneurs = {
 					exists = leader
 				}
 			}
+		}
+		modifier = {
+			factor = 2
+			has_ethic = ethic_egalitarian
 		}
 		# Should really check for citizenship instead
 		modifier = {
@@ -110,7 +104,10 @@ entrepreneurs = {
 					is_egalitarian = yes
 				}
 			}
-			has_job = politician
+			OR = {
+				has_job = sovereign_representative # 议员
+				has_job = politician
+			}
 		}
 		# 万众一心
 		modifier = {
@@ -137,7 +134,7 @@ entrepreneurs = {
 	}
 
 	# 诉求
-		demand = { # 民主政府
+		demand = { # 民主政府 （议员不支持直民，那会使议员虚弱）
 			title = "DEMAND_GOVERNMENT_DEMOCRACY"
 			unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
 			desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
@@ -145,10 +142,37 @@ entrepreneurs = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_authority = auth_democratic
+						has_authority = auth_oligarchic
+					}
+				}
 			}
 			trigger = {
 				owner = {
-					has_authority = auth_democratic
+					has_authority = auth_oligarchic
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_DEMOCRACY"
+			unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
+			desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_authority = auth_democratic
+						has_authority = auth_oligarchic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_direct_democratic
 				}
 			}
 		}
@@ -161,12 +185,39 @@ entrepreneurs = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = concentration_of_power
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = high_decentralization
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_FEDERAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_FEDERAL"
+			desc = "DEMAND_CENTRALIZE_FEDERAL_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = concentration_of_power
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					OR = {
+						has_policy_flag = full_decentralization
 						has_policy_flag = partial_decentralization
-						has_policy_flag = high_decentralization
 					}
 				}
 			}
@@ -182,6 +233,10 @@ entrepreneurs = {
 				exists = owner
 				owner = {
 					is_socialism = no
+					OR = {
+						has_policy_flag = private_ownership
+						has_policy_flag = national_ownership
+					}
 				}
 			}
 			trigger = {
@@ -190,16 +245,64 @@ entrepreneurs = {
 				}
 			}
 		}
-		demand = { # 国有化 （社）
-			title = "DEMAND_OWNERSHIP_STATE"
-			unfulfilled_title = "DEMAND_OWNERSHIP_STATE"
-			desc = "DEMAND_OWNERSHIP_STATE_DESC"
+		demand = {
+			title = "DEMAND_OWNERSHIP_PRIVATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_PRIVATE"
+			desc = "DEMAND_OWNERSHIP_PRIVATE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					NOR = {
+						has_policy_flag = private_ownership
+						has_policy_flag = national_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = family_ownership
+				}
+			}
+		}
+		demand = { # 集体化 （社）
+			title = "DEMAND_OWNERSHIP_COOP"
+			unfulfilled_title = "DEMAND_OWNERSHIP_COOP"
+			desc = "DEMAND_OWNERSHIP_COOP_DESC"
 			fulfilled_effect = 10
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
 				owner = {
 					is_socialism = yes
+					OR = {
+						has_policy_flag = labor_ownership
+						has_policy_flag = private_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = labor_ownership
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_OWNERSHIP_COOP"
+			unfulfilled_title = "DEMAND_OWNERSHIP_COOP"
+			desc = "DEMAND_OWNERSHIP_COOP_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = yes
+					NOR = {
+						has_policy_flag = labor_ownership
+						has_policy_flag = private_ownership
+					}
 				}
 			}
 			trigger = {
@@ -254,7 +357,7 @@ entrepreneurs = {
 				always = no
 			}
 		}
-		demand = { # 低工时
+		demand = { # 低工时 (非资)
 			title = "DEMAND_WORKHOUR_SOCIALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
 			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
@@ -289,7 +392,7 @@ entrepreneurs = {
 				exists = owner
 				owner = {
 					is_capitalism = no
-					NOR = {
+					OR = {
 						has_policy_flag = future_working_hours_authoritarian
 						has_policy_flag = long_working_hours
 					}
@@ -392,34 +495,6 @@ entrepreneurs = {
 			}
 		}
 
-		#无奴隶制
-		demand = {
-			title = "PROGRESSIVE_NO_SLAVERY"
-			unfulfilled_title = "PROGRESSIVE_SLAVERY"
-			desc = "PROGRESSIVE_NO_SLAVERY_DESC"
-			fulfilled_effect = 10
-			unfulfilled_effect = -15
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_policy_flag = slavery_not_allowed
-						has_policy_flag = slavery_allowed
-					}
-					NOR = {
-						has_ethic = ethic_xenophobe
-						has_ethic = ethic_fanatic_xenophobe
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					NOR = {
-						has_policy_flag = slavery_allowed
-					}
-				}
-			}
-		}
 		#反垄断
 		demand = {
 			title = "ANTITRUST"

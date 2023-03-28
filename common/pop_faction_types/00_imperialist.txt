@@ -33,7 +33,7 @@ imperialist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_pacifist = no
+		NOT = { has_ethic = ethic_pacifist }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_imperialist_i = yes
 			can_join_faction_imperialist_c = yes
@@ -42,13 +42,6 @@ imperialist = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				is_militarist = yes
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -69,8 +62,19 @@ imperialist = {
 			}
 		}
 		modifier = {
-			factor = 1.25
-			has_citizenship_rights = yes
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_militarist
+				has_ethic = ethic_authoritarian
+			}
+		}
+		modifier = { # Transform to Revolutionarist
+			factor = 0.1
+			has_ethic = ethic_socialism
+			exists = from
+			from = {
+				is_socialism = yes
+			}
 		}
 		# Actions
 		modifier = {
@@ -96,10 +100,7 @@ imperialist = {
 					exists = from
 					from = { is_militarist = yes }
 				}
-				OR = {
-					is_militarist = yes
-					is_xenophobe = yes
-				}
+				is_militarist = yes
 			}
 			OR = {
 				has_job = commandante
@@ -147,26 +148,50 @@ imperialist = {
 	}
 	
 	# 诉求
-		demand = { # 专制独裁
+		demand = { # 专制独裁 (伟大领袖，或者君主也行)
 			title = "DEMAND_GOVERNMENT_DICTATORSHIP"
 			unfulfilled_title = "DEMAND_GOVERNMENT_DICTATORSHIP"
 			desc = "DEMAND_GOVERNMENT_DICTATORSHIP_DESC"
 			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
+			unfulfilled_effect = 5
 			potential = {
 				exists = owner
-			}
-			trigger = {
 				owner = {
 					OR = {
 						has_authority = auth_dictatorial
-						has_authority = auth_imperial
+						has_authority = auth_oligarchic
 					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_dictatorial
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_DICTATORSHIP"
+			unfulfilled_title = "DEMAND_GOVERNMENT_DICTATORSHIP"
+			desc = "DEMAND_GOVERNMENT_DICTATORSHIP_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_authority = auth_dictatorial
+						has_authority = auth_oligarchic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_imperial
 				}
 			}
 		}
 		
-		demand = { # 市场干涉
+		demand = { # 市场干涉 （非社）
 			title = "DEMAND_ECONOMY_INTERFERENCE"
 			unfulfilled_title = "DEMAND_ECONOMY_INTERFERENCE"
 			desc = "DEMAND_ECONOMY_INTERFERENCE_DESC"
@@ -174,10 +199,39 @@ imperialist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					is_socialism = no
+					OR = {
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_controlled_economy
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = economic_stance_mixed
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_ECONOMY_INTERFERENCE"
+			unfulfilled_title = "DEMAND_ECONOMY_INTERFERENCE"
+			desc = "DEMAND_ECONOMY_INTERFERENCE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					NOR = {
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_controlled_economy
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_market
 				}
 			}
 		}

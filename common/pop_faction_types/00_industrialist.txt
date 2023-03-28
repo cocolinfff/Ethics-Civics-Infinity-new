@@ -34,7 +34,7 @@ industrialist = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_socialism = no
+		NOT = { has_ethic = ethic_socialism }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_industrialist_i = yes
 			can_join_faction_industrialist_c = yes
@@ -43,13 +43,6 @@ industrialist = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				is_capitalism = yes
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -70,9 +63,10 @@ industrialist = {
 			}
 		}
 		modifier = {
-			factor = 0.25
-			NOT = {
-				is_same_species = owner_species
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_xenophile
 			}
 		}
 		# Actions
@@ -95,7 +89,7 @@ industrialist = {
 		modifier = {
 			factor = @factionattractionhighvery
 			#is_pop_category = specialist
-			NOT = { owner = { has_policy_flag = economic_stance_planned } }
+			NOT = { has_policy_flag = economic_stance_planned }
 			OR = {
 				AND = {
 					exists = from
@@ -131,38 +125,48 @@ industrialist = {
 	}
     
 	# 诉求
-		demand = { # 寡头政府
-			title = "DEMAND_GOVERNMENT_OLIGARCHY"
-			unfulfilled_title = "DEMAND_GOVERNMENT_OLIGARCHY"
-			desc = "DEMAND_GOVERNMENT_OLIGARCHY_DESC"
+		demand = { # 企业政府 (企业优先，不要太民主或专制)
+			title = "DEMAND_GOVERNMENT_ENTERPRISE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ENTERPRISE"
+			desc = "DEMAND_GOVERNMENT_ENTERPRISE_DESC"
 			fulfilled_effect = 10
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
 				owner = {
-					is_megacorp = no
+					OR = {
+						is_eci_megacorp = yes
+						has_authority = auth_democratic
+						has_authority = auth_dictatorial
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					is_eci_megacorp = yes
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_ENTERPRISE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ENTERPRISE"
+			desc = "DEMAND_GOVERNMENT_ENTERPRISE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						is_eci_megacorp = yes
+						has_authority = auth_democratic
+						has_authority = auth_dictatorial
+					}
 				}
 			}
 			trigger = {
 				owner = {
 					has_authority = auth_oligarchic
 				}
-			}
-		}
-		demand = { # 企业政府
-			title = "DEMAND_GOVERNMENT_ENTERPRISE"
-			unfulfilled_title = "DEMAND_GOVERNMENT_ENTERPRISE"
-			desc = "DEMAND_GOVERNMENT_ENTERPRISE_DESC"
-			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Not Show
-			potential = {
-				exists = owner
-				owner = {
-					is_megacorp = yes
-				}
-			}
-			trigger = {
-				always = yes
 			}
 		}
 
@@ -174,12 +178,39 @@ industrialist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = concentration_of_power
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = high_decentralization
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_FEDERAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_FEDERAL"
+			desc = "DEMAND_CENTRALIZE_FEDERAL_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = concentration_of_power
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					OR = {
+						has_policy_flag = full_decentralization
 						has_policy_flag = partial_decentralization
-						has_policy_flag = high_decentralization
 					}
 				}
 			}
@@ -193,6 +224,12 @@ industrialist = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = private_ownership
+						has_policy_flag = national_ownership
+					}
+				}
 			}
 			trigger = {
 				owner = {
@@ -200,7 +237,71 @@ industrialist = {
 				}
 			}
 		}
+		demand = {
+			title = "DEMAND_OWNERSHIP_PRIVATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_PRIVATE"
+			desc = "DEMAND_OWNERSHIP_PRIVATE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = private_ownership
+						has_policy_flag = national_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = family_ownership
+				}
+			}
+		}
 
+		demand = { # 市场放任
+			title = "DEMAND_ECONOMY_FREE"
+			unfulfilled_title = "DEMAND_ECONOMY_FREE"
+			desc = "DEMAND_ECONOMY_FREE_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = economic_stance_market
+						has_policy_flag = economic_controlled_economy
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_market
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_ECONOMY_FREE"
+			unfulfilled_title = "DEMAND_ECONOMY_FREE"
+			desc = "DEMAND_ECONOMY_FREE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = economic_stance_market
+						has_policy_flag = economic_controlled_economy
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_mixed
+				}
+			}
+		}
+		
 		demand = { # 贸易联盟
 			title = "DEMAND_INVEST_TRADE"
 			unfulfilled_title = "DEMAND_INVEST_TRADE"
@@ -217,7 +318,7 @@ industrialist = {
 				owner = {
 					OR = {
 						has_policy_flag = trade_conversion_trade_league
-						has_policy_flag = trade_conversion_trade_league_innovation
+						#has_policy_flag = trade_conversion_trade_league_innovation
 					}
 				}
 			}
@@ -358,6 +459,45 @@ industrialist = {
 						has_slavery_type = { type = slavery_indentured }
 					}
 				}
+			}
+		}
+
+		demand = { # 重商外交
+			title = "DEMAND_DIPLOMA_TRADE"
+			unfulfilled_title = "DEMAND_DIPLOMA_TRADE"
+			desc = "DEMAND_DIPLOMA_TRADE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					NOT = { owner = { has_policy_flag = diplo_stance_isolationist } }
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = diplo_stance_mercantile
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_DIPLOMA_TRADE"
+			unfulfilled_title = "DEMAND_DIPLOMA_TRADE"
+			desc = "DEMAND_DIPLOMA_TRADE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_isolationist
+				}
+			}
+			trigger = {
+				always = no
 			}
 		}
 

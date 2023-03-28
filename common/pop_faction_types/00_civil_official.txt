@@ -34,7 +34,10 @@ civil_official = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_egalitarian = no
+		NOR = {
+			has_ethic = ethic_egalitarian
+			has_ethic = ethic_militarist
+		}
 		OR = { # Only Same Ideology or Job
 			can_join_faction_civil_official_i = yes
 			can_join_faction_civil_official_c = yes
@@ -43,16 +46,6 @@ civil_official = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				OR = {
-					is_authoritarian = yes
-					is_pacifist = yes
-				}
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -70,6 +63,13 @@ civil_official = {
 				NOT = {
 					exists = leader
 				}
+			}
+		}
+		modifier = { # Ideology Similarity
+			factor = 2
+			OR = {
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_pacifist
 			}
 		}
 		# Actions
@@ -129,37 +129,92 @@ civil_official = {
 	}
 
 	# 诉求
-		demand = { # 反民粹
-			title = "DEMAND_GOVERNMENT_ANTIPOP"
-			unfulfilled_title = "DEMAND_GOVERNMENT_ANTIPOP"
-			desc = "DEMAND_GOVERNMENT_ANTIPOP_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -10
-			potential = {
-				exists = owner
-				owner = {
-					has_authority = auth_direct_democratic
-				}
-			}
-			trigger = {
-				always = no
-			}
-		}
-
-		demand = { # 适当分权
-			title = "DEMAND_CENTRALIZE_LOW"
-			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
-			desc = "DEMAND_CENTRALIZE_LOW_DESC"
+		demand = { # 精英政治 （官僚主义）
+			title = "DEMAND_GOVERNMENT_ELITE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
+			desc = "DEMAND_GOVERNMENT_ELITE_DESC"
 			fulfilled_effect = 10
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_authority = auth_oligarchic
+						has_authority = auth_imperial
+						has_authority = auth_democratic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_oligarchic
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_ELITE"
+			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
+			desc = "DEMAND_GOVERNMENT_ELITE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_authority = auth_oligarchic
+						has_authority = auth_imperial
+						has_authority = auth_democratic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_dictatorial
+				}
+			}
+		}
+
+		demand = { # 中央集权
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = partial_decentralization
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = centralized_state
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_HIGH"
+			unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
+			desc = "DEMAND_CENTRALIZE_HIGH_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = centralized_state
+						has_policy_flag = partial_decentralization
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					OR = {
+						has_policy_flag = excessive_centralization
 						has_policy_flag = concentration_of_power
-						has_policy_flag = partial_decentralization
 					}
 				}
 			}
@@ -173,6 +228,12 @@ civil_official = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = national_ownership
+						has_policy_flag = labor_ownership
+					}
+				}
 			}
 			trigger = {
 				owner = {
@@ -180,8 +241,29 @@ civil_official = {
 				}
 			}
 		}
+		demand = {
+			title = "DEMAND_OWNERSHIP_STATE"
+			unfulfilled_title = "DEMAND_OWNERSHIP_STATE"
+			desc = "DEMAND_OWNERSHIP_STATE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = national_ownership
+						has_policy_flag = labor_ownership
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = private_ownership
+				}
+			}
+		}
 		
-		demand = { # 市场干涉
+		demand = { # 市场干涉 （非社）
 			title = "DEMAND_ECONOMY_INTERFERENCE"
 			unfulfilled_title = "DEMAND_ECONOMY_INTERFERENCE"
 			desc = "DEMAND_ECONOMY_INTERFERENCE_DESC"
@@ -189,10 +271,39 @@ civil_official = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					is_socialism = no
+					OR = {
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_controlled_economy
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = economic_stance_mixed
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_ECONOMY_INTERFERENCE"
+			unfulfilled_title = "DEMAND_ECONOMY_INTERFERENCE"
+			desc = "DEMAND_ECONOMY_INTERFERENCE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_socialism = no
+					NOR = {
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_controlled_economy
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_market
 				}
 			}
 		}
@@ -325,18 +436,6 @@ civil_official = {
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_elitist
-			}
-			remove_modifier = promoted_elitist
-		}
-		if = {
-			limit = {
-				has_modifier = suppressed_elitist
-			}
-			remove_modifier = suppressed_elitist
-		}
 	}
 	
 	actions = {

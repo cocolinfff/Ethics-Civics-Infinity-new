@@ -33,7 +33,7 @@ totalitarian = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_egalitarian = no
+		NOT = { has_ethic = ethic_egalitarian }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_totalitarian_i = yes
 			can_join_faction_totalitarian_c = yes
@@ -42,16 +42,6 @@ totalitarian = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				OR = { # Totalitarian is about militarist
-					is_authoritarian = yes
-					is_militarist = yes
-				}
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -70,6 +60,10 @@ totalitarian = {
 					exists = leader
 				}
 			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_authoritarian
 		}
 		# Actions
 		modifier = {
@@ -127,38 +121,61 @@ totalitarian = {
 	}
 
 	# 诉求
-		demand = { # 专制独裁
+		demand = { # 专制独裁 (伟大领袖，或者君主也行)
 			title = "DEMAND_GOVERNMENT_DICTATORSHIP"
 			unfulfilled_title = "DEMAND_GOVERNMENT_DICTATORSHIP"
 			desc = "DEMAND_GOVERNMENT_DICTATORSHIP_DESC"
 			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
+			unfulfilled_effect = 5
 			potential = {
 				exists = owner
-			}
-			trigger = {
 				owner = {
 					OR = {
 						has_authority = auth_dictatorial
-						has_authority = auth_imperial
+						has_authority = auth_oligarchic
 					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_dictatorial
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_GOVERNMENT_DICTATORSHIP"
+			unfulfilled_title = "DEMAND_GOVERNMENT_DICTATORSHIP"
+			desc = "DEMAND_GOVERNMENT_DICTATORSHIP_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_authority = auth_dictatorial
+						has_authority = auth_oligarchic
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_authority = auth_imperial
 				}
 			}
 		}
 
-		demand = { # 极权！
-			title = "DEMAND_CENTRALIZE_FULL"
-			unfulfilled_title = "DEMAND_CENTRALIZE_FULL"
-			desc = "DEMAND_CENTRALIZE_FULL_DESC"
+		demand = { # 极权政治
+			title = "DEMAND_CENTRALIZE_TOTAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_TOTAL"
+			desc = "DEMAND_CENTRALIZE_TOTAL_DESC"
 			fulfilled_effect = 10
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
 				owner = {
-					NOR = {
-						has_policy_flag = partial_decentralization
-						has_policy_flag = high_decentralization
-						has_policy_flag = full_decentralization
+					OR = {
+						has_policy_flag = excessive_centralization
+						has_policy_flag = concentration_of_power
 					}
 				}
 			}
@@ -169,27 +186,28 @@ totalitarian = {
 			}
 		}
 		demand = {
-			title = "DEMAND_CENTRALIZE_FULL"
-			unfulfilled_title = "DEMAND_CENTRALIZE_FULL"
-			desc = "DEMAND_CENTRALIZE_FULL_NO_DESC"
-			#fulfilled_effect = 0 # Yellow
+			title = "DEMAND_CENTRALIZE_TOTAL"
+			unfulfilled_title = "DEMAND_CENTRALIZE_TOTAL"
+			desc = "DEMAND_CENTRALIZE_TOTAL_DESC"
+			fulfilled_effect = 5
 			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
-					OR = {
-						has_policy_flag = partial_decentralization
-						has_policy_flag = high_decentralization
-						has_policy_flag = full_decentralization
+					NOR = {
+						has_policy_flag = excessive_centralization
+						has_policy_flag = concentration_of_power
 					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					has_policy_flag = centralized_state
+				}
 			}
 		}
 
-		demand = { # 统制经济
+		demand = { # 法团统制
 			title = "DEMAND_ECONOMY_CORPORATE"
 			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
 			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
@@ -197,10 +215,39 @@ totalitarian = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = economic_controlled_economy
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_stance_planned_free
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = economic_controlled_economy
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_ECONOMY_CORPORATE"
+			unfulfilled_title = "DEMAND_ECONOMY_CORPORATE"
+			desc = "DEMAND_ECONOMY_CORPORATE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = economic_controlled_economy
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_stance_planned_free
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_planned
 				}
 			}
 		}
@@ -312,6 +359,50 @@ totalitarian = {
 			}
 		}
 
+		demand = { # 强硬外交
+			title = "DEMAND_DIPLOMA_AGGRESIVE"
+			unfulfilled_title = "DEMAND_DIPLOMA_AGGRESIVE"
+			desc = "DEMAND_DIPLOMA_AGGRESIVE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					NOT = {
+						has_policy_flag = diplo_stance_cooperative
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = diplo_stance_belligerent
+						has_policy_flag = diplo_stance_supremacist
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_DIPLOMA_AGGRESIVE"
+			unfulfilled_title = "DEMAND_DIPLOMA_AGGRESIVE"
+			desc = "DEMAND_DIPLOMA_AGGRESIVE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
 		demand = {
 			title = "FACTION_OUTRAGED_GC"
 			unfulfilled_title = "FACTION_OUTRAGED_GC"
@@ -341,7 +432,8 @@ totalitarian = {
 				owner = {
 					OR = {
 						has_valid_civic = civic_military_dictatorship
-						has_valid_civic = civic_stratocracy
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_philosopher_king
 					}
 				}
 			}
@@ -349,7 +441,8 @@ totalitarian = {
 				owner = {
 					OR = {
 						has_valid_civic = civic_military_dictatorship
-						has_valid_civic = civic_stratocracy
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_philosopher_king
 					}
 				}
 			}

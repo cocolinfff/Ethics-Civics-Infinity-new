@@ -33,7 +33,7 @@ prosperity = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_militarist = no
+		NOT = { has_ethic = ethic_militarist }
 		OR = { # Only Same Ideology or Job
 			can_join_faction_prosperity_i = yes
 			can_join_faction_prosperity_c = yes
@@ -42,16 +42,6 @@ prosperity = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				OR = {
-					is_capitalist = yes
-					is_pacifist = yes
-				}
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -76,6 +66,13 @@ prosperity = {
 			OR = {
 				has_ethic = ethic_pacifist
 				has_ethic = ethic_fanatic_pacifist
+			}
+		}
+		modifier = {
+			factor = 2.0
+			OR = {
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_capitalism
 			}
 		}
 		# Actions
@@ -117,7 +114,8 @@ prosperity = {
 			OR = {
 				AND = {
 					has_job = farmer
-					NOT = { owner = { has_civic = civic_big_industrial_farming } }
+					exists = from
+					from = { NOT = { has_civic = civic_big_industrial_farming } }
 				}
 				has_job = artisan
 				has_job = entertainer
@@ -166,7 +164,7 @@ prosperity = {
 				always = no
 			}
 		}
-
+		
 		demand = { # 市场干涉
 			title = "DEMAND_ECONOMY_INTERFERENCE"
 			unfulfilled_title = "DEMAND_ECONOMY_INTERFERENCE"
@@ -175,10 +173,37 @@ prosperity = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_controlled_economy
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = economic_stance_mixed
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_ECONOMY_INTERFERENCE"
+			unfulfilled_title = "DEMAND_ECONOMY_INTERFERENCE"
+			desc = "DEMAND_ECONOMY_INTERFERENCE_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = economic_stance_mixed
+						has_policy_flag = economic_controlled_economy
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = economic_stance_market
 				}
 			}
 		}
@@ -220,17 +245,21 @@ prosperity = {
 			}
 		}
 		
-		demand = { # 反机器劳工
+		demand = { # 反机器劳工 （资）
 			title = "DEMAND_ROBOT_DEWORK"
 			unfulfilled_title = "DEMAND_ROBOT_DEWORK"
 			desc = "DEMAND_ROBOT_DEWORK_DESC"
 			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -10 
+			unfulfilled_effect = -15 
 			potential = {
 				exists = owner
 				owner = {
+					is_capitalism = yes
 					has_policy_flag = robots_allowed
-					NOT = { has_policy_flag = ai_servitude }
+					NOR = { # 不反对侍从AI和人权AI
+						has_policy_flag = ai_full_rights
+						has_policy_flag = ai_servitude
+					}
 				}
 			}
 			trigger = {
@@ -251,9 +280,7 @@ prosperity = {
 				}
 			}
 			trigger = {
-				owner = {
-					has_policy_flag = freedom_of_speech
-				}
+				has_policy_flag = freedom_of_speech
 			}
 		}
 		demand = {

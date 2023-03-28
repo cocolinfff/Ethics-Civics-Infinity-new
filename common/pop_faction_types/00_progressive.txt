@@ -1,5 +1,5 @@
 ##############################
-# 知识分子(VANILLA)-激进民主-科研/专家利益集团
+# 知识分子(VANILLA)-激进民主-科研/专家利益集团（精英主义民主派）
 ##############################
 progressive = {
 	election_header = "GFX_faction_header_yellow"
@@ -33,7 +33,10 @@ progressive = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		is_authoritarian = no
+		NOR = {
+			has_ethic = ethic_authoritarian
+			has_ethic = ethic_socialism
+		}
 		OR = { # Only Same Ideology or Job
 			can_join_faction_progressive_i = yes
 			can_join_faction_progressive_c = yes
@@ -42,13 +45,6 @@ progressive = {
 	}
 	attraction = {
 		base = 100
-		modifier = {
-			factor = 1.5
-			exists = from
-			from = {
-				is_egalitarian = yes
-			}
-		}
 		modifier = {
 			factor = 1.25
 			exists = root
@@ -68,12 +64,17 @@ progressive = {
 				}
 			}
 		}
-		# Should really check for citizenship instead
-		modifier = {
-			factor = 0.25
-			NOT = {
-				is_same_species = owner_species
+		modifier = { # Transform to Unionist
+			factor = 0.1
+			has_ethic = ethic_egalitarian
+			exists = from
+			from = {
+				is_socialism = yes
 			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_egalitarian
 		}
 		# Actions
 		modifier = {
@@ -99,9 +100,7 @@ progressive = {
 					exists = from
 					from = { is_egalitarian = yes }
 				}
-				OR = {
-					is_egalitarian = yes
-				}
+				has_ethic = ethic_egalitarian
 			}
 			is_pop_category = specialist
 		}
@@ -130,7 +129,7 @@ progressive = {
 	}
 	
 	# 诉求
-		demand = { # 民主政府
+		demand = { # 民主政府 （知识分子是民主派中的精英主义者）
 			title = "DEMAND_GOVERNMENT_DEMOCRACY"
 			unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
 			desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
@@ -139,45 +138,41 @@ progressive = {
 			potential = {
 				exists = owner
 				owner = {
-					NOR = {
-						has_authority = auth_dictatorial
-						has_authority = auth_imperial
+					OR = {
+						has_authority = auth_democratic
+						has_authority = auth_oligarchic
 					}
 				}
 			}
 			trigger = {
 				owner = {
-					has_authority = auth_democratic
+					has_authority = auth_oligarchic
 				}
 			}
 		}
-		demand = { # 投票权
-			title = "DEMAND_GOVERNMENT_ELECTION"
-			unfulfilled_title = "DEMAND_GOVERNMENT_ELECTION"
-			desc = "DEMAND_GOVERNMENT_ELECTION_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -15
+		demand = {
+			title = "DEMAND_GOVERNMENT_DEMOCRACY"
+			unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
+			desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
-					OR = {
-						has_authority = auth_dictatorial
-						has_authority = auth_imperial
+					NOR = {
+						has_authority = auth_democratic
+						has_authority = auth_oligarchic
 					}
 				}
 			}
 			trigger = {
-				exists = owner
 				owner = {
-					OR = {
-						has_authority = auth_dictatorial
-						has_authority = auth_imperial
-					}
+					has_authority = auth_direct_democratic
 				}
 			}
 		}
 
-		demand = { # 适当分权
+		demand = { # 适当集权
 			title = "DEMAND_CENTRALIZE_LOW"
 			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
 			desc = "DEMAND_CENTRALIZE_LOW_DESC"
@@ -185,6 +180,31 @@ progressive = {
 			#unfulfilled_effect = 0 # Yellow
 			potential = {
 				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = centralized_state
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+		demand = {
+			title = "DEMAND_CENTRALIZE_LOW"
+			unfulfilled_title = "DEMAND_CENTRALIZE_LOW"
+			desc = "DEMAND_CENTRALIZE_LOW_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = high_decentralization
+						has_policy_flag = centralized_state
+					}
+				}
 			}
 			trigger = {
 				owner = {
@@ -247,16 +267,16 @@ progressive = {
 				}
 			}
 			trigger = {
-				exists = owner
 				owner = {
 					has_policy_flag = freedom_of_speech
 				}
+				
 			}
 		}
 		demand = {
-			title = "DEMAND_SPEECH_STRICT"
-			unfulfilled_title = "DEMAND_SPEECH_STRICT"
-			desc = "DEMAND_SPEECH_STRICT_NO_DESC"
+			title = "DEMAND_SPEECH_FREE"
+			unfulfilled_title = "DEMAND_SPEECH_FREE"
+			desc = "DEMAND_SPEECH_FREE_DESC"
 			#fulfilled_effect = 0 # Yellow
 			unfulfilled_effect = -10
 			potential = {
@@ -266,10 +286,7 @@ progressive = {
 				}
 			}
 			trigger = {
-				exists = owner
-				owner = {
-					has_policy_flag = strict_control
-				}
+				always = no
 			}
 		}
 
@@ -381,11 +398,31 @@ progressive = {
 				owner = {
 					is_homicidal = no
 					is_country_type = default
-					has_policy_flag = diplo_stance_cooperative
+					NOT = { has_policy_flag = diplo_stance_isolationist }
 				}
 			}
 			trigger = {
-				always = yes
+				owner = {
+					has_policy_flag = diplo_stance_cooperative
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_DIPLOMA_COOP"
+			unfulfilled_title = "DEMAND_DIPLOMA_COOP"
+			desc = "DEMAND_DIPLOMA_COOP_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+				owner = {
+					is_homicidal = no
+					is_country_type = default
+					has_policy_flag = diplo_stance_isolationist
+				}
+			}
+			trigger = {
+				always = no
 			}
 		}
 
