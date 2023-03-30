@@ -155,7 +155,7 @@ situation_event = { # 计算情况改善-国策基础 6号
     immediate = {
 		set_variable = { which = rec_situation_add_civic_temp value = 0 } # 初始化经济情况改善 - 国策基础
 		if = { # 加载scripted_modifier
-			limit={ has_situation_flag = economic_crisis }
+			limit = { has_situation_flag = economic_crisis }
 			change_variable = { which = rec_situation_add_civic_temp value = owner.modifier:rec_incrisis_civic_situation_improve_add }
 		}
 		else = {
@@ -164,7 +164,7 @@ situation_event = { # 计算情况改善-国策基础 6号
 		
 		# 政策
 		if = { # 自由市场 +1.0增长
-			limit={
+			limit = {
 				owner = { has_policy_flag = economic_stance_market }
 			}
 			change_variable = { which = rec_situation_add_civic_temp value = 1 }
@@ -381,12 +381,6 @@ situation_event = { # 计算情况改善-国策乘数 11号
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		# 共同市场计算
-		owner = {
-			rec_market_self_get = yes
-			rec_market_common_get = yes
-		}
-		
 		set_variable = { which = rec_situation_mult_civic_temp value = 1 } # 初始化经济情况改善 - 国策乘数
 		
 		#round_variable_to_closest = {
@@ -659,6 +653,11 @@ situation_event = { # 计算危机阈值 2号
     #    is_ai = no
     #}
     immediate = {
+		# 共同市场计算 和阈值无关，放这是为了防止数值突变
+		owner = {
+			rec_market_self_get = yes
+			rec_market_common_get = yes
+		}
 		
 		set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
 		
@@ -1083,7 +1082,7 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
     immediate = {
 		set_variable = { which = rec_crisis_add_edict value = 0 } # 初始化危机累积增加 - 法令基础
 		change_variable = { which = rec_crisis_add_edict value = owner.modifier:mod_rec_edict_crisis_accumulate_add } # 加载scripted_modifier
-		if = { # 反垄断法案 +0.2增长
+		if = { # 反垄断法案 -0.3增长
 			limit = {
 				owner = { has_edict = The_anti_monopoly_Act }
 			}
@@ -1198,8 +1197,15 @@ situation_event = { # 计算危机积累 4号
     immediate = {
 	
 		set_variable = { which = rec_crisis_add_self value = rec_crisis_add_temp }
-		if = { # 共同市场危机增长
-			limit = { owner = { NOT = { check_variable = { which = rec_market_common_size value = rec_market_self_size } } } }
+		if = { # 共同市场危机增长（理论上危机时也涨，但出于游戏性禁止）
+			limit = {
+				owner = {
+					NOR = {
+						#has_situation_flag = economic_crisis # 目前通过给AI发送经济危机解决共同市场危机不降积累的问题
+						check_variable = { which = rec_market_common_size value = rec_market_self_size }
+					}
+				}
+			}
 			set_variable = { which = rec_crisis_add_temp value = owner.rec_market_common_accumulate }
 			set_variable = { which = rec_crisis_add_change value = value:rec_crisis_add_change }
 			round_variable_to_closest = {
@@ -1335,8 +1341,29 @@ situation_event = { # 判断危机效果 5号
 		else_if = { # 危机积累超过危机阈值，爆发危机
 			limit = { check_variable = { which = rec_crisis_accumulated value > rec_crisis_threshold } }
 			set_situation_flag = economic_crisis
-			owner = { set_country_flag = rec_economic_crisis }
 			situation_event = { id = ethic_economic_crisis.0 days = 25 }
+			owner = {
+				set_country_flag = rec_economic_crisis
+				every_playable_country = {
+					limit = {
+						OR = {
+							is_in_federation_with = PREV
+							has_commercial_pact = PREV
+							AND = {
+								has_subject = PREV
+								NOT = { subject_can_diplomacy = PREV }
+							}
+							AND = {
+								has_overlord = PREV
+								NOT = { subject_can_diplomacy = THIS }
+							}
+						}
+						NOT = { is_same_empire = PREV }
+						rec_circle_access = yes
+					}
+					add_modifier = { modifier = rec_economic_crisis_ai years = 15 } # AI会有15年连带经济危机
+				}
+			}
 		}
 
 		if = { # 危机积累60%以下，低危机
