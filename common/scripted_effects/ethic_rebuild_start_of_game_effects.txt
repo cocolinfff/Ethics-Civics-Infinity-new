@@ -191,6 +191,44 @@ generate_start_pops = {
 
 		if = {
 			limit = {
+				owner = {
+					has_valid_civic = civic_machine_servitor
+					has_origin = origin_true_yuht
+				}
+			}
+			last_created_species = {
+				if = {
+					limit = {
+						ROOT = { is_planet_class = pc_shattered_ring_habitable }
+					}
+					modify_species = {
+						species = this
+						ideal_planet_class = home_planet
+					}
+				}
+				set_citizenship_type = {
+					country = root.owner
+					type = citizenship_limited
+				}
+				set_living_standard = {
+					country = root.owner
+					type = living_standard_organic_trophy
+				}
+			}
+			while = {
+				count = 25
+				create_pop = {
+					species = last_created_species
+					ethos = random
+				}
+				last_created_pop = {
+					clear_ethos = yes
+				}
+			}
+		}
+
+		if = {
+			limit = {
 				owner = { has_valid_civic = civic_machine_assimilator }
 			}
 			last_created_species = {
@@ -474,13 +512,30 @@ generate_start_pops = {
 	}
 	if = {
 		limit = {
-			owner = { has_origin = origin_true_yuht }
+			owner = {
+				has_origin = origin_true_yuht
+				NOT = { has_valid_civic = civic_machine_servitor }
+			}
 		}
 		while = {
 			count = 70
 			create_pop = {
 				species = owner_main_species
 				ethos = random
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_true_yuht
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+		while = {
+			count = 40
+			create_pop = {
+				species = root.owner.species
 			}
 		}
 	}
@@ -498,10 +553,7 @@ generate_start_pops = {
 	}
 	if = {
 		limit = {
-			owner = {
-				is_eager_explorer_empire = yes
-				NOT = { has_origin = origin_true_yuht }
-			}
+			owner = { is_eager_explorer_empire = yes }
 		}
 		while = {
 			count = 10
@@ -621,6 +673,207 @@ generate_start_pops = {
 			}
 		}
 		add_building = building_equipment_breeding_plant
+	}
+}
+
+generate_home_planet_final_pass = {
+	optimize_memory
+	# Adjust life-seeded colonies
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_life_seeded
+			}
+		}
+
+		owner = {
+			# Nuke other colonies gained from advanced empire, etc
+			every_owned_planet = {
+				limit = { is_capital = no }
+				remove_all_buildings = yes
+				destroy_colony = yes
+			}
+			if = {
+				limit = { NOT = { has_valid_civic = civic_permanent_employment } }
+				change_dominant_species = { species = last_created_species change_all = yes }
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_origin = origin_shattered_ring
+					has_origin = origin_machine
+				}
+			}
+		}
+		owner = {
+			capital_scope = {
+				system_star = {
+					set_deposit = d_energy_10
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_tree_of_life
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_tree_of_life_home
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_lithoid
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_lithoid_crater
+				add_deposit = d_buried_lithoids
+				add_deposit = d_buried_lithoids
+				add_deposit = d_buried_lithoids
+				add_deposit = d_buried_lithoids
+				add_modifier = { modifier = lithoid_crater }
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_lost_colony
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_modifier = { modifier = colonial_spirit_mod }
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_broken_shackles
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_modifier = { modifier = free_at_last_broken_shackles days = 7200 }
+				add_modifier = { modifier = culture_shock_broken_shackles days = 3600 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_progenitor_hive
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_progenitor
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_origin = origin_default
+			}
+		}
+		owner = {
+			if = {
+				limit = {
+					is_gestalt = no
+				}
+				capital_scope = {
+					add_modifier = { modifier = prosp_uni_mod days = 7200 }
+				}
+			}
+			else = {
+				capital_scope = {
+					add_modifier = { modifier = prosp_uni_mod_gestalt days = 7200 }
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				OR = {
+					has_origin = origin_machine
+					has_origin = origin_true_yuht
+				}
+			}
+		}
+		owner = {
+			capital_scope = {
+				add_deposit = d_machine_minerals
+				solar_system = {
+					every_system_planet = {
+						limit = {
+							colonizable_planet = no
+							is_star = no
+						}
+						clear_deposits = yes
+					}
+					every_system_planet = {
+						limit = {
+							is_asteroid = yes
+						}
+						remove_planet = yes
+					}
+					every_system_planet = {
+						limit = {
+							colonizable_planet = no
+							is_star = no
+							is_asteroid = no
+							NOT = { is_planet_class = pc_gas_giant }
+						}
+						change_pc = pc_broken
+					}
+					every_system_planet = {
+						limit = {
+							colonizable_planet = no
+							is_star = no
+							is_planet_class = pc_gas_giant
+						}
+						change_pc = pc_molten
+						add_modifier = { modifier = chthonian_planet }
+						every_moon = {
+							limit = {
+								colonizable_planet = no
+							}
+							remove_planet = yes
+						}
+						while = {
+							limit = {
+								planet_size >= 20
+							}
+							change_planet_size = -6
+						}
+					}
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				any_owned_pop = {
+					has_trait = trait_exotic_metabolism
+				}
+			}
+		}
+
+		add_deposit = d_exotic_mountain
 	}
 }
 
@@ -936,6 +1189,7 @@ give_physics_tech_tier_1_effect = {
 	give_technology = { message = no tech = tech_shields_2 }
 	give_technology = { message = no tech = tech_power_plant_2 }
 	give_technology = { message = no tech = tech_power_hub_1 }
+	give_technology = { message = no tech = tech_lasers_2 }
 }
 
 give_physics_tech_tier_2_effect = {
@@ -977,6 +1231,24 @@ give_physics_tech_tier_2_effect = {
 		give_technology = { message = no tech = tech_hyper_drive_2 }
 	}
 	give_technology = { message = no tech = tech_ftl_inhibitor }
+	give_technology = { message = no tech = tech_lasers_3 }
+	give_technology = { message = no tech = tech_pd_tracking_2 }
+	give_technology = { message = no tech = tech_mine_volatile_motes }
+}
+
+give_physics_tech_tier_3_effect = {
+	give_technology = { message = no tech = tech_space_science_5 }
+	give_technology = { message = no tech = tech_combat_computers_2 }
+	give_technology = { message = no tech = tech_encryption_3 }
+	give_technology = { message = no tech = tech_decryption_3 }
+	give_technology = { message = no tech = tech_antimatter_power }
+	give_technology = { message = no tech = tech_reactor_boosters_3 }
+	give_technology = { message = no tech = tech_shields_4 }
+	give_technology = { message = no tech = tech_planetary_shield_generator }
+	give_technology = { message = no tech = tech_sensors_3 }
+	give_technology = { message = no tech = tech_power_plant_4 }
+	give_technology = { message = no tech = tech_mine_dark_matter }
+	give_technology = { message = no tech = tech_lasers_4 }
 }
 
 give_engineering_tech_tier_1_effect = {
@@ -995,6 +1267,8 @@ give_engineering_tech_tier_1_effect = {
 	give_technology = { message = no tech = tech_robotic_workers }
 	give_technology = { message = no tech = tech_afterburners_1 }
 	give_technology = { message = no tech = tech_assembly_pattern }
+	give_technology = { message = no tech = tech_mass_drivers_2 }
+	give_technology = { message = no tech = tech_missiles_2 }
 }
 
 give_engineering_tech_tier_2_effect = {
@@ -1017,6 +1291,41 @@ give_engineering_tech_tier_2_effect = {
 	give_technology = { message = no tech = tech_engineering_2 }
 	give_technology = { message = no tech = tech_droid_workers }
 	give_technology = { message = no tech = tech_housing_1 }
+	give_technology = { message = no tech = tech_mass_drivers_3 }
+	give_technology = { message = no tech = tech_missiles_3 }
+	give_technology = { message = no tech = tech_flak_batteries_2 }
+	give_technology = { message = no tech = tech_mine_rare_crystals }
+	give_technology = { message = no tech = tech_mine_exotic_gases }
+}
+
+give_engineering_tech_tier_3_effect = {
+	if = {
+		limit = {
+			OR = {
+				is_machine_empire = no
+				has_civic = civic_machine_assimilator
+			}
+		}
+		give_technology = { message = no tech = tech_integrated_cybernetics }
+	}
+	give_technology = { message = no tech = tech_cruisers }
+	give_technology = { message = no tech = tech_destroyer_hull_2 }
+	give_technology = { message = no tech = tech_cruiser_build_speed }
+	give_technology = { message = no tech = tech_cruiser_hull_1 }
+	give_technology = { message = no tech = tech_starbase_4 }
+	give_technology = { message = no tech = tech_habitat_1 }
+	give_technology = { message = no tech = tech_strike_craft_3 }
+	give_technology = { message = no tech = tech_ship_armor_4 }
+	give_technology = { message = no tech = tech_thrusters_3 }
+	give_technology = { message = no tech = tech_space_mining_5 }
+	give_technology = { message = no tech = tech_mining_3 }
+	give_technology = { message = no tech = tech_alloys_2 }
+	give_technology = { message = no tech = tech_luxuries_2 }
+	give_technology = { message = no tech = tech_afterburners_2 }
+	give_technology = { message = no tech = tech_housing_2 }
+	give_technology = { message = no tech = tech_mine_living_metal }
+	give_technology = { message = no tech = tech_mass_drivers_4 }
+	give_technology = { message = no tech = tech_missiles_4 }
 }
 
 give_society_tech_tier_1_effect = {
@@ -1228,4 +1537,51 @@ give_society_tech_tier_2_effect = {
 		give_technology = { message = no tech = tech_xeno_diplomacy }
 	}
 	give_technology = { message = no tech = tech_capital_productivity_1 }
+}
+
+give_society_tech_tier_3_effect = {
+	if = {
+		limit = {
+			is_gestalt = no
+		}
+		give_technology = { message = no tech = tech_interstellar_economics }
+	}
+	give_technology = { message = no tech = tech_nano_vitality_crops }
+	give_technology = { message = no tech = tech_food_processing_2 }
+	give_technology = { message = no tech = tech_gene_tailoring }
+	give_technology = { message = no tech = tech_refit_standards }
+	give_technology = { message = no tech = tech_combat_training }
+	give_technology = { message = no tech = tech_psionic_theory }
+	give_technology = { message = no tech = tech_galactic_bureaucracy }
+	if = {
+		limit = {
+			has_authority = auth_machine_intelligence
+		}
+		give_technology = { message = no tech = tech_resource_processing_algorithms }
+	}
+	if = {
+		limit = {
+			OR = {
+				is_gestalt = no
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+		give_technology = { message = no tech = tech_paradise_dome }
+	}
+	if = {
+		limit = {
+			NOR = {
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_fanatic_spiritualist
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+		give_technology = { message = no tech = tech_autocurating_vault }
+	}
+	if = {
+		limit = {
+			has_valid_civic = civic_agrarian_idyll
+		}
+		give_technology = { message = no tech = tech_housing_agrarian_idyll }
+	}
 }

@@ -359,9 +359,9 @@ civic_environmentalist_corporate_start_buildings = {
 	}
 	solar_system = {
 		random_system_planet = {
-			exists = owner
 			if = {
 				limit = {
+					exists = owner
 					owner = {
 						OR = {
 							has_valid_civic = civic_environmentalist_corporate
@@ -373,7 +373,10 @@ civic_environmentalist_corporate_start_buildings = {
 				add_blocker = { type = d_big_nature_preserve_blocker }
 			}
 			else_if = {
-				limit = { owner = { has_valid_civic = civic_environmentalist } }
+				limit = {
+					exists = owner
+					owner = { has_valid_civic = civic_environmentalist }
+				}
 				remove_deposit = d_big_nature_preserve_blocker
 			}
 		}
@@ -387,9 +390,9 @@ civic_vilified_start_buildings = {
 	}
 	solar_system = {
 		random_system_planet = {
-			exists = owner
 			if = {
 				limit = {
+					exists = owner
 					owner = { has_valid_civic = civic_vilified }
 					planet = {
 						has_building = building_research_lab_1
@@ -404,6 +407,7 @@ civic_vilified_start_buildings = {
 			}
 			else_if = {
 				limit = {
+					exists = owner
 					owner = { has_valid_civic = civic_vilified }
 					planet = {
 						has_building = building_research_lab_2
@@ -415,6 +419,7 @@ civic_vilified_start_buildings = {
 			}
 			else_if = {
 				limit = {
+					exists = owner
 					owner = { has_valid_civic = civic_vilified }
 					planet = { has_building = building_research_lab_3 }
 				}
@@ -549,6 +554,7 @@ civic_true_yuht_start_buildings = {
 				owner = { has_origin = origin_true_yuht }
 			}
 			clear_blockers = yes
+			remove_all_buildings = yes
 			remove_all_districts = yes
 			if = {
 				limit = { owner = { is_gestalt = no } }
@@ -562,9 +568,9 @@ civic_true_yuht_start_buildings = {
 				limit = { owner = { is_machine_empire = yes } }
 				add_building = building_machine_system_capital
 			}
+			add_building = building_master_archive
 			if = {
 				limit = {
-					has_building = building_bureaucratic_1
 					owner = {
 						OR = {
 							has_valid_civic = civic_anarchism
@@ -573,40 +579,44 @@ civic_true_yuht_start_buildings = {
 						}
 					}
 				}
-				remove_building = building_bureaucratic_1
 				add_building = building_planetary_management_center
 			}
 			if = {
-				limit = { has_building = building_hive_node }
-				remove_building = building_hive_node
-				add_building = building_hive_confluence
+				limit = {
+					owner = {
+						is_machine_empire = yes
+						NOR = {
+							has_civic = civic_machine_servitor
+							has_civic = civic_machine_assimilator
+						}
+					}
+				}
+				add_building = building_class_4_singularity
 			}
 			if = {
-				limit = { has_building = building_research_lab_1 }
-				remove_building = building_research_lab_1
+				limit = {
+					owner = {
+						NOR = {
+							has_valid_civic = civic_anarchism
+							has_valid_civic = civic_democracy_and_clean_government
+							has_valid_civic = civic_OGAS
+						}
+					}
+				}
+				add_building = building_class_4_singularity
 			}
-			if = {
-				limit = { has_building = building_holo_theatres }
-				remove_building = building_holo_theatres
-			}
-			if = {
-				limit = { has_building = building_temple }
-				remove_building = building_temple
-			}
-			if = {
-				limit = { has_building = building_organic_sanctuary }
-				remove_building = building_organic_sanctuary
-			}
-			if = {
-				limit = { has_building = building_commercial_zone }
-				remove_building = building_commercial_zone
-			}
-			add_building = building_master_archive
+			add_building = building_class_4_singularity
+			add_building = building_dimensional_fabricator
+			add_building = building_dimensional_fabricator
+			add_building = building_dimensional_fabricator
+			add_building = building_dimensional_fabricator
+			add_building = building_class_4_singularity
 			if = {
 				limit = {
 					owner = {
 						is_lithoid_empire = no
 						OR = {
+							is_machine_empire = no
 							has_civic = civic_machine_servitor
 							has_civic = civic_machine_assimilator
 						}
@@ -616,54 +626,83 @@ civic_true_yuht_start_buildings = {
 			}
 			if = {
 				limit = {
-					owner = {
-						NOR = {
-							is_lithoid_empire = no
-							has_civic = civic_machine_servitor
-							has_civic = civic_machine_assimilator
-						}
-					}
+					owner = { is_lithoid_empire = yes }
 				}
 				add_building = building_dimensional_fabricator
 			}
-			add_building = building_dimensional_fabricator
-			add_building = building_dimensional_fabricator
-			add_building = building_class_4_singularity
-			add_building = building_affluence_center
-			add_building = building_nano_forge
+			if = {
+				limit = {
+					owner = {
+						OR = {
+							is_gestalt = no
+							has_civic = civic_machine_servitor
+						}
+					}
+				}
+				add_building = building_affluence_center
+				add_building = building_nano_forge
+			}
+			if = {
+				limit = {
+					owner = {
+						is_gestalt = yes
+						NOT = { has_civic = civic_machine_servitor }
+					}
+				}
+				add_building = building_nano_forge
+				add_building = building_nano_forge
+			}
 			if = {
 				limit = { owner = { has_civic = civic_machine_servitor } }
 				while = {
-					count = 5
+					count = 8
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_housing
 					}
+				}
+				while = {
+					count = 4
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_arms_industry
 					}
-				}
-				add_district_and_planet_size_if_needed_effect = {
-					district = district_arcology_organic_housing
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_arcology_civilian_industry
+					}
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_arcology_organic_housing
+					}
 				}
 			}
 			else_if = {
-				limit = { owner = { is_gestalt = yes }}
+				limit = { owner = { is_gestalt = yes } }
 				while = {
-					count = 5
+					count = 8
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_housing
 					}
+				}
+				while = {
+					count = 4
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_arcology_administrative_gestalt
+					}
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_arms_industry
+					}
+					add_district_and_planet_size_if_needed_effect = {
+						district = district_arcology_leisure
 					}
 				}
 			}
 			else = {
 				while = {
-					count = 4
+					count = 8
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_housing
 					}
+				}
+				while = {
+					count = 4
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_arms_industry
 					}
@@ -672,28 +711,6 @@ civic_true_yuht_start_buildings = {
 					}
 					add_district_and_planet_size_if_needed_effect = {
 						district = district_arcology_civilian_industry
-					}
-				}
-			}
-			if = {
-				limit = {
-					is_spiritualist = no
-				}
-				while = {
-					count = 4
-					add_district_and_planet_size_if_needed_effect = {
-						district = district_arcology_administrative
-					}
-				}
-			}
-			if = {
-				limit = {
-					is_spiritualist = yes
-				}
-				while = {
-					count = 4
-					add_district_and_planet_size_if_needed_effect = {
-						district = district_arcology_religious
 					}
 				}
 			}
