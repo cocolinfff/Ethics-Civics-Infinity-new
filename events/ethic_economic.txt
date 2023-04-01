@@ -1,4 +1,4 @@
-namespace=ethic_economic 
+namespace = ethic_economic 
 
 country_event = { # 市场经济系统自动开关（月检）
     id = ethic_economic.0
@@ -686,14 +686,14 @@ situation_event = { # 计算危机阈值 2号
 			limit = { owner = { has_edict = economic_deinflaction } }
 			change_variable = { which = rec_crisis_threshold value = -20 }
 		}
-		if = { # 发放代金券 +40阈值 暂时没做
-			limit = { owner = { has_edict = economic_distribute_tickets } }
-			change_variable = { which = rec_crisis_threshold value = 40 }
-		}
-		if = { # 额外印钞 +40阈值 暂时没做
-			limit = { owner = { has_edict = economic_extra_printing } }
-			change_variable = { which = rec_crisis_threshold value = 40 }
-		}
+		#if = { # 发放代金券 +40阈值 暂时没做
+		#	limit = { owner = { has_edict = economic_consumer_coupon } }
+		#	change_variable = { which = rec_crisis_threshold value = 40 }
+		##}
+		#if = { # 额外印钞 +40阈值 暂时没做
+		#	limit = { owner = { has_edict = economic_extra_printing } }
+		#	change_variable = { which = rec_crisis_threshold value = 40 }
+		#}
 		
         if = { # 更多思潮内容
             limit = { has_global_flag = cultural_overhaul_active }
@@ -824,17 +824,6 @@ situation_event = { # 计算危机增长-有危机时 3号
 		}
 		if = { # 工人合作社 -0.4增长
 			limit={ owner = { has_valid_civic = civic_world_cooperative } }
-			change_variable = { which = rec_crisis_add_civic value = -0.2 }
-		}
-		if = { # 钓鱼佬/珊瑚礁 -0.2增长
-			limit={
-				owner = {
-					OR = {
-						has_valid_civic = civic_anglers
-						has_valid_civic = civic_anglers_lithoid
-					}
-				}
-			}
 			change_variable = { which = rec_crisis_add_civic value = -0.2 }
 		}
 		if = { # 钓鱼佬/珊瑚礁 -0.1增长
@@ -1081,7 +1070,7 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
     hide_window = yes
     immediate = {
 		set_variable = { which = rec_crisis_add_edict value = 0 } # 初始化危机累积增加 - 法令基础
-		change_variable = { which = rec_crisis_add_edict value = owner.modifier:mod_rec_edict_crisis_accumulate_add } # 加载scripted_modifier
+		change_variable = { which = rec_crisis_add_edict value = owner.modifier:rec_edict_crisis_accumulate_add } # 加载scripted_modifier
 		if = { # 反垄断法案 -0.3增长
 			limit = {
 				owner = { has_edict = The_anti_monopoly_Act }
@@ -2011,10 +2000,18 @@ planet_event = { # 扩张效应-征服星球带来的危机稀释
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		from = {
-			change_variable = { which = prev.rec_expand_pop_0 value = trigger:num_pops }
+		owner = {
+			change_variable = { which = rec_expand_pop_0 value = prev.trigger:num_pops }
 		}
     }
+}
+country_event = { # 扩张效应-获得星系
+	id = ethic_economic.901
+	is_triggered_only = yes
+	hide_window = yes
+	immediate = {
+		change_variable = { which = rec_expand_resource_0 value = 12 }
+	}
 }
 
 planet_event = { # 提升效应-提升物种带来的危机稀释
@@ -2042,6 +2039,7 @@ planet_event = { # 开拓效应-征服者私有化协议过程
 			years = 1
 			clear_on_owner_change = yes
 		}
+		owner = { change_variable = { which = rec_expand_resource_0 value = 5 } }
 		planet_event = { id = ethic_economic.920 days = 30 }
     }
 }
@@ -2052,12 +2050,12 @@ planet_event = { # 开拓效应-征服者私有化协议过程
     immediate = {
 		if = {
 			limit = { has_planet_modifier = pm_explorer_privatized }
-			owner = { change_variable = { which = rec_expand_resource_0 value = 1 } }
+			owner = { change_variable = { which = rec_expand_resource_0 value = 2 } }
 			planet_event = { id = ethic_economic.920 days = 30 }
 		}
     }
 }
-event = { # 战争效应-战争赔款的危机稀释
+country_event = { # 战争效应-战争赔款的危机稀释
 	id = ethic_economic.95
 	is_triggered_only = yes
 	hide_window = yes
@@ -2067,9 +2065,9 @@ event = { # 战争效应-战争赔款的危机稀释
 			set_variable = { which = rec_pops_out value = trigger:num_pops }
 			multiply_variable = { which = rec_pops_out value = 0.5 }
 			from = {
-				change_variable = { which = rec_expand_pop_0 value = root.rec_pops_out }
-				change_variable = { which = rec_expand_pop_1 value = root.rec_pops_out }
-				change_variable = { which = rec_expand_pop_2 value = root.rec_pops_out }
+				change_variable = { which = rec_expand_pop_0 value = prev.rec_pops_out }
+				change_variable = { which = rec_expand_pop_1 value = prev.rec_pops_out }
+				change_variable = { which = rec_expand_pop_2 value = prev.rec_pops_out }
 			}
 		}
 	}

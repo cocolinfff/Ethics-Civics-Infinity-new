@@ -89,7 +89,7 @@ bankers = {
 					exists = owner
 					owner = { is_capitalism = yes }
 				}
-				is_capitalism = yes
+				has_ethic = ethic_capitalism
 			}
 			OR = {
 				has_job = mogul
@@ -101,8 +101,8 @@ bankers = {
 			factor = 0.1
 			exists = root
 			root = { faction_approval < 0.5 }
-			exists = from
-			from = { has_ascension_perk = ap_one_vision }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
 		}
 	}
 	leader = {
@@ -453,6 +453,44 @@ bankers = {
 			}
 		}
 
+		#国库充盈（原版）
+		demand = {
+			title = "PROSPERITY_LIQUIDITY"
+			unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
+			desc = "PROSPERITY_LIQUIDITY_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -0.001
+			potential = {
+				# TODO get a reasonable trigger for counting colonies?
+				exists = owner
+				owner = {
+					any_owned_planet = {
+						NOT = {
+							is_same_value = root.capital_scope
+						}
+						root = {
+							owner = {
+								any_owned_planet = {
+									NOR = {
+										is_same_value = prevprevprev
+										is_same_value = root.owner.capital_scope
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					resource_stockpile_compare = {
+						resource = energy
+						value >= 5000
+					}
+				}
+			}
+		}
+		
 		#贸易联邦
 		demand = {
 			title = "TRADE_FEDERATION_DEMAND"
@@ -534,6 +572,24 @@ bankers = {
 							}
 						}
 					}
+				}
+			}
+		}
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
 				}
 			}
 		}
@@ -685,6 +741,9 @@ bankers = {
 			}
 			effect = {
 				set_pop_faction_flag = suppress_faction
+				owner = {
+					set_country_flag = suppress_bankers
+				}
 			}
 			ai_weight = { base = 0 }
 		}
@@ -695,7 +754,10 @@ bankers = {
 				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_pop_faction_flag = remove_faction
+				remove_pop_faction_flag = suppress_faction
+				owner = {
+					remove_country_flag = suppress_bankers
+				}
 			}
 			ai_weight = { base = 0 }
 		}
