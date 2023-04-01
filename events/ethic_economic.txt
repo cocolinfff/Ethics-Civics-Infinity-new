@@ -508,7 +508,6 @@ situation_event = { # 计算情况改善-其它 26号
 			}
 			change_variable = { which = rec_situation_add_market_temp value = 0.2 }
 		}
-
 		if = { # 伞の优化-贸易额总值影响 = 贸易总额/帝国规模 * 系数(0.005)
 			limit = { has_global_flag = z_pf2_installed }
 			set_variable = { which = trade_value_per_size value = owner.PF_var_cntr_TRADE_value }
@@ -524,6 +523,7 @@ situation_event = { # 计算情况改善-其它 26号
 				change_variable = { which = rec_situation_add_market_temp value = trade_value_per_size }
 			}
 		}
+		change_variable = { which = rec_situation_add_market_temp value = owner.modifier:rec_market_situation_improve_add }
 		round_variable_to_closest = {
 			which = rec_situation_add_market_temp
 			value = 0.001
@@ -774,35 +774,17 @@ situation_event = { # 计算危机增长-有危机时 3号
 	hide_window = yes
 	immediate = {
 		set_variable = { which = rec_crisis_add_temp value = 0 } # 初始化增长
-		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
-		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
 
 		set_variable = { which = rec_crisis_add_market value = 0 }
-		if = { # 一般条件市场效应
-			limit={
-				situation_progress > 10
-				situation_progress < 70
-			}
-			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_2 }
-			multiply_variable = { which = rec_crisis_add_market value = -2 }
-		}
-		else_if = { # 高度繁荣市场效应
-			limit={
-				situation_progress > 70
-				situation_progress < 90
-			}
-			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_3 }
-			multiply_variable = { which = rec_crisis_add_market value = -2 }
-		}
-		else_if = { # 经济危机市场效应
+		if = { # 经济危机市场效应
 			limit = { situation_progress < 10 }
-			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_1 }
+			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_5 }
 			multiply_variable = { which = rec_crisis_add_market value = -2 }
 		}
-		else = { # 经济过热市场效应
-			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_4 }
+		else = { # 补正线
+			set_variable = { which = rec_crisis_add_market value = value:economy_stage_rebalance_6 }
 			multiply_variable = { which = rec_crisis_add_market value = -2 }
-		} # 初始化增长
+		}# 初始化增长
 		if = { # 市场变革
 			limit = { owner = { has_modifier = cm_market_revolution } }
 			change_variable = { which = rec_crisis_add_market value = value:crisis_decline_market_revolution }
@@ -811,6 +793,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 			which = rec_crisis_add_market
 			value = 0.001
 		}
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_market }
 
 		set_variable = { which = rec_crisis_add_civic value = 0 }
 		change_variable = { which = rec_crisis_add_civic value = owner.modifier:rec_incrisis_civic_crisis_accumulate_add } # 加载scripted_modifier
@@ -862,6 +845,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 			which = rec_crisis_add_civic
 			value = 0.001
 		}
+		change_variable = { which = rec_crisis_add_temp value = rec_crisis_add_civic }
 
 		round_variable_to_closest = {
 			which = rec_crisis_add_temp
@@ -1186,7 +1170,7 @@ situation_event = { # 计算危机积累 4号
     immediate = {
 	
 		set_variable = { which = rec_crisis_add_self value = rec_crisis_add_temp }
-		if = { # 共同市场危机增长（理论上危机时也涨，但出于游戏性禁止）
+		if = { # 共同市场危机增长
 			limit = {
 				owner = {
 					NOR = {
@@ -1331,7 +1315,7 @@ situation_event = { # 判断危机效果 5号
 			limit = { check_variable = { which = rec_crisis_accumulated value > rec_crisis_threshold } }
 			set_situation_flag = economic_crisis
 			situation_event = { id = ethic_economic_crisis.0 days = 25 }
-			owner = {
+			owner = { # 获得危机FLAG，共同市场AI国家危机15年
 				set_country_flag = rec_economic_crisis
 				every_playable_country = {
 					limit = {
@@ -1352,6 +1336,7 @@ situation_event = { # 判断危机效果 5号
 					}
 					add_modifier = { modifier = rec_economic_crisis_ai years = 15 } # AI会有15年连带经济危机
 				}
+				situation_event = { id = ethic_economic_crisis.2 } # 立刻重算阈值
 			}
 		}
 
@@ -1868,7 +1853,7 @@ country_event = { # 事件-圣塔菲：激进的探险
     trigger = {
 		NOT = { mid_game_years_passed >= 5 }
 		owner = {
-			has_edict = explorer_privitization
+			has_edict = explorer_privatization
 			NOT = { has_country_flag = radical_first_contact_done }
 		}
     }
@@ -2002,6 +1987,7 @@ planet_event = { # 扩张效应-征服星球带来的危机稀释
     immediate = {
 		owner = {
 			change_variable = { which = rec_expand_pop_0 value = prev.trigger:num_pops }
+			change_variable = { which = rec_expand_pop_1 value = prev.trigger:num_pops }
 		}
     }
 }
@@ -2010,7 +1996,9 @@ country_event = { # 扩张效应-获得星系
 	is_triggered_only = yes
 	hide_window = yes
 	immediate = {
-		change_variable = { which = rec_expand_resource_0 value = 12 }
+		change_variable = { which = rec_expand_resource_0 value = 36 }
+		change_variable = { which = rec_expand_resource_1 value = 24 }
+		change_variable = { which = rec_expand_resource_2 value = 12 }
 	}
 }
 
@@ -2021,7 +2009,8 @@ planet_event = { # 提升效应-提升物种带来的危机稀释
     immediate = {
 		owner = {
 			change_variable = { which = rec_expand_pop_0 value = 2 }
-			change_variable = { which = rec_expand_pop_1 value = 1 }
+			change_variable = { which = rec_expand_pop_1 value = 2 }
+			change_variable = { which = rec_expand_pop_2 value = 1 }
 		}
     }
 }
@@ -2039,7 +2028,8 @@ planet_event = { # 开拓效应-征服者私有化协议过程
 			years = 1
 			clear_on_owner_change = yes
 		}
-		owner = { change_variable = { which = rec_expand_resource_0 value = 5 } }
+		owner = { change_variable = { which = rec_expand_resource_0 value = 8 } }
+		owner = { change_variable = { which = rec_expand_resource_1 value = 4 } }
 		planet_event = { id = ethic_economic.920 days = 30 }
     }
 }
@@ -2050,7 +2040,7 @@ planet_event = { # 开拓效应-征服者私有化协议过程
     immediate = {
 		if = {
 			limit = { has_planet_modifier = pm_explorer_privatized }
-			owner = { change_variable = { which = rec_expand_resource_0 value = 2 } }
+			owner = { change_variable = { which = rec_expand_resource_0 value = 3 } }
 			planet_event = { id = ethic_economic.920 days = 30 }
 		}
     }
@@ -2069,6 +2059,7 @@ country_event = { # 战争效应-战争赔款的危机稀释
 				change_variable = { which = rec_expand_pop_1 value = prev.rec_pops_out }
 				change_variable = { which = rec_expand_pop_2 value = prev.rec_pops_out }
 			}
+			clear_variable = rec_pops_out 
 		}
 	}
 }
