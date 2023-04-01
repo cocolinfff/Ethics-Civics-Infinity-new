@@ -10,7 +10,7 @@ compradors = {
 	resources = {
 		category = pop_factions
 		produces = {
-			unity = 0.25
+			unity = 0.50
 		}
 	}
 	is_potential = {
@@ -205,9 +205,10 @@ compradors = {
 			potential = {
 				exists = owner
 				owner = {
-					NOR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
+					OR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = limit_of_working_hours
+						has_policy_flag = standard_working_hours
 					}
 				}
 			}
@@ -215,7 +216,7 @@ compradors = {
 				owner = {
 					OR = {
 						has_policy_flag = future_working_hours_authoritarian
-						has_policy_flag = long_working_hours
+						has_policy_flag = limit_of_working_hours
 					}
 				}
 			}
@@ -223,20 +224,23 @@ compradors = {
 		demand = {
 			title = "DEMAND_WORKHOUR_CAPITALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_CAPITALISM"
-			desc = "DEMAND_WORKHOUR_CAPITALISM_NO_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -15 
+			desc = "DEMAND_WORKHOUR_CAPITALISM_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
-					OR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
+					NOR = {
+						has_policy_flag = future_working_hours_authoritarian
+						has_policy_flag = limit_of_working_hours
+						has_policy_flag = standard_working_hours
 					}
 				}
 			}
 			trigger = {
-				always = no
+				owner = {
+					has_policy_flag = long_working_hours
+				}
 			}
 		}
 		
@@ -402,6 +406,9 @@ compradors = {
 			}
 			effect = {
 				set_pop_faction_flag = suppress_faction
+				owner = {
+					set_country_flag = suppress_compradors
+				}
 			}
 			ai_weight = { base = 0 }
 		}
@@ -412,7 +419,10 @@ compradors = {
 				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_pop_faction_flag = remove_faction
+				remove_pop_faction_flag = suppress_faction
+				owner = {
+					remove_country_flag = suppress_compradors
+				}
 			}
 			ai_weight = { base = 0 }
 		}

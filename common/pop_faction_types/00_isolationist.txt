@@ -87,13 +87,14 @@ isolationist = {
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhigh
+			exists = from
 			OR = {
 				AND = {
 					exists = owner
 					owner = { is_xenophobe = yes }
 				}
 				AND = {
-					is_xenophobe = yes
+					has_ethic = ethic_xenophobe
 					happiness < 0.45
 				}
 			}
@@ -104,17 +105,17 @@ isolationist = {
 		}
 		modifier = { # Utobian Soft
 			factor = 0
-			exists = from
-			has_living_standard = { country = from type = living_standard_utopian }
-			from = { is_xenophobe = no }
+			exists = owner
+			has_living_standard = { type = living_standard_utopian country = owner }
+			owner = { is_xenophobe = no }
 		}
 		# 万众一心
 		modifier = {
 			factor = 0.1
 			exists = root
 			root = { faction_approval < 0.5 }
-			exists = from
-			from = { has_ascension_perk = ap_one_vision }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
 		}
 	}
 	leader = {
@@ -686,6 +687,9 @@ isolationist = {
 			}
 			effect = {
 				set_pop_faction_flag = suppress_faction
+				owner = {
+					set_country_flag = suppress_isolationist
+				}
 			}
 			ai_weight = { base = 0 }
 		}
@@ -696,7 +700,10 @@ isolationist = {
 				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_pop_faction_flag = remove_faction
+				remove_pop_faction_flag = suppress_faction
+				owner = {
+					remove_country_flag = suppress_isolationist
+				}
 			}
 			ai_weight = { base = 0 }
 		}

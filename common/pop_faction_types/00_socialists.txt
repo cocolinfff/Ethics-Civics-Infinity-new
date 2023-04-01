@@ -45,21 +45,7 @@ socialists = {
 		modifier = {
 			factor = 1.5
 			exists = root
-			exists = owner
 			root = {
-				exists = leader
-				leader = {
-					leader_class = ruler
-				}
-			}
-			owner = {
-				has_ethic = ethic_fanatic_socialism
-			}
-		}
-		modifier = {
-			factor = 1.25
-			exists = from
-			from = {
 				exists = leader
 				leader = {
 					leader_class = ruler
@@ -106,11 +92,11 @@ socialists = {
 		# Stance from Job
 		modifier = {
 			factor = @factionattractionhigh
-			is_pop_category = worker
 			OR = {
 				AND = {
+					NOT = { has_job = clerk } # 社工联排斥职员
+					exists = owner
 					owner = { is_socialism = yes }
-					NOT = { has_job = clerk }
 				}
 				is_socialism = yes
 				is_egalitarian = yes
@@ -715,6 +701,24 @@ socialists = {
 				always = yes
 			}
 		}
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+		}
 
 	on_create = {
 		# pop_faction_event = {
@@ -863,6 +867,9 @@ socialists = {
 			}
 			effect = {
 				set_pop_faction_flag = suppress_faction
+				owner = {
+					set_country_flag = suppress_socialists
+				}
 			}
 			ai_weight = { base = 0 }
 		}
@@ -873,7 +880,10 @@ socialists = {
 				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_pop_faction_flag = remove_faction
+				remove_pop_faction_flag = suppress_faction
+				owner = {
+					remove_country_flag = suppress_socialists
+				}
 			}
 			ai_weight = { base = 0 }
 		}

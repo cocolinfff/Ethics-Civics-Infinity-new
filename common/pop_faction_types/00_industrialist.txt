@@ -89,14 +89,15 @@ industrialist = {
 		modifier = {
 			factor = @factionattractionhighvery
 			#is_pop_category = specialist
-			NOT = { owner = { has_policy_flag = economic_stance_planned } }
+			exists = owner
+			owner = { NOT = { has_policy_flag = economic_stance_planned } }
 			OR = {
 				AND = {
 					exists = owner
 					owner = { is_capitalism = yes }
 				}
 				OR = {
-					is_capitalism = yes
+					has_ethic = ethic_capitalism
 				}
 			}
 			OR = {
@@ -492,7 +493,7 @@ industrialist = {
 			trigger = {
 				owner = {
 					any_owned_species = {
-						has_slavery_type = { country = from type = slavery_indentured }
+						has_slavery_type = { type = slavery_indentured country = owner }
 					}
 				}
 			}
@@ -558,43 +559,6 @@ industrialist = {
 				owner = {
 					OR = {
 						has_policy_flag = trade_conversion_consumer_goods
-					}
-				}
-			}
-		}
-		#国库充盈（原版）
-		demand = {
-			title = "PROSPERITY_LIQUIDITY"
-			unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
-			desc = "PROSPERITY_LIQUIDITY_DESC"
-			fulfilled_effect = 10
-			unfulfilled_effect = -0.001
-			potential = {
-				# TODO get a reasonable trigger for counting colonies?
-				exists = owner
-				owner = {
-					any_owned_planet = {
-						NOT = {
-							is_same_value = root.capital_scope
-						}
-						root = {
-							owner = {
-								any_owned_planet = {
-									NOR = {
-										is_same_value = prevprevprev
-										is_same_value = root.owner.capital_scope
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					resource_stockpile_compare = {
-						resource = energy
-						value >= 5000
 					}
 				}
 			}
@@ -682,6 +646,24 @@ industrialist = {
 							}
 						}
 					}
+				}
+			}
+		}
+		demand = {
+			title = "FACTION_OUTRAGED_GC"
+			unfulfilled_title = "FACTION_OUTRAGED_GC"
+			desc = "FACTION_OUTRAGED_GC_DESC"
+			fulfilled_effect = -20
+			unfulfilled_effect = -0.001
+			potential = {
+				exists = owner
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
+				}
+			}
+			trigger = {
+				owner = {
+					has_country_flag = faction_xenophile_outraged_gc
 				}
 			}
 		}
@@ -813,6 +795,9 @@ industrialist = {
 			}
 			effect = {
 				set_pop_faction_flag = suppress_faction
+				owner = {
+					set_country_flag = suppress_industrialist
+				}
 			}
 			ai_weight = { base = 0 }
 		}
@@ -823,7 +808,10 @@ industrialist = {
 				has_pop_faction_flag = suppress_faction
 			}
 			effect = {
-				remove_pop_faction_flag = remove_faction
+				remove_pop_faction_flag = suppress_faction
+				owner = {
+					remove_country_flag = suppress_industrialist
+				}
 			}
 			ai_weight = { base = 0 }
 		}
