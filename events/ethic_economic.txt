@@ -30,6 +30,19 @@ country_event = { # 市场经济系统自动开关（月检）
 						limit = { years_passed < 1 }
 						set_variable = { which = rec_crisis_accumulated value = 50 }
 						set_variable = { which = rec_crisis_percentage value = 25 }
+						set_variable = { which = rec_situation_add_civic value = 1 }
+						if = {
+							limit = {
+								OR = { # 母星尚未完全开发的起源会有额外的发展空间
+									has_origin = origin_broken_shackles
+									has_origin = origin_payback
+									has_origin = origin_fear_of_the_dark
+								}
+								capital = {
+									planet_event = { id = ethic_economic.92 }
+								}
+							}
+						}
 					}
 					else = {
 						set_variable = { which = rec_crisis_accumulated value = 0 }
@@ -527,6 +540,12 @@ situation_event = { # 计算情况改善-其它 26号
 			}
 		}
 		change_variable = { which = rec_situation_add_market_temp value = owner.modifier:rec_market_situation_improve_add }
+		if = { # 新近贸易协定
+			limit = {
+				owner = { has_country_flag = rec_commercial_pact }
+			}
+			change_variable = { which = rec_situation_add_market_temp value = 0.2 }
+		}
 		round_variable_to_closest = {
 			which = rec_situation_add_market_temp
 			value = 0.001
@@ -757,6 +776,13 @@ situation_event = { # 计算危机阈值 2号
 			change_variable = { which = rec_crisis_threshold value = owner.modifier:rec_crisis_threshold_add } # 加载scripted_modifier
 		}
 		
+		if = { # 新近贸易协定
+			limit = {
+				owner = { has_country_flag = rec_commercial_pact }
+			}
+			change_variable = { which = rec_crisis_threshold value = 80 }
+		}
+
 		set_variable = { which = rec_crisis_threshold_self value = rec_crisis_threshold }
 		if = { # 共同市场危机阈值
 			limit = { owner = { NOT = { check_variable = { which = rec_market_common_threshold value = 0 } } } }
@@ -823,7 +849,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
-		if = { # MSI集团 -0.5增长
+		if = { # MSI集团 -0.5增长 显然，奴隶制有利于减少危机积累
 			limit = {
 				years_passed < 50
 				owner = {
@@ -832,7 +858,7 @@ situation_event = { # 计算危机增长-有危机时 3号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.5 }
 		}
-		if = { # 反抗的土著起源 -0.2增长
+		if = { # 反抗的土著起源 -120%增长 我也不知道为什么，大概是开发自然资源吧
 			limit = {
 				years_passed < 30
 				owner = {
@@ -930,7 +956,7 @@ situation_event = { # 计算危机增长-无危机时-国策基础 8号
 			}
 			change_variable = { which = rec_crisis_add_civic value = -0.1 }
 		}
-		if = { # MSI集团 -0.2增长
+		if = { # MSI集团 -0.2增长 显然，奴隶制有利于减少危机积累
 			limit = {
 				years_passed < 30
 				owner = {
@@ -1041,7 +1067,7 @@ situation_event = { # 计算危机增长-无危机时-政策乘数 13号
                     }
                 }
 			}
-            multiply_variable = { which = rec_crisis_mult_civic value = 0.9 }
+            multiply_variable = { which = rec_crisis_mult_civic value = 0.85 }
         }
 		round_variable_to_closest = {
 			which = rec_crisis_mult_civic
@@ -1151,6 +1177,12 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
 				change_variable = { which = rec_expand_resource_1 value = value:market_revolution_resource }
 				change_variable = { which = rec_expand_resource_2 value = value:market_revolution_resource }
 			}
+		}
+		if = { # 新近贸易协定
+			limit = {
+				owner = { has_country_flag = rec_commercial_pact }
+			}
+			change_variable = { which = rec_crisis_add_market value = -0.15 }
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
@@ -1338,9 +1370,10 @@ situation_event = { # 判断危机效果 5号
 						NOT = { is_same_empire = PREV }
 						rec_circle_access = yes
 					}
+					add_modifier = { modifier = rec_economic_crisis_severe years = 5 } # 5年强烈经济危机
 					add_modifier = { modifier = rec_economic_crisis_ai years = 15 } # AI会有15年连带经济危机
 				}
-				situation_event = { id = ethic_economic_crisis.2 days = 1 } # 立刻重算阈值
+				situation_event = { id = ethic_economic.2 days = 1 } # 立刻重算阈值
 			}
 		}
 
@@ -2029,12 +2062,13 @@ planet_event = { # 开拓效应-征服者私有化协议过程
     immediate = {
 		add_modifier = {
 			modifier = pm_explorer_privatized
-			years = 1
+			years = 5
 			clear_on_owner_change = yes
 		}
 		owner = {
-			change_variable = { which = rec_expand_resource_0 value = 8 }
-			change_variable = { which = rec_expand_resource_1 value = 4 }
+			change_variable = { which = rec_expand_resource_0 value = 72 }
+			change_variable = { which = rec_expand_resource_1 value = 27 }
+			change_variable = { which = rec_expand_resource_2 value = 9 }
 		}
 		planet_event = { id = ethic_economic.920 days = 30 }
     }
@@ -2046,9 +2080,20 @@ planet_event = { # 开拓效应-征服者私有化协议过程
     immediate = {
 		if = {
 			limit = { has_modifier = pm_explorer_privatized }
-			owner = { change_variable = { which = rec_expand_resource_0 value = 3 } }
+			owner = { change_variable = { which = rec_expand_resource_0 value = 36 } }
+			owner = { change_variable = { which = rec_expand_resource_1 value = 18 } }
+			owner = { change_variable = { which = rec_expand_resource_2 value = 9 } }
 			planet_event = { id = ethic_economic.920 days = 30 }
 		}
+    }
+}
+planet_event = { # 贸易协议-临时提高经济改善
+    id = ethic_economic.93
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
+		this = { set_timed_country_flag = { which = rec_commercial_pact years = value:rec_commercial_pact } }
+		from = { set_timed_country_flag = { which = rec_commercial_pact years = value:rec_commercial_pact_d } }
     }
 }
 country_event = { # 战争效应-战争赔款的危机稀释
