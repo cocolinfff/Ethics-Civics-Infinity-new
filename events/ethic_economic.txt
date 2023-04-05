@@ -31,14 +31,17 @@ country_event = { # 市场经济系统自动开关（月检）
 						set_variable = { which = rec_crisis_accumulated value = 50 }
 						set_variable = { which = rec_crisis_percentage value = 25 }
 						set_variable = { which = rec_situation_add_civic value = 1 }
-						if = {
-							limit = {
-								OR = { # 母星尚未完全开发的起源会有额外的发展空间
-									has_origin = origin_broken_shackles
-									has_origin = origin_payback
-									has_origin = origin_fear_of_the_dark
+						set_variable = { which = rec_situation_add_civic_temp value = 1 }
+						owner = {
+							if = {
+								limit = {
+									OR = { # 母星尚未完全开发的起源会有额外的发展空间
+										has_origin = origin_broken_shackles
+										has_origin = origin_payback
+										has_origin = origin_fear_of_the_dark
+									}
 								}
-								capital = {
+								capital_scope = {
 									planet_event = { id = ethic_economic.92 }
 								}
 							}
@@ -47,6 +50,8 @@ country_event = { # 市场经济系统自动开关（月检）
 					else = {
 						set_variable = { which = rec_crisis_accumulated value = 0 }
 						set_variable = { which = rec_crisis_percentage value = 0 }
+						set_variable = { which = rec_situation_add_civic value = 1 }
+						set_variable = { which = rec_situation_add_civic_temp value = 1 }
 					} # 初始化危机累积
 					
 					set_variable = { which = rec_crisis_threshold value = 200 } # 初始化阈值
@@ -555,7 +560,7 @@ situation_event = { # 计算情况改善-其它 26号
 	
 		if = { # 战时经济重整-经济恶化
 			limit = { owner = { is_at_war = yes } }
-			if = {
+			if = { # 初始化
 				limit = { NOT = { has_situation_flag = economic_at_war } }
 				set_situation_flag = economic_at_war
 				set_variable = { which = rec_situation_add_war_temp value = 0 }
@@ -571,8 +576,13 @@ situation_event = { # 计算情况改善-其它 26号
 				change_variable = { which = rec_situation_add_war_temp value = 0.015 } # 长期的债券并不能拯救经济
 			}
 		}
-		else_if = {
+		else_if = { # 战后偿还债券，利率15%
 			limit = { owner = { is_at_war = no } }
+			if = {
+				limit = { set_situation_flag = economic_at_war }
+				remove_situation_flag = economic_at_war
+				change_variable = { which = rec_crisis_add_war value = value:rec_bonds_pay }
+			}
 			set_variable = { which = rec_situation_add_war_temp value = 0 }
 		}
 		round_variable_to_closest = {
@@ -624,8 +634,6 @@ situation_event = { # 计算情况改善-其它 26号
 			change_variable = { which = rec_situation_add_exploit_temp value = rec_situation_improve }
 			multiply_variable = { which = rec_situation_add_exploit_temp value = -0.1 }
 		}
-
-		
 		round_variable_to_closest = {
 			which = rec_situation_add_exploit_temp
 			value = 0.001
@@ -1108,10 +1116,6 @@ situation_event = { # 计算危机增长-无危机时-法令基础 18号
 			}
 			change_variable = { which = rec_crisis_add_edict value = -0.6 }
 		}
-		if = { # 债券 -0.3增长
-			limit = { owner = { has_edict = war_bonds } }
-			change_variable = { which = rec_crisis_add_edict value = -0.3 }
-		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_edict
 			value = 0.001
@@ -1257,9 +1261,13 @@ situation_event = { # 计算危机积累 4号
 		#	change_variable = { which = rec_crisis_add_war value = value:crisis_decline_war }
 		#}
 		# 测试新版战争经济-提供少量危机减少
-		if = { # 战时经济重整-释放危机压力
-			limit = { owner = { is_at_war = yes } }
-			set_variable = { which = rec_crisis_add_war value = value:crisis_decline_war } # 战争期间每月减少1%(0-2)危机积累
+		if = { # 战时经济重整-通过战争债券转嫁危机积累到战后
+			limit = { owner = {
+				is_at_war = yes
+				has_edict = war_bonds
+			} }
+			change_variable = { which = rec_bonds_value value = value:rec_bonds_value } # 出售的总债券
+			set_variable = { which = rec_crisis_add_war value = value:rec_bonds_decline } # 战争期间每月减少1%(0-2)危机积累
 		}
 		else = { set_variable = { which = rec_crisis_add_war value = 0 } }
 		round_variable_to_closest = {
@@ -2022,9 +2030,9 @@ planet_event = { # 扩张效应-征服星球带来的危机稀释
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		owner = {
-			change_variable = { which = rec_expand_pop_0 value = prev.trigger:num_pops }
-			change_variable = { which = rec_expand_pop_1 value = prev.trigger:num_pops }
+		from = {
+			change_variable = { which = rec_expand_pop_0 value = root.trigger:num_pops }
+			#change_variable = { which = rec_expand_pop_1 value = root.trigger:num_pops }
 		}
     }
 }
@@ -2051,8 +2059,36 @@ planet_event = { # 提升效应-提升物种带来的危机稀释
 		}
     }
 }
+pop_event = { # 劫掠？
+    id = ethic_economic.911
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
+		owner = {
+			random_list = {
+				100 = { change_variable = { which = rec_expand_pop_0 value = 1 } }
+				66 = { change_variable = { which = rec_expand_pop_1 value = 2 } }
+				33 = { change_variable = { which = rec_expand_pop_2 value = 1 } }
+			}
+		}
+    }
+}
+pop_event = { # 废奴！
+    id = ethic_economic.912
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
+		owner = {
+			random_list = {
+				100 = { change_variable = { which = rec_expand_pop_0 value = 1 } }
+				66 = { change_variable = { which = rec_expand_pop_1 value = 1 } }
+				33 = { change_variable = { which = rec_expand_pop_2 value = 1 } }
+			}
+		}
+    }
+}
 
-planet_event = { # 开拓效应-征服者私有化协议过程
+planet_event = { # 开拓效应-征服者私有化协议
     id = ethic_economic.92
     is_triggered_only = yes
     hide_window = yes
@@ -2080,20 +2116,22 @@ planet_event = { # 开拓效应-征服者私有化协议过程
     immediate = {
 		if = {
 			limit = { has_modifier = pm_explorer_privatized }
-			owner = { change_variable = { which = rec_expand_resource_0 value = 36 } }
-			owner = { change_variable = { which = rec_expand_resource_1 value = 18 } }
-			owner = { change_variable = { which = rec_expand_resource_2 value = 9 } }
+			owner = {
+				change_variable = { which = rec_expand_resource_0 value = 36 }
+				change_variable = { which = rec_expand_resource_1 value = 18 }
+				change_variable = { which = rec_expand_resource_2 value = 9 }
+			}
 			planet_event = { id = ethic_economic.920 days = 30 }
 		}
     }
 }
-planet_event = { # 贸易协议-临时提高经济改善
+country_event = { # 贸易协议-临时提高经济改善
     id = ethic_economic.93
     is_triggered_only = yes
     hide_window = yes
     immediate = {
-		this = { set_timed_country_flag = { which = rec_commercial_pact years = value:rec_commercial_pact } }
-		from = { set_timed_country_flag = { which = rec_commercial_pact years = value:rec_commercial_pact_d } }
+		this = { set_timed_country_flag = { flag = rec_commercial_pact years = value:rec_commercial_pact } }
+		from = { set_timed_country_flag = { flag = rec_commercial_pact years = value:rec_commercial_pact_d } }
     }
 }
 country_event = { # 战争效应-战争赔款的危机稀释
@@ -2106,11 +2144,10 @@ country_event = { # 战争效应-战争赔款的危机稀释
 			set_variable = { which = rec_pops_out value = trigger:num_pops }
 			multiply_variable = { which = rec_pops_out value = 0.5 }
 			from = {
-				change_variable = { which = rec_expand_pop_0 value = prev.rec_pops_out }
-				change_variable = { which = rec_expand_pop_1 value = prev.rec_pops_out }
-				change_variable = { which = rec_expand_pop_2 value = prev.rec_pops_out }
+				change_variable = { which = rec_expand_pop_0 value = root.rec_pops_out }
+				change_variable = { which = rec_expand_pop_1 value = root.rec_pops_out }
+				change_variable = { which = rec_expand_pop_2 value = root.rec_pops_out }
 			}
-			clear_variable = rec_pops_out 
 		}
 	}
 }
