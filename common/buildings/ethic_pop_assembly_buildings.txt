@@ -116,7 +116,21 @@ building_robot_assembly_complex = {
 
 	potential = {
 		exists = owner
-		owner = { is_regular_empire = yes }
+		OR = {
+			owner = { is_ai = no }
+			NOT = { exists = assembling_species }
+			assembling_species = { is_robotic_species = yes }
+		}
+		owner = {
+			is_regular_empire = yes
+			NOT = { has_policy_flag = robots_outlawed }
+			OR = {
+				is_ai = no
+				NOT = { has_ascension_perk = ap_engineered_evolution }
+				is_materialist = yes
+			}
+		}
+		NOT = { has_modifier = slave_colony }
 	}
 
 	convert_to = {
@@ -126,16 +140,24 @@ building_robot_assembly_complex = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			buildings_no_crystals = yes
 			owner = {
-				is_regular_empire = no
+				OR = {
+					is_regular_empire = no
+					has_policy_flag = robots_outlawed
+				}
 			}
+			has_modifier = slave_colony
 			AND = {
 				owner = { is_ai = yes }
 				free_district_slots = 0
 				free_building_slots = 0
 				free_housing <= 0
 				free_jobs <= 0
+			}
+			owner = {
+				is_ai = yes
+				has_ascension_perk = ap_engineered_evolution
+				is_materialist = no
 			}
 		}
 	}
@@ -157,7 +179,7 @@ building_robot_assembly_complex = {
 	}
 
 	prerequisites = {
-		tech_synthetic_workers
+		tech_robot_assembly_complex
 	}
 	
 	triggered_desc = {
