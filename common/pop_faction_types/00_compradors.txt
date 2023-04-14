@@ -118,69 +118,52 @@ compradors = {
 	}
 
 	# 诉求
-	# 	demand = { # 中央集权
-	# 		title = "DEMAND_CENTRALIZE_HIGH"
-	# 		unfulfilled_title = "DEMAND_CENTRALIZE_HIGH"
-	# 		desc = "DEMAND_CENTRALIZE_HIGH_DESC"
-	# 		fulfilled_effect = 10
-	# 		#unfulfilled_effect = 0 # Yellow
-	# 		potential = {
-	# 			exists = owner
-	# 		}
-	# 		trigger = {
-	# 			owner = {
-	# 				OR = {
-	# 					has_policy_flag = centralized_state
-	# 					has_policy_flag = excessive_centralization
-	# 				}
-	# 			}
-	# 		}
-	# 	}
 
-		demand = { # 私有化
-			title = "DEMAND_OWNERSHIP_PRIVATE"
-			unfulfilled_title = "DEMAND_OWNERSHIP_PRIVATE"
-			desc = "DEMAND_OWNERSHIP_PRIVATE_DESC"
+		demand = { # 保持忠诚
+			title = "DEMAND_COMPRADORS"
+			unfulfilled_title = "DEMAND_COMPRADORS"
+			desc = "DEMAND_COMPRADORS_DESC"
 			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
+			#unfulfilled_effect = 0
 			potential = {
 				exists = owner
 				owner = {
-					OR = {
-						has_policy_flag = private_ownership
-						has_policy_flag = national_ownership
+					NOT = {
+						has_loyalty < 0
+						has_monthly_loyalty < 0
 					}
 				}
 			}
 			trigger = {
 				owner = {
-					has_policy_flag = private_ownership
+					AND = {
+						has_loyalty > 0
+						has_monthly_loyalty > 0
+					}
 				}
 			}
 		}
 		demand = {
-			title = "DEMAND_OWNERSHIP_PRIVATE"
-			unfulfilled_title = "DEMAND_OWNERSHIP_PRIVATE"
-			desc = "DEMAND_OWNERSHIP_PRIVATE_DESC"
-			fulfilled_effect = 5
+			title = "DEMAND_COMPRADORS"
+			unfulfilled_title = "DEMAND_COMPRADORS"
+			desc = "DEMAND_COMPRADORS_DESC"
+			#fulfilled_effect = 0
 			unfulfilled_effect = -10
 			potential = {
 				exists = owner
 				owner = {
-					NOR = {
-						has_policy_flag = private_ownership
-						has_policy_flag = national_ownership
+					AND = {
+						has_loyalty < 0
+						has_monthly_loyalty < 0
 					}
 				}
 			}
 			trigger = {
-				owner = {
-					has_policy_flag = family_ownership
-				}
+				always = no
 			}
 		}
 
-		demand = { # 减税
+		demand = { # 减税（宗主为市场经济时，方便经济剥削
 			title = "DEMAND_INVEST_MARKET"
 			unfulfilled_title = "DEMAND_INVEST_MARKET"
 			desc = "DEMAND_INVEST_MARKET_DESC"
@@ -188,10 +171,85 @@ compradors = {
 			unfulfilled_effect = -5
 			potential = {
 				exists = owner
+				owner = {
+					exists = overlord
+					overlord = {
+						OR = {
+							has_policy_flag = economic_stance_market
+							has_policy_flag = economic_stance_mixed
+						}
+					}
+				}
 			}
 			trigger = {
 				owner = {
 					has_policy_flag = trade_conversion_normal
+				}
+			}
+		}
+
+		demand = { # 外交一致
+			title = "DEMAND_COMPRADORS_DIPLOMA"
+			unfulfilled_title = "DEMAND_COMPRADORS_DIPLOMA"
+			desc = "DEMAND_COMPRADORS_DIPLOMA_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -5
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					subject_can_diplomacy = this
+				}
+			}
+		}
+
+		demand = { # 科研合作
+			title = "DEMAND_COMPRADORS_RESEARCH"
+			unfulfilled_title = "DEMAND_COMPRADORS_RESEARCH"
+			desc = "DEMAND_COMPRADORS_RESEARCH_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_research_agreement = overlord
+				}
+			}
+		}
+
+		demand = { # 经贸合作
+			title = "DEMAND_COMPRADORS_TRADE"
+			unfulfilled_title = "DEMAND_COMPRADORS_TRADE"
+			desc = "DEMAND_COMPRADORS_TRADE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_commercial_pact = overlord
+				}
+			}
+		}
+
+		demand = { # 深度合作
+			title = "DEMAND_COMPRADORS_SPECIAL"
+			unfulfilled_title = "DEMAND_COMPRADORS_SPECIAL"
+			desc = "DEMAND_COMPRADORS_SPECIAL_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = 0
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					any_agreement = {
+						has_active_specialization = any
+					}
 				}
 			}
 		}
@@ -240,93 +298,6 @@ compradors = {
 			trigger = {
 				owner = {
 					has_policy_flag = long_working_hours
-				}
-			}
-		}
-		
-		demand = { # 物竞天择
-			title = "DEMAND_WELFARE_FREE"
-			unfulfilled_title = "DEMAND_WELFARE_FREE"
-			desc = "DEMAND_WELFARE_FREE_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -15
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_policy_flag = public_healthcare
-						has_policy_flag = public_education
-					}
-				}
-			}
-			trigger = {
-				always = no
-			}
-		}
-		
-		demand = { # 接受难民
-			title = "DEMAND_REFUGEE_ALL"
-			unfulfilled_title = "DEMAND_REFUGEE_ALL"
-			desc = "DEMAND_REFUGEE_ALL_DESC"
-			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-				owner = {
-					NOT = { has_policy_flag = refugees_not_allowed }
-				}
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = refugees_allowed
-				}
-			}
-		}
-		demand = {
-			title = "DEMAND_REFUGEE_ALL"
-			unfulfilled_title = "DEMAND_REFUGEE_ALL"
-			desc = "DEMAND_REFUGEE_ALL_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -5
-			potential = {
-				exists = owner
-				owner = {
-					has_policy_flag = refugees_not_allowed
-				}
-			}
-			trigger = {
-				always = no
-			}
-		}
-
-		demand = { # 生育自由
-			title = "DEMAND_BIRTH_NO"
-			unfulfilled_title = "DEMAND_BIRTH_NO"
-			desc = "DEMAND_BIRTH_NO_DESC"
-			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = population_controls_not_allowed
-				}
-			}
-		}
-
-		demand = { # 自由移民
-			title = "DEMAND_IMMIGRATION_NO"
-			unfulfilled_title = "DEMAND_IMMIGRATION_NO"
-			desc = "DEMAND_IMMIGRATION_NO_DESC"
-			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = resettlement_not_allowed
 				}
 			}
 		}
