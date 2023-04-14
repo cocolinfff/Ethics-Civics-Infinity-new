@@ -1093,125 +1093,6 @@ building_overseer_homes = {
 	}
 }
 
-building_ranger_lodge = {
-	base_buildtime = @b1_time
-	base_cap_amount = 1
-	category = amenity
-	icon = holding_park_ranger_lodge
-	potential = {
-		NOT = {	has_modifier = slave_colony	}
-		owner = {
-			is_regular_empire = yes
-			has_valid_civic = civic_environmentalist
-		}
-		NOR = {
-			is_planet_class = pc_city
-			is_planet_class = pc_hive
-			is_planet_class = pc_machine
-			is_planet_class = pc_relic
-		}
-		is_artificial = no
-	}
-
-	allow = {
-		custom_tooltip = {
-			fail_text = no_free_district_for_ranger_lodge
-			planet = {
-				num_free_districts = {
-					type = any
-					value > 0
-				}
-			}
-		}
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = { is_regular_empire = no }
-			has_modifier = slave_colony
-			owner = { NOT = { has_valid_civic = civic_environmentalist } }
-			is_planet_class = pc_city
-			is_planet_class = pc_hive
-			is_planet_class = pc_machine
-			is_planet_class = pc_relic
-		}
-	}
-
-	planet_modifier = {
-		job_ranger_add = @b1_jobs
-		deposit_blockers_natural_unity_produces_add = 2
-	}
-
-	#triggered_planet_modifier = { TODO_CD Reimplement this later with propper tooltips
-	#	potential = {
-	#		has_designation = col_resort
-	#	}
-	#	job_ranger_per_pop = 0.1 # 1 job per 10 pops
-	#}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_galactic_community_member = yes
-				is_active_resolution = resolution_ecology_integrated_gardens
-			}
-		}
-		deposit_blockers_natural_unity_produces_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_galactic_community_member = yes
-				is_active_resolution = resolution_ecology_environmental_control_board
-			}
-		}
-		deposit_blockers_natural_unity_produces_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				is_galactic_community_member = yes
-				is_active_resolution = resolution_ecology_paradise_initiative
-			}
-		}
-		deposit_blockers_natural_unity_produces_add = 1
-	}
-	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
-		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
-	}
-
-	triggered_desc = {
-		text = job_ranger_effect_desc
-	}
-
-	on_built = {
-		planet = {
-			add_blocker = { type = d_big_nature_preserve_blocker }
-		}
-	}
-
-	on_destroy = {
-		planet = {
-			if = {
-				limit = { has_deposit = d_big_nature_preserve_blocker }
-				remove_deposit = d_big_nature_preserve_blocker
-			}
-		}
-	}
-}
-
 #水浴中心
 building_toxic_bath = {
 	base_buildtime = @b1_time
@@ -1294,6 +1175,7 @@ building_ranger_lodge = {
 	}
 
 	allow = {
+		exists = owner
 		custom_tooltip = {
 			fail_text = no_free_district_for_ranger_lodge
 			planet = {
@@ -1303,7 +1185,7 @@ building_ranger_lodge = {
 				}
 			}
 		}
-		NOT = { has_policy_flag = industrial_unlimited }
+		NOT = { owner = { has_policy_flag = industrial_unlimited } }
 		NOT = { has_building = holding_park_ranger_lodge }
 		NOT = { has_building_construction = holding_park_ranger_lodge }
 	}
