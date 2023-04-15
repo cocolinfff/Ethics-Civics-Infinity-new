@@ -1,12 +1,12 @@
 # ##################
 # 原版FTL
 # ##################
-
 tech_hyper_drive_1 = {
-	cost = @tier5cost3
+	cost = @tier1cost2
 	area = physics
 	tier = 0
 	category = { particles }
+	prerequisites = { "tech_space_exploration" }
 	start_tech = yes
 
 	is_reverse_engineerable = no
@@ -44,6 +44,7 @@ tech_hyper_drive_1 = {
 		NOR = {
 			has_origin = origin_warpdrive_start
 			has_origin = origin_true_yuht
+			has_origin = origin_taking_care_of_god
 		}
 		OR = {
 			is_eager_explorer_empire = no
@@ -148,11 +149,12 @@ tech_hyper_drive_3 = {
 # 曲率引擎
 # ##################
 tech_warp_drive_1 = {
-	cost = @tier5cost3
+	cost = @tier1cost2
 	area = physics
 	category = { field_manipulation }
 	tier = 0
 	is_reverse_engineerable = no
+	prerequisites = { "tech_space_exploration" }
 	start_tech = yes
 	potential = {
 		allow_ftl_civilization = yes
@@ -260,7 +262,6 @@ tech_warp_drive_3 = {
 # ##################
 # 原版开局科技
 # ##################
-
 tech_basic_science_lab_1 = {
 	cost = @tier0cost1
 	area = physics
@@ -285,8 +286,69 @@ tech_basic_science_lab_1 = {
 	}
 
 	starting_potential = {
-		is_low_tech_start = no # So Broken Shackles origin players don't start with it
+		OR = {
+			has_origin = origin_taking_care_of_god
+			is_low_tech_start = no # So Broken Shackles origin players don't start with it
+		}
 		is_primitive_society = no
+	}
+}
+
+tech_space_exploration = {
+	cost = @tier0cost1
+	area = physics
+	start_tech = yes
+	category = { computing }
+	tier = 0
+
+	starting_potential = {
+		NOT = { has_origin = origin_taking_care_of_god }
+	}
+
+	#allow auto-explore on science ships
+	feature_flags = {
+		tech_automated_exploration
+		unlocks_auto_research
+	}
+
+	prereqfor_desc = {
+		ship = {
+			title = "TECH_UNLOCK_SCIENCE_SHIP_CONSTRUCTION_TITLE"
+			desc = "TECH_UNLOCK_SCIENCE_SHIP_CONSTRUCTION_DESC"
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = engineering
+				has_trait = "leader_trait_expertise_computing"
+			}
+		}
+	}
+}
+
+tech_shields_1 = {
+	area = physics
+	cost = @tier1cost1
+	tier = 0
+	category = { field_manipulation }
+	ai_update_type = all
+	start_tech = yes
+
+	starting_potential = {
+		NOT = { has_origin = origin_taking_care_of_god }
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = engineering
+				has_trait = "leader_trait_expertise_field_manipulation"
+			}
+		}
 	}
 }
 
