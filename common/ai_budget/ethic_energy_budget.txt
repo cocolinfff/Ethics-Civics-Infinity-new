@@ -1,0 +1,383 @@
+## Categories used in this file must have use_for_ai_budget = yes defined in economic_categories ##
+## It is possible to have multiple entries with the same category and resource ##
+
+#################
+## Expenditure ##
+#################
+energy_expenditure_buffer = { # Buffer, will not be spent
+	resource = energy
+	type = expenditure
+	category = buffer
+
+	potential = {
+		always = yes
+	}
+
+	weight = {
+		weight = 0.1
+	}
+}
+
+energy_expenditure_planets_gaia_seeder = {
+	resource = energy
+	type = expenditure
+	category = planets
+
+	potential = {
+		is_idyllic_bloom_empire = yes
+		resource_stockpile_compare = { resource = energy value > 2000 }
+
+		any_owned_planet = {
+			NOR = {
+				is_planet_class = pc_gaia
+				is_planet_class = pc_city
+				is_planet_class = pc_hive
+				is_planet_class = pc_machine
+			}
+			is_artificial = no
+		}
+	}
+
+	weight = {
+		weight = 0.2
+	}
+}
+
+energy_expenditure_trade = {
+	resource = energy
+	type = expenditure
+	category = trade
+
+	potential = {
+		has_resource = {
+			type = energy
+			amount > 5000
+		}
+	}
+
+	weight = {
+		weight = 0.5
+	}
+}
+
+energy_expenditure_trade_deficit = {
+	resource = energy
+	type = expenditure
+	category = trade
+
+	potential = {
+		has_resource = {
+			type = energy
+			amount > 500
+		}
+		OR = {
+			AND = {
+				has_monthly_income = {
+					resource = minerals
+					value < -1
+				}
+				has_resource = {
+					type = minerals
+					amount < 1000
+				}
+			}
+			AND = {
+				has_monthly_income = {
+					resource = food
+					value < -1
+				}
+				has_resource = {
+					type = food
+					amount < 500
+				}
+			}
+			AND = {
+				has_monthly_income = {
+					resource = consumer_goods
+					value < -1
+				}
+				has_resource = {
+					type = consumer_goods
+					amount < 500
+				}
+			}
+			AND = {
+				has_monthly_income = {
+					resource = alloys
+					value < -1
+				}
+				has_resource = {
+					type = alloys
+					amount < 500
+				}
+			}
+		}
+	}
+
+	weight = {
+		weight = 0.7
+	}
+}
+
+energy_expenditure_colonies = {
+	resource = energy
+	type = expenditure
+	category = colonies
+
+	potential = {
+		ai_colonize_plans > 0
+		OR = {
+			has_civic = civic_corporate_dominion
+			has_civic = civic_private_prospectors
+		}
+	}
+
+	# if we can colonize with energy, we should
+	weight = {
+		weight = 1.5
+	}
+
+	desired_max = {
+		base = 500
+	}
+}
+
+energy_expenditure_deposit_blockers = {
+	resource = energy
+	type = expenditure
+	category = deposit_blockers
+
+	potential = {
+		any_owned_planet = {
+			num_uncleared_blockers > 0
+		}
+	}
+
+	weight = {
+		weight = 0.3
+
+		modifier = {
+			factor = 5
+
+			# if we have any planet that is currently completely blocked
+			any_owned_planet = {
+				num_uncleared_blockers > 0
+				num_free_districts = { type = any value < 1 }
+			}
+		}
+	}
+
+	# base remove blocker cost
+	desired_min = {
+		base = 500
+	}
+
+	desired_max = {
+		base = 1000
+	}
+}
+
+energy_expenditure_megastructures = {
+	resource = energy
+	type = expenditure
+	category = megastructures
+
+	potential = {
+		is_country_type = default
+		has_technology = tech_gateway_activation
+		is_at_war = no
+		any_owned_megastructure = {
+			OR = {
+				is_megastructure_type = gateway_0
+				is_megastructure_type = gateway_ruined
+			}
+		}
+		has_resource = {
+			type = energy
+			amount > 6000
+		}
+	}
+
+	weight = {
+		weight = 0.5
+	}
+
+	desired_max = {
+		base = 6000 # currently only used by gateways
+	}
+}
+
+energy_expenditure_decisions = {
+	resource = energy
+	type = expenditure
+	category = decisions
+
+	potential = {
+		# only consider these kinds of decisions when "wealthy"
+		has_resource = {
+			type = energy
+			amount > 5000
+		}
+	}
+
+	weight = {
+		weight = 0.20
+	}
+
+	# based on mastery of nature decision
+	desired_max = {
+		base = 2000
+	}
+}
+
+energy_expenditure_terraforming = {
+	resource = energy
+	type = expenditure
+	category = terraforming
+
+	potential = {
+		has_technology = tech_terrestrial_sculpting
+	}
+
+	weight = {
+		weight = 0.3
+		modifier = {
+			factor = 0.5
+			end_game_years_passed > 0 #Probably not relevant anymore
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_ascension_perk = ap_machine_worlds
+				has_ascension_perk = ap_hive_worlds
+				AND = {
+					has_technology = tech_climate_restoration
+					any_system_within_border = {
+						any_system_planet = {
+							OR = {
+								has_modifier = terraforming_candidate
+								AND = {
+									is_planet_class = pc_nuked
+									root = {
+										NOT = { ideal_planet_class = pc_nuked }
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					has_ascension_perk = ap_detox
+					any_system_within_border = {
+						any_system_planet = {
+							has_modifier = toxic_terraforming_candidate
+						}
+					}
+				}
+			}
+		}
+	}
+
+	desired_max = { #never any need for more than that for a single planet
+		base = 20000
+	}
+}
+
+############
+## Upkeep ##
+############
+energy_upkeep_buffer = {	# Buffer, will not be spent
+	resource = energy
+	type = upkeep
+	category = buffer
+
+	potential = {
+		always = yes
+	}
+
+	weight = {
+		weight = 0.01
+	}
+}
+
+energy_upkeep_country = { # Covers most other things. Note: each category opts into using this pool via ai_use_parent_for_resources_upkeep in the category
+	resource = energy
+	type = upkeep
+	category = country
+
+	potential = {
+		always = yes
+	}
+
+	weight = {
+		weight = 1
+		modifier = {
+			factor = 1.25
+			resource_income_compare = {
+				resource = energy
+				value > 1000
+			}
+		}
+		modifier = {
+			factor = 1.5
+			resource_income_compare = {
+				resource = energy
+				value > 2000
+			}
+		}
+	}
+}
+
+energy_upkeep_armies = {
+	resource = energy
+	type = upkeep
+	category = armies
+
+	potential = {
+		always = yes
+	}
+
+	weight = {
+		weight = 0.05
+	}
+}
+
+ethic_leaders_energy = {
+	resource = energy
+	type = expenditure
+	category = leaders
+
+	potential = {
+		always = yes
+	}
+
+	weight = {
+		weight = 0.3
+		modifier = {
+			factor = 1.25
+			OR = {
+				scientist_count < 4
+
+				NOT = {
+					research_leader = {
+						area = physics
+					}
+				}
+				NOT = {
+					research_leader = {
+						area = society
+					}
+				}
+				NOT = {
+					research_leader = {
+						area = engineering
+					}
+				}
+			}
+		}
+	}
+
+	desired_max = {
+		base = 50
+	}
+}
