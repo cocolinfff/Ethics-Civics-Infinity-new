@@ -1,0 +1,409 @@
+@contribution_low = 0.1
+@contribution_medium = 0.2
+@contribution_high = 0.3
+@fleet_cap_low = 200
+@fleet_cap_medium = 400
+@fleet_cap_high = 600
+
+@cooldown = 3600
+
+fleet_contribution_low_tt_communist = {
+	allow = {
+		custom_tooltip = {
+			fail_text = "requires_federation_lvl_2"
+			federation_level >= 2
+		}
+		custom_tooltip = {
+			NOT = {
+				AND = {
+					NOT = { has_federation_law = fleet_contribution_low_tt_communist }
+					has_modifier = federation_law_category_fleet_contribution_cooldown
+					has_any_federation_law_in_category = law_category_fleet_contribution
+				}
+			}
+		}
+	}
+	potential = {
+		has_federation_type = TT_communist_federation
+	}
+	modifier = {
+		description = "fleet_contribution_low_effect"
+		federation_fleet_contribution_factor = @contribution_low
+		federation_fleet_cap_add = @fleet_cap_low
+	}
+	cohesion_growth = -0.25
+	on_enact = {
+		if = {
+			limit = { has_federation_flag = enable_federation_cooldowns }
+			add_modifier = {
+				modifier = federation_law_category_fleet_contribution_cooldown
+				days = @cooldown
+			}
+		}
+		add_cohesion = -5
+		hidden_effect = {
+			if = {
+				limit = {
+					has_federation_flag = no_federation_fleet
+				}
+				remove_federation_flag = no_federation_fleet
+				set_timed_federation_flag = {
+					flag = no_federation_fleet_build_right_cooldown
+					days = 10
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		base = 0
+
+		#Default support
+		modifier = {
+			desc = federation_acceptance_generally_positive
+			add = 11
+		}
+
+		modifier = {
+			add = 30
+			desc = federation_acceptance_high_cohesion
+			federation = {
+				federation_cohesion >= 99
+				has_federation_law = fleet_contribution_none
+			}
+		}
+
+		#Attempt to raise contribution by a step in crisis
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 15
+			federation = { has_federation_law = fleet_contribution_none }
+			has_crisis_stage_2 = yes
+		}
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 25
+			federation = { has_federation_law = fleet_contribution_none }
+			has_crisis_stage_3 = yes
+		}
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 100
+			federation = { has_federation_law = fleet_contribution_none }
+			has_crisis_stage_4 = yes
+		}
+
+		#Behaviour-specific
+		modifier = {
+			desc = federation_acceptance_president
+			add = 100
+			federation = { has_federation_law = fleet_contribution_none }
+			is_federation_leader = yes
+		}
+		modifier = {
+			desc = federation_acceptance_federation_builders
+			add = 10
+			has_ai_personality = federation_builders
+		}
+		modifier = {
+			desc = federation_acceptance_democratic_crusaders
+			add = 5
+			has_ai_personality = democratic_crusaders
+		}
+		modifier = {
+			desc = federation_acceptance_militarist
+			add = 5
+			is_militarist = yes
+		}
+
+		#Attempt to lower contribution by a step when there is bad cohesion
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < 0
+				has_federation_law = fleet_contribution_medium
+			}
+		}
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < -25
+				has_federation_law = fleet_contribution_medium
+			}
+		}
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < -50
+				has_federation_law = fleet_contribution_medium
+			}
+		}
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < -75
+				has_federation_law = fleet_contribution_medium
+			}
+		}
+	}
+}
+
+fleet_contribution_medium_tt_communist = {
+	allow = {
+		custom_tooltip = {
+			fail_text = "requires_federation_lvl_3"
+			federation_level >= 3
+		}
+		custom_tooltip = {
+			NOT = {
+				AND = {
+					NOT = { has_federation_law = fleet_contribution_medium_tt_communist }
+					has_modifier = federation_law_category_fleet_contribution_cooldown
+					has_any_federation_law_in_category = law_category_fleet_contribution
+				}
+			}
+		}
+	}
+	potential = {
+		has_federation_type = TT_communist_federation
+	}
+	modifier = {
+		description = "fleet_contribution_medium_effect"
+		federation_fleet_contribution_factor = @contribution_medium
+		federation_fleet_cap_add = @fleet_cap_medium
+	}
+	cohesion_growth = -0.50
+	on_enact = {
+		if = {
+			limit = { has_federation_flag = enable_federation_cooldowns }
+			add_modifier = {
+				modifier = federation_law_category_fleet_contribution_cooldown
+				days = @cooldown
+			}
+		}
+		add_cohesion = -5
+		hidden_effect = {
+			if = {
+				limit = {
+					has_federation_flag = no_federation_fleet
+				}
+				remove_federation_flag = no_federation_fleet
+				set_timed_federation_flag = {
+					flag = no_federation_fleet_build_right_cooldown
+					days = 10
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		base = 0
+
+		#Default support
+		modifier = {
+			desc = federation_acceptance_generally_positive
+			add = 26
+		}
+
+		#Attempt to raise contribution by a step in crisis
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 15
+			federation = { has_federation_law = fleet_contribution_low_tt_communist }
+			has_crisis_stage_2 = yes
+		}
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 25
+			federation = { has_federation_law = fleet_contribution_low_tt_communist }
+			has_crisis_stage_3 = yes
+		}
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 100
+			federation = { has_federation_law = fleet_contribution_low_tt_communist }
+			has_crisis_stage_4 = yes
+		}
+
+		#Behaviour-specific
+		modifier = {
+			desc = federation_acceptance_president
+			add = 100
+			federation = { has_federation_law = fleet_contribution_low_tt_communist }
+			is_federation_leader = yes
+		}
+		modifier = {
+			desc = federation_acceptance_federation_builders
+			add = 10
+			has_ai_personality = federation_builders
+		}
+		modifier = {
+			desc = federation_acceptance_democratic_crusaders
+			add = 5
+			has_ai_personality = democratic_crusaders
+		}
+		modifier = {
+			desc = federation_acceptance_xenophobic_isolationists
+			add = -5
+			has_ai_personality = xenophobic_isolationists
+		}
+		modifier = {
+			desc = federation_acceptance_militarist
+			add = 5
+			is_militarist = yes
+		}
+
+		#Attempt to lower contribution by a step when there is bad cohesion
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < 0
+				has_federation_law = fleet_contribution_high_tt_communist
+			}
+		}
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < -25
+				has_federation_law = fleet_contribution_high_tt_communist
+			}
+		}
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < -50
+				has_federation_law = fleet_contribution_high_tt_communist
+			}
+		}
+		modifier = {
+			desc = federation_acceptance_reduce_fleet
+			add = 25
+			is_federation_leader = no
+			federation = {
+				federation_cohesion < -75
+				has_federation_law = fleet_contribution_high_tt_communist
+			}
+		}
+	}
+}
+
+fleet_contribution_high_tt_communist = {
+	allow = {
+		custom_tooltip = {
+			fail_text = "requires_federation_lvl_4"
+			federation_level >= 4
+		}
+		custom_tooltip = {
+			NOT = {
+				AND = {
+					NOT = { has_federation_law = fleet_contribution_high_tt_communist }
+					has_modifier = federation_law_category_fleet_contribution_cooldown
+					has_any_federation_law_in_category = law_category_fleet_contribution
+				}
+			}
+		}
+	}
+	potential = {
+		has_federation_type = TT_communist_federation
+	}
+	modifier = {
+		description = "fleet_contribution_high_effect"
+		federation_fleet_contribution_factor = @contribution_high
+		federation_fleet_cap_add = @fleet_cap_high
+	}
+	cohesion_growth = -0.75
+	on_enact = {
+		if = {
+			limit = { has_federation_flag = enable_federation_cooldowns }
+			add_modifier = {
+				modifier = federation_law_category_fleet_contribution_cooldown
+				days = @cooldown
+			}
+		}
+		add_cohesion = -5
+		hidden_effect = {
+			if = {
+				limit = {
+					has_federation_flag = no_federation_fleet
+				}
+				remove_federation_flag = no_federation_fleet
+				set_timed_federation_flag = {
+					flag = no_federation_fleet_build_right_cooldown
+					days = 10
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		base = 0
+
+		#Default support
+		modifier = {
+			desc = federation_acceptance_generally_positive
+			add = 41
+		}
+
+		#Attempt to raise contribution by a step in crisis
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 15
+			federation = { has_federation_law = fleet_contribution_medium_tt_communist }
+			has_crisis_stage_2 = yes
+		}
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 25
+			federation = { has_federation_law = fleet_contribution_medium_tt_communist }
+			has_crisis_stage_3 = yes
+		}
+		modifier = {
+			desc = federation_acceptance_crisis
+			add = 100
+			federation = { has_federation_law = fleet_contribution_medium_tt_communist }
+			has_crisis_stage_4 = yes
+		}
+
+		#Behaviour-specific
+		modifier = {
+			desc = federation_acceptance_president
+			add = 100
+			federation = { has_federation_law = fleet_contribution_medium_tt_communist }
+			is_federation_leader = yes
+		}
+		modifier = {
+			desc = federation_acceptance_federation_builders
+			add = 10
+			has_ai_personality = federation_builders
+		}
+		modifier = {
+			desc = federation_acceptance_democratic_crusaders
+			add = 5
+			has_ai_personality = democratic_crusaders
+		}
+		modifier = {
+			desc = federation_acceptance_xenophobic_isolationists
+			add = -5
+			has_ai_personality = xenophobic_isolationists
+		}
+		modifier = {
+			desc = federation_acceptance_militarist
+			add = 5
+			is_militarist = yes
+		}
+	}
+}

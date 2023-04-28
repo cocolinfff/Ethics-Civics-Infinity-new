@@ -1780,6 +1780,17 @@ country_event = {
 				days = 3
 			}
 		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				factor = 100
+				has_country_flag = human_1
+				OR = {
+					has_valid_civic = civic_shared_burden
+					has_valid_civic = civic_socialistic
+				}
+			}
+		}
 	}
 	option = { #我们看着就好
 		name = red_origin.819.b
@@ -1807,10 +1818,15 @@ country_event = {
 		ai_chance = {
 			base = 1
 			modifier = {
- 				factor = 0
+				factor = 0.5
+				has_ethic = ethic_xenophobe
+			}
+			modifier = {
+				factor = 0
  				NOR = {
-					has_ethic = ethic_socialism
-					has_ethic = ethic_fanatic_socialism
+					is_capitalism = yes
+					has_ethic = ethic_fanatic_authoritarian
+					has_ethic = ethic_fanatic_xenophobe
 				}
  			}
 		}
@@ -1822,10 +1838,9 @@ country_event = {
 			base = 1
 			modifier = {
 				factor = 0
-				OR = {
-				   has_ethic = ethic_socialism
-				   has_ethic = ethic_fanatic_socialism
-			   }
+				is_egalitarian = yes
+				is_xenophobe = no
+				has_ethic = ethic_fanatic_socialism
 			}
 		}
 	}
@@ -1889,7 +1904,7 @@ country_event = {
 		}
 		declare_war = {
 			target = event_target:from_overlord
-			attacker_war_goal = wg_force_ideology
+			attacker_war_goal = wg_galactic_revolution_communist_interstellar
 			effect = {
 				every_playable_country = {
 					limit = {
@@ -1981,273 +1996,273 @@ country_event = {
 			divide_variable = { which = splintering_worlds value = 2 }
 			floor_variable = splintering_worlds
 			while = { # iterate through all splintering worlds
-			limit = {
-				any_owned_planet = {
-					is_capital = no
-					OR = {
-						root = {
-							check_variable = {
-								which = splintering_worlds
-								value >= 2
-							}
-						}
-						NOT = { has_star_flag = soviet_union_planet_2 }
-					}
-					OR = {
-						root = {
-							check_variable = {
-								which = splintering_worlds
-								value >= 3
-							}
-						}
-						NOT = { has_star_flag = soviet_union_planet_3 }
-					}
-				}
-			}
-			random_system_within_border = { # we want a country per colonized system
 				limit = {
-					is_capital_system = no
-					OR = {
-						root = {
-							check_variable = {
-								which = splintering_worlds
-								value >= 2
+					any_owned_planet = {
+						is_capital = no
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 2
+								}
 							}
+							NOT = { has_star_flag = soviet_union_planet_2 }
 						}
-						NOT = { has_star_flag = soviet_union_system_2_flag }
-					}
-					OR = {
-						root = {
-							check_variable = {
-								which = splintering_worlds
-								value >= 3
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 3
+								}
 							}
+							NOT = { has_star_flag = soviet_union_planet_3 }
 						}
-						NOT = { has_star_flag = soviet_union_system_3_flag }
 					}
-					any_system_planet = { is_colony = yes }
 				}
-				random_system_planet = {
-					limit = { is_colony = yes }
-					create_country = {
-						name = "NAME_Red_Origin_Ex_Union_Member"
-						type = default
-						authority = random
-						civics = random
-						species = root.species
-						ethos = random
-						origin = origin_default
-						day_zero_contact = no
-						effect = {
-							set_country_flag = origin_red_satellite_ex_union
-							set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
-							set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
-							save_global_event_target_as = current_splinter
-							copy_techs_from = {
-								target = root
-							}
-							change_government = {
-								civics = random
-							}
-							establish_communications_no_message = root
-							every_playable_country = { # Establish Contact with previous vassals
-								limit = {
-									has_communications = root
-									NOT = { has_communications = event_target:current_splinter }
-								}
-								establish_communications_no_message = event_target:current_splinter
-							}
-							every_playable_country = {
-								limit = {
-									NOT = { has_communications = root }
-									has_active_first_contact_with = root
-								}
-								establish_contact = {
-									who = event_target:current_splinter
-									location = event_target:current_splinter.capital_star
-								}
-							}
-
-							root = { # Give them one of the previous Overlord's fleets
-								random_owned_fleet = {
-									set_owner = event_target:current_splinter
-								}
-							}
-
-							# Give them a fleet of their own
-							create_fleet_from_naval_cap = 0.3
-							create_fleet_from_naval_cap = 0.2
-							create_fleet_from_naval_cap = 0.1
-
-							# Give them some starting resources
-							add_basic_resources_effect = { VALUE = 3000 }
-							add_manufactured_resources_effect = { VALUE = 1500 }
-							add_advanced_resources_effect = { VALUE = 1000 }
-
-						}
-					}
-					solar_system = {
-						if = {
-							limit = { exists = starbase }
-							starbase = {
-								set_owner = event_target:current_splinter
-								if = {
-									limit = { has_starbase_size = starbase_outpost }
-									set_starbase_size = starbase_starport
-									set_starbase_module = {
-										slot = 1
-										module = shipyard
-									}
-									set_starbase_module = {
-										slot = 2
-										module = shipyard
-									}
-								}
-								else_if = {
-									limit = {
-										NOT = { has_starbase_module = shipyard }
-									}
-									set_starbase_module = {
-										slot = 1
-										module = shipyard
-									}
-									set_starbase_module = {
-										slot = 2
-										module = shipyard
-									}
-								}
-							}
-						}
-						else = {
-							create_starbase = {
-								size = starbase_starport
-								module = shipyard
-								module = shipyard
-								owner = event_target:current_splinter
-							}
-						}
-						add_claims = {
-							who = root.owner
-							show_notification = no
-						}
-						every_system_planet = {
-							limit = {
-								is_colony = yes
-							}
-							set_owner = event_target:current_splinter
-						}
-					}
-					set_owner = event_target:current_splinter
-				}
-				every_neighbor_system = {
+				random_system_within_border = { # we want a country per colonized system
 					limit = {
-						exists = owner
-						owner = { is_same_value = root.owner }
-						exists = starbase
-						NOR = {
-							any_system_planet = {
-								is_colony = yes
+						is_capital_system = no
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 2
+								}
 							}
-							any_neighbor_system = {
+							NOT = { has_star_flag = soviet_union_system_2_flag }
+						}
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 3
+								}
+							}
+							NOT = { has_star_flag = soviet_union_system_3_flag }
+						}
+						any_system_planet = { is_colony = yes }
+					}
+					random_system_planet = {
+						limit = { is_colony = yes }
+						create_country = {
+							name = "NAME_Red_Origin_Ex_Union_Member"
+							type = default
+							authority = random
+							civics = random
+							species = root.species
+							ethos = random
+							origin = origin_default
+							day_zero_contact = no
+							effect = {
+								set_country_flag = origin_red_satellite_ex_union
+								set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
+								set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
+								save_global_event_target_as = current_splinter
+								copy_techs_from = {
+									target = root
+								}
+								change_government = {
+									civics = random
+								}
+								establish_communications_no_message = root
+								every_playable_country = { # Establish Contact with previous vassals
+									limit = {
+										has_communications = root
+										NOT = { has_communications = event_target:current_splinter }
+									}
+									establish_communications_no_message = event_target:current_splinter
+								}
+								every_playable_country = {
+									limit = {
+										NOT = { has_communications = root }
+										has_active_first_contact_with = root
+									}
+									establish_contact = {
+										who = event_target:current_splinter
+										location = event_target:current_splinter.capital_star
+									}
+								}
+
+								root = { # Give them one of the previous Overlord's fleets
+									random_owned_fleet = {
+										set_owner = event_target:current_splinter
+									}
+								}
+
+								# Give them a fleet of their own
+								create_fleet_from_naval_cap = 0.3
+								create_fleet_from_naval_cap = 0.2
+								create_fleet_from_naval_cap = 0.1
+
+								# Give them some starting resources
+								add_basic_resources_effect = { VALUE = 3000 }
+								add_manufactured_resources_effect = { VALUE = 1500 }
+								add_advanced_resources_effect = { VALUE = 1000 }
+
+							}
+						}
+						solar_system = {
+							if = {
+								limit = { exists = starbase }
+								starbase = {
+									set_owner = event_target:current_splinter
+									if = {
+										limit = { has_starbase_size = starbase_outpost }
+										set_starbase_size = starbase_starport
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+									else_if = {
+										limit = {
+											NOT = { has_starbase_module = shipyard }
+										}
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+								}
+							}
+							else = {
+								create_starbase = {
+									size = starbase_starport
+									module = shipyard
+									module = shipyard
+									owner = event_target:current_splinter
+								}
+							}
+							add_claims = {
+								who = root.owner
+								show_notification = no
+							}
+							every_system_planet = {
+								limit = {
+									is_colony = yes
+								}
+								set_owner = event_target:current_splinter
+							}
+						}
+						set_owner = event_target:current_splinter
+					}
+					every_neighbor_system = {
+						limit = {
+							exists = owner
+							owner = { is_same_value = root.owner }
+							exists = starbase
+							NOR = {
 								any_system_planet = {
-									is_capital = yes
-									owner = {
-										is_same_value = root
+									is_colony = yes
+								}
+								any_neighbor_system = {
+									any_system_planet = {
+										is_capital = yes
+										owner = {
+											is_same_value = root
+										}
 									}
 								}
 							}
 						}
+						starbase = { set_owner = event_target:current_splinter }
 					}
-					starbase = { set_owner = event_target:current_splinter }
-				}
-				event_target:current_splinter = {
-					while = {
-						count = 3
-						every_system_within_border = {
-							every_neighbor_system = {
-								limit = {
-									exists = owner
-									owner = { is_same_value = root.owner }
-									exists = starbase
-									NOR = {
-										any_system_planet = {
-											is_colony = yes
-										}
-										any_neighbor_system = {
+					event_target:current_splinter = {
+						while = {
+							count = 3
+							every_system_within_border = {
+								every_neighbor_system = {
+									limit = {
+										exists = owner
+										owner = { is_same_value = root.owner }
+										exists = starbase
+										NOR = {
 											any_system_planet = {
 												is_colony = yes
-												owner = {
-													OR = {
-														is_same_value = root
-														has_country_flag = origin_red_satellite_ex_union
+											}
+											any_neighbor_system = {
+												any_system_planet = {
+													is_colony = yes
+													owner = {
+														OR = {
+															is_same_value = root
+															has_country_flag = origin_red_satellite_ex_union
+														}
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 2
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 1
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 3
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 2
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 4
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 3
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 5
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 4
 													}
 												}
 											}
 										}
-										AND = {
-											distance = {
-												source = root.capital_scope
-												min_jumps = 1
-												max_jumps = 2
-											}
-											NOT = {
-												distance = {
-													source = event_target:current_splinter.capital_scope
-													min_jumps = 1
-													max_jumps = 1
-												}
-											}
-										}
-										AND = {
-											distance = {
-												source = root.capital_scope
-												min_jumps = 1
-												max_jumps = 3
-											}
-											NOT = {
-												distance = {
-													source = event_target:current_splinter.capital_scope
-													min_jumps = 1
-													max_jumps = 2
-												}
-											}
-										}
-										AND = {
-											distance = {
-												source = root.capital_scope
-												min_jumps = 1
-												max_jumps = 4
-											}
-											NOT = {
-												distance = {
-													source = event_target:current_splinter.capital_scope
-													min_jumps = 1
-													max_jumps = 3
-												}
-											}
-										}
-										AND = {
-											distance = {
-												source = root.capital_scope
-												min_jumps = 1
-												max_jumps = 5
-											}
-											NOT = {
-												distance = {
-													source = event_target:current_splinter.capital_scope
-													min_jumps = 1
-													max_jumps = 4
-												}
-											}
-										}
 									}
+									starbase = { set_owner = event_target:current_splinter }
 								}
-								starbase = { set_owner = event_target:current_splinter }
 							}
 						}
 					}
 				}
-			}
 			}
 			join_alliance = {
 				who = root
@@ -2295,13 +2310,8 @@ country_event = {
 		}
 		root = {
 			federation = {
-				if = {
-					limit = {
-						has_global_flag = tidy_tradition_active
-					}
-					set_federation_type = TT_communist_federation
-					set_name = random
-				}
+				set_federation_type = TT_communist_federation
+				set_name = random
 				add_cohesion = 200
 			}
 		}
