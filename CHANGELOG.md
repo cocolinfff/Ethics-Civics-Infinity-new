@@ -2,6 +2,13 @@
 
 ## By Windea
 
+## 1.0.0 (2023-04-29)
+
+
+### Bug Fixes
+
+* test PR and change for Readme.md ([35436ec](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/commit/35436ec90be01428faeac083a7b5bd9a10cabbbb))
+
 ### 2023/1/29
 
 * 整理 预设国家（补充：奥比斯科技协同社、伊菲雷西联合舰队、旋桌骑士高阶领主国，齐里克合作社改为齐里克公社）

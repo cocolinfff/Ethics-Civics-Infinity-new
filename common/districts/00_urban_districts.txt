@@ -144,9 +144,11 @@ district_crashed_slaver_ship = {
 }
 
 # 城市区划
+@city_cost = 500
 district_city = {
 	base_buildtime = 480
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 	show_on_uncolonized = {
 		exists = from
 		from = {
@@ -158,12 +160,16 @@ district_city = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
 		}
 	}
 	potential = {
 		exists = owner
 		OR = {
-			NOT = { exists = owner } #this condition is needed for galaxy generation
+			NOT = {
+				exists = owner
+			}
 			AND = {
 				exists = owner
 				owner = {
@@ -178,11 +184,16 @@ district_city = {
 				}
 			}
 		}
+		NOT = {
+			has_deposit = d_crashed_slaver_ship
+		}
 		OR = {
 			uses_district_set = standard
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
 		}
 	}
 	allow = {
@@ -209,7 +220,6 @@ district_city = {
 			energy = 2
 		}
 	}
-	
 	planet_modifier = {
 		planet_housing_add = 4
 		planet_max_buildings_add = 1
@@ -249,13 +259,15 @@ district_city = {
 		modifier = {
 			trade_value_add = 4
 			planet_housing_add = -1
-			mult = value:society_family_structure
 		}
+		mult = value:society_family_structure
 	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_policy_flag = trade_conversion_growth_dev }
+			owner = {
+				has_policy_flag = trade_conversion_growth_dev
+			}
 		}
 		modifier = {
 			planet_housing_add = 1
@@ -311,7 +323,6 @@ district_city = {
 			planet_housing_add = 1
 		}
 	}
-	# 城市建设
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -335,7 +346,7 @@ district_city = {
 			}
 		}
 		modifier = {
-		planet_max_buildings_add = 0.5
+			planet_max_buildings_add = 0.5
 		}
 	}
 	triggered_planet_modifier = {
@@ -348,13 +359,13 @@ district_city = {
 			}
 		}
 		modifier = {
-		planet_housing_add = -1
-		job_clerk_add = -1
-		planet_district_city_build_speed_mult = -0.05
-		planet_building_build_speed_mult = 0.05
+			planet_housing_add = -1
+			job_clerk_add = -1
+			planet_district_city_build_speed_mult = -0.05
+			planet_building_build_speed_mult = 0.05
 		}
 	}
-    triggered_planet_modifier = {
+	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = {
@@ -364,8 +375,22 @@ district_city = {
 			}
 		}
 		modifier = {
-		planet_housing_add = 1
-		job_clerk_add = 1
+			planet_housing_add = 1
+			job_clerk_add = 1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					is_regular_empire = yes
+					has_origin = origin_fear_of_the_dark
+				}
+			}
+		}
+		modifier = {
+			job_clerk_add = 1
 		}
 	}
 	triggered_planet_modifier = {
@@ -437,7 +462,10 @@ district_city = {
 						value > 30
 					}
 				}
-				and = { is_capital = yes free_housing < 15 }
+				and = {
+					is_capital = yes
+					free_housing < 15
+				}
 			}
 		}
 	}
@@ -447,22 +475,18 @@ district_city = {
 			str_force_city_district = yes
 		}
 	}
-
 	ai_resource_production = {
 		society_research = 50
 		trigger = {
 			str_force_city_district = yes
 		}
 	}
-
-
 	ai_resource_production = {
 		energy = 30
 		trigger = {
 			str_force_city_district = yes
 		}
 	}
-
 	ai_resource_production = {
 		alloys = 10
 		energy = 10
@@ -495,6 +519,7 @@ district_city = {
 district_hive = {
 	base_buildtime = 480
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 	show_on_uncolonized = {
 		from = {
 			is_hive_empire = yes
@@ -502,8 +527,14 @@ district_hive = {
 		OR = {
 			uses_district_set = standard
 			uses_district_set = hive_world
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiofort
+			uses_district_set = pdfloraforge
+			uses_district_set = pdflorafort
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
 		}
 	}
 	potential = {
@@ -514,8 +545,14 @@ district_hive = {
 		OR = {
 			uses_district_set = standard
 			uses_district_set = hive_world
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiofort
+			uses_district_set = pdfloraforge
+			uses_district_set = pdflorafort
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
 		}
 	}
 	allow = {
@@ -526,9 +563,9 @@ district_hive = {
 	conversion_ratio = 0.5
 	convert_to = {
 		district_arcology_housing
+		district_rw_hive
 		district_nexus
 		district_city
-		district_rw_hive
 	}
 	resources = {
 		category = planet_districts_cities
@@ -539,7 +576,6 @@ district_hive = {
 			energy = 2
 		}
 	}
-
 	planet_modifier = {
 		planet_housing_add = 6
 		job_maintenance_drone_add = 3
@@ -560,7 +596,13 @@ district_hive = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			is_planet_class = pc_hive
+			OR = {
+				is_pd_hive_world = yes
+				is_planet_class = pc_bioforge
+				is_planet_class = pc_biofort
+				is_planet_class = pc_megaflorafort
+				is_planet_class = pc_megafloraforge
+			}
 		}
 		modifier = {
 			planet_housing_add = 6
@@ -594,7 +636,7 @@ district_hive = {
 		potential = {
 			exists = owner
 			owner = {
-				has_swapped_tradition = tr_prosperity_extended_hives
+				has_active_tradition = tr_prosperity_extended_hives
 			}
 		}
 		modifier = {
@@ -607,6 +649,7 @@ district_hive = {
 district_nexus = {
 	base_buildtime = 480
 	is_capped_by_modifier = no
+	exempt_from_ai_planet_specialization = yes
 	show_on_uncolonized = {
 		from = {
 			is_machine_empire = yes
@@ -616,6 +659,10 @@ district_nexus = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinefort
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
 		}
 	}
 	potential = {
@@ -628,6 +675,10 @@ district_nexus = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinefort
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
 		}
 	}
 	allow = {
@@ -651,7 +702,6 @@ district_nexus = {
 			energy = 2
 		}
 	}
-
 	planet_modifier = {
 		planet_housing_add = 5
 		job_maintenance_drone_add = 4
@@ -709,7 +759,7 @@ district_nexus = {
 		potential = {
 			exists = owner
 			owner = {
-				has_swapped_tradition = tr_prosperity_optimized_nexus
+				has_active_tradition = tr_prosperity_optimized_nexus
 			}
 		}
 		modifier = {
@@ -727,12 +777,21 @@ district_industrial = {
 	}
 	show_on_uncolonized = {
 		exists = from
-		uses_district_industrial = yes
+		is_primitive_society = no
+		OR = {
+			uses_district_industrial = yes
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
+		}
 	}
 	potential = {
 		exists = owner
 		is_primitive_society = no
-		uses_district_industrial = yes
+		OR = {
+			uses_district_industrial = yes
+			uses_district_set = pdnecroplanet
+			uses_district_set = pdscrapyard
+		}
 	}
 	allow = {
 		NOT = {
@@ -741,10 +800,16 @@ district_industrial = {
 		NOT = {
 			has_modifier = slave_colony
 		}
+		is_pd_planetary_megaproject = no
 	}
 	conversion_ratio = 0.5
 	convert_to = {
 		district_arcology_arms_industry
+		district_rw_industrial
+		district_corp_industrial
+		district_bioforge_stomach
+		district_mf_alloy
+		district_techno_industrial
 	}
 	resources = {
 		category = planet_districts_industrial
@@ -792,21 +857,23 @@ district_industrial = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { 
-			    is_relentless_industrialist_empire = yes
+			owner = {
+				is_relentless_industrialist_empire = yes
 			}
 		}
 		modifier = {
 			trade_value_add = 7
 			planet_housing_add = 1
 			planet_max_buildings_add = 0.68
-		    pop_lifestyle_trade_mult = 0.02
+			pop_lifestyle_trade_mult = 0.02
 		}
 	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_policy_flag = trade_conversion_industrial_progress }
+			owner = {
+				has_policy_flag = trade_conversion_industrial_progress
+			}
 		}
 		modifier = {
 			planet_housing_add = 1
@@ -818,6 +885,9 @@ district_industrial = {
 			owner = {
 				has_policy_flag = trade_conversion_industrial_progress
 				has_tradition = tr_harmony_utopian_dream
+				NOT = {
+					has_origin = origin_zarqlanism_idea
+				}
 			}
 		}
 		modifier = {
@@ -835,8 +905,6 @@ district_industrial = {
 			}
 		}
 		modifier = {
-			job_artisan_add = -0.25
-			job_foundry_add = -0.25
 			job_re_acolyte_metallurgists_add = 0.25
 			job_re_acolyte_artisan_add = 0.25
 		}
@@ -844,7 +912,24 @@ district_industrial = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_tradition = tr_harmony_the_greater_good }
+			owner = {
+				OR = {
+					is_regular_empire = yes
+					has_origin = origin_fear_of_the_dark
+				}
+			}
+		}
+		modifier = {
+			job_artisan_add = 1
+			job_foundry_add = 1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_tradition = tr_harmony_the_greater_good
+			}
 			has_global_flag = ideological_revolution
 		}
 		modifier = {
@@ -856,6 +941,9 @@ district_industrial = {
 			exists = owner
 			owner = {
 				is_regular_empire = yes
+				NOT = {
+					has_origin = origin_zarqlanism_idea
+				}
 			}
 		}
 		modifier = {
@@ -872,8 +960,6 @@ district_industrial = {
 			}
 		}
 		modifier = {
-			job_artisan_add = -1
-			job_foundry_add = -1
 			job_re_acolyte_metallurgists_add = 1
 			job_re_acolyte_artisan_add = 1
 		}
@@ -900,13 +986,15 @@ district_industrial = {
 			job_fabricator_add = 2
 		}
 	}
-	# Designation Job Changes
 	triggered_planet_modifier = {
 		potential = {
 			has_designation = col_foundry
 			exists = owner
 			owner = {
 				is_regular_empire = yes
+				NOT = {
+					has_origin = origin_zarqlanism_idea
+				}
 			}
 		}
 		modifier = {
@@ -924,8 +1012,8 @@ district_industrial = {
 			}
 		}
 		modifier = {
-			job_foundry_add = -2
-			job_re_acolyte_metallurgists_add = 2
+			job_re_acolyte_artisan_add = -1
+			job_re_acolyte_metallurgists_add = 1
 		}
 	}
 	triggered_planet_modifier = {
@@ -934,6 +1022,9 @@ district_industrial = {
 			exists = owner
 			owner = {
 				is_regular_empire = yes
+				NOT = {
+					has_origin = origin_zarqlanism_idea
+				}
 			}
 		}
 		modifier = {
@@ -951,8 +1042,8 @@ district_industrial = {
 			}
 		}
 		modifier = {
-			job_artisan_add = -2
-			job_re_acolyte_artisan_add = 2
+			job_re_acolyte_metallurgists_add = -1
+			job_re_acolyte_artisan_add = 1
 		}
 	}
 	triggered_planet_modifier = {
@@ -967,7 +1058,6 @@ district_industrial = {
 				country_uses_consumer_goods = yes
 			}
 			OR = {
-				# Can only reduce your artisan production if you actually have some
 				has_active_building = building_factory_2
 				has_active_building = building_factory_3
 			}
