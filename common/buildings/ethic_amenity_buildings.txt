@@ -836,10 +836,14 @@ building_hyper_entertainment_forum = {
 
 #基因诊所
 building_clinic = {
-	base_buildtime = @b1_time
-	base_cap_amount = 1
+	base_buildtime = @b2_time
+	can_build = no
 	category = amenity
+	allow = {
+		has_upgraded_capital = yes
+	}
 	potential = {
+		has_building = building_medical_center
 		owner = {
 			OR = {
 				is_regular_empire = yes
@@ -873,86 +877,18 @@ building_clinic = {
 		}
 	}
 	planet_modifier = {
-		job_healthcare_add = 2
+		job_healthcare_add = 3
 	}
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = {
-				has_policy_flag = public_healthcare
+				has_policy_flag = mixed_healthcare
 			}
 		}
 		modifier = {
 			job_healthcare_add = 1
-		}
-	}
-	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b1_minerals
-		}
-		upkeep = {
-			energy = @b1_upkeep
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					has_policy_flag = public_healthcare
-				}
-			}
-			energy = 0.5
-		}
-	}
-	prerequisites = {
-		"tech_frontier_health"
-	}
-	upgrades = {
-		"building_hospital"
-	}
-	triggered_desc = {
-		text = job_healthcare_effect_desc
-	}
-}
-
-#基因医院
-building_hospital = {
-	base_buildtime = @b2_time
-	can_build = no
-	category = amenity
-	potential = {
-		has_building = building_clinic
-	}
-	allow = {
-		has_upgraded_capital = yes
-	}
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				is_regular_empire = no
-			}
-			has_modifier = slave_colony
-			buildings_no_exotic_gases = yes
-			AND = {
-				buildings_stop_pop = yes
-				owner = {
-					is_ai = yes
-				}
-			}
-		}
-	}
-	planet_modifier = {
-		job_healthcare_add = @b2_jobs
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = public_healthcare
-			}
-		}
-		modifier = {
-			job_healthcare_add = 2
+			job_healthcare_per_pop = 0.03
 		}
 	}
 	resources = {
@@ -968,10 +904,81 @@ building_hospital = {
 		upkeep = {
 			trigger = {
 				owner = {
-					has_policy_flag = public_healthcare
+					has_policy_flag = mixed_healthcare
 				}
 			}
 			energy = 1
+		}
+	}
+	prerequisites = {
+		"tech_frontier_health"
+	}
+	upgrades = {
+		"building_hospital"
+	}
+	triggered_desc = {
+		text = job_healthcare_effect_desc
+	}
+}
+
+#基因医院
+building_hospital = {
+	base_buildtime = @b3_time
+	can_build = no
+	category = amenity
+	potential = {
+		has_building = building_clinic
+	}
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_regular_empire = no
+			}
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = {
+					is_ai = yes
+				}
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_add = 5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mixed_healthcare
+			}
+		}
+		modifier = {
+			job_healthcare_add = 2
+			job_healthcare_per_pop = 0.03
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b3_minerals
+			exotic_gases = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			exotic_gases = @b3_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 2
 		}
 	}
 	prerequisites = {

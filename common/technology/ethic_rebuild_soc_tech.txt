@@ -1575,12 +1575,49 @@ tech_nutrient_replication = {
 	}
 }
 
+tech_medical_system = {
+	cost = @tier1cost2
+	area = society
+	start_tech = yes
+	tier = 0
+	category = { biology }
+
+	starting_potential = {
+		is_eager_explorer_empire = no
+		is_primitive_society = no
+	}
+
+	potential = {
+		OR ={
+			is_gestalt = no
+			AND = { # 可能也是失控女仆兼容
+				#has_global_flag = flag_rogue_maid_mod_activated
+				is_servitor_empire = yes
+			}
+		}
+	}
+
+	weight_modifier = {
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_harmony_adopt
+		}
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_biology"
+			}
+		}
+	}
+}
+
 tech_frontier_health = {
 	cost = @tier1cost2
 	area = society
 	tier = 1
 	category = { biology }
-	prerequisites = { "tech_genome_mapping" "tech_colonization_1" }
+	prerequisites = { "tech_genome_mapping" "tech_medical_system" }
 	weight = @tier1weight2
 
 	potential = {
@@ -1595,6 +1632,14 @@ tech_frontier_health = {
 
 	weight_modifier = {
 		factor = 2
+		modifier = {
+			factor = 0
+			NOR = {
+				has_technology = tech_mine_exotic_gases
+				has_technology = tech_exotic_gases
+				has_country_flag = has_market_access
+			}
+		}
 		modifier = {
 			factor = 1.25
 			has_tradition = tr_harmony_adopt
@@ -1628,14 +1673,6 @@ tech_frontier_hospital = {
 	}
 
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			NOR = {
-				has_technology = tech_mine_exotic_gases
-				has_technology = tech_exotic_gases
-				has_country_flag = has_market_access
-			}
-		}
 		modifier = {
 			factor = 1.25
 			has_tradition = tr_harmony_adopt
