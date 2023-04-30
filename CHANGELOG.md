@@ -2,6 +2,14 @@
 
 ## By Windea
 
+## [1.0.1](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/compare/v1.0.0...v1.0.1) (2023-04-30)
+
+
+### Bug Fixes
+
+* test for release ([559a08e](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/commit/559a08e6a507ee08880ad3154253bd1dcd96f11f))
+* 修复了数个语法错误[merge from newbie-forever/master] ([f754556](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/commit/f7545563ca77a746d0677dc7d7cb2dc68d65e4d6))
+
 ## 1.0.0 (2023-04-29)
 
 
