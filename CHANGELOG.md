@@ -2,6 +2,21 @@
 
 ## By Windea
 
+## [1.0.1](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/compare/v1.0.0...v1.0.1) (2023-04-30)
+
+
+### Bug Fixes
+
+* test for release ([559a08e](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/commit/559a08e6a507ee08880ad3154253bd1dcd96f11f))
+* 修复了数个语法错误[merge from newbie-forever/master] ([f754556](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/commit/f7545563ca77a746d0677dc7d7cb2dc68d65e4d6))
+
+## 1.0.0 (2023-04-29)
+
+
+### Bug Fixes
+
+* test PR and change for Readme.md ([35436ec](https://github.com/cocolinfff/Ethics-Civics-Infinity-new/commit/35436ec90be01428faeac083a7b5bd9a10cabbbb))
+
 ### 2023/1/29
 
 * 整理 预设国家（补充：奥比斯科技协同社、伊菲雷西联合舰队、旋桌骑士高阶领主国，齐里克合作社改为齐里克公社）
