@@ -14,35 +14,38 @@
 # 人民战争
 peoples_war = {
 	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
+	icon = "GFX_edict_type_time"
 
 	resources = {
 		category = edicts
 		upkeep = {
-			unity = 0.9
+			unity = 3
+			multiplier = trigger:num_pops
+		}
+		produces = {
+			alloys = 0.5
 			multiplier = trigger:num_pops
 		}
 	}
 
 	modifier = {
-		armies_cost_mult = -0.33
-		army_defense_morale_mult = 0.40
-		army_defense_health_mult = 1
-		planet_army_build_speed_mult = 0.20
-		defensive_war_influence_gain_add = 3	
-		force_disparity_fire_rate_mult = 0.50
-		#ship_speed_mult = 0.15
-		#starbase_shipyard_capacity_mult = 2
+		starbase_shipyard_build_speed_mult = 0.33
+		planet_army_build_speed_mult = 0.33
+		damage_vs_superior_empires_mult = 0.33
+		defensive_war_influence_gain_add = 1
+		pop_defense_armies_add = 1
 	}
 
 	potential = {
 		OR = {
+			has_valid_civic = civic_martial_brotherhood
 		    has_valid_civic = "civic_independent"
 		    has_valid_civic = "civic_peoples_republic"
 			has_ethic = ethic_fanatic_socialism
 		}
 		NOR = {
 		    has_ethic = ethic_fanatic_authoritarian
+			has_valid_civic = civic_characteristic_socialism_pioneer
 		}
 		OR = {
 		    is_at_war = yes
@@ -51,11 +54,122 @@ peoples_war = {
 	}
 
 	ai_weight = {
-		weight = @EdictMedPrio
+		base = 0
 		modifier = {
-			factor = 3
-		    is_at_war = yes
+			add = 10
+			has_valid_civic = civic_martial_brotherhood
+			is_at_war = yes
 		}
+		modifier = {
+			add = 30
+			has_valid_civic = civic_liberator
+			is_at_war = yes
+		}
+	}
+}
+
+# 文化大革命
+cultural_revolution = {
+	length = @ambitionDuration
+	icon = "GFX_edict_type_time"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			unity = 3
+			multiplier = trigger:num_pops
+		}
+	}
+
+	modifier = {
+		planet_stability_add = -15
+		pop_cat_worker_political_power = 10.00
+		planet_jobs_unity_produces_mult = 0.5
+		country_society_tech_research_speed = 0.35
+		pop_ethics_shift_speed_mult = 5.00
+		pop_ethic_socialism_attraction_mult = 1.00
+		leader_age = -10
+		country_leader_pool_size = -2
+	}
+
+	potential = {
+		OR = {
+			NOT = { is_country_type = default_ev }
+			has_origin = origin_ev_both_choosen
+			has_civic = civic_ev_planet_and_fleet
+			has_ascension_perk = ev_land_planets
+		}
+		has_technology = tech_ascension_theory
+		OR = {
+			has_valid_civic = "civic_independent"
+			has_valid_civic = "civic_peoples_republic"
+			has_ethic = ethic_fanatic_socialism
+		}
+		NOT = { has_ethic = ethic_fanatic_authoritarian }
+		NOT = { has_policy_flag = reform_and_opening_up }
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 6
+			has_policy_flag = continuous_revolution
+		}
+		modifier = {
+			factor = 6
+			has_valid_civic = civic_civil_rights_gun_grant
+		}
+	}
+}
+
+# 经济总体战
+silver_dollar_and_cotton_yarn = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		cost = {
+			energy = 0.6
+			consumer_goods = 0.4
+			multiplier = trigger:num_pops
+		}
+		upkeep = {
+			consumer_goods = 0.4
+			food = 0.4
+			multiplier = trigger:num_pops
+		}
+	}
+
+	modifier = {
+		job_mogul_per_pop = -1
+		planet_jobs_produces_mult = 0.25
+		pop_cat_worker_happiness = 0.15
+		pop_lifestyle_trade_mult = 0.5
+		country_trade_fee = 0.25
+		trade_value_mult = -0.2
+	}
+
+	potential = {
+		OR = {
+			NOT = { is_country_type = default_ev }
+			has_origin = origin_ev_both_choosen
+			has_civic = civic_ev_planet_and_fleet
+			has_ascension_perk = ev_land_planets
+		}
+		OR = {
+			has_civic = civic_transcendental_communism
+			has_civic = civic_barbaric_despoilers
+			has_civic = civic_shared_burden
+			has_civic = civic_socialistic
+			has_civic = civic_peoples_republic
+		}
+		NOT = { has_valid_civic = civic_characteristic_socialism_pioneer }
+		is_planned_type = yes
+	}
+
+	ai_weight = {
+		weight = @EdictMedPrio
 	}
 }
 
@@ -67,14 +181,16 @@ anti_corruption = {
 	resources = {
 		category = edicts
 		upkeep = {
-			unity = 0.8
+			influence = 0.02
 			multiplier = trigger:num_pops
 		}
 	}
 
 	modifier = {
-		country_unity_produces_mult = 0.25
+		country_unity_produces_mult = 0.15
 		pop_citizen_happiness = 0.1
+		pop_factions_unity_produces_mult = -0.05
+		pop_factions_influence_produces_add = 0.02
 		country_leader_pool_size = -1
 	}
 
@@ -86,11 +202,7 @@ anti_corruption = {
 			has_civic = civic_ev_planet_and_fleet
 			has_ascension_perk = ev_land_planets
 		}
-		OR = {
-		    has_valid_civic = "civic_independent"
-		    has_valid_civic = "civic_peoples_republic"
-			has_ethic = ethic_fanatic_socialism
-		}
+		is_socialism = yes
 	}
 
 	ai_weight = {
@@ -113,8 +225,8 @@ family_planning = {
 
 	modifier = {
 		planet_jobs_specialist_produces_mult = 0.05
-		empire_size_pops_mult = -0.2
-		pop_amenities_usage_mult = -0.2
+		empire_size_pops_mult = -0.25
+		pop_amenities_usage_mult = -0.25
 		pop_growth_speed_reduction = 0.50
 		planet_pop_assembly_mult = -0.33
 	    country_leader_pool_size = -1
@@ -133,169 +245,6 @@ family_planning = {
 
 	ai_weight = {
 		weight = 0
-	}
-}
-
-# 生育补贴
-airth_allowance = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
-	resources = {
-		category = edicts
-		cost = {
-			energy = 1
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			energy = 0.5
-			food = 0.4
-			unity = 0.2
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		job_healthcare_per_pop = 0.02
-		planet_jobs_produces_mult = -0.15
-		pop_growth_speed = 0.1
-		pop_growth_speed_reduction = -0.15
-		POP_UPKEEP_MULT = 0.5
-	}
-
-	potential = {
-		always = yes
-	}
-
-	ai_weight = {
-		weight = @EdictMedPrio
-	}
-}
-# 巡回医疗
-itinerant_medical = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
-	resources = {
-		category = edicts
-		cost = {
-			energy = 3
-			unity = 2
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			consumer_goods = 1.4
-			unity = 1.2
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		pop_cat_worker_happiness = 0.10
-		job_healthcare_per_pop = 0.04
-		country_unity_produces_mult = 0.15
-	}
-
-	potential = {
-		OR = {
-			NOT = { is_country_type = default_ev }
-			has_origin = origin_ev_both_choosen
-			has_civic = civic_ev_planet_and_fleet
-			has_ascension_perk = ev_land_planets
-		}
-		OR = {
-			has_civic = civic_socialistic
-			has_civic = civic_peoples_republic
-		}
-	}
-
-	ai_weight = {
-		weight = @EdictMedPrio
-	}
-}
-# 党在连上
-the_party_is_on_the_line = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
-	resources = {
-		category = edicts
-		cost = {
-			energy = 0.8
-			unity = 0.4
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			energy = 0.5
-			unity = 0.3
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		country_naval_cap_mult = 0.05
-		ARMY_STARTING_EXPERIENCE_ADD = 200
-		ARMY_BUILD_SPEED_MULT = 0.5
-		ARMY_ATTACK_DAMAGE_MULT = 0.2
-		ARMY_ATTACK_MORALE_MULT = 0.33
-	}
-
-	potential = {
-		OR = {
-			NOT = { is_country_type = default_ev }
-			has_origin = origin_ev_both_choosen
-			has_civic = civic_ev_planet_and_fleet
-			has_ascension_perk = ev_land_planets
-		}
-		OR = {
-			has_civic = civic_socialistic
-			has_civic = civic_peoples_republic
-		}
-	}
-
-	ai_weight = {
-		weight = @EdictMedPrio
-	}
-}
-
-# 苦难行军
-march_of_suffering = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
-	resources = {
-		category = edicts
-		cost = {
-			unity = 0.2
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			unity = 1.5
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		job_commandante_per_pop = 0.02
-		country_pop_enslaved_mult = 0.35
-		POP_UPKEEP_MULT = -0.6
-		pop_growth_speed_reduction = 0.4
-		planet_jobs_slave_produces_mult = 0.25
-	}
-
-	potential = {
-		OR = {
-			NOT = { is_country_type = default_ev }
-			has_origin = origin_ev_both_choosen
-			has_civic = civic_ev_planet_and_fleet
-			has_ascension_perk = ev_land_planets
-		}
-		is_socialism = yes
-		is_egalitarian = no
-	}
-
-	ai_weight = {
-		weight = @EdictMedPrio
 	}
 }
 
@@ -351,21 +300,25 @@ the_industrial_constitution = {
 	resources = {
 		category = edicts
 		cost = {
-			unity = 2.5
+			unity = 1.5
 			multiplier = trigger:num_pops
 		}
 		upkeep = {
-			unity = 2.5
-			food = 2
+			unity = 1.5
+			multiplier = trigger:num_pops
+		}
+		produces = {
+			food = 1
+			consumer_goods = 0.5
 			multiplier = trigger:num_pops
 		}
 	}
 
 	modifier = {
-		job_grassroot_cadre_per_pop = 0.04
-		planet_bureaucrats_produces_mult = 0.4
-		planet_district_industrial_build_speed_mult = 0.35
-		planet_jobs_worker_produces_mult = 0.25
+		job_grassroot_cadre_per_pop = 0.03
+		planet_bureaucrats_produces_mult = 0.25
+		planet_district_industrial_build_speed_mult = 0.2
+		planet_jobs_worker_produces_mult = 0.15
 		planet_jobs_specialist_produces_mult = 0.10
 		pop_happiness = -0.35
 	}
@@ -382,51 +335,6 @@ the_industrial_constitution = {
 			has_civic = civic_nazbol
 			has_civic = civic_ultimate_collective
 		}
-	}
-
-	ai_weight = {
-		weight = @EdictMedPrio
-	}
-}
-
-# 经济总体战
-silver_dollar_and_cotton_yarn = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
-	resources = {
-		category = edicts
-		cost = {
-			energy = 1
-			consumer_goods = 0.5
-			unity = 0.2
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			unity = 0.5
-			food = 0.2
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		planet_jobs_produces_mult = 0.2
-		planet_building_build_speed_mult = 0.15
-		pop_cat_worker_happiness = 0.1
-		pop_lifestyle_trade_mult = 0.66
-		country_trade_fee = 0.4
-		trade_value_mult = -0.15
-	}
-
-	potential = {
-		OR = {
-			NOT = { is_country_type = default_ev }
-			has_origin = origin_ev_both_choosen
-			has_civic = civic_ev_planet_and_fleet
-			has_ascension_perk = ev_land_planets
-		}
-		is_socialism = yes
-		is_egalitarian = yes
 	}
 
 	ai_weight = {
@@ -488,7 +396,7 @@ anti_triad_putting = {
 	}
 
 	modifier = {
-		planet_stability_add = 5
+		planet_stability_add = 10
 		planet_crime_add = -15
 	    pop_citizen_happiness = 0.05
 	}
@@ -527,6 +435,7 @@ scientific_spirit = {
 
 	modifier = {
 		all_technology_research_speed = 0.1
+		planet_researchers_unity_produces_add = 1
 	}
 
 	potential = {
@@ -565,9 +474,8 @@ liberation_theology = {
 	}
 
 	modifier = {
-		country_unity_produces_mult = 0.20
-		all_technology_research_speed = -0.10
-		#planet_jobs_produces_mult = 0.10
+		country_unity_produces_mult = 0.1
+		pop_amenities_usage_mult = -0.1
 		pop_ethic_spiritualist_attraction_mult = 0.15
 		pop_ethic_socialism_attraction_mult = 0.05
 	}
@@ -584,110 +492,10 @@ liberation_theology = {
 		    has_valid_civic = "civic_peoples_republic"
 			has_ethic = ethic_fanatic_socialism
 		}
-		NOT = {
-			has_valid_civic = civic_knowledge_seeker
-		}
 		is_spiritualist = yes
 	}
 
 	ai_weight = {
 		weight = @EdictMedPrio
-	}
-}
-
-# 科学解放神学
-liberation_theology_tech = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
-	resources = {
-		category = edicts
-		upkeep = {
-			unity = 0.5
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		country_unity_produces_mult = 0.20
-		#planet_jobs_produces_mult = 0.10
-		pop_ethic_spiritualist_attraction_mult = 0.15
-		pop_ethic_socialism_attraction_mult = 0.05
-	}
-
-	potential = {
-		OR = {
-			NOT = { is_country_type = default_ev }
-			has_origin = origin_ev_both_choosen
-			has_civic = civic_ev_planet_and_fleet
-			has_ascension_perk = ev_land_planets
-		}
-		OR = {
-		    has_valid_civic = "civic_independent"
-		    has_valid_civic = "civic_peoples_republic"
-			has_ethic = ethic_fanatic_socialism
-		}
-		AND = {
-			has_valid_civic = civic_knowledge_seeker
-		}
-		is_spiritualist = yes
-	}
-
-	ai_weight = {
-		weight = @EdictMedPrio
-	}
-}
-
-# 文化大革命
-cultural_revolution = {
-	length = @ambitionDuration
-	icon = "GFX_edict_type_time"
-
-	resources = {
-		category = edicts
-		upkeep = {
-			unity = 3
-			multiplier = trigger:num_pops
-		}
-	}
-
-	modifier = {
-		planet_stability_add = -15
-		pop_cat_worker_political_power = 10.00
-		planet_jobs_unity_produces_mult = 0.5
-		country_society_tech_research_speed = 0.35
-		pop_ethics_shift_speed_mult = 5.00
-		pop_ethic_socialism_attraction_mult = 1.00
-		leader_age = -10
-	    country_leader_pool_size = -2
-	}
-
-	potential = {
-		OR = {
-			NOT = { is_country_type = default_ev }
-			has_origin = origin_ev_both_choosen
-			has_civic = civic_ev_planet_and_fleet
-			has_ascension_perk = ev_land_planets
-		}
-		has_technology = tech_ascension_theory
-		OR = {
-		    has_valid_civic = "civic_independent"
-		    has_valid_civic = "civic_peoples_republic"
-			has_ethic = ethic_fanatic_socialism
-		}
-		NOT = { has_ethic = ethic_fanatic_authoritarian }
-		NOT = { has_policy_flag = reform_and_opening_up }
-	}
-
-	ai_weight = {
-		weight = 1
-		modifier = {
-			factor = 6
-			has_policy_flag = continuous_revolution
-		}
-		modifier = {
-			factor = 6
-			has_valid_civic = civic_civil_rights_gun_grant
-		}
 	}
 }

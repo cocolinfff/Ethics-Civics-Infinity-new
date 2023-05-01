@@ -9,21 +9,78 @@
 
 @campaignDuration = -1
 
-# 赎罪券
-enhanced_surveillance = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-
+# 消费狂潮
+consumerist_propaganda = {
+	length = 360
+	icon = "GFX_edict_type_time"
 	resources = {
-		category = edicts
+		category = campaigns
 		upkeep = {
-			unity = 0.4
+			consumer_goods = 0.5
+			multiplier = trigger:num_pops
+		}
+		produces = {
+			energy = 1
 			multiplier = trigger:num_pops
 		}
 	}
 
 	modifier = {
-		trade_value_mult = 0.2
+		pop_lifestyle_trade_mult = 0.33
+		pop_citizen_happiness = 0.1
+		pop_amenities_usage_mult = 0.3
+		pop_ethic_capitalism_attraction_mult = 0.25
+	}
+
+	potential = {
+		is_capitalism = yes
+		NOR = {
+			has_ethic = ethic_fanatic_spiritualist
+			has_ethic = ethic_fanatic_pacifist
+		}
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 3
+			NOR = {
+				has_authority = auth_corporate
+				has_valid_civic = civic_merchant_guilds
+				has_valid_civic = civic_state_monopoly
+				has_civic = civic_characteristic_socialism_pioneer
+			}
+		}
+		modifier = {
+			factor = 8
+			OR = {
+				has_authority = auth_corporate
+				has_valid_civic = civic_merchant_guilds
+				has_valid_civic = civic_state_monopoly
+				has_civic = civic_characteristic_socialism_pioneer
+			}
+		}
+	}
+}
+
+# 赎罪券
+indulgences = {
+	length = 720
+	icon = "GFX_edict_type_time"
+
+	resources = {
+		category = campaigns
+		upkeep = {
+			unity = 0.5
+			multiplier = trigger:num_pops
+		}
+		produces = {
+			energy = 1.5
+			multiplier = trigger:num_pops
+		}
+	}
+
+	modifier = {
 		pop_citizen_happiness = 0.1
 		planet_crime_mult = 0.15
 		pop_ethic_spiritualist_attraction_mult = 0.15
@@ -31,10 +88,7 @@ enhanced_surveillance = {
 	}
 
 	potential = {
-		OR = {
-			is_capitalism = yes
-			has_civic = civic_characteristic_socialism_pioneer
-		}
+		is_capitalism = yes
 		is_spiritualist = yes
 	}
 
@@ -73,23 +127,23 @@ free_trade_act = {
 	resources = {
 		category = edicts
 		upkeep = {
-			unity = @Edict2Cost
+			unity = @Edict3Cost
 			multiplier = value:edict_size_effect
 		}
 	}
 
 	modifier = {
-		trade_value_mult = 0.80
-		country_trade_attractiveness = 0.35
+		pop_job_trade_mult = 0.80
+		country_trade_attractiveness = 0.33
 		planet_stability_add = -10
-		planet_crime_mult = 0.65
+		planet_crime_mult = 0.5
 		pop_ethic_capitalism_attraction_mult = 0.15
 	}
 
 	potential = {
 		OR = {
 			NOT = { is_socialism = yes }
-			has_civic = civic_characteristic_socialism_pioneer
+			has_valid_civic = civic_characteristic_socialism_pioneer
 		}
 		OR = {
 			is_egalitarian = yes
@@ -150,7 +204,7 @@ business_competition_act = {
 	potential = {
 		OR = {
 			NOT = { is_socialism = yes }
-			has_civic = civic_characteristic_socialism_pioneer
+			has_valid_civic = civic_characteristic_socialism_pioneer
 		}
 		is_militarist = yes
 	}
@@ -159,10 +213,7 @@ business_competition_act = {
 		weight = 1
 		modifier = {
 			factor = 0.5
-			NOR = {
-				is_capitalism = yes
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+			is_capitalism = no
 		}
 		modifier = {
 			factor = 3
@@ -211,7 +262,7 @@ the_flexible_seniority_act = {
 				has_ethic = ethic_fanatic_egalitarian
 				has_ethic = ethic_fanatic_pacifist
 			}
-			has_civic = civic_characteristic_socialism_pioneer
+			has_valid_civic = civic_characteristic_socialism_pioneer
 		}
 		OR = {
 			has_ethic = ethic_xenophobe
@@ -223,10 +274,7 @@ the_flexible_seniority_act = {
 		weight = 1
 		modifier = {
 			factor = 0.5
-			NOR = {
-				is_capitalism = yes
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+			is_capitalism = no
 		}
 		modifier = {
 			factor = 3
@@ -261,8 +309,9 @@ indefinite_patent_act = {
 	}
 
 	modifier = {
-		all_technology_research_speed = -0.05
+		planet_researchers_unity_produces_add = 1
 		planet_jobs_specialist_produces_mult = 0.2
+		all_technology_research_speed = -0.05
 		country_leader_pool_size = -1
 		pop_ethic_capitalism_attraction_mult = 0.1
 	}
@@ -271,7 +320,7 @@ indefinite_patent_act = {
 		is_materialist = yes
 		OR = {
 			NOT = { is_socialism = yes }
-			has_civic = civic_characteristic_socialism_pioneer
+			has_valid_civic = civic_characteristic_socialism_pioneer
 		}
 	}
 
@@ -279,10 +328,7 @@ indefinite_patent_act = {
 		weight = 1
 		modifier = {
 			factor = 0.5
-			NOR = {
-				is_capitalism = yes
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+			is_capitalism = no
 		}
 		modifier = {
 			factor = 3
@@ -311,42 +357,37 @@ blessings = {
 	resources = {
 		category = edicts
 		upkeep = {
-			unity = @Edict3Cost
+			unity = @Edict4Cost
 			multiplier = value:edict_size_effect
 		}
 	}
 
 	modifier = {
-		planet_jobs_worker_produces_mult = 0.25
-		planet_jobs_specialist_produces_mult = 0.15
 		country_pop_enslaved_mult = 0.4
-		pop_cat_ruler_happiness = 0.1
+		COUNTRY_TRADE_ATTRACTIVENESS = 0.33
+		planet_jobs_slave_produces_mult = 0.33
+		planet_jobs_worker_produces_mult = 0.2
+		planet_jobs_specialist_produces_mult = 0.1
 		pop_cat_specialist_happiness = -0.05
-		pop_cat_worker_happiness = -0.1
+		pop_cat_worker_happiness = -0.15
+		pop_job_trade_mult = 0.66
+		pop_lifestyle_trade_mult = -0.66
 		pop_ethic_capitalism_attraction_mult = 0.25
 	}
 
 	potential = {
 		OR = {
-			NOT = { is_socialism = yes }
-			has_civic = civic_characteristic_socialism_pioneer
+			has_ethic = ethic_fanatic_capitalism
+			has_valid_civic = civic_characteristic_socialism_pioneer
 		}
-		OR = {
-			has_authority = auth_corporate
-			has_valid_civic = civic_merchant_guilds
-			has_valid_civic = civic_state_monopoly
-			has_ethic = ethic_spiritualist
-		}
+		is_authoritarian = yes
 	}
 
 	ai_weight = {
 		weight = 1
 		modifier = {
 			factor = 0.5
-			NOR = {
-				is_capitalism = yes
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+			is_capitalism = no
 		}
 		modifier = {
 			factor = 8
@@ -367,64 +408,12 @@ blessings = {
 	}
 }
 
-# 消费狂潮
-consumerist_propaganda = {
-	length = @campaignDuration
-	icon = "GFX_edict_type_time"
-	resources = {
-		category = campaigns
-		upkeep = {
-			consumer_goods = @campaignCost
-			multiplier = value:edict_size_effect
-		}
-	}
-
-	modifier = {
-		pop_lifestyle_trade_mult = 0.2
-		country_unity_produces_mult = 0.15
-		pop_citizen_happiness = 0.1
-		planet_pops_consumer_goods_upkeep_mult = 0.2
-		pop_amenities_usage_mult = 0.3
-		pop_ethic_capitalism_attraction_mult = 0.25
-	}
-
-	potential = {
-		is_capitalism = yes
-		NOR = {
-			has_ethic = ethic_fanatic_spiritualist
-			has_ethic = ethic_fanatic_pacifist
-		}
-	}
-
-	ai_weight = {
-		weight = 1
-		modifier = {
-			factor = 3
-			NOR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_civic = civic_characteristic_socialism_pioneer
-			}
-		}
-		modifier = {
-			factor = 8
-			OR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_civic = civic_characteristic_socialism_pioneer
-			}
-		}
-	}
-}
-
 # 薪酬与绩效
 pay_and_performance = {
 	length = @campaignDuration
-	icon = "GFX_edict_type_time"
+	icon = "GFX_edict_type_policy"
 	resources = {
-		category = campaigns
+		category = edicts
 		upkeep = {
 			unity = @campaignCost
 			multiplier = value:edict_size_effect
@@ -432,122 +421,21 @@ pay_and_performance = {
 	}
 
 	modifier = {
-		pop_job_trade_mult = 0.5
-		planet_jobs_worker_produces_mult = 0.2
-		COUNTRY_TRADE_ATTRACTIVENESS = 0.25
-		pop_citizen_happiness = -0.1
-		pop_amenities_usage_mult = 0.2
+		planet_jobs_worker_produces_mult = 0.33
+		pop_cat_worker_happiness = -0.15
+		pop_growth_speed = -0.15
+		pop_job_trade_mult = 0.33
 		pop_lifestyle_trade_mult = -0.33
 	}
 
 	potential = {
 		is_capitalism = yes
 		is_authoritarian = yes
-	}
-
-	ai_weight = {
-		weight = 1
-		modifier = {
-			factor = 3
-			NOR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_civic = civic_characteristic_socialism_pioneer
-			}
+		OR = {
+			has_policy_flag = short_working_hours
+			has_policy_flag = free_working_hours
+			has_policy_flag = future_working_hours_liberal
 		}
-		modifier = {
-			factor = 8
-			OR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_civic = civic_characteristic_socialism_pioneer
-			}
-		}
-	}
-}
-
-# 计件超发
-piece_overrun = {
-	length = @campaignDuration
-	icon = "GFX_edict_type_time"
-	resources = {
-		category = campaigns
-		upkeep = {
-			energy = -10
-			consumer_goods = -10
-			unity = @Edict3Cost
-			multiplier = value:edict_size_effect
-		}
-	}
-
-	modifier = {
-		pop_job_trade_mult = 1
-		COUNTRY_TRADE_ATTRACTIVENESS = 0.6
-		planet_jobs_slave_produces_mult = 0.4
-		planet_jobs_worker_produces_mult = 0.3
-		planet_jobs_specialist_produces_mult = 0.2
-		pop_amenities_usage_mult = 0.6
-		pop_citizen_happiness = -0.2
-		pop_lifestyle_trade_mult = -0.66
-	}
-
-	potential = {
-		is_capitalism = yes
-		is_authoritarian = yes
-	}
-
-	ai_weight = {
-		weight = 1
-		modifier = {
-			factor = 3
-			NOR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_civic = civic_characteristic_socialism_pioneer
-			}
-		}
-		modifier = {
-			factor = 8
-			OR = {
-				has_authority = auth_corporate
-				has_valid_civic = civic_merchant_guilds
-				has_valid_civic = civic_state_monopoly
-				has_civic = civic_characteristic_socialism_pioneer
-			}
-		}
-	}
-}
-
-# 政治博弈
-class_games = {
-	length = @campaignDuration
-	icon = "GFX_edict_type_time"
-	resources = {
-		category = campaigns
-		upkeep = {
-			energy = @Edict1Cost
-			consumer_goods = @Edict3Cost
-			unity = @Edict1Cost
-			multiplier = value:edict_size_effect
-		}
-	}
-
-	modifier = {
-		planet_jobs_unity_produces_mult = 0.15
-		pop_growth_speed_reduction = -0.05
-		trade_value_mult = 0.2
-		pop_lifestyle_trade_mult = 0.35
-		planet_jobs_worker_produces_mult = -0.3
-		planet_building_build_speed_mult = -0.2
-		starbase_shipyard_build_speed_mult = -0.2
-	}
-
-	potential = {
-		is_capitalism = yes
-		is_egalitarian = yes
 	}
 
 	ai_weight = {
@@ -576,7 +464,7 @@ class_games = {
 # 活跃工会
 active_unions = {
 	length = @campaignDuration
-	icon = "GFX_edict_type_time"
+	icon = "GFX_edict_type_policy"
 	resources = {
 		category = campaigns
 		upkeep = {
@@ -587,11 +475,13 @@ active_unions = {
 	}
 
 	modifier = {
-		planet_jobs_unity_produces_mult = 0.3
-		pop_lifestyle_trade_mult = 0.35
-		pop_cat_worker_happiness = 0.2
+		planet_jobs_unity_produces_mult = 0.25
+		pop_cat_worker_happiness = 0.1
 		pop_cat_specialist_happiness = 0.2
-		pop_cat_ruler_happiness = -0.5
+		planet_building_build_speed_mult = -0.15
+		starbase_shipyard_build_speed_mult = -0.15
+		pop_lifestyle_trade_mult = 0.5
+		pop_job_trade_mult = -0.5
 	}
 
 	potential = {
@@ -622,43 +512,125 @@ active_unions = {
 	}
 }
 
+# 反垄断法案
+The_anti_monopoly_Act = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = 2
+			unity = 1
+			multiplier = trigger:num_pops
+		}
+		upkeep = {
+			energy = 2
+			unity = 1
+			mult = value:scripted_modifier_mult|MODIFIER|pop_cat_ruler_political_power|
+		}
+	}
+	modifier = {
+		trade_value_mult = 0.2
+		pop_cat_ruler_happiness = -0.25
+		pop_cat_specialist_happiness = 0.15
+		pop_cat_worker_happiness = 0.1
+		job_merchant_per_pop = 0.05
+		job_mogul_per_pop = -0.02
+	}
+	potential = {
+		is_eci_megacorp = no
+		OR = {
+			has_policy_flag = economic_stance_market
+			has_policy_flag = economic_stance_mixed
+		}
+		any_situation = {
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+	ai_weight = {
+		weight = 100
+	}
+}
+
+# 辉煌时代
+Kennedy_the_welfare_system = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = 7
+			consumer_goods = 5
+			unity = 3
+			multiplier = trigger:num_pops
+		}
+		upkeep = {
+			energy = 7
+			consumer_goods = 5
+			unity = 3
+			mult = value:scripted_modifier_mult|MODIFIER|pop_cat_ruler_political_power|
+		}
+	}
+	modifier = {
+		pop_category_rulers_consumer_goods_upkeep_mult = -0.85
+		pop_cat_ruler_happiness = -0.25
+		pop_cat_specialist_happiness = 0.1
+		pop_cat_worker_happiness = 0.15
+		DIPLO_WEIGHT_NAVAL_MULT = 0.15
+		pop_government_ethic_attraction = 0.45
+		planet_stability_add = 15
+		trade_value_mult = 0.66
+	}
+	potential = {
+		OR = {
+			has_policy_flag = economic_stance_market
+			has_policy_flag = economic_stance_mixed
+		}
+		any_situation = {
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+	ai_weight = {
+		weight = 0
+	}
+}
+
 # 货架农业
 protein_kingdom = {
-	length = @campaignDuration
+	length = @EdictPerpetual
 	icon = "GFX_edict_type_time"
 	resources = {
 		category = campaigns
 		cost = {
 			trigger = { is_lithoid_empire = no }
 			energy = 2
-			food = 5
+			food = 4
 			multiplier = trigger:num_pops
 		}
 		upkeep = {
 			trigger = { is_lithoid_empire = no }
-			food = 3
+			food = 2
 			multiplier = trigger:num_pops
 		}
 		cost = {
 			trigger = { is_lithoid_empire = yes }
 			energy = 2
-			minerals = 5
+			minerals = 4
 			multiplier = trigger:num_pops
 		}
 		upkeep = {
 			trigger = { is_lithoid_empire = yes }
-			minerals = 3
+			minerals = 2
 			multiplier = trigger:num_pops
 		}
 	}
 
 	modifier = {
 		planet_stability_add = 20
-		pop_growth_speed_reduction = -0.1
-		pop_growth_speed = 0.1
-		trade_value_mult = 0.2
-		pop_lifestyle_trade_mult = 0.1
-		COUNTRY_TRADE_ATTRACTIVENESS = 0.33
+		pop_growth_speed_reduction = -0.15
+		pop_growth_speed = 0.15
+		trade_value_mult = 0.1
+		pop_lifestyle_trade_mult = 0.15
 		pop_amenities_usage_mult = 0.25
 	}
 
@@ -690,6 +662,37 @@ protein_kingdom = {
 	}
 }
 
+# 泄压阀
+pressure_relief_valve = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+	resources = {
+		category = edicts
+		upkeep = {
+			consumer_goods = 1
+			unity = 1
+			multiplier = trigger:num_pops
+		}
+	}
+	modifier = {
+		trade_value_mult = -0.10
+		PLANET_STABILITY_ADD = 15
+		PLANET_CRIME_MULT = 0.33
+		pop_cat_worker_political_power = -0.5
+	}
+	potential = {
+		OR = { has_country_flag = ETHIC_MARKET_ECONOMY }
+		is_capitalism = yes
+		is_egalitarian = yes
+		any_situation = {
+			NOT = { has_situation_flag = economic_crisis }
+		}
+	}
+	ai_weight = {
+		weight = 100
+	}
+}
+
 # 铁拳
 iron_fist = {
 	length = @campaignDuration
@@ -697,7 +700,7 @@ iron_fist = {
 	resources = {
 		category = campaigns
 		upkeep = {
-			unity = @Edict1Cost
+			unity = @Edict2Cost
 			multiplier = value:edict_size_effect
 		}
 	}
@@ -806,127 +809,3 @@ iron_fist = {
 #		weight = 0
 #	}
 #}
-
-# 反垄断法案
-The_anti_monopoly_Act = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-	resources = {
-		category = edicts
-		upkeep = {
-			energy = 2
-			unity = 1
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			energy = 2
-			unity = 1
-			mult = value:scripted_modifier_mult|MODIFIER|pop_cat_ruler_political_power|
-		}
-	}
-	effect = {
-		custom_tooltip = edict_The_anti_monopoly_Act
-	}
-	modifier = {
-        trade_value_mult = 0.2
-        pop_cat_ruler_happiness = -0.15
-        pop_cat_specialist_happiness = 0.1
-        pop_cat_worker_happiness = 0.1
-        job_merchant_per_pop = 0.05
-        job_mogul_per_pop = -0.02
-	}
-	potential = {
-		OR = {
-			has_policy_flag = economic_stance_market
-			has_policy_flag = economic_stance_mixed
-		}
-		any_situation = {
-			NOT = { has_situation_flag = economic_crisis }
-		}
-	}
-	ai_weight = {
-		weight = 100
-	}
-}
-
-# 辉煌时代
-Kennedy_the_welfare_system = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-	resources = {
-		category = edicts
-		upkeep = {
-			energy = 7
-			consumer_goods = 5
-			unity = 3
-			multiplier = trigger:num_pops
-		}
-		upkeep = {
-			energy = 7
-			consumer_goods = 5
-			unity = 3
-			mult = value:scripted_modifier_mult|MODIFIER|pop_cat_ruler_political_power|
-		}
-	}
-	effect = {
-		custom_tooltip = edict_Kennedy_the_welfare_system
-	}
-	modifier = {
-		pop_category_rulers_consumer_goods_upkeep_add = -3
-		pop_category_specialists_consumer_goods_upkeep_add = 1.25
-		pop_category_workers_consumer_goods_upkeep_add = 0.85
-		pop_cat_ruler_happiness = -0.25
-		pop_cat_specialist_happiness = 0.1
-		pop_cat_worker_happiness = 0.15
-        DIPLO_WEIGHT_NAVAL_MULT = 0.15
-        POP_GOVERNMENT_ETHIC_ATTRACTION = 0.45
-        PLANET_STABILITY_ADD = 15
-		pop_lifestyle_trade_mult = 0.33
-	}
-	potential = {
-		OR = {
-			has_policy_flag = economic_stance_market
-			has_policy_flag = economic_stance_mixed
-		}
-		any_situation = {
-			NOT = { has_situation_flag = economic_crisis }
-		}
-	}
-	ai_weight = {
-		weight = 0
-	}
-}
-
-# 泄压阀
-pressure_relief_valve = {
-	length = @EdictPerpetual
-	icon = "GFX_edict_type_policy"
-	resources = {
-		category = edicts
-		upkeep = {
-			consumer_goods = 1
-			unity = 1
-			multiplier = trigger:num_pops
-		}
-	}
-	effect = {
-		custom_tooltip = edict_pressure_relief_valve
-	}
-	modifier = {
-        trade_value_mult = -0.10
-        PLANET_STABILITY_ADD = 15
-        PLANET_CRIME_MULT = 0.33
-        pop_cat_worker_political_power = -0.5
-	}
-	potential = {
-		OR = { has_country_flag = ETHIC_MARKET_ECONOMY }
-		is_capitalism = yes
-		is_egalitarian = yes
-		any_situation = {
-			NOT = { has_situation_flag = economic_crisis }
-		}
-	}
-	ai_weight = {
-		weight = 100
-	}
-}
