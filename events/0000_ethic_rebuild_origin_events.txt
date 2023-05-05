@@ -1,0 +1,141 @@
+namespace = origin
+
+# Dissolution of the Empire
+country_event = { # Overlord Version
+    id = origin.5730
+
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_origin = origin_imperial_vassal_overlord
+    }
+
+    immediate = {
+        save_event_target_as = previous_overlord
+        set_country_flag = origin_imperial_vassal_ex_overlord
+        set_origin = origin_default
+        every_megastructure = {
+            limit = {
+                is_megastructure_type = gateway_derelict
+            }
+            solar_system = {
+                spawn_megastructure = {
+                    type = "gateway_ruined"
+                    coords_from = prev
+                }
+            }
+            remove_megastructure = this
+        }
+        change_government = {
+            authority = auth_dictatorial
+            civics = random
+        }
+        every_subject = { # Release and notify current subjects
+            if = {
+                limit = {
+                    is_ai = yes
+                }
+                set_subject_of = { who = none }
+            }
+            country_event = { id = origin.5735 }
+        }
+        while = { # iterate through all splintering worlds
+            limit = { any_owned_planet = { is_capital = no } }
+            random_system_within_border = { # we want a country per colonized system
+                limit = { is_capital_system = no }
+                add_claims = { who = root }
+                random_system_planet = {
+                    limit = { is_colony = yes }
+                    create_country = {
+                        name = random
+                        type = default
+                        authority = random
+                        civics = random
+                        species = root.species
+                        ethos = random
+                        origin = origin_default
+                        day_zero_contact = no
+                        effect = {
+                            set_country_flag = origin_imperial_vassal_ex_overlord
+                            set_country_flag = origin_imperial_vassal_ex_overlord@event_target:previous_overlord # also unique in case of MP (while the overlord survives...)
+                            set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
+                            save_event_target_as = current_splinter
+
+                            every_playable_country = { # Establish Contact with previous vassals
+                                limit = {
+                                    has_communications = root
+                                    NOT = { has_communications = event_target:current_splinter }
+                                }
+                                establish_communications_no_message = event_target:current_splinter
+                            }
+                            every_playable_country = {
+                                limit = {
+                                    NOT = { has_communications = root }
+                                    has_active_first_contact_with = root
+                                }
+                                establish_contact = {
+                                    who = event_target:current_splinter
+                                    location = event_target:current_splinter.capital_star
+                                }
+                            }
+
+                            root = { # Give them one of the previous Overlord's fleets
+                                random_owned_fleet = {
+                                    set_owner = event_target:current_splinter
+                                }
+                            }
+
+                            # Give them tech from previous Overlord
+                            copy_techs_from = {
+                                target = event_target:previous_overlord
+                            }
+
+                            # Give them a fleet of their own
+                            create_fleet = {
+                                effect = {
+                                    set_owner = event_target:current_splinter
+                                    while = {
+                                        count = 10
+                                        create_ship = {
+                                            name = random
+                                            design = NAME_Ravager
+                                        }
+                                    }
+                                    set_location = event_target:current_splinter.capital_star
+                                }
+                            }
+
+                            event_target:previous_overlord = {
+                                every_owned_starbase = {
+                                    solar_system = {
+                                        add_claims = { who = event_target:current_splinter }
+                                    }
+                                }
+                            }
+
+                            # Give them some starting resources
+                            add_basic_resources_effect = { VALUE = 3000 }
+                            add_manufactured_resources_effect = { VALUE = 1500 }
+                            add_advanced_resources_effect = { VALUE = 1000 }
+
+                            declare_war = { # Start a war with the previous Overlord
+                                target = root
+                                name = {
+                                    key = "NAME_Imperial_War"
+                                }
+                                attacker_war_goal = wg_conquest
+                            }
+                        }
+                    }
+                    set_owner = event_target:current_splinter
+                }
+                every_system_planet = {
+                    limit = { is_colony = yes }
+                    set_owner = event_target:current_splinter
+                }
+                starbase = { set_owner = event_target:current_splinter }
+            }
+        }
+    }
+}
