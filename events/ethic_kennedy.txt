@@ -1,0 +1,393 @@
+namespace = ethic_kennedy
+country_event = {
+    id = ethic_kennedy.1
+    title = ethic_kennedy.1.name
+    desc = ethic_kennedy.1.desc
+    picture = GFX_evt_cover_blown
+    show_sound = event_planetary_riot
+    location = root
+
+    is_triggered_only = yes
+
+    trigger = {
+        exists = ruler
+    }
+
+    immediate = {
+        owner = {
+            limit = { NOT = { has_election_type = none } }
+            set_country_flag = maintaining_political_stability
+        }
+        ruler = {
+            save_event_target_as = rulername
+            kill_leader = {
+                type = ruler
+                show_notification = no
+            }
+        }
+    }
+
+    option = {
+        name = ethic_kennedy.1.a
+        custom_tooltip = ethic_kennedy.1.a.tooltip
+        hidden_effect = { country_event = { id = ethic_kennedy.2 days = 60 } }
+    }
+
+    option = {
+        name = ethic_kennedy.1.b
+        custom_tooltip = ethic_kennedy.1.b.tooltip
+        hidden_effect = {
+            save_event_target_as = government_in_power
+            set_country_flag = government_in_power
+            while = { # iterate through all splintering worlds
+                limit = { any_owned_planet = { is_capital = no } }
+                random_system_within_border = { # we want a country per colonized system
+                    limit = { is_capital_system = no }
+                    random_list = {
+                        5 = {
+                            add_claims = { who = root }
+                            random_system_planet = {
+                                limit = { is_colony = yes }
+                                create_country = {
+                                    name = random
+                                    type = default
+                                    authority = random
+                                    civics = random
+                                    species = root.species
+                                    ethos = random
+                                    origin = origin_default
+                                    day_zero_contact = no
+                                    effect = {
+                                        set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
+                                        save_event_target_as = opposition_rebel
+                                        set_country_flag = opposition_rebel
+
+                                        every_playable_country = { # Establish Contact with previous vassals
+                                            limit = {
+                                                has_communications = root
+                                                NOT = { has_communications = event_target:opposition_rebel }
+                                            }
+                                            establish_communications_no_message = event_target:opposition_rebel
+                                        }
+                                        every_playable_country = {
+                                            limit = {
+                                                NOT = { has_communications = root }
+                                                has_active_first_contact_with = root
+                                            }
+                                            establish_contact = {
+                                                who = event_target:opposition_rebel
+                                                location = event_target:opposition_rebel.capital_star
+                                            }
+                                        }
+
+                                        root = { # Give them one of the previous Overlord's fleets
+                                            random_owned_fleet = {
+                                                set_owner = event_target:opposition_rebel
+                                            }
+                                        }
+
+                                        # Give them tech from previous Overlord
+                                        copy_techs_from = {
+                                            target = event_target:government_in_power
+                                        }
+
+                                        # Give them a fleet of their own
+                                        create_fleet = {
+                                            effect = {
+                                                set_owner = event_target:opposition_rebel
+                                                while = {
+                                                    count = 10
+                                                    create_ship = {
+                                                        name = random
+                                                        design = NAME_Ravager
+                                                    }
+                                                }
+                                                set_location = event_target:opposition_rebel.capital_star
+                                            }
+                                        }
+
+                                        event_target:government_in_power = {
+                                            every_owned_starbase = {
+                                                solar_system = {
+                                                    add_claims = { who = event_target:opposition_rebel }
+                                                }
+                                            }
+                                        }
+
+                                        # Give them some starting resources
+                                        add_basic_resources_effect = { VALUE = 3000 }
+                                        add_manufactured_resources_effect = { VALUE = 1500 }
+                                        add_advanced_resources_effect = { VALUE = 1000 }
+
+                                        declare_war = { # Start a war with the previous Overlord
+                                            target = root
+                                            name = {
+                                                key = "NAME_Imperial_War"
+                                            }
+                                            attacker_war_goal = wg_imperial_war
+                                        }
+                                    }
+                                }
+                                set_owner = event_target:opposition_rebel
+                            }
+                            every_system_planet = {
+                                limit = { is_colony = yes }
+                                set_owner = event_target:opposition_rebel
+                            }
+                            starbase = { set_owner = event_target:opposition_rebel }
+                        }
+                        5 = {}
+                    }
+                }
+            }
+        }
+    }
+}
+
+country_event = {
+    id = ethic_kennedy.2
+    title = "ethic_kennedy.2.name"
+    desc = "ethic_kennedy.2.desc"
+    picture = GFX_evt_board_meeting
+    location = ROOT
+    is_triggered_only = yes
+
+    immediate = {
+        every_owned_pop = {
+            random_list = {
+                19 = { }
+                1 = { kill_pop = yes }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.a"
+        trigger = { is_authoritarian = yes }
+        shift_ethic = ethic_fanatic_egalitarian
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.b"
+        trigger = { is_egalitarian = yes }
+        shift_ethic = ethic_fanatic_authoritarian
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.c"
+        trigger = { is_capitalism = yes }
+        shift_ethic = ethic_fanatic_socialism
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.d"
+        trigger = { is_socialism = yes }
+        shift_ethic = ethic_fanatic_capitalism
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.e"
+        trigger = { is_materialist = yes }
+        shift_ethic = ethic_fanatic_spiritualist
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.f"
+        trigger = { is_spiritualist = yes }
+        shift_ethic = ethic_fanatic_materialist
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.g"
+        trigger = { is_militarist = yes }
+        shift_ethic = ethic_fanatic_pacifist
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.h"
+        trigger = { is_pacifist = yes }
+        shift_ethic = ethic_fanatic_militarist
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.i"
+        trigger = { is_xenophobe = yes }
+        shift_ethic = ethic_fanatic_xenophile
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_kennedy.2.j"
+        trigger = { is_xenophile = yes }
+        shift_ethic = ethic_fanatic_xenophobe
+        custom_tooltip = government_cooldown_reseted
+        hidden_effect = {
+            set_government_cooldown = no
+            every_relation = {
+                limit = {
+                    is_ai = no
+                    is_country_type = default
+                    has_communications = prev
+                    has_intel_level = {
+                        who = prev
+                        category = government
+                        level >= 1
+                    }
+                }
+                country_event = { id = factions.2000 }
+            }
+        }
+    }
+}
