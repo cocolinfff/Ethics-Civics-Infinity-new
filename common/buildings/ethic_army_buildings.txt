@@ -129,6 +129,7 @@ building_dread_encampment = {
 	potential = {
 		exists = owner
 		owner = { has_valid_civic = civic_reanimated_armies }
+		NOT = { has_planet_flag = planetary_station }
 	}
 
 	convert_to = {
@@ -173,23 +174,20 @@ building_stronghold = {
 	}
 	destroy_trigger = {
 		exists = owner
+		owner = { is_ai = yes }
+		OR = {
+			num_buildings = {
+				type = building_stronghold
+				value > 1
+			}
+			has_building = building_fortress
+		}
+		free_building_slots = 0
 		owner = {
-			is_ai = yes
+			used_naval_capacity_percent < 0.6
+			is_at_war = no				# don't destroy while at war
 		}
-		AND = {
-			OR = {
-				num_buildings = {
-					type = building_stronghold
-					value > 1
-				}
-				has_building = building_fortress
-			}
-			free_building_slots = 0
-			owner = {
-				used_naval_capacity_percent < 0.6
-				is_at_war = no				# don't destroy while at war
-			}
-		}
+		NOT = { has_planet_flag = planetary_station }
 	}
 	triggered_planet_modifier = {
 		potential = {
