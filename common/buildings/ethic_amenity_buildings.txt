@@ -5,27 +5,22 @@ building_luxury_residence = {
 	category = amenity
 	potential = {
 		OR = {
-			NOT = {
-				is_planet_class = pc_habitat
-			}
+			NOT = {	is_planet_class = pc_habitat }
 			has_planet_flag = advanced_habitat
 		}
-		NOT = {
+		NOR = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 		exists = owner
 		owner = {
 			is_regular_empire = yes
 			OR = {
-				NOT = {
-					has_ethic = ethic_fanatic_socialism
-				}
+				NOT = {	has_ethic = ethic_fanatic_socialism	}
 				has_ethic = ethic_fanatic_authoritarian
 			}
 			NOT = { has_civic = civic_sparta_spirit }
 		}
-	}
-	allow = {
 	}
 	destroy_trigger = {
 		exists = owner
@@ -107,15 +102,11 @@ building_paradise_dome = {
 	potential = {
 		has_building = building_luxury_residence
 		OR = {
-			NOT = {
-				is_planet_class = pc_habitat
-			}
+			NOT = {	is_planet_class = pc_habitat }
 			AND = {
 				has_planet_flag = advanced_habitat
 				exists = owner
-				owner = {
-					has_ascension_perk = ap_voidborn
-				}
+				owner = { has_ascension_perk = ap_voidborn	}
 			}
 		}
 	}
@@ -125,18 +116,12 @@ building_paradise_dome = {
 	destroy_trigger = {
 		exists = owner
 		OR = {
-			owner = {
-				is_regular_empire = no
-			}
+			owner = { is_regular_empire = no }
 			owner = {
 				has_ethic = ethic_fanatic_socialism
-				NOT = {
-					has_ethic = ethic_fanatic_authoritarian
-				}
+				NOT = {	has_ethic = ethic_fanatic_authoritarian }
 			}
-			owner = {
-				has_civic = civic_sparta_spirit
-			}
+			owner = { has_civic = civic_sparta_spirit }
 			has_modifier = slave_colony
 		}
 	}
@@ -231,14 +216,13 @@ building_communal_housing = {
 				has_civic = civic_sparta_spirit
 				AND = {
 					has_ethic = ethic_fanatic_socialism
-					NOT = {
-						has_ethic = ethic_fanatic_authoritarian
-					}
+					NOT = {	has_ethic = ethic_fanatic_authoritarian }
 				}
 			}
 		}
-		NOT = {
+		NOR = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 	}
 	allow = {
@@ -247,28 +231,20 @@ building_communal_housing = {
 		exists = owner
 		OR = {
 			AND = {
-				owner = {
-					is_ai = yes
-				}
+				owner = { is_ai = yes }
 				free_building_slots = 0
 				free_jobs < 1
 				free_housing > 10
 			}
 			AND = {
 				is_planet_class = pc_habitat
-				NOT = {
-					has_planet_flag = advanced_habitat
-				}
+				NOT = {	has_planet_flag = advanced_habitat }
 			}
 			has_modifier = slave_colony
 			owner = {
-				NOT = {
-					is_regular_empire = yes
-				}
+				NOT = {	is_regular_empire = yes }
 				OR = {
-					NOT = {
-						has_ethic = ethic_fanatic_socialism
-					}
+					NOT = {	has_ethic = ethic_fanatic_socialism }
 					has_ethic = ethic_fanatic_authoritarian
 				}
 				NOT = { has_civic = civic_sparta_spirit }
@@ -287,9 +263,7 @@ building_communal_housing = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				has_active_tradition = tr_domination_imperious_architecture
-			}
+			owner = { has_active_tradition = tr_domination_imperious_architecture }
 		}
 		modifier = {
 			planet_housing_add = 1
@@ -408,6 +382,7 @@ building_drone_storage = {
 	potential = {
 		exists = owner
 		owner = { is_machine_empire = yes }
+		NOT = { has_planet_flag = planetary_station }
 	}
 
 	destroy_trigger = {
@@ -520,6 +495,7 @@ building_hive_warren = {
 	potential = {
 		exists = owner
 		owner = { is_hive_empire = yes }
+		NOT = { has_planet_flag = planetary_station }
 	}
 
 	destroy_trigger = {
@@ -619,22 +595,23 @@ building_holo_theatres = {
 
 	potential = {
 		exists = owner
-		NOT = { has_modifier = slave_colony }
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
+		owner = { is_regular_empire = yes }
 		OR = {
-			owner = {
-				NOT = { is_ai = yes }
-			}
-			AND = {
-				NOT = { has_available_jobs = entertainer }
-				NOT = { has_forbidden_jobs = entertainer }
+			owner = { NOT = { is_ai = yes }	}
+			NOR = {
+				has_available_jobs = entertainer
+				has_forbidden_jobs = entertainer
 			}
 		}
+		NOT = { has_building = building_low_tech_capital }
 		owner = {
 			NOR = {
 				is_gestalt = yes
-				OR = {
-					has_valid_civic = civic_proletarian_culture
-				}
+				OR = { has_valid_civic = civic_proletarian_culture }
 			}
 		}
 	}
@@ -833,6 +810,163 @@ building_hyper_entertainment_forum = {
 	}
 }
 
+
+#基因诊所
+building_clinic = {
+	base_buildtime = @b2_time
+	can_build = no
+	category = amenity
+	allow = {
+		has_upgraded_capital = yes
+	}
+	potential = {
+		has_building = building_medical_center
+		owner = {
+			OR = {
+				is_regular_empire = yes
+				AND = {
+					has_origin = origin_fear_of_the_dark
+					is_country_type = primitive
+				}
+			}
+		}
+		NOT = { has_modifier = slave_colony }
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				NOR = {
+					is_regular_empire = yes
+					AND = {
+						has_origin = origin_fear_of_the_dark
+						is_country_type = primitive
+					}
+				}
+			}
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = { is_ai = yes }
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_add = 3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mixed_healthcare
+			}
+		}
+		modifier = {
+			job_healthcare_add = 1
+			job_healthcare_per_pop = 0.03
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 1
+		}
+	}
+	prerequisites = {
+		"tech_frontier_health"
+	}
+	upgrades = {
+		"building_hospital"
+	}
+	triggered_desc = {
+		text = job_healthcare_effect_desc
+	}
+}
+
+#基因医院
+building_hospital = {
+	base_buildtime = @b3_time
+	can_build = no
+	category = amenity
+	potential = {
+		has_building = building_clinic
+	}
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_regular_empire = no
+			}
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = {
+					is_ai = yes
+				}
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_add = 5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mixed_healthcare
+			}
+		}
+		modifier = {
+			job_healthcare_add = 2
+			job_healthcare_per_pop = 0.03
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b3_minerals
+			exotic_gases = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			exotic_gases = @b3_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 2
+		}
+	}
+	prerequisites = {
+		"tech_frontier_hospital"
+	}
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+	}
+	triggered_desc = {
+		text = job_healthcare_effect_desc
+	}
+}
+
 building_maintenance_depot = {
 	base_buildtime = 240
 	can_build = no
@@ -841,6 +975,7 @@ building_maintenance_depot = {
 
 	potential = {
 		owner = { is_gestalt = yes }
+		NOT = {	has_planet_flag = planetary_station }
 	}
 
 	destroy_trigger = {
@@ -949,7 +1084,10 @@ building_toxic_bath = {
 	icon = building_toxic_bath
 
 	potential = {
-		NOT = { has_modifier = slave_colony }
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
 		owner = {
 			is_regular_empire = yes
 			OR = {
@@ -1004,7 +1142,10 @@ building_ranger_lodge = {
 	category = amenity
 	icon = holding_park_ranger_lodge
 	potential = {
-		NOT = {	has_modifier = slave_colony	}
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
 		owner = {
 			is_regular_empire = yes
 			is_gestalt = no

@@ -446,3 +446,62 @@ wg_force_ideology = {
 		}
 	}
 }
+
+wg_imperial_war = {
+	casus_belli = cb_subjugation
+	set_defender_wargoal = wg_imperial_war
+
+	hide_if_no_cb = yes
+	total_war = yes
+	release_occupied_systems_on_status_quo = yes
+
+	allowed_peace_offers = {
+		status_quo
+	}
+
+	surrender_acceptance = -100
+
+	war_exhaustion = 0.75
+
+	potential = {
+		OR = {
+			has_country_flag = government_in_power
+			has_country_flag = opposition_rebel
+		}
+		from = {
+			OR = {
+				has_country_flag = government_in_power
+				has_country_flag = opposition_rebel
+			}
+		}
+	}
+
+	on_status_quo = {
+		from = {
+			while = {
+				random_system = {
+					add_claims = { who = root }
+				}
+			}
+			if = {
+				limit = { has_country_flag = government_in_power }
+				remove_country_flag = government_in_power
+			}
+		}
+		root = {
+			while = {
+				random_system = {
+					add_claims = { who = from }
+				}
+			}
+			if = {
+				limit = { has_country_flag = government_in_power }
+				remove_country_flag = government_in_power
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
