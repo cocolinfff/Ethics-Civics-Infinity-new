@@ -1077,20 +1077,6 @@ tech_deep_sinkhole = {
 	}
 }
 
-tech_interplanetary_commerce = {
-	cost = 0
-	area = society
-	start_tech = yes
-	category = {
-		good_trading
-	}
-	tier = 0
-	potential = {
-		is_gestalt = no
-	}
-	## unlock commercial zone building
-}
-
 # Space Trading
 tech_space_trading = {
 	cost = @tier1cost3
@@ -1589,12 +1575,49 @@ tech_nutrient_replication = {
 	}
 }
 
+tech_medical_system = {
+	cost = @tier1cost2
+	area = society
+	start_tech = yes
+	tier = 0
+	category = { biology }
+
+	starting_potential = {
+		is_low_tech_start = no
+		is_primitive_society = no
+	}
+
+	potential = {
+		OR ={
+			is_gestalt = no
+			AND = { # 可能也是失控女仆兼容
+				#has_global_flag = flag_rogue_maid_mod_activated
+				is_servitor_empire = yes
+			}
+		}
+	}
+
+	weight_modifier = {
+		modifier = {
+			factor = 1.25
+			has_tradition = tr_harmony_adopt
+		}
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_biology"
+			}
+		}
+	}
+}
+
 tech_frontier_health = {
 	cost = @tier1cost2
 	area = society
 	tier = 1
 	category = { biology }
-	prerequisites = { "tech_genome_mapping" "tech_colonization_1" }
+	prerequisites = { "tech_genome_mapping" "tech_medical_system" }
 	weight = @tier1weight2
 
 	potential = {
@@ -1609,6 +1632,14 @@ tech_frontier_health = {
 
 	weight_modifier = {
 		factor = 2
+		modifier = {
+			factor = 0
+			NOR = {
+				has_technology = tech_mine_exotic_gases
+				has_technology = tech_exotic_gases
+				has_country_flag = has_market_access
+			}
+		}
 		modifier = {
 			factor = 1.25
 			has_tradition = tr_harmony_adopt
@@ -1642,14 +1673,6 @@ tech_frontier_hospital = {
 	}
 
 	weight_modifier = {
-		modifier = {
-			factor = 0
-			NOR = {
-				has_technology = tech_mine_exotic_gases
-				has_technology = tech_exotic_gases
-				has_country_flag = has_market_access
-			}
-		}
 		modifier = {
 			factor = 1.25
 			has_tradition = tr_harmony_adopt
@@ -1864,23 +1887,9 @@ tech_colonization_5 = {
 	}
 }
 
-tech_interplanetary_commerce = {
-	cost = 0
-	area = society
-	start_tech = yes
-	category = { statecraft }
-	tier = 0
-
-	potential = {
-		is_gestalt = no
-	}
-
-	starting_potential = {
-		is_primitive_society = no
-	}
-}
-
-#Eco Simulation
+# ##################
+# 原版开局科技
+# ##################
 tech_industrial_farming = {
 	cost = 0
 	area = society
@@ -1906,5 +1915,115 @@ tech_holo_entertainment = {
 
 	starting_potential = {
 		is_primitive_society = no
+		NOT = { has_origin = origin_taking_care_of_god }
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = engineering
+				has_trait = "leader_trait_expertise_statecraft"
+			}
+		}
+	}
+}
+
+tech_interplanetary_commerce = {
+	cost = 0
+	area = society
+	start_tech = yes
+	category = {
+		good_trading
+	}
+	tier = 0
+	potential = {
+		is_gestalt = no
+	}
+
+	starting_potential = {
+		is_primitive_society = no
+	}
+}
+
+#New Worlds Protocol
+tech_colonization_1 = {
+	cost = @tier1cost1
+	area = society
+	tier = 0
+	category = { new_worlds }
+	prerequisites = { "tech_space_exploration" }
+	start_tech = yes
+
+	prereqfor_desc = {
+		ship = {
+			title = "TECH_UNLOCK_COLONY_SHIP_CONSTRUCTION_TITLE"
+			desc = "TECH_UNLOCK_COLONY_SHIP_CONSTRUCTION_DESC"
+		}
+	}
+
+	starting_potential = {
+		NOT = { has_origin = origin_taking_care_of_god }
+	}
+
+	weight_modifier = {
+		factor = 1000
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 1.25
+			research_leader = {
+				area = society
+				has_trait = "leader_trait_expertise_new_worlds"
+			}
+		}
+	}
+}
+
+tech_assault_armies = {
+	cost = @tier1cost1
+	area = society
+	tier = 0
+	category = { military_theory }
+	prerequisites = { "tech_planetary_defenses" }
+	start_tech = yes
+
+	starting_potential = {
+		NOT = { has_origin = origin_taking_care_of_god }
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = engineering
+				has_trait = "leader_trait_expertise_military_theory"
+			}
+		}
+	}
+}
+
+#Defense Platform
+tech_space_defense_station_1 = {
+	cost = @tier1cost2
+	tier = 0
+	area = society
+	start_tech = yes
+	category = { military_theory }
+	prerequisites = { "tech_starbase_1" "tech_assault_armies" }
+
+	starting_potential = {
+		NOT = { has_origin = origin_taking_care_of_god }
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = value:tech_weight_likelihood
+			research_leader = {
+				area = engineering
+				has_trait = "leader_trait_expertise_military_theory"
+			}
+		}
 	}
 }

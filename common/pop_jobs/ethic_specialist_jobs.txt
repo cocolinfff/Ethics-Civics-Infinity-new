@@ -199,7 +199,7 @@ artisan_specialist = {
 			}
 			minerals = 1
 		}
-		produces = {
+		upkeep = {
 			trigger = {
 				exists = owner
 				owner = {
@@ -272,7 +272,7 @@ artisan_specialist = {
 			}
 		}
 		modifier = {
-			trade_value_add = 2
+			trade_value_add = 4
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
@@ -353,15 +353,14 @@ grassroot_cadre = {
 			trigger = {
 				owner = { is_planned_type = yes }
 			}
-			unity = 2
-			society_research = 3
+			unity = 4
 			consumer_goods = 2
 			alloys = 1
 		}
 		produces = {
 			trigger = {
 				owner = { is_planned_type = yes }
-				planet = { is_factory_planet = yes }
+				planet = { has_factory_designation = yes }
 			}
 			consumer_goods = 2
 			alloys = -1
@@ -369,7 +368,7 @@ grassroot_cadre = {
 		produces = {
 			trigger = {
 				owner = { is_planned_type = yes }
-				planet = { is_foundry_planet = yes }
+				planet = { has_foundry_designation = yes }
 			}
 			consumer_goods = -2
 			alloys = 1
@@ -389,7 +388,7 @@ grassroot_cadre = {
 					is_catalytic_empire = yes
 					is_planned_type = yes
 				}
-				planet = { is_foundry_planet = no }
+				planet = { has_foundry_designation = no }
 			}
 			minerals = 2
 			food = 2
@@ -400,9 +399,19 @@ grassroot_cadre = {
 					is_catalytic_empire = yes
 					is_planned_type = yes
 				}
-				planet = { is_foundry_planet = yes }
+				planet = { has_foundry_designation = yes }
 			}
 			food = 4
+		}
+
+		#余货征集
+		produces = {
+			trigger = {
+				owner = { is_planned_type = yes }
+				planet = { has_foundry_designation = yes }
+			}
+			unity = 3
+			alloys = 1
 		}
 	}
 
@@ -411,8 +420,57 @@ grassroot_cadre = {
 		potential = {
 			always = yes
 		}
-		planet_amenities_add = 2
+		planet_amenities_add = 4
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = concentration_of_power
+					has_policy_flag = partial_decentralization
+				}
+			}
+		}
+		country_edict_fund_add = 5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = concentration_of_power
+					has_policy_flag = partial_decentralization
+				}
+			}
+		}
+		species_empire_size_mult = -0.02
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = centralized_state
+					has_policy_flag = excessive_centralization
+				}
+			}
+		}
+		country_edict_fund_add = 10
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = full_decentralization
+					has_policy_flag = high_decentralization
+				}
+			}
+		}
+		species_empire_size_mult = -0.04
 	}
 
 	#浮动加成
@@ -438,29 +496,30 @@ grassroot_cadre = {
 		potential = {
 			planet = {
 				has_industrial_districts = yes
-				is_factory_planet = no
+				has_factory_designation = no
 			}
 		}
 		planet_metallurgists_alloys_produces_add = 0.1
 	}
 	triggered_planet_modifier = {
 		potential = {
-			planet = { is_foundry_planet = yes }
+			planet = { has_foundry_designation = yes }
 		}
 		planet_metallurgists_alloys_produces_add = 0.1
 	}
+
 	triggered_planet_modifier = {
 		potential = {
 			planet = {
 				has_industrial_districts = yes
-				is_foundry_planet = no
+				has_foundry_designation = no
 			}
 		}
 		planet_artisans_consumer_goods_produces_add = 0.1
 	}
 	triggered_planet_modifier = {
 		potential = {
-			planet = { is_factory_planet = yes }
+			planet = { has_factory_designation = yes }
 		}
 		planet_artisans_consumer_goods_produces_add = 0.1
 	}
@@ -471,6 +530,20 @@ grassroot_cadre = {
 			owner = { is_planned_type = yes }
 		}
 		pop_government_ethic_attraction = 0.05
+	}
+
+	#余货征集
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = yes
+			exists = owner 
+			owner = {
+				has_edict = the_industrial_constitution
+			}
+		}
+		job_labour_hero_add = 0.34
+		planet_labour_hero_produces_mult = 0.05
+		planet_jobs_worker_produces_mult = 0.025
 	}
 
 	#市场经济加成
@@ -523,6 +596,7 @@ grassroot_cadre = {
 		weight = 50
 	}
 }
+
 
 #记者
 media_worker = {
@@ -1410,8 +1484,7 @@ death_knight = {
 				}
 			}
 		}
-		planet_stability_add = 20
-		mult = planet.society_factor_pops
+		planet_stability_add = 2.5
 	}
 
 	weight = {
@@ -2157,7 +2230,7 @@ primitive_artisan = {
 			}
 			minerals = 0.5
 		}
-		produces = {
+		upkeep = {
 			trigger = {
 				exists = owner
 				owner = {

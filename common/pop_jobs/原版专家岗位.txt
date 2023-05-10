@@ -141,7 +141,7 @@ merchant = {
 	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
-		trade_value_add = 10
+		trade_value_add = 5
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	weight = {
@@ -344,8 +344,7 @@ soldier = {
 			exists = owner
 			owner = { has_valid_civic = civic_military_junta }
 		}
-		planet_stability_add = 20
-		mult = planet.society_factor_pops
+		planet_stability_add = 2.5
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -364,12 +363,21 @@ soldier = {
 		potential = {
 			exists = owner
 			owner = {
-				has_valid_civic = civic_sparta_spirit
+				OR = {
+					has_valid_civic = civic_sparta_spirit
+					has_valid_civic = civic_nazbol
+				}
 			}
 		}
 		modifier = {
-			pop_cat_specialist_political_power = 3
+			pop_political_power = 9
 		}
+	}
+	triggered_country_modifier = {
+		potential = {
+			owner = { has_civic = civic_sparta_spirit }
+		}
+		ship_fire_rate_mult = 0.01
 	}
 	weight = {
 		weight = 300
@@ -606,27 +614,13 @@ researcher = {
 			physics_research = 2
 			engineering_research = 2
 			society_research = 2
-			mult = value:knight_commander_unity_output_modifier
+			mult = value:knights_research_output_modifier
 		}
 		produces = {
 			trigger = {
 				exists = owner
 				owner = {
-					OR = {
-						has_edict = scientific_spirit
-						has_edict = indefinite_patent_act
-					}
-				}
-			}
-			unity = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					OR = {
-						has_valid_civic = civic_futuristic_art
-					}
+					has_valid_civic = civic_futuristic_art
 				}
 			}
 			unity = 0.5
@@ -753,6 +747,32 @@ researcher = {
 		}
 		job_squire_add = 2
 	}
+	triggered_pop_modifier = {
+		potential = {
+			planet = {
+				exists = army_leader
+				army_leader = {
+					has_trait = leader_trait_academia_recruiter
+				}
+			}
+		}
+		modifier = {
+			pop_defense_armies_add = 1
+		}
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_science_directorates" } 
+			}
+		}
+		modifier = {
+			country_edict_fund_add = 1
+		}
+		mult = value:councilor_level|TYPE|councilor_science_directorates|
+	}
+
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
@@ -945,29 +965,11 @@ priest = {
 		potential = {
 			exists = owner
 			owner = {
-				has_valid_civic = civic_imperial_cult
-			}
-		}
-		modifier = {
-			country_edict_fund_add = 3
-		}
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_divine_council
-			}
-		}
-		modifier = {
-			country_edict_fund_add = 3
-		}
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_spiritual_democracy
+				OR = {
+					has_valid_civic = civic_imperial_cult
+					has_valid_civic = civic_divine_council
+					has_valid_civic = civic_spiritual_democracy
+				}
 			}
 		}
 		modifier = {
@@ -1020,9 +1022,9 @@ priest = {
 			}
 		}
 		modifier = {
-			planet_jobs_engineering_research_produces_mult = -0.01
-			planet_jobs_society_research_produces_mult = -0.01
-			planet_jobs_physics_research_produces_mult = -0.01
+			planet_researchers_engineering_research_produces_mult = -0.01
+			planet_researchers_society_research_produces_mult = -0.01
+			planet_researchers_physics_research_produces_mult = -0.01
 		}
 	}
 	triggered_planet_modifier = {
@@ -1334,6 +1336,13 @@ enforcer = {
 	}
 	triggered_planet_modifier = {
 		potential = {
+			owner = { NOT = { has_valid_civic = civic_police_state_corporate } }
+		}
+		trade_value_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
 			owner = { NOT = { has_valid_civic = civic_glory_and_dream } }
 		}
 		planet_crime_add = -20
@@ -1344,10 +1353,9 @@ enforcer = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			planet = { is_variable_set = society_factor_pops }
+			always = yes
 		}
-		planet_stability_add = 60
-		mult = planet.society_factor_pops
+		planet_stability_add = 5
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -1604,6 +1612,14 @@ telepath = {
 		planet_crime_add = -35
 		planet_jobs_produces_mult = 0.05
 		species_empire_size_mult = -0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_valid_civic = civic_police_state_corporate } }
+		}
+		trade_value_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -2260,15 +2276,6 @@ bureaucrat = {
 	}
 	resources = {
 		category = planet_bureaucrats
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_ai = yes
-				}
-			}
-			unity = 3
-		}
 		upkeep = {
 			consumer_goods = 1
 		}
@@ -2321,7 +2328,6 @@ bureaucrat = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			planet = { is_variable_set = society_factor_pops }
 			exists = owner
 			owner = {
 				OR = {
@@ -2332,8 +2338,7 @@ bureaucrat = {
 				}
 			}
 		}
-		planet_stability_add = 40
-		mult = planet.society_factor_pops
+		planet_stability_add = 2
 	}
 	weight = {
 		weight = @specialist_job_weight
@@ -2607,7 +2612,6 @@ roboticist = {
 			owner = {
 				has_policy_flag = roboticist_output_build_cyborgs
 			}
-			can_assemble_cyborg_pop = yes
 		}
 		planet_pop_assembly_organic_add = 2.25
 	}
@@ -2632,7 +2636,7 @@ roboticist = {
 healthcare = {
 	category = specialist
 	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_clinic
+	building_icon = building_medical_center
 	clothes_texture_index = 3
 	possible_pre_triggers = {
 		has_owner = yes
@@ -2647,10 +2651,10 @@ healthcare = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_policy_flag = public_healthcare
+					has_policy_flag = mixed_healthcare
 				}
 			}
-			unity = 1
+			unity = 2
 		}
 		produces = {
 			trigger = {
@@ -2664,36 +2668,17 @@ healthcare = {
 		upkeep = {
 			consumer_goods = 1
 		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					not = {
-						has_policy_flag = public_healthcare
-					}
-				}
-			}
-			consumer_goods = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_policy_flag = public_healthcare
-				}
-			}
-			consumer_goods = 0.5
-		}
 	}
 	triggered_planet_modifier = {
 		potential = {
 			always = yes
 		}
-		planet_amenities_add = 5
+		planet_amenities_add = 6
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	planet_modifier = {
 		pop_growth_speed_reduction = -0.05
+		planet_pop_assembly_organic_mult = 0.05
 		pop_environment_tolerance = 0.05
 	}
 	triggered_planet_modifier = {
@@ -2704,18 +2689,8 @@ healthcare = {
 			}
 		}
 		modifier = {
-			planet_amenities_add = 1
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { NOT = { has_policy_flag = private_healthcare } }
-		}
-		modifier = {
-			planet_pop_assembly_organic_mult = 0.05
-			pop_growth_speed = 0.05
+			pop_growth_speed_reduction = -0.02
+			planet_amenities_add = -2
 		}
 	}
 	triggered_planet_modifier = {
@@ -2726,8 +2701,9 @@ healthcare = {
 			}
 		}
 		modifier = {
-			trade_value_add = 2
+			pop_cat_ruler_happiness = 0.05
 			pop_lifestyle_trade_mult = 0.02
+			pop_growth_speed_reduction = 0.02
 		}
 	}
 	triggered_planet_modifier = {
@@ -2817,14 +2793,7 @@ manager = {
 		produces = {
 			trigger = {
 				exists = owner
-				is_eci_megacorp = yes
-			}
-			society_research = 2
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				is_eci_megacorp = no
+				owner = { is_eci_megacorp = yes }
 			}
 			unity = 3
 		}
@@ -2855,6 +2824,14 @@ manager = {
 		species_empire_size_mult = -0.1
 		planet_bureaucrats_upkeep_mult = 0.01
 		planet_amenities_add = -2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			is_eci_megacorp = yes
+		}
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	triggered_country_modifier = {
 		potential = {
@@ -2896,7 +2873,7 @@ manager = {
 	triggered_planet_modifier = {
 		potential = { is_eci_megacorp = no }
 		modifier = {
-			trade_value_add = 2
+			trade_value_add = 3
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
@@ -3770,10 +3747,51 @@ knight = {
 			unity = 3
 			mult = value:knights_unity_output_modifier
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_country_flag = toxoids_7011_b }
+			}
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+			mult = value:job_total_research_output_modifier|JOB|researcher|
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_country_flag = toxoids_7040_b }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			mult = value:job_total_research_output_modifier|JOB|researcher|
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_country_flag = toxoids_7130_b }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			mult = value:job_total_research_output_modifier|JOB|researcher|
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_country_flag = toxoids_7220_a }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			mult = value:job_total_research_output_modifier|JOB|researcher|
+		}
 		upkeep = {
 			alloys = 0.5
 		}
 	}
+
 	triggered_pop_modifier = {
 		potential = {
 			always = yes
@@ -3781,26 +3799,23 @@ knight = {
 		pop_defense_armies_add = 2
 		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
 	}
+
 	triggered_planet_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = toxoids_7090_a
-			}
+			owner = { has_country_flag = toxoids_7090_a }
 		}
-		planet_stability_add = 3
+		planet_amenities_add = 5
 		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
 	}
+
 	triggered_country_modifier = {
 		country_naval_cap_add = 4
 		mult = value:scripted_modifier_mult|MODIFIER|knights_independent_category_produces_mult|
 	}
+
 	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				has_country_flag = toxoids_7165_a
-			}
+			owner = { has_modifier = alloy_producing_knights }
 		}
 		country_alloys_produces_mult = 0.015
 	}

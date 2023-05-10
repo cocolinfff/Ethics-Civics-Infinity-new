@@ -3,32 +3,18 @@
 @buildings_t3 = 8
 @buildings_t4 = 12
 
-#工人文化宫
-building_cultural_palace = {
+#医学研究所
+building_medical_center = {
 	base_buildtime = @b1_time
-	category = amenity
-	icon = building_cultural_palace
+	base_cap_amount = 1
+	category = pop_assembly
 	potential = {
-		NOT = {
-			has_modifier = slave_colony
-		}
 		owner = {
-			has_valid_civic = civic_proletarian_culture
+			is_regular_empire = yes
 		}
-		OR = {
-			owner = {
-				NOT = {
-					is_ai = yes
-				}
-			}
-			AND = {
-				NOT = {
-					has_available_jobs = entertainer
-				}
-				NOT = {
-					has_forbidden_jobs = entertainer
-				}
-			}
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 	}
 	destroy_trigger = {
@@ -37,6 +23,83 @@ building_cultural_palace = {
 			owner = {
 				is_regular_empire = no
 			}
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = { is_ai = yes }
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = mixed_healthcare
+					has_policy_flag = public_healthcare
+				}
+			}
+		}
+		modifier = {
+			job_healthcare_add = 1
+			job_healthcare_per_pop = 0.02
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 300
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 0.5
+		}
+	}
+	prerequisites = {
+		"tech_medical_system"
+	}
+	upgrades = {
+		"building_clinic"
+	}
+	triggered_desc = {
+		text = job_healthcare_effect_desc
+	}
+}
+
+#工人文化宫
+building_cultural_palace = {
+	base_buildtime = @b1_time
+	category = amenity
+	potential = {
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
+		owner = { has_valid_civic = civic_proletarian_culture }
+		OR = {
+			owner = { is_ai = no }
+			AND = {
+				NOR = {
+					has_available_jobs = entertainer
+					has_forbidden_jobs = entertainer
+				}
+			}
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_regular_empire = no }
 			has_modifier = slave_colony
 		}
 	}
@@ -152,21 +215,16 @@ building_equipment_breeding_plant = {
 	icon = building_spawning_pool
 	potential = {
 		exists = owner
+		NOT = { has_planet_flag = planetary_station }
 		OR = {
-			owner = {
-				is_ai = no
-			}
-			NOT = {
+			owner = { is_ai = no }
+			AND = {
 				exists = assembling_species
-			}
-			assembling_species = {
-				is_organic_species = yes
+				assembling_species = { is_organic_species = yes }
 			}
 		}
 		OR = {
-			owner = {
-				is_ai = no
-			}
+			owner = { is_ai = no }
 			NAND = {
 				free_district_slots = 0
 				free_building_slots <= 1
@@ -295,11 +353,10 @@ building_ethic_akx_worm_4 = {
 	can_be_disabled = no
 	potential = {
 		exists = planet
-		planet = {
-			is_capital = yes
-		}
-		NOT = {
+		planet = { is_capital = yes	}
+		NOR = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 	}
 	planet_modifier = {
@@ -328,8 +385,9 @@ building_photon_computing_center = {
 	category = research
 	potential = {
 		exists = owner
-		NOT = {
+		NOR = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 	}
 	allow = {
@@ -394,15 +452,11 @@ building_thermal_borehole = {
 	base_cap_amount = 1
 	category = resource
 	potential = {
-		NOT = {
-			has_modifier = resort_colony
-		}
 		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
 			is_planet_class = pc_habitat
 			is_planet_class = pc_ringworld_habitable
-		}
-		NOT = {
-			has_modifier = slave_colony
 		}
 	}
 	planet_modifier = {
@@ -440,9 +494,7 @@ building_colliseum = {
 		exists = owner
 		owner = {
 			has_valid_civic = civic_reeducated_labor
-			not = {
-				has_ethic = ethic_fanatic_pacifist
-			}
+			not = { has_ethic = ethic_fanatic_pacifist }
 		}
 	}
 	allow = {
@@ -517,9 +569,7 @@ building_planet_network_node = {
 	base_cap_amount = 7
 	potential = {
 		exists = owner
-		owner = {
-			has_valid_civic = civic_OGAS
-		}
+		owner = { has_valid_civic = civic_OGAS }
 	}
 	allow = {
 		exists = owner
@@ -527,14 +577,13 @@ building_planet_network_node = {
 			has_valid_civic = civic_OGAS
 			NOT = { has_technology = tech_sapient_ai }
 		}
+		NOT = { has_planet_flag = planetary_station }
 	}
 	destroy_trigger = {
 		exists = owner
 		owner = {
 			is_hive_empire = yes
-			NOT = {
-				has_valid_civic = civic_OGAS
-			}
+			NOT = {	has_valid_civic = civic_OGAS }
 		}
 	}
 	convert_to = {
@@ -564,6 +613,24 @@ building_planet_network_node = {
 			exists = owner
 		}
 		text = job_democratic_politician_effect_desc
+	}
+	ai_resource_production = {
+		administrative_capacity_calculation = 20
+		physics_research = 20
+		society_research = 20
+		engineering_research = 20
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 100
+			owner = {
+				has_monthly_income = {
+					resource = administrative_capacity_calculation
+					value < 0
+				}
+			}
+		}
 	}
 }
 
@@ -715,6 +782,24 @@ building_planetary_management_center = {
 	triggered_desc = {
 		text = job_researcher_effect_desc
 	}
+	ai_resource_production = {
+		administrative_capacity_calculation = 40
+		physics_research = 40
+		society_research = 40
+		engineering_research = 40
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 100
+			owner = {
+				has_monthly_income = {
+					resource = administrative_capacity_calculation
+					value < 0
+				}
+			}
+		}
+	}
 }
 
 #信息大厦
@@ -731,12 +816,11 @@ building_information_tower = {
 				has_valid_civic = civic_corporate_cybercap
 			}
 		}
+		NOT = { has_planet_flag = planetary_station }
 	}
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			is_hive_empire = yes
-		}
+		owner = { is_hive_empire = yes }
 	}
 	#一级首都
 	triggered_planet_modifier = {
@@ -900,6 +984,88 @@ building_information_tower = {
 			energy = 2
 		}
 	}
+	ai_resource_production = {
+		trigger = {
+			planet = {
+				OR = {
+					has_building = building_colony_shelter
+					has_building = building_low_tech_capital
+					has_building = building_hab_capital
+				}
+			}
+		}
+		administrative_capacity_calculation = 10
+		physics_research = 10
+		society_research = 10
+		engineering_research = 10
+	}
+	ai_resource_production = {
+		trigger = {
+			planet = {
+				OR = {
+					has_building = building_capital
+					has_building = building_hab_major_capital
+					has_building = building_resort_capital
+				}
+			}
+		}
+		administrative_capacity_calculation = 20
+		physics_research = 20
+		society_research = 20
+		engineering_research = 20
+	}
+	ai_resource_production = {
+		trigger = {
+			planet = {
+				OR = {
+					has_building = building_major_capital
+					has_building = building_hab_system_capital
+					has_building = building_resort_major_capital
+				}
+			}
+		}
+		administrative_capacity_calculation = 40
+		physics_research = 40
+		society_research = 40
+		engineering_research = 40
+	}
+	ai_resource_production = {
+		trigger = {
+			planet = {
+				has_building = building_system_capital
+			}
+		}
+		administrative_capacity_calculation = 80
+		physics_research = 60
+		society_research = 60
+		engineering_research = 60
+	}
+	ai_resource_production = {
+		trigger = {
+			planet = {
+				OR = {
+					has_building = building_imperial_capital
+					has_building = building_hab_imperial_capital
+				}
+			}
+		}
+		administrative_capacity_calculation = 160
+		physics_research = 100
+		society_research = 100
+		engineering_research = 100
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 1000
+			owner = {
+				has_monthly_income = {
+					resource = administrative_capacity_calculation
+					value < 0
+				}
+			}
+		}
+	}
 }
 
 #拜金教神龛
@@ -999,8 +1165,9 @@ building_mecha_monastery = {
 		owner = {
 			has_origin = origin_machine_cult
 		}
-		NOT = {
+		NOR = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 	}
 	allow = {
@@ -1090,7 +1257,10 @@ building_waste_reprocessing_center = {
 
 	potential = {
 		owner = { has_country_flag = bought_waste_reprocessing_center }
-		NOT = { has_modifier = slave_colony }
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
 	}
 
 	destroy_trigger = {
@@ -1131,16 +1301,13 @@ building_primitive_dwellings_eci = {
 
 	potential = {
 		exists = owner
-		owner = {
-			is_primitive_society = yes
-		}
+		owner = { is_primitive_society = yes }
+		NOT = { has_planet_flag = planetary_station }
 	}
 
 	destroy_trigger = {
 		exists = owner
-		owner = {
-			is_primitive_society = no
-		}
+		owner = { is_primitive_society = no }
 	}
 
 	planet_modifier = {
@@ -1165,6 +1332,7 @@ building_mage_tower_1 = {
 			has_modifier = resort_colony
 			has_modifier = slave_colony
 			has_modifier = crucible_colony
+			has_planet_flag = planetary_station
 			NAND = {
 				exists = owner
 				owner = { has_origin =  origin_wizarding_world }
@@ -1420,11 +1588,10 @@ building_school_of_magic = {
 	base_cap_amount = 1
 	category = research
 	potential = {
-		NOT = {
+		NOR = {
 			has_modifier = resort_colony
-		}
-		NOT = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 		exists = owner
 		owner = {

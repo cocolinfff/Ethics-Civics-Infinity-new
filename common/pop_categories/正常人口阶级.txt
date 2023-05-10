@@ -1,9 +1,9 @@
 
-@trade_value_prosperity_gospel = 1
-@trade_value_shared_burden = 0.5
-@trade_value_very_high = 2
-@trade_value_high = 1.5
-@trade_value_normal = 0.5
+@trade_value_prosperity_gospel = 2
+@trade_value_shared_burden = 0.75
+@trade_value_very_high = 4
+@trade_value_high = 2.5
+@trade_value_normal = 1
 @trade_value_low = 0.25
 @trade_value_very_low = 0.05
 
@@ -259,6 +259,17 @@ ruler = {
 		trade_value_add = 1.75
 		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_mult|
 	}
+
+	# 私人医疗
+	triggered_planet_modifier = {
+		potential = {
+			AND = { exists = owner exists = planet }
+			owner = { has_policy_flag = private_healthcare }
+			planet = { has_clinic = yes }
+		}
+		job_healthcare_add = 1
+	}
+
 	triggered_planet_modifier = {
 		potential = {
 			can_generate_trade_value = yes
@@ -299,26 +310,28 @@ ruler = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_mult|
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
 
 	triggered_pop_modifier = {
 		potential = {
 			NOT = { has_trait = trait_noxious }
 		}
+		key = trait_noxious
 		pop_happiness = 1
 		mult = modifier:pop_non_noxious_happiness
 	}
 
 	triggered_planet_modifier = {
 		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
 			has_trait = trait_noxious
 		}
-		custom_tooltip = noxious_bastards
+		key = trait_noxious
 		pop_non_noxious_happiness = @noxious_happiness_penalty
 	}
 
@@ -338,6 +351,18 @@ ruler = {
 			energy = 0.5
 			minerals = 0.5
 			food = 0.5
+		}
+		#朝闻道
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
+			}
+			physics_research = 0.25
+			engineering_research = 0.25
+			society_research = 0.25
 		}
 		#血源诅咒
 		produces = {
@@ -527,56 +552,15 @@ ruler = {
 			unity = 0.5
 		}
 
-		# Biological Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = no
-			}
-			food = @living_standard_food_normal
-		}
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = no
-			}
-			food = @living_standard_phototrophic_normal
-		}
-		upkeep = {
-			trigger = {
-				has_phototrophic_energy_upkeep = yes
-			}
-			energy = @living_standard_phototrophic_normal
-		}
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
 
-		# Lithoid Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = yes
-			}
-			minerals = @living_standard_food_normal
-		}
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
 
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = yes
-			}
-			minerals = @living_standard_phototrophic_normal
-		}
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
 
-		# Robotic Upkeep
-		upkeep = {
-			trigger = {
-				is_robot_pop = yes
-			}
-			energy = @living_standard_energy_normal
-		}
 		# Exotic Metabolism Upkeep
 		upkeep = {
 			trigger = {
@@ -586,29 +570,10 @@ ruler = {
 			exotic_gases = @exotic_metabolism
 		}
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_scintillating
-			}
-			rare_crystals = @lithoid_trait_resource_production
-		}
+		# Resource Production
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_gaseous_byproducts
-			}
-			exotic_gases = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_volatile_excretions
-			}
-			volatile_motes = @lithoid_trait_resource_production
-		}
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
 
 		produces = {
 			trigger = {
@@ -616,6 +581,13 @@ ruler = {
 				has_trait = trait_inorganic_breath
 			}
 			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				has_trait = trait_drake_scaled
+			}
+			alloys = @drake_scaled_trait_resource_production
 		}
 	}
 }
@@ -926,26 +898,28 @@ specialist = {
 		trade_value_add = @trade_value_normal
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
 
 	triggered_pop_modifier = {
 		potential = {
 			NOT = { has_trait = trait_noxious }
 		}
+		key = trait_noxious
 		pop_happiness = 1
 		mult = modifier:pop_non_noxious_happiness
 	}
 
 	triggered_planet_modifier = {
 		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
 			has_trait = trait_noxious
 		}
-		custom_tooltip = noxious_bastards
+		key = trait_noxious
 		pop_non_noxious_happiness = @noxious_happiness_penalty
 	}
 
@@ -985,6 +959,18 @@ specialist = {
 				}
 			}
 			unity = 0.5
+		}
+		#朝闻道
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
+			}
+			physics_research = 0.25
+			engineering_research = 0.25
+			society_research = 0.25
 		}
 		#超视社会主义
 		produces = {
@@ -1138,56 +1124,15 @@ specialist = {
 			}
 			energy = 0.15
 		}
-		# Biological Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = no
-			}
-			food = @living_standard_food_normal
-		}
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = no
-			}
-			food = @living_standard_phototrophic_normal
-		}
-		upkeep = {
-			trigger = {
-				has_phototrophic_energy_upkeep = yes
-			}
-			energy = @living_standard_phototrophic_normal
-		}
 
-		# Lithoid Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = yes
-			}
-			minerals = @living_standard_food_normal
-		}
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
 
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = yes
-			}
-			minerals = @living_standard_phototrophic_normal
-		}
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
 
-		# Robotic Upkeep
-		upkeep = {
-			trigger = {
-				is_robot_pop = yes
-			}
-			energy = @living_standard_energy_normal
-		}
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
 
 		# Exotic Metabolism Upkeep
 		upkeep = {
@@ -1198,29 +1143,10 @@ specialist = {
 			exotic_gases = @exotic_metabolism
 		}
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_scintillating
-			}
-			rare_crystals = @lithoid_trait_resource_production
-		}
+		# Resource Production
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_gaseous_byproducts
-			}
-			exotic_gases = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_volatile_excretions
-			}
-			volatile_motes = @lithoid_trait_resource_production
-		}
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
 
 		produces = {
 			trigger = {
@@ -1228,6 +1154,13 @@ specialist = {
 				has_trait = trait_inorganic_breath
 			}
 			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				has_trait = trait_drake_scaled
+			}
+			alloys = @drake_scaled_trait_resource_production
 		}
 	}
 }
@@ -1483,13 +1416,6 @@ worker = {
 		trade_value_add = @trade_value_very_low
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
-
 	should_apply_unemployment_penalties = {
 		NOR = {
 			has_very_high_living_standard_type = yes
@@ -1522,6 +1448,36 @@ worker = {
 				}
 			}
 			consumer_goods = 2
+		}
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			has_job = clerk
+			owner = { has_modifier = paragon_origin_strengthened_government_ii }
+		}
+		pop_political_power = 0.25
+	}
+	triggered_pop_modifier = {
+		potential = {
+			has_job = clerk
+			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		pop_political_power = 0.50
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			is_enslaved = no
+			planet = {
+				exists = army_leader
+				army_leader = {
+					has_trait = leader_trait_honored_warmaster
+				}
+			}
+		}
+		modifier = {
+			pop_defense_armies_add = 1
 		}
 	}
 	triggered_pop_modifier = {
@@ -1585,19 +1541,28 @@ worker = {
 		unity = 10
 	}
 
+
 	triggered_pop_modifier = {
 		potential = {
 			NOT = { has_trait = trait_noxious }
 		}
+		key = trait_noxious
 		pop_happiness = 1
 		mult = modifier:pop_non_noxious_happiness
 	}
 
 	triggered_planet_modifier = {
 		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
 			has_trait = trait_noxious
 		}
-		custom_tooltip = noxious_bastards
+		key = trait_noxious
 		pop_non_noxious_happiness = @noxious_happiness_penalty
 	}
 
@@ -1637,6 +1602,30 @@ worker = {
 				}
 			}
 			unity = 0.5
+		}
+
+		#朝闻道
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
+			}
+			physics_research = 0.25
+			engineering_research = 0.25
+			society_research = 0.25
+		}
+		# 余粮征集
+		produces = {
+			trigger = {
+				is_enslaved = no
+				exists = owner
+				owner = {
+					has_edict = the_industrial_constitution
+				}
+			}
+			unity = 2
 		}
 		#超视社会主义
 		produces = {
@@ -1849,56 +1838,14 @@ worker = {
 			mult = planet.value:count_job|JOB|slave_overseer|
 		}
 
-		# Biological Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = no
-			}
-			food = @living_standard_food_normal
-		}
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = no
-			}
-			food = @living_standard_phototrophic_normal
-		}
-		upkeep = {
-			trigger = {
-				has_phototrophic_energy_upkeep = yes
-			}
-			energy = @living_standard_phototrophic_normal
-		}
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
 
-		# Lithoid Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = yes
-			}
-			minerals = @living_standard_food_normal
-		}
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
 
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = yes
-			}
-			minerals = @living_standard_phototrophic_normal
-		}
-
-		# Robotic Upkeep
-		upkeep = {
-			trigger = {
-				is_robot_pop = yes
-			}
-			energy = @living_standard_energy_normal
-		}
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
 
 		# Exotic Metabolism Upkeep
 		upkeep = {
@@ -1909,29 +1856,10 @@ worker = {
 			exotic_gases = @exotic_metabolism
 		}
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_scintillating
-			}
-			rare_crystals = @lithoid_trait_resource_production
-		}
+		# Resource Production
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_gaseous_byproducts
-			}
-			exotic_gases = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_volatile_excretions
-			}
-			volatile_motes = @lithoid_trait_resource_production
-		}
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
 
 		produces = {
 			trigger = {
@@ -1939,6 +1867,13 @@ worker = {
 				has_trait = trait_inorganic_breath
 			}
 			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				has_trait = trait_drake_scaled
+			}
+			alloys = @drake_scaled_trait_resource_production
 		}
 	}
 }
@@ -1974,26 +1909,28 @@ slave = {
 		energy = 50
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
 
 	triggered_pop_modifier = {
 		potential = {
 			NOT = { has_trait = trait_noxious }
 		}
+		key = trait_noxious
 		pop_happiness = 1
 		mult = modifier:pop_non_noxious_happiness
 	}
 
 	triggered_planet_modifier = {
 		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
 			has_trait = trait_noxious
 		}
-		custom_tooltip = noxious_bastards
+		key = trait_noxious
 		pop_non_noxious_happiness = @noxious_happiness_penalty
 	}
 
@@ -2038,7 +1975,10 @@ slave = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
 	}
 
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = yes
+		}
 		trade_value_add = 2
 		pop_lifestyle_trade_mult = 0.01
 		mult = value:scripted_modifier_mult|MODIFIER|planet_jobs_slave_produces_mult|
@@ -2055,6 +1995,19 @@ slave = {
 		}
 		trade_value_add = 3
 		mult = value:scripted_modifier_mult|MODIFIER|planet_jobs_slave_produces_mult|
+	}
+
+	# 工业宪法
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = yes
+			exists = owner 
+			owner = {
+				has_edict = the_industrial_constitution
+			}
+		}
+		pop_cat_slave_political_power = 3
+		pop_happiness = -0.20
 	}
 
 	# 奴役暴君
@@ -2122,7 +2075,7 @@ slave = {
 		potential = {
 			exists = owner
 			owner = {
-				has_valid_civic = civic_characteristic_socialism
+				is_characteristic_socialism = yes
 			}
 		}
 		trade_value_add = 1.25
@@ -2172,56 +2125,27 @@ slave = {
 	resources = {
 		category = pop_category_slave
 
-		# Biological Upkeep
-		upkeep = {
+		#朝闻道
+		produces = {
 			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = no
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
 			}
-			food = @living_standard_food_normal
-		}
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = no
-			}
-			food = @living_standard_phototrophic_normal
-		}
-		upkeep = {
-			trigger = {
-				has_phototrophic_energy_upkeep = yes
-			}
-			energy = @living_standard_phototrophic_normal
+			physics_research = 0.25
+			engineering_research = 0.25
+			society_research = 0.25
 		}
 
-		# Lithoid Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = yes
-			}
-			minerals = @living_standard_food_normal
-		}
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
 
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				is_phototrophic = yes
-				is_lithoid = yes
-			}
-			minerals = @living_standard_phototrophic_normal
-		}
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
 
-		# Robotic Upkeep
-		upkeep = {
-			trigger = {
-				is_robot_pop = yes
-			}
-			energy = @living_standard_energy_normal
-		}
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
 
 		# Exotic Metabolism Upkeep
 		upkeep = {
@@ -2233,29 +2157,9 @@ slave = {
 		}
 
 		# Resource Production
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_scintillating
-			}
-			rare_crystals = @lithoid_trait_resource_production
-		}
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_gaseous_byproducts
-			}
-			exotic_gases = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_volatile_excretions
-			}
-			volatile_motes = @lithoid_trait_resource_production
-		}
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
 
 		produces = {
 			trigger = {
@@ -2263,6 +2167,13 @@ slave = {
 				has_trait = trait_inorganic_breath
 			}
 			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				has_trait = trait_drake_scaled
+			}
+			alloys = @drake_scaled_trait_resource_production
 		}
 	}
 }

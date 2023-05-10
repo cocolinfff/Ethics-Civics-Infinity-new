@@ -16,7 +16,6 @@ can_fill_drone_job = {
 		exists = owner
 		owner = { is_gestalt = yes }
 		is_being_purged = no
-		is_enslaved = no
 		is_being_assimilated = no
 		NOT = { has_citizenship_type = { type = citizenship_organic_trophy } }
 		NOT = { has_citizenship_type = { type = citizenship_limited } }
@@ -394,7 +393,7 @@ can_dismiss_leader = {
 can_species_be_assembled = {
 	is_sapient = yes
 	has_population_control = {
-		type = no
+		value = no
 		country = root.owner
 	}
 	##_|基础条件|
@@ -406,12 +405,11 @@ can_species_be_assembled = {
 				has_trait = trait_robot_mind_relic_core	# azl
 				has_trait = trait_reassembler			# 时与空
 			}
-			KZ_VOY_trgr_plnt_ASSEMBLY = yes	# 久远
 
 			#	魔女
 			if = { limit = { has_trait = trait_dummy }
 				if = { limit = { root.owner = { has_origin = origin_garbage_princesses } }
-					root = { 
+					root = {
 						OR = {
 							has_building = building_enigmatic_assembly_plant
 							num_assigned_jobs = {
@@ -442,7 +440,12 @@ can_species_be_assembled = {
 				}
 			}
 			#	久远
-			else_if = { limit = { has_trait = trait_KZ_VOY_magic_puppet }
+			if = {
+				limit = { root = { has_active_building = building_KZ_VOY_homunculus_furnace } }
+				root = { has_planet_flag = KZ_VOY_homunculus_furnace_assembly_integration_off_flag }
+			}
+			else_if = {
+				limit = { has_trait = trait_KZ_VOY_magic_puppet }
 				KZ_VOY_can_assemble_magic_puppet = yes
 			}
 			#	GF
@@ -547,10 +550,7 @@ can_species_be_assembled = {
 							owner = { has_civic = civic_permanent_employment }
 						}
 						has_planet_flag = can_organic_assemble_flag #for mod compatibility
-						AND = {
-							has_building = building_equipment_breeding_plant
-							owner = { has_civic = civic_libido_equipment }
-						}
+
 						#	星海帝皇
 						has_building = building_clone_guard_clone_vat
 						#	FW
@@ -566,6 +566,17 @@ can_species_be_assembled = {
 		#	WSG物种/wsg
 		UGRC_trgr_spcs_WSG = yes
 
+		#	Ecar苗床
+		AND = {
+			root = {
+				check_modifier_value = {
+					modifier = planet_pop_assembly_organic_add
+					value > 0
+				}
+				has_building = building_equipment_breeding_plant
+				owner = { has_civic = civic_libido_equipment }
+			}
+		}
 		#	久远
 		KZ_VOY_trgr_plnt_CLONE = yes
 		#	azl/azlr
@@ -635,7 +646,7 @@ can_species_be_assembled = {
 						has_country_flag = wawa_FUTA_alow
 					}
 					OR = {
-						is_planet_class =  pc_futa_ring_world
+						is_planet_class = pc_futa_ring_world
 						has_building = building_futa_wawa
 					}
 				}
@@ -661,8 +672,8 @@ can_species_be_assembled = {
 	else_if = {
 		limit = {
 			OR = {
-				has_trait = trait_KZ_VOY_terranoid_dragon
-				has_trait = trait_KZ_VOY_terranoid_dragon_SP
+				has_trait = trait_KZ_VOY_sub_terran_dragon
+				has_trait = trait_KZ_VOY_sub_terran_dragon_SP
 			}
 		}
 		KZ_VOY_trgr_plnt_CLONE = yes
@@ -700,5 +711,19 @@ can_crossbreed_species_on_planet = {
 			limit = { is_crossbreeding_possible = yes }
 			count >= 2
 		}
+	}
+}
+
+#是否能够进行基因改造
+# Root = country
+# This = species
+can_modify_species = {
+	OR = {
+		NOR = {
+			has_trait = trait_self_modified
+			has_trait = trait_fallen_god
+			has_trait = trait_unnatural
+		}
+		is_same_species = root
 	}
 }
