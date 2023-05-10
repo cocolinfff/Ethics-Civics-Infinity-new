@@ -226,37 +226,32 @@ trait_unnatural = {
 ####################
 
 leader_trait_expertise_good_trading = {
-	cost = 1
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_expertise_good_trading.dds"
+	veteran_class_locked_trait = yes
+	councilor_trait = yes
+	inline_script = {
+		script = trait/icon_society
+		CLASS = scientist
+		ICON = "GFX_leader_trait_expertise_good_trading"
+		RARITY = free_or_veteran
+		COUNCIL = yes
+		TIER = 1
+	}
 	modifier = {
-		category_good_trading_research_speed_mult = @categorybonus
+		category_good_trading_research_speed_mult = 0.15
+		category_good_trading_draw_chance_mult = 0.25
 	}
-	leader_trait = {
-		scientist
+	leader_potential_add = {
+		is_specialist_researcher = no
+		OR = {
+			has_paragon_dlc = no
+			has_trait_tier1or2or3 = { TRAIT = leader_trait_society_focus }
+		}
 	}
-	leader_class = {
-		scientist
-	}
-	opposites = {
-		"leader_trait_expertise_materials"
-		"leader_trait_expertise_propulsion"
-		"leader_trait_expertise_voidcraft"
-		"leader_trait_expertise_industry"
-		"leader_trait_expertise_field_manipulation"
-		"leader_trait_expertise_particles"
-		"leader_trait_expertise_psionics"
-		"leader_trait_expertise_computing"
-		"leader_trait_expertise_new_worlds"
-		"leader_trait_expertise_biology"
-		"leader_trait_expertise_military_theory"
-		"leader_trait_expertise_statecraft"
-	}
-	# higher chance to generate techs in category financial theory (done in tech-script)
-	ai_categories = {
-		society
-	}
-	ai_weight = {
-		weight = 100
+	leader_class = { scientist }
+	ai_categories = { society }
+	ai_weight = 100
+	selectable_weight = {
+		inline_script = paragon/subclass_free_trait_weight
 	}
 }
 
@@ -276,304 +271,257 @@ trait_ruler_immortal = {
 }
 
 
-leader_trait_admiral_cyborg = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_cyborg.dds"
-	modifier = {
-		ship_fire_rate_mult = 0.05
+leader_trait_cyborg = {
+	is_councilor_trait_for_ruler = yes
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_cyborg"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
 	}
-	leader_trait = { admiral }
-	leader_class = { admiral }
-	initial = no
-	randomized = no
-}
-
-leader_trait_admiral_synthetic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_synthetic.dds"
-	modifier = {
-		ship_fire_rate_mult = 0.05
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = admiral
+		}
+		ship_weapon_damage = 0.1
 		ship_weapon_range_mult = 0.10
 	}
-	leader_trait = { admiral }
-	leader_class = { admiral }
-	initial = no
-	randomized = no
-}
-
-leader_trait_admiral_psionic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_leader.dds"
-	modifier = {
-		ship_weapon_damage = 0.1
-		ship_evasion_mult = 0.15
-	}
-	leader_trait = { admiral }
-	leader_class = { admiral }
-	initial = no
-	randomized = no
-}
-
-leader_trait_admiral_chosen = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_chosen_one.dds"
-	immortal_leaders = yes
-	modifier = {
-		ship_weapon_damage = 0.2
-		ship_evasion_mult = 0.3
-	}
-	leader_trait = { admiral }
-	leader_class = { admiral }
-	initial = no
-	randomized = no
-}
-
-leader_trait_general_cyborg = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_cyborg.dds"
-	modifier = {
-		army_damage_mult = 0.05
-	}
-	leader_trait = { general }
-	leader_class = { general }
-	initial = no
-	randomized = no
-}
-
-leader_trait_general_synthetic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_synthetic.dds"
-	modifier = {
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = general
+		}
 		army_damage_mult = 0.10
 	}
-	leader_trait = { general }
-	leader_class = { general }
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		assist_research_mult = 0.33
+	}
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		leader_scientists_physics_research_produces_add = 2.5
+		leader_scientists_society_research_produces_add = 2.5
+		leader_scientists_engineering_research_produces_add = 2.5
+		mult = trigger:has_skill
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = governor
+		}
+		planet_pops_upkeep_mult = -0.10
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		planet_structures_upkeep_mult = -0.25
+		empire_size_districts_mult = -0.05
+	}
+	leader_class = { admiral scientist general governor }
 	initial = no
 	randomized = no
+	notify_on_gained = no
 }
 
-leader_trait_general_psionic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_leader.dds"
-	modifier = {
+leader_trait_synthetic = {
+	is_councilor_trait_for_ruler = yes
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_synthetic"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = admiral
+		}
+		ship_fire_rate_mult = 0.10
+		ship_armor_hardening_add = 0.10
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = general
+		}
+		army_damage_mult = 0.05
+		army_collateral_damage_mult = 0.10
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		ship_anomaly_research_speed_mult = 0.15
+	}
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		leader_scientists_physics_research_produces_add = 2.5
+		leader_scientists_society_research_produces_add = 2.5
+		leader_scientists_engineering_research_produces_add = 2.5
+		mult = trigger:has_skill
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = governor
+		}
+		planet_jobs_worker_produces_mult = 0.05
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		planet_pop_assembly_add = 1
+	}
+	leader_class = { admiral scientist general governor }
+	initial = no
+	randomized = no
+	notify_on_gained = no
+}
+
+leader_trait_psionic = {
+	is_councilor_trait_for_ruler = yes
+	inline_script = {
+		script = trait/icon_psionic
+		CLASS = leader
+		ICON = "GFX_leader_trait_psionic"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = admiral
+		}
+		ship_weapon_damage = 0.1
+		ship_shield_hardening_add = 0.10
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = general
+		}
 		army_morale = 0.15
 		army_morale_damage_mult = 0.15
 	}
-	leader_trait = { general }
-	leader_class = { general }
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		science_ship_survey_speed = 0.25
+		ship_archaeological_site_clues_add = 1
+	}
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		leader_scientists_physics_research_produces_add = 2.5
+		leader_scientists_society_research_produces_add = 3.334
+		leader_scientists_engineering_research_produces_add = 2.5
+		mult = trigger:has_skill
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = governor
+		}
+		planet_jobs_unity_produces_mult = 0.10
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		pop_government_ethic_attraction = 0.10
+		country_ruler_influence_produces_add = 0.5
+		category_psionics_research_speed_mult = 0.10
+	}
+	leader_class = { admiral scientist general governor }
 	initial = no
 	randomized = no
+	notify_on_gained = no
 }
 
-leader_trait_general_chosen = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_chosen_one.dds"
+leader_trait_chosen = {
+	is_councilor_trait_for_ruler = yes
 	immortal_leaders = yes
-	modifier = {
+	inline_script = {
+		script = trait/icon_psionic
+		CLASS = leader
+		ICON = "GFX_leader_trait_chosen"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = admiral
+		}
+		ship_weapon_damage = 0.2
+		ship_shield_hardening_add = 0.3
+	}
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = general
+		}
 		army_morale = 0.3
 		army_morale_damage_mult = 0.3
 		army_damage_mult = 0.2
 	}
-	leader_trait = { general }
-	leader_class = { general }
-	initial = no
-	randomized = no
-}
-
-leader_trait_governor_cyborg = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_cyborg.dds"
-	modifier = {
-		planet_jobs_minerals_produces_mult = 0.05
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		science_ship_survey_speed = 0.50
+		ship_archaeological_site_clues_add = 2
 	}
-	leader_trait = { governor }
-	leader_class = { governor }
-	initial = no
-	randomized = no
-}
-
-leader_trait_governor_synthetic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_synthetic.dds"
-	modifier = {
-		planet_jobs_energy_produces_mult = 0.05
-		planet_jobs_minerals_produces_mult = 0.05
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		leader_scientists_physics_research_produces_add = 10
+		leader_scientists_society_research_produces_add = 10
+		leader_scientists_engineering_research_produces_add = 10
+		mult = trigger:has_skill
 	}
-	leader_trait = { governor }
-	leader_class = { governor }
-	initial = no
-	randomized = no
-}
-
-leader_trait_governor_psionic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_leader.dds"
-	modifier = {
-		planet_stability_add = 5
-		planet_jobs_unity_produces_mult = 0.10
-	}
-	leader_trait = { governor }
-	leader_class = { governor }
-	initial = no
-	randomized = no
-}
-
-leader_trait_governor_chosen = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_chosen_one.dds"
-	immortal_leaders = yes
-	modifier = {
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = governor
+		}
 		planet_stability_add = 10
 		planet_jobs_unity_produces_mult = 0.20
 	}
-	leader_trait = { governor }
-	leader_class = { governor }
-	initial = no
-	randomized = no
-}
-
-leader_trait_scientist_cyborg = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_cyborg.dds"
-	modifier = {
-		all_technology_research_speed = 0.05
-	}
-	leader_trait = { scientist }
-	leader_class = { scientist }
-	initial = no
-	randomized = no
-
-	ai_categories = {
-		physics
-		society
-		engineering
-	}
-
-	ai_weight = {
-		weight = 100
-	}
-}
-
-leader_trait_scientist_synthetic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_synthetic.dds"
-	modifier = {
-		all_technology_research_speed = 0.05
-		ship_anomaly_research_speed_mult = 0.15
-	}
-	leader_trait = { scientist }
-	leader_class = { scientist }
-	initial = no
-	randomized = no
-
-	ai_categories = {
-		survey
-		physics
-		society
-		engineering
-	}
-
-	ai_weight = {
-		weight = 100
-	}
-}
-
-leader_trait_scientist_psionic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_leader.dds"
-	modifier = {
-		all_technology_research_speed = 0.10
-		category_psionics_research_speed_mult = 0.10
-		science_ship_survey_speed = 0.25
-		ship_archeaological_site_clues_add = 1
-	}
-	leader_trait = { scientist }
-	leader_class = { scientist }
-	initial = no
-	randomized = no
-
-	ai_categories = {
-		survey
-		physics
-		society
-		engineering
-	}
-
-	ai_weight = {
-		weight = 100
-	}
-}
-
-leader_trait_scientist_chosen = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_chosen_one.dds"
-	immortal_leaders = yes
-	modifier = {
-		all_technology_research_speed = 0.20
-		science_ship_survey_speed = 0.50
-		ship_archeaological_site_clues_add = 2
-	}
-	leader_trait = { scientist }
-	leader_class = { scientist }
-	initial = no
-	randomized = no
-
-	ai_categories = {
-		survey
-		physics
-		society
-		engineering
-	}
-
-	ai_weight = {
-		weight = 100
-	}
-}
-
-leader_trait_ruler_cyborg = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_cyborg.dds"
-	leader_trait = { ruler }
-	leader_class = { ruler }
-	initial = no
-	randomized = no
-}
-
-leader_trait_ruler_synthetic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_synthetic.dds"
-	modifier = {
-		planet_jobs_robotic_produces_mult = 0.05
-	}
-	leader_trait = { ruler }
-	leader_class = { ruler }
-	initial = no
-	randomized = no
-}
-
-leader_trait_ruler_psionic = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_leader.dds"
-	modifier = {
-		pop_government_ethic_attraction = 0.10
-		country_ruler_influence_produces_add = 0.5
-	}
-	leader_trait = { ruler }
-	leader_class = { ruler }
-	initial = no
-	randomized = no
-}
-
-leader_trait_ruler_chosen = {
-	cost = 0
-	icon = "gfx/interface/icons/traits/leader_traits/leader_trait_psionic_chosen_one.dds"
-	immortal_leaders = yes
-	modifier = {
+	triggered_modifier = {
+		potential = {
+			is_ruler = yes
+		}
 		pop_government_ethic_attraction = 0.20
 		country_ruler_influence_produces_add = 1
 	}
-	leader_trait = { ruler }
-	leader_class = { ruler }
+	leader_class = { admiral scientist general governor }
 	initial = no
 	randomized = no
 }
