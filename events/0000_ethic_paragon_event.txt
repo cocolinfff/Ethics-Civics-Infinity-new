@@ -1,0 +1,178 @@
+namespace = paragon
+
+country_event = { #Leader grows - 10 yo
+    id = paragon.3114
+    title = "paragon.3114.name"
+    desc = "paragon.3114.desc"
+    picture = GFX_evt_board_meeting
+    show_sound = event_finding_loot
+    fire_only_once = yes
+
+    is_triggered_only = yes
+
+    immediate = {
+    }
+
+    option = {
+        name = paragon.3114.a
+        trigger = { is_xenophile = yes }
+        set_global_flag = leader_raised_xenophile
+    }
+    option = {
+        name = paragon.3114.b
+        trigger = { is_xenophobe = yes }
+        set_global_flag = leader_raised_xenophobe
+    }
+    option = {
+        name = paragon.3114.c
+        trigger = { is_pacifist = yes }
+        set_global_flag = leader_raised_pacifist
+    }
+    option = {
+        name = paragon.3114.d
+        trigger = { is_militarist = yes }
+        set_global_flag = leader_raised_militarist
+    }
+    option = {
+        name = paragon.3114.e
+        trigger = { is_egalitarian = yes }
+        set_global_flag = leader_raised_egalitarian
+    }
+    option = {
+        name = paragon.3114.f
+        trigger = { is_authoritarian = yes }
+        set_global_flag = leader_raised_authoritarian
+    }
+    option = {
+        name = paragon.3114.g
+        trigger = { is_spiritualist = yes }
+        set_global_flag = leader_raised_spiritualist
+    }
+    option = {
+        name = paragon.3114.h
+        trigger = { is_materialist = yes }
+        set_global_flag = leader_raised_materialist
+    }
+    option = {
+        name = paragon.3114.i
+        trigger = { is_socialism = yes }
+        set_global_flag = leader_raised_socialism
+    }
+    option = {
+        name = paragon.3114.j
+        trigger = { is_capitalism = yes }
+        set_global_flag = leader_raised_capitalism
+    }
+
+    after = {
+        country_event = { id = paragon.3115 days = 3600 }
+    }
+}
+
+country_event = { # Create Exakeides - 20 yo
+    id = paragon.3115
+    title = "paragon.3115.name"
+    desc = "paragon.3115.desc"
+    picture = GFX_evt_board_meeting
+    show_sound = par_event_keides
+    fire_only_once = yes
+    is_triggered_only = yes
+    event_window_type = leader_story
+    event_picture_background = "GFX_leader_recruitment_bg_legendary_keides"
+
+    immediate = {
+        random_system = {
+            limit = { has_star_flag = legendary_leader_1st_system }
+            save_event_target_as = 1st_system_legendary
+        }
+        random_system = {
+            limit = { has_star_flag = legendary_leader_2nd_system }
+            save_event_target_as = 2nd_system_legendary
+        }
+        random_system = {
+            limit = { has_star_flag = legendary_leader_3rd_system }
+            save_event_target_as = 3rd_system_legendary
+        }
+
+        create_species = {
+            name = "NAME_Unknown"
+            class = HUM
+            portrait = paragon_exakeides_artifact_1 #Exakeides portrait
+            namelist = "PRT1"
+            traits = {
+                trait = "trait_enduring"
+                trait = "trait_quick_learners"
+                trait = "trait_erudite"
+            }
+            effect = {
+                save_event_target_as = exakeides_species
+            }
+        }
+
+        create_leader = {
+            class = scientist
+            species = event_target:exakeides_species
+            name = "NAME_Exakeides"
+            skill = 1
+            gender = male
+            event_leader = yes
+            skip_background_generation = yes
+            custom_catch_phrase = keides_catch_phrase
+            custom_description = desc_exakeides
+            effect = {
+                set_leader_flag = legendary_leader
+                set_leader_flag = exakeides
+            }
+        }
+        last_created_leader = {
+            set_age = 21
+            set_leader_flag = NAME
+            set_leader_flag = immune_to_negative_traits
+            save_global_event_target_as = legendary_lost_leader
+            add_trait_no_notify = leader_trait_legendary_far_from_home
+        }
+        switch = {
+            trigger = has_global_flag
+            leader_raised_xenophile = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_xenophile }
+            }
+            leader_raised_xenophobe = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_xenophobe }
+            }
+            leader_raised_militarist = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_militarist }
+            }
+            leader_raised_pacifist = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_pacifist }
+            }
+            leader_raised_egalitarian = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_egalitarian }
+            }
+            leader_raised_authoritarian = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_authoritarian }
+            }
+            leader_raised_spiritualist = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_spiritualist }
+            }
+            leader_raised_materialist = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_materialist }
+            }
+            leader_raised_socialism = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_socialism }
+            }
+            leader_raised_capitalism = {
+                event_target:legendary_lost_leader = { change_background_ethic = ethic_capitalism }
+            }
+        }
+    }
+
+    picture_event_data = {
+        portrait = event_target:legendary_lost_leader
+        room = galactic_custodian_room
+    }
+
+    option = {
+        name = paragon.3115.a
+        hidden_effect = { country_event = { id = paragon.3116 } }
+    }
+}
