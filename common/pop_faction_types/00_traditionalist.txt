@@ -3,7 +3,8 @@
 ##############################
 traditionalist = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_spiritualist
+	guiding_ethic = "ethic_spiritualist"
+	visual_ethic = "traditionalist_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
 	unique = yes
 	support_multiplier = 1
@@ -14,11 +15,7 @@ traditionalist = {
 		}
 	}
 	is_potential = {
-		#days_passed > 60
-		NOR = {
-			is_gestalt = yes
-			has_country_flag = suppress_vanilla_factions
-		}
+		is_faction_allowed = yes
 	}
 	parameters = {
 		empire = {
@@ -123,6 +120,17 @@ traditionalist = {
 	}
 
 	# 诉求
+		# Faction Outraged
+		inline_script = {
+			script = pop_faction_types/demand_faction_outraged
+			FLAG = galcom_resolution_passed_anti_xenoist
+		}
+		# Faction Pleased
+		inline_script = {
+			script = pop_faction_types/demand_faction_pleased
+			FLAG = galcom_resolution_passed_pro_xenoist
+		}
+		
 		demand = { # 君主制 (君主，或者专制，总之不支持民主)
 			title = "DEMAND_GOVERNMENT_MONARCHY"
 			unfulfilled_title = "DEMAND_GOVERNMENT_MONARCHY"
@@ -454,24 +462,6 @@ traditionalist = {
 			}
 		}
 
-		demand = {
-			title = "FACTION_OUTRAGED_GC"
-			unfulfilled_title = "FACTION_OUTRAGED_GC"
-			desc = "FACTION_OUTRAGED_GC_DESC"
-			fulfilled_effect = -20
-			unfulfilled_effect = -0.001
-			potential = {
-				exists = owner
-				owner = {
-					has_country_flag = faction_spiritualist_outraged_gc
-				}
-			}
-			trigger = {
-				owner = {
-					has_country_flag = faction_spiritualist_outraged_gc
-				}
-			}
-		}
 		#灵能追溯
 		demand = {
 			title = "TRADITIONALIST_PSIONIC_PURSUIT"
@@ -652,6 +642,14 @@ traditionalist = {
 					has_modifier = proclaim_religious_finding
 				}
 			}
+		}
+
+		# 派系的委员会和领导人诉求
+		inline_script = {
+			script = "paragon/global_faction_demands"
+			ETHIC = ethic_spiritualist
+			ETHIC_FANATIC = ethic_fanatic_spiritualist
+			ETHIC_OPPOSED = ethic_materialist
 		}
 
 	on_create = {
