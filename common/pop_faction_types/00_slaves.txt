@@ -3,7 +3,8 @@
 ##############################
 slaves = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_egalitarian
+	guiding_ethic = "ethic_egalitarian"
+	visual_ethic = "slaves_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
 	unique = yes
 	support_multiplier = 0.75 # Not Mainstream
@@ -14,12 +15,11 @@ slaves = {
 		}
 	}
 	is_potential = {
-		days_passed > 360 # Need Time to Prepare
+		days_passed > 360 # 受压迫者需要一年时间准备
+		is_faction_allowed = yes
 		NOR = {
 			has_valid_civic = civic_all_slave
 			has_valid_civic = civic_slave_tradition
-			is_gestalt = yes
-			has_country_flag = suppress_vanilla_factions
 		}
 		any_owned_pop = {
 			is_enslaved = yes
@@ -120,6 +120,17 @@ slaves = {
 	}
 	
 	# 诉求
+		# Faction Outraged
+		inline_script = {
+			script = pop_faction_types/demand_faction_outraged
+			FLAG = galcom_resolution_passed_anti_xenoist
+		}
+		# Faction Pleased
+		inline_script = {
+			script = pop_faction_types/demand_faction_pleased
+			FLAG = galcom_resolution_passed_pro_xenoist
+		}
+		
 		demand = { # 低工时
 			title = "DEMAND_WORKHOUR_SOCIALISM"
 			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
@@ -200,25 +211,6 @@ slaves = {
 			}
 		}
 
-		demand = {
-			title = "FACTION_OUTRAGED_GC"
-			unfulfilled_title = "FACTION_OUTRAGED_GC"
-			desc = "FACTION_OUTRAGED_GC_DESC"
-			fulfilled_effect = -20
-			unfulfilled_effect = -0.001
-			potential = {
-				exists = owner
-				owner = {
-					has_country_flag = faction_xenophile_outraged_gc
-				}
-			}
-			trigger = {
-				owner = {
-					has_country_flag = faction_xenophile_outraged_gc
-				}
-			}
-		}
-	
 	on_create = {
 		pop_faction_event = {
 			id = factions.1

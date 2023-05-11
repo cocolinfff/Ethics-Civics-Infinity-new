@@ -4,7 +4,8 @@
 
 civil_official = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_authoritarian
+	guiding_ethic = "ethic_authoritarian"
+	visual_ethic = "civil_official_visual_ethic"
 	use_guiding_ethic_as_pop_filter = no
 	unique = yes
 	support_multiplier = 1
@@ -15,11 +16,7 @@ civil_official = {
 		}
 	}
 	is_potential = {
-		#days_passed > 60
-		NOR = {
-			is_gestalt = yes
-			has_country_flag = suppress_vanilla_factions
-		}
+		is_faction_allowed = yes
 	}
 	parameters = {
 		empire = {
@@ -129,6 +126,17 @@ civil_official = {
 	}
 
 	# 诉求
+		# Faction Outraged
+		inline_script = {
+			script = pop_faction_types/demand_faction_outraged
+			FLAG = galcom_resolution_passed_anti_xenoist
+		}
+		# Faction Pleased
+		inline_script = {
+			script = pop_faction_types/demand_faction_pleased
+			FLAG = galcom_resolution_passed_pro_xenoist
+		}
+		
 		demand = { # 精英政治 （官僚主义）
 			title = "DEMAND_GOVERNMENT_ELITE"
 			unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
@@ -379,24 +387,6 @@ civil_official = {
 			}
 		}
 
-		demand = {
-			title = "FACTION_OUTRAGED_GC"
-			unfulfilled_title = "FACTION_OUTRAGED_GC"
-			desc = "FACTION_OUTRAGED_GC_DESC"
-			fulfilled_effect = -20
-			unfulfilled_effect = -0.001
-			potential = {
-				exists = owner
-				owner = {
-					has_country_flag = faction_authoritarian_outraged_gc
-				}
-			}
-			trigger = {
-				owner = {
-					has_country_flag = faction_authoritarian_outraged_gc
-				}
-			}
-		}
 		#精英主义
 		demand = {
 			title = "TOTALITARIAN_ELITISM"
@@ -468,6 +458,14 @@ civil_official = {
 			}
 		}
 	
+		# 派系的委员会和领导人诉求
+		inline_script = {
+			script = "paragon/global_faction_demands"
+			ETHIC = ethic_authoritarian
+			ETHIC_FANATIC = ethic_fanatic_authoritarian
+			ETHIC_OPPOSED = ethic_egalitarian
+		} 
+
 	on_create = {
 		# pop_faction_event = { id = factions.1 }
 	}
