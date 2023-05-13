@@ -273,7 +273,6 @@ living_standard_academic_privilege = {
 
 #乌托邦
 living_standard_utopian = {
-	token = living_standard_utopian
 	name = living_standard_utopian
 	triggered_pop_modifier = {
 		potential = {
@@ -491,7 +490,253 @@ living_standard_utopian = {
 	}
 }
 
-#颓废
+#反乌托邦
+living_standard_dystopian_society = {
+	potential = {
+		exists = from
+		from = {
+			OR = {
+				is_gestalt = no
+				has_civic = civic_network_of_the_mind
+				has_civic = civic_network_of_the_mind_machine
+				has_civic = civic_network_of_the_mind_true_hive
+			}
+		}
+		from ={
+			NOR = {
+				is_egalitarian = yes
+				has_valid_civic = civic_social_democracy
+				has_valid_civic = civic_welfare_state
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
+			}
+		}
+	}
+	allow = {
+		hidden_trigger = {
+			exists = from
+		}
+		from ={
+			NOR = {
+				is_egalitarian = yes
+				has_valid_civic = civic_social_democracy
+				has_valid_civic = civic_welfare_state
+				has_policy_flag = tt_communist_road_4
+				has_policy_flag = tt_communist_road_5
+			}
+		}
+		OR = {
+			AND = {
+				custom_tooltip = {
+					fail_text = "requires_tr_future_economy"
+					from = {
+						OR = {
+							AND = {
+								OR = {
+									has_tradition = tr_future_economy
+									has_tradition = tr_future_economy_soc
+									has_tradition = tr_future_economy_state_owned_enterprises
+								}
+								has_technology = tech_ascension_theory
+							}
+							is_network_of_the_mind = yes
+							has_valid_civic = civic_ultimate_collective
+						}
+					}
+				}
+				from = {
+					is_egalitarian = no
+					OR = {
+						is_network_of_the_mind = yes
+						has_valid_civic = civic_ultimate_collective
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_assimilation
+					country = from
+				}
+			}
+		}
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			NAND = {
+				exists = owner
+				owner = { has_deficit = consumer_goods }
+			}
+		}
+		pop_cat_ruler_happiness = 0.25
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			OR = {
+				has_job = enforcer
+				has_job = colonist
+				has_job = telepath
+			}
+			NAND = {
+				exists = owner
+				owner = { has_deficit = consumer_goods }
+			}
+		}
+		pop_happiness = 0.1
+		pop_political_power = 1
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			OR = {
+				has_job = enforcer
+				has_job = colonist
+				has_job = telepath
+			}
+		}
+		pop_amenities_usage_mult = -0.3
+		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_very_high_decadent
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			is_pop_category = ruler
+		}
+		pop_amenities_usage_mult = 0.5
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			NOR = {
+				has_job = enforcer
+				has_job = colonist
+				has_job = telepath
+			}
+		}
+		pop_cat_specialist_happiness = -2
+		pop_cat_worker_happiness = -2
+		pop_cat_slave_happiness = -2
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			OR = {
+				AND = {
+					is_unemployed = yes
+					is_pop_category = ruler
+				}
+				AND = {
+					exists = owner
+					owner = { has_deficit = consumer_goods }
+				}
+			}
+		}
+		pop_happiness = -0.25
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			NOR = {
+				has_job = enforcer
+				has_job = colonist
+				has_job = telepath
+			}
+			OR = {
+				is_pop_category = specialist
+				is_pop_category = worker
+				is_pop_category = criminal
+				is_pop_category = slave
+			}
+		}
+		pop_amenities_usage_base = -1
+		pop_job_amenities_mult = -1
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			has_job = enforcer
+			has_job = telepath
+			OR = {
+				planet = { free_amenities < 0 }
+				AND = {
+					exists = owner
+					owner = { has_deficit = consumer_goods }
+				}
+			}
+		}
+		pop_happiness = -0.75
+	}
+
+	in_breach_of = {
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_greater_than_ourselves
+		}
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_balance_in_the_middle
+		}
+		{
+			trigger = {
+				is_gestalt = no
+			}
+			key = resolution_greatergood_universal_prosperity_mandate
+		}
+	}
+
+	pop_modifier = {
+		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_very_high_decadent
+		pop_category_specialists_consumer_goods_upkeep_add = @living_standard_luxuries_low_decadent
+		pop_category_workers_consumer_goods_upkeep_add = @living_standard_luxuries_low
+		pop_category_slave_consumer_goods_upkeep_add = @living_standard_luxuries_none
+		pop_cat_ruler_political_power = 9
+		pop_cat_specialist_political_power = -0.25
+		pop_cat_worker_political_power = -0.25
+	}
+
+	allow = {
+		hidden_trigger = { exists = from }
+		custom_tooltip = {
+			fail_text = is_slaves_tooltip
+			NOT = { has_citizenship_type = { country = from type = citizenship_slavery } }
+		}
+		custom_tooltip = {
+			fail_text = is_purged_not_neutered
+			if = {
+				limit = {
+					OR = {
+						has_citizenship_type = { country = from type = citizenship_purge_machine }
+						has_citizenship_type = { country = from type = citizenship_purge }
+					}
+				}
+				has_purge_type = { country = from type = purge_neutering }
+			}
+		}
+		custom_tooltip = {
+			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_assimilation
+					country = from
+				}
+			}
+		}
+	}
+
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+#纸醉金迷
 living_standard_decadent = {
 	name = living_standard_decadent
 
