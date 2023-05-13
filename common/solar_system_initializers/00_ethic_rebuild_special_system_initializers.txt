@@ -1,0 +1,234 @@
+# Chosen starting system
+the_chosen_home_initializer = {
+    class = sc_g
+
+    name = NAME_Aspharelle
+
+    flags = {
+        chosen_system
+        crisis_spawn_exclude
+    }
+
+    usage = misc_system_init
+    usage_odds = 0
+
+    prevent_anomalies = yes
+
+    planet = {
+        class = star
+        orbit_distance = 0
+    }
+
+
+    #3 gaia worlds!
+
+    planet = {
+        class = pc_molten
+        orbit_distance = 42
+        orbit_angle = 42
+        size = 10
+        has_ring = no
+    }
+
+    planet = {
+        class = pc_toxic
+        orbit_distance = 25
+        orbit_angle = 142
+        size = 18
+        has_ring = no
+    }
+
+    planet = {
+        class = pc_gaia
+        orbit_distance = 32
+        orbit_angle = 69
+        size = 30
+        has_ring = yes
+
+        moon = {
+            class = pc_barren_cold
+            size = 5
+            orbit_distance = 12
+            orbit_angle = 40
+            has_ring = no
+        }
+
+        init_effect = {
+            create_species = {
+                name = NAME_Charynoi
+                class = random_non_machine
+
+                traits = {
+                    ideal_planet_class = pc_gaia
+                    trait = random_traits
+                }
+
+                effect = {
+                    modify_species = {
+                        base = this
+                        remove_trait = trait_pc_gaia_preference
+                        add_trait = trait_pc_gaia_preference_terraforming
+
+                        effect = {
+                            save_event_target_as = chosen_species
+                        }
+                    }
+                }
+            }
+            create_country = {
+                species = event_target:chosen_species
+                name = NAME_The_Chosen
+                adjective = NAME_ADJ_Chosen
+                type = default
+                origin = origin_life_seeded
+                ethos = {
+                    ethic = ethic_fanatic_xenophobe
+                    ethic = ethic_fanatic_militarist
+                    ethic = ethic_spiritualist
+                }
+                civics = {
+                    civic = civic_fanatic_purifiers
+                    civic = civic_The_Druid_Way
+                    civic = civic_exalted_priesthood
+                }
+                authority = random
+                effect = {
+                    save_global_event_target_as = chosen_empire
+                    set_country_flag = chosen_empire
+                    give_starting_resources_effect = yes
+                    create_leader = {
+                        class = governor
+                        species = event_target:chosen_species
+                    }
+                    while = {
+                        count = 3
+                        create_leader = {
+                            class = scientist
+                            species = event_target:chosen_species
+                        }
+                    }
+                }
+                day_zero_contact = no #otherwise enclaves and FEs get instant comms
+            }
+            create_colony = {
+                owner = event_target:chosen_empire
+            }
+            generate_start_deposits_and_blockers = yes
+            clear_blockers = yes
+            generate_start_buildings_and_districts = yes
+            generate_start_pops = yes
+        }
+    }
+
+    planet = {
+        class = pc_gaia
+        orbit_distance = 32
+        orbit_angle = 142
+        size = 25
+        has_ring = no
+
+        init_effect = {
+            create_colony = {
+                owner = event_target:chosen_empire
+            }
+            fire_on_action = { on_action = on_initialize_advanced_colony }
+        }
+    }
+
+    planet = {
+        class = pc_gas_giant
+        orbit_distance = 49
+        orbit_angle = 99
+        size = 30
+        has_ring = yes
+
+        moon = {
+            class = pc_gaia
+            size = 18
+            orbit_distance = 17
+            orbit_angle = 75
+            has_ring = no
+
+            init_effect = {
+                create_colony = {
+                    owner = event_target:chosen_empire
+                }
+                fire_on_action = { on_action = on_initialize_advanced_colony }
+            }
+        }
+    }
+
+    planet = {
+        class = pc_barren_cold
+        orbit_distance = 87
+        orbit_angle = 99
+        size = 10
+        has_ring = no
+        moon = {
+            class = pc_barren_cold
+            size = 5
+            orbit_distance = 12
+            orbit_angle = 40
+            has_ring = no
+        }
+    }
+
+    init_effect = {
+        set_spawn_system_batch = begin
+        spawn_system = {
+            min_distance >= 80
+            max_distance <= 100
+            direction = rimwards
+            initializer = the_chosen_escapee_initializer
+            hyperlane = no
+        }
+        spawn_system = {
+            min_distance >= 15
+            max_distance <= 30
+            initializer = the_chosen_resources_initializer
+            hyperlane = no
+
+            effect = {
+                add_hyperlane = {
+                    from = this
+                    to = prev
+                }
+                save_event_target_as = first_neighbor
+            }
+        }
+        while = {
+            count = 2
+            spawn_system = {
+                min_distance >= 8
+                max_distance <= 20
+                initializer = random
+                hyperlane = no
+                effect = {
+                    set_star_flag = chosen_system
+                    set_star_flag = crisis_spawn_exclude
+                    add_hyperlane = {
+                        from = this
+                        to = prev
+                    }
+                    add_hyperlane = {
+                        from = this
+                        to = event_target:first_neighbor
+                    }
+                }
+            }
+        }
+        set_spawn_system_batch = end
+
+        generate_home_system_resources = yes
+        event_target:chosen_empire = {
+            country_event = { id = game_start.6 } #advanced start init
+        }
+
+        create_starbase = {
+            size = starbase_starport
+            module = shipyard
+            building = crew_quarters
+            owner = event_target:chosen_empire
+        }
+    }
+}
