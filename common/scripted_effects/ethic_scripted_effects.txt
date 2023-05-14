@@ -235,130 +235,116 @@ kill_one_owner_species_pop = {
 	}
 }
 
-build_city = {
+build_bureaucratic_building = {
 	if = {
 		limit = {
 			planet = {
+				allow_bureaucratic_building = yes
+				free_building_slots > 0
+			}
+			owner = {
+				is_regular_empire = yes
 				OR = {
-					uses_district_set = standard
-					uses_district_set = hive_world
-					uses_district_set = machine_world
-					uses_district_set = shattered_ring_world
-				}
-			}
-			owner = { is_regular_empire = yes }
-		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_city
-			}
-		}
-	}
-	if = {
-		limit = {
-			planet = {
-				OR = {
-					uses_district_set = standard
-					uses_district_set = hive_world
-					uses_district_set = machine_world
-					uses_district_set = shattered_ring_world
-				}
-			}
-			owner = { is_hive_empire = yes }
-		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_hive
-			}
-		}
-	}
-	if = {
-		limit = {
-			planet = {
-				OR = {
-					uses_district_set = standard
-					uses_district_set = hive_world
-					uses_district_set = machine_world
-					uses_district_set = shattered_ring_world
-				}
-			}
-			owner = { is_machine_empire = yes }
-		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_nexus
-			}
-		}
-	}
-	if = {
-		limit = {
-			planet = {
-				OR = {
-					uses_district_set = city_world
-					uses_district_set = pdecocity
-					uses_district_set = pdmilarc
-					uses_district_set = pdcorpoarc
+					is_adminless_country = no
+					is_clean_government_country = yes
 				}
 			}
 		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_arcology_housing
-			}
-		}
+		add_building = building_bureaucratic_1
 	}
-	if = {
+	else_if = {
 		limit = {
 			planet = {
-				uses_district_set = habitat
+				allow_bureaucratic_building = yes
+				free_building_slots = 0
+				has_building = building_bureaucratic_1
+			}
+			owner = {
+				is_regular_empire = yes
+				has_technology = tech_colonial_bureaucracy
+				OR = {
+					is_adminless_country = no
+					is_clean_government_country = yes
+				}
 			}
 		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_hab_housing
-			}
-		}
+		remove_building = building_bureaucratic_1
+		add_building = building_bureaucratic_2
 	}
-	if = {
+	else_if = {
 		limit = {
-			planet = { uses_district_set = ring_world }
-			owner = { is_regular_empire = yes }
-		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_rw_city
+			planet = {
+				allow_bureaucratic_building = yes
+				free_building_slots = 0
+				has_building = building_bureaucratic_2
+				NOT = { has_building = building_bureaucratic_1 }
+			}
+			owner = {
+				is_regular_empire = yes
+				has_technology = tech_galactic_bureaucracy
+				OR = {
+					is_adminless_country = no
+					is_clean_government_country = yes
+				}
 			}
 		}
+		remove_building = building_bureaucratic_2
+		add_building = building_bureaucratic_3
 	}
-	if = {
+	else_if = {
 		limit = {
-			planet = { uses_district_set = ring_world }
-			owner = { is_hive_empire = yes }
-		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_rw_hive
+			planet = {
+				free_building_slots > 0
+				num_buildings = { TYPE = building_planet_network_node value < 7 }
+			}
+			owner = {
+				has_valid_civic = civic_OGAS
+				NOT = { has_technology = tech_sapient_ai }
 			}
 		}
+		add_building = building_planet_network_node
 	}
-	if = {
+	else_if = {
 		limit = {
-			planet = { uses_district_set = ring_world }
-			owner = { is_machine_empire = yes }
-		}
-		while = {
-			count = 1
-			add_district_and_planet_size_if_needed_effect = {
-				district = district_rw_nexus
+			planet = {
+				free_building_slots > 0
+				NOT = { has_building = building_planet_network_node }
+				num_buildings = { TYPE = building_planetary_management_center value < 7 }
+			}
+			owner = {
+				has_valid_civic = civic_OGAS
+				has_technology = tech_sapient_ai
 			}
 		}
+		add_building = building_planetary_management_center
+	}
+	else_if = {
+		limit = {
+			planet = {
+				has_building = building_planet_network_node
+			}
+			owner = {
+				has_valid_civic = civic_OGAS
+				has_technology = tech_sapient_ai
+			}
+		}
+		remove_building = building_planet_network_node
+		add_building = building_planetary_management_center
+	}
+	else_if = {
+		limit = {
+			planet = {
+				free_building_slots > 0
+				NOT = { has_building = building_information_tower }
+			}
+			owner = {
+				OR = {
+					has_valid_civic = civic_cybercap
+					has_valid_civic = civic_corporate_cybercap
+				}
+			}
+		}
+		add_building = building_information_tower
 	}
 }
 
