@@ -1,0 +1,264 @@
+namespace = ethic_direct_democratic_councilor
+
+# 设置直接民主的委员会
+country_event = {
+    id = ethic_direct_democratic_councilor.1
+    hide_window = yes
+    trigger = {
+        is_direct_democratic = yes
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        force_add_civic = civic_debug
+        force_remove_civic = civic_debug
+        country_create_direct_democratic_councilor = {
+            CLASS = governor
+            COUNCIL_POS = councilor_direct_democratic_governor
+            DESC = councilor_direct_democratic_governor_desc
+        }
+        country_create_direct_democratic_councilor = {
+            CLASS = scientist
+            COUNCIL_POS = councilor_direct_democratic_scientist
+            DESC = councilor_direct_democratic_scientist_desc
+        }
+        country_create_direct_democratic_councilor = {
+            CLASS = admiral
+            COUNCIL_POS = councilor_direct_democratic_admiral
+            DESC = councilor_direct_democratic_admiral_desc
+        }
+        country_create_direct_democratic_councilor = {
+            CLASS = general
+            COUNCIL_POS = councilor_direct_democratic_general
+            DESC = councilor_direct_democratic_general_desc
+        }
+        random_owned_leader = {
+            limit = {
+                leader_class = governor
+                is_councilor = no
+                is_ruler = no
+            }
+            change_leader_portrait = from.species
+        }
+        random_owned_leader = {
+            limit = {
+                leader_class = admiral
+                is_councilor = no
+                is_ruler = no
+            }
+            change_leader_portrait = from.species
+        }
+    }
+}
+
+# 委员会每提升四级
+country_event = {
+    id = ethic_direct_democratic_councilor.2
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_paragon_dlc = yes
+        is_direct_democratic = yes
+        FROM = {
+            is_ruler = no
+            is_councilor = yes
+        }
+    }
+
+    immediate = {
+        FROM = {
+            set_gestalt_node_protrait_effect = yes
+        }
+    }
+}
+
+# 委员会换届（也就是寄了）
+# This = Country
+# From = Leader
+country_event = {
+    id = ethic_direct_democratic_councilor.3
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        from = {
+            OR = {
+                is_councilor_type = councilor_direct_democratic_governor
+                is_councilor_type = councilor_direct_democratic_scientist
+                is_councilor_type = councilor_direct_democratic_admiral
+                is_councilor_type = councilor_direct_democratic_general
+            }
+        }
+    }
+
+    immediate = {
+        from = {
+            switch = {
+                trigger = is_councilor_type
+                councilor_direct_democratic_governor = {
+                    root = {
+                        country_create_direct_democratic_councilor = {
+                            CLASS = governor
+                            COUNCIL_POS = councilor_direct_democratic_governor
+                            DESC = councilor_direct_democratic_governor_desc
+                        }
+                    }
+                }
+                councilor_direct_democratic_scientist = {
+                    root = {
+                        country_create_direct_democratic_councilor = {
+                            CLASS = scientist
+                            COUNCIL_POS = councilor_direct_democratic_scientist
+                            DESC = councilor_direct_democratic_scientist_desc
+                        }
+                    }
+                }
+                councilor_direct_democratic_admiral = {
+                    root = {
+                        country_create_direct_democratic_councilor = {
+                            CLASS = admiral
+                            COUNCIL_POS = councilor_direct_democratic_admiral
+                            DESC = councilor_direct_democratic_admiral_desc
+                        }
+                    }
+                }
+                councilor_direct_democratic_general = {
+                    root = {
+                        country_create_direct_democratic_councilor = {
+                            CLASS = general
+                            COUNCIL_POS = councilor_direct_democratic_general
+                            DESC = councilor_direct_democratic_general_desc
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+# 转政体时移除委员会
+event = {
+    id = ethic_direct_democratic_councilor.4
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        any_country = {
+            is_direct_democratic = no
+            any_owned_leader = {
+                is_councilor = yes
+                OR = {
+                    is_councilor_type = councilor_direct_democratic_governor
+                    is_councilor_type = councilor_direct_democratic_scientist
+                    is_councilor_type = councilor_direct_democratic_admiral
+                    is_councilor_type = councilor_direct_democratic_general
+                }
+            }
+        }
+    }
+
+    immediate = {
+        every_country = {
+            limit = { is_direct_democratic = no }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            random_owned_leader = {
+                limit = {
+                    is_councilor = yes
+                    is_councilor_type = councilor_direct_democratic_governor
+                }
+                kill_leader = { show_notification = no }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_councilor = yes
+                    is_councilor_type = councilor_direct_democratic_scientist
+                }
+                kill_leader = { show_notification = no }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_councilor = yes
+                    is_councilor_type = councilor_direct_democratic_admiral
+                }
+                kill_leader = { show_notification = no }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_councilor = yes
+                    is_councilor_type = councilor_direct_democratic_general
+                }
+                kill_leader = { show_notification = no }
+            }
+        }
+    }
+}
+
+# 转政体时设置委员会
+event = {
+    id = ethic_direct_democratic_councilor.5
+    hide_window = yes
+    trigger = {
+        any_country = {
+            is_direct_democratic = yes
+            any_owned_leader = {
+                is_councilor = yes
+                NOR = {
+                    is_councilor_type = councilor_direct_democratic_governor
+                    is_councilor_type = councilor_direct_democratic_scientist
+                    is_councilor_type = councilor_direct_democratic_admiral
+                    is_councilor_type = councilor_direct_democratic_general
+                }
+            }
+        }
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        every_country = {
+            limit = { is_direct_democratic = yes }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            country_create_direct_democratic_councilor = {
+                CLASS = governor
+                COUNCIL_POS = councilor_direct_democratic_governor
+                DESC = councilor_direct_democratic_governor_desc
+            }
+            country_create_direct_democratic_councilor = {
+                CLASS = scientist
+                COUNCIL_POS = councilor_direct_democratic_scientist
+                DESC = councilor_direct_democratic_scientist_desc
+            }
+            country_create_direct_democratic_councilor = {
+                CLASS = admiral
+                COUNCIL_POS = councilor_direct_democratic_admiral
+                DESC = councilor_direct_democratic_admiral_desc
+            }
+            country_create_direct_democratic_councilor = {
+                CLASS = general
+                COUNCIL_POS = councilor_direct_democratic_general
+                DESC = councilor_direct_democratic_general_desc
+            }
+            random_owned_leader = {
+                limit = {
+                    leader_class = governor
+                    is_councilor = no
+                    is_ruler = no
+                }
+                change_leader_portrait = from.species
+            }
+            random_owned_leader = {
+                limit = {
+                    leader_class = admiral
+                    is_councilor = no
+                    is_ruler = no
+                }
+                change_leader_portrait = from.species
+            }
+        }
+    }
+}

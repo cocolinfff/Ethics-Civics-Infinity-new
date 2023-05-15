@@ -1004,3 +1004,82 @@ can_modify_species = {
 		is_same_species = root
 	}
 }
+
+#是否能够更换内阁
+# this = country
+can_country_change_councilors = {
+	is_gestalt = no
+	NOT = { has_authority = auth_direct_democratic }
+}
+
+#能否获得额外内阁席位
+# this = country
+has_extra_council_position = {
+	country_has_extra_council_position = yes
+	NOT = { has_authority = auth_direct_democratic }
+}
+
+#计入领袖上限
+# this = leader
+should_count_towards_leader_cap = {
+	NOR = {
+		leader_class = envoy
+		AND = {
+			owner = {
+				OR = {
+					is_gestalt = yes
+					has_authority = auth_direct_democratic
+				}
+			}
+			is_councilor = yes
+			# We count all rulers as well
+			NOT = { is_ruler = yes }
+		}
+	}
+}
+
+#享受工资的领袖
+#This = leader
+should_pay_for_leader_upkeep = {
+	NOT = {
+		AND = {
+			exists = owner
+			owner = {
+				OR = {
+					is_gestalt = yes
+					has_authority = auth_direct_democratic
+				}
+			}
+			is_councilor = yes
+		}
+	}
+}
+
+#领袖能获得理事会特质吗
+# this = leader
+can_leader_get_council_trait = {
+	NAND = {
+		exists = owner
+		owner = {
+			OR = {
+				is_gestalt = yes
+				has_authority = auth_direct_democratic
+			}
+		}
+		is_councilor = no
+	}
+}
+
+#领袖能获得子类特质吗
+# this = leader
+can_leader_get_subclass_trait = {
+	NAND = {
+		exists = owner
+		OR = {
+			is_gestalt = yes
+			has_authority = auth_direct_democratic
+		}
+		is_councilor = yes
+	}
+	has_any_subclass = no
+}
