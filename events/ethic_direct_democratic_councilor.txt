@@ -1,6 +1,6 @@
 namespace = ethic_direct_democratic_councilor
 
-# 设置直接民主的委员会
+# 开局设置直接民主的委员会
 country_event = {
     id = ethic_direct_democratic_councilor.1
     hide_window = yes
@@ -14,6 +14,20 @@ country_event = {
         force_add_civic = civic_debug
         force_remove_civic = civic_debug
         country_create_all_direct_democratic_councilor = yes
+        every_owned_leader = {
+            limit = {
+                OR = {
+                    leader_class = governor
+                    leader_class = admiral
+                }
+                is_councilor = no
+                is_ruler = no
+            }
+            change_leader_portrait = species
+            remove_leader_flag = direct_democratic_councilor
+        }
+        direct_democratic_councilor_start_skill = yes
+        set_country_flag = ethic_direct_democratic
     }
 }
 
@@ -96,12 +110,17 @@ country_event = {
     }
 }
 
+#转政体时的判定
 country_event = {
     id = ethic_direct_democratic_councilor.4
     hide_window = yes
     is_triggered_only = yes
     immediate = {
         set_country_flag = government_changed
+        if = {
+            limit = { is_direct_democratic = yes }
+            set_country_flag = ethic_direct_democratic
+        }
     }
 }
 
@@ -115,6 +134,10 @@ country_event = {
         has_country_flag = government_changed
     }
 
+    trigger = {
+        has_country_flag = government_changed
+    }
+
     immediate = {
         if = {
             limit = { is_direct_democratic = no }
@@ -122,14 +145,36 @@ country_event = {
                 limit = { is_councilor_direct_democratic = yes }
                 kill_leader = { show_notification = no fire = yes }
             }
-        } else = {
+            random_owned_leader = {
+                limit = {
+                    leader_class = scientist
+                    is_ruler = no
+                }
+                set_council_position = councilor_research
+            }
+            random_owned_leader = {
+                limit = {
+                    OR = {
+                        leader_class = admiral
+                        leader_class = general
+                    }
+                    is_ruler = no
+                }
+                set_council_position = councilor_defense
+            }
+            remove_country_flag = ethic_direct_democratic
+        }
+        else_if = {
+            limit = {
+                is_direct_democratic = yes
+                NOT = { has_country_flag = ethic_direct_democratic }
+            }
             force_add_civic = civic_debug
             force_remove_civic = civic_debug
             country_create_all_direct_democratic_councilor = yes
+            direct_democratic_councilor_start_skill = yes
+            set_country_flag = ethic_direct_democratic
         }
-        force_add_civic = civic_debug
-        force_remove_civic = civic_debug
         remove_country_flag = government_changed
     }
 }
-
