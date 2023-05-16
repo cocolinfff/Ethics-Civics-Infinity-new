@@ -13,35 +13,7 @@ country_event = {
     immediate = {
         force_add_civic = civic_debug
         force_remove_civic = civic_debug
-        country_create_direct_democratic_councilor = {
-            CLASS = governor
-            COUNCIL_POS = councilor_direct_democratic_governor
-            DESC = councilor_direct_democratic_governor_desc
-        }
-        country_create_direct_democratic_councilor = {
-            CLASS = scientist
-            COUNCIL_POS = councilor_direct_democratic_scientist
-            DESC = councilor_direct_democratic_scientist_desc
-        }
-        country_create_direct_democratic_councilor = {
-            CLASS = admiral
-            COUNCIL_POS = councilor_direct_democratic_admiral
-            DESC = councilor_direct_democratic_admiral_desc
-        }
-        country_create_direct_democratic_councilor = {
-            CLASS = general
-            COUNCIL_POS = councilor_direct_democratic_general
-            DESC = councilor_direct_democratic_general_desc
-        }
-        random_owned_leader = {
-            limit = {
-                has_leader_flag = direct_democratic_councilor
-                is_councilor = no
-                is_ruler = no
-            }
-            change_leader_portrait = species
-            remove_leader_flag = direct_democratic_councilor
-        }
+        country_create_all_direct_democratic_councilor = yes
     }
 }
 
@@ -76,14 +48,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        from = {
-            OR = {
-                is_councilor_type = councilor_direct_democratic_governor
-                is_councilor_type = councilor_direct_democratic_scientist
-                is_councilor_type = councilor_direct_democratic_admiral
-                is_councilor_type = councilor_direct_democratic_general
-            }
-        }
+        from = { is_councilor_direct_democratic = yes }
     }
 
     immediate = {
@@ -131,98 +96,40 @@ country_event = {
     }
 }
 
-# 转政体时移除委员会
-event = {
+country_event = {
     id = ethic_direct_democratic_councilor.4
     hide_window = yes
-
     is_triggered_only = yes
-
-    trigger = {
-        any_country = {
-            is_direct_democratic = no
-            any_owned_leader = {
-                is_councilor = yes
-                OR = {
-                    is_councilor_type = councilor_direct_democratic_governor
-                    is_councilor_type = councilor_direct_democratic_scientist
-                    is_councilor_type = councilor_direct_democratic_admiral
-                    is_councilor_type = councilor_direct_democratic_general
-                }
-            }
-        }
-    }
-
     immediate = {
-        every_country = {
-            limit = { is_direct_democratic = no }
-            random_owned_leader = {
-                limit = {
-                    has_leader_flag = direct_democratic_councilor
-                }
-                kill_leader = { show_notification = no }
-            }
-            force_add_civic = civic_debug
-            force_remove_civic = civic_debug
-        }
+        set_country_flag = government_changed
     }
 }
 
 # 转政体时设置委员会
-event = {
+country_event = {
     id = ethic_direct_democratic_councilor.5
     hide_window = yes
-    trigger = {
-        any_country = {
-            is_direct_democratic = yes
-            any_owned_leader = {
-                is_councilor = yes
-                NOR = {
-                    is_councilor_type = councilor_direct_democratic_governor
-                    is_councilor_type = councilor_direct_democratic_scientist
-                    is_councilor_type = councilor_direct_democratic_admiral
-                    is_councilor_type = councilor_direct_democratic_general
-                }
-            }
-        }
-    }
-
     is_triggered_only = yes
 
+    trigger = {
+        has_country_flag = government_changed
+    }
+
     immediate = {
-        every_country = {
-            limit = { is_direct_democratic = yes }
+        if = {
+            limit = { is_direct_democratic = no }
+            every_owned_leader = {
+                limit = { is_councilor_direct_democratic = yes }
+                kill_leader = { show_notification = no fire = yes }
+            }
+        } else = {
             force_add_civic = civic_debug
             force_remove_civic = civic_debug
-            country_create_direct_democratic_councilor = {
-                CLASS = governor
-                COUNCIL_POS = councilor_direct_democratic_governor
-                DESC = councilor_direct_democratic_governor_desc
-            }
-            country_create_direct_democratic_councilor = {
-                CLASS = scientist
-                COUNCIL_POS = councilor_direct_democratic_scientist
-                DESC = councilor_direct_democratic_scientist_desc
-            }
-            country_create_direct_democratic_councilor = {
-                CLASS = admiral
-                COUNCIL_POS = councilor_direct_democratic_admiral
-                DESC = councilor_direct_democratic_admiral_desc
-            }
-            country_create_direct_democratic_councilor = {
-                CLASS = general
-                COUNCIL_POS = councilor_direct_democratic_general
-                DESC = councilor_direct_democratic_general_desc
-            }
-            random_owned_leader = {
-                limit = {
-                    has_leader_flag = direct_democratic_councilor
-                    is_councilor = no
-                    is_ruler = no
-                }
-                change_leader_portrait = species
-                remove_leader_flag = direct_democratic_councilor
-            }
+            country_create_all_direct_democratic_councilor = yes
         }
+        force_add_civic = civic_debug
+        force_remove_civic = civic_debug
+        remove_country_flag = government_changed
     }
 }
+
