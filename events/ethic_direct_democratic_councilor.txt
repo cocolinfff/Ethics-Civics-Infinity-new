@@ -1,6 +1,6 @@
 namespace = ethic_direct_democratic_councilor
 
-# 设置直接民主的委员会
+# 开局设置直接民主的委员会
 country_event = {
     id = ethic_direct_democratic_councilor.1
     hide_window = yes
@@ -14,6 +14,7 @@ country_event = {
         force_add_civic = civic_debug
         force_remove_civic = civic_debug
         country_create_all_direct_democratic_councilor = yes
+        set_country_flag = ethic_direct_democratic
     }
 }
 
@@ -96,12 +97,17 @@ country_event = {
     }
 }
 
+#转政体时的判定
 country_event = {
     id = ethic_direct_democratic_councilor.4
     hide_window = yes
     is_triggered_only = yes
     immediate = {
         set_country_flag = government_changed
+        if = {
+            limit = { is_direct_democratic = yes }
+            set_country_flag = ethic_direct_democratic
+        }
     }
 }
 
@@ -123,13 +129,16 @@ country_event = {
                 kill_leader = { show_notification = no fire = yes }
             }
         }
-        else = {
+        else_if = {
+            limit = {
+                is_direct_democratic = yes
+                NOT = { has_country_flag = ethic_direct_democratic }
+            }
             force_add_civic = civic_debug
             force_remove_civic = civic_debug
             country_create_all_direct_democratic_councilor = yes
+            set_country_flag = ethic_direct_democratic
         }
-        force_add_civic = civic_debug
-        force_remove_civic = civic_debug
         remove_country_flag = government_changed
     }
 }
