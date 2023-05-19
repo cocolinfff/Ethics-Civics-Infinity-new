@@ -313,6 +313,7 @@ wg_force_ideology = {
 			}
 			custom_tooltip = wg_force_ideology_accept_3
 		}
+		custom_tooltip = wg_independence_accept
 		hidden_effect = {
 			from = {
 				if = {
@@ -332,19 +333,40 @@ wg_force_ideology = {
 						force_add_civic = civic_debug
 						force_remove_civic = civic_debug
 						country_create_all_direct_democratic_councilor = yes
+						if = {
+							limit = { NOT = { has_country_flag = ethic_direct_democratic } }
+							set_country_flag = ethic_direct_democratic
+						}
 					}
 				}
 			}
-			root = {
-				if = {
-					limit = {
-						is_direct_democratic = yes
-						from = { NOT = { has_country_flag = ethic_direct_democratic } }
-					}
-					from = {
-						set_country_flag = ethic_direct_democratic
+			every_country = {
+				limit = {
+					AND = {
+						is_subject = yes
+						exists = overlord
+						overlord = { is_same_value = from }
 					}
 				}
+				impose_ideology_effect = yes
+				if = {
+					limit = {
+						root = { is_direct_democratic = yes }
+					}
+					force_add_civic = civic_debug
+					force_remove_civic = civic_debug
+					country_create_all_direct_democratic_councilor = yes
+				}
+				if = {
+					limit = {
+						root = { is_direct_democratic = yes }
+						NOT = { has_country_flag = ethic_direct_democratic }
+					}
+					set_country_flag = ethic_direct_democratic
+				}
+				root = { add_opinion_modifier = { modifier = opinion_we_liberated who = prev } }
+				add_opinion_modifier = { modifier = opinion_liberated_us who = root }
+				set_subject_of = { who = none }
 			}
 			if = {
 				limit = { from = { has_been_declared_crisis = no } }
@@ -409,14 +431,6 @@ wg_force_ideology = {
 						modifier = newly_subjugated_loyalty
 						years = 5
 					}
-				}
-			}
-			from = {
-				every_subject = {
-					limit = {
-						is_gestalt = no
-					}
-					impose_ideology_effect = yes
 				}
 			}
 		}
