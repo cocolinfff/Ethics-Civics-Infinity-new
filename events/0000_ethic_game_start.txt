@@ -1,0 +1,46 @@
+namespace = game_start
+
+country_event = {
+    id = game_start.60
+    hide_window = yes
+    trigger = {
+        is_country_type = default
+        #selectable = { host_has_dlc = "Galactic Paragons" }
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        set_variable = {
+            which = paragon_chance_negative
+            value = 0
+        }
+
+        # Give Empire the starting Council Agenda, and progress it to about 1-2 years from finishing.
+        if = {
+            limit = { is_gestalt = yes }
+            set_council_agenda = agenda_infinite_opportunities_gestalt
+        }
+        else_if = {
+            limit = { has_authority = auth_direct_democratic }
+            set_council_agenda = agenda_infinite_opportunities
+        }
+        else_if = {
+            limit = {
+                is_gestalt = no
+                NOT = { has_authority = auth_direct_democratic }
+            }
+            set_council_agenda = agenda_infinite_opportunities
+
+            # Prefer a Scientist as Head of Research (otherwise picks your Home planet Governor).
+            random_owned_leader = {
+                limit = {
+                    leader_class = scientist
+                    is_ruler = no
+                }
+                set_council_position = councilor_research
+            }
+        }
+        add_council_agenda_progress = 6000
+    }
+}
