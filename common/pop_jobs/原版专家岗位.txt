@@ -1724,7 +1724,7 @@ telepath = {
 		country_naval_cap_add = 7
 	}
 	weight = {
-		weight = @specialist_job_weight
+		weight = 20
 		modifier = {
 			# 可控的动态权重
 			factOR = value:job_weights_modifier|JOB|telepath|RESOURCE|unity|
@@ -1777,38 +1777,6 @@ entertainer = {
 		produces = {
 			unity = 1
 		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_art_country
-				}
-			}
-			unity = 1
-			society_research = 1
-		}
-		#无产阶级文化
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_proletarian_culture
-				}
-			}
-			unity = 1
-		}
-		#未来艺术
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_futuristic_art
-				}
-			}
-			physics_research = 2
-			engineering_research = 2
-			society_research = 2
-		}
 		#和平主义
 		produces = {
 			trigger = {
@@ -1824,26 +1792,6 @@ entertainer = {
 				exists = owner
 				owner = {
 					has_ethic = ethic_pacifist
-				}
-			}
-			unity = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = {
-						has_valid_civic = civic_proletarian_culture
-					}
-				}
-			}
-			consumer_goods = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_commercial_entertainment
 				}
 			}
 			unity = 1
@@ -1946,7 +1894,7 @@ entertainer = {
 		}
 		modifier = {
 			# 可控的动态权重
-			factOR = 100
+			factOR = 10
 			exists = owner
 			owner = {
 				has_valid_civic = civic_eternal_jihad
@@ -2020,6 +1968,14 @@ duelist = {
 			unity = 3
 		}
 		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_valid_civic = civic_proletarian_culture
+					}
+				}
+			}
 			alloys = 0.5
 		}
 	}
@@ -2029,6 +1985,81 @@ duelist = {
 		}
 		planet_amenities_add = 12
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_commercial_entertainment
+			}
+		}
+		modifier = {
+			trade_value_add = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_commercial_entertainment
+					has_valid_civic = civic_proletarian_culture
+				}
+			}
+		}
+		planet_amenities_add = -2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_futuristic_art
+			}
+		}
+		planet_amenities_add = -2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_pleasure_seekers
+					has_valid_civic = civic_corporate_hedonism
+				}
+			}
+		}
+		pop_growth_speed = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+			}
+		}
+		modifier = {
+			job_professional_star_fans_add = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+			}
+		}
+		modifier = {
+			job_professional_star_fans_add = 1
+		}
+		mult = planet.value:count_job|JOB|manager|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_corporate_hedonism" }
+		}
+
+		trade_value_add = @councilor_corporate_hedonism_entertainer_trade_value
+		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_trade_mult|TYPE|councilor_corporate_hedonism|
 	}
 	country_modifier = {
 		country_naval_cap_add = 2
@@ -2062,6 +2093,14 @@ duelist = {
 			is_enslaved = yes
 			has_slavery_type = {
 				type = slavery_military
+			}
+		}
+		modifier = {
+			# 可控的动态权重
+			factOR = 10
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
 			}
 		}
 		modifier = {
