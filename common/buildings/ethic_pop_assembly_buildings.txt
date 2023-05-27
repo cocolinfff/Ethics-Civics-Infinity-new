@@ -1162,8 +1162,8 @@ building_toxic_bath_machine = {
 
 #医学研究所
 building_clinic = {
-	base_buildtime = @b2_time
-	can_build = no
+	base_buildtime = @b1_time
+	base_cap_amount = 1
 	category = pop_assembly
 	potential = {
 		owner = {
@@ -1237,11 +1237,54 @@ building_clinic = {
 	triggered_desc = {
 		text = job_healthcare_effect_desc
 	}
+
+	on_repaired = {
+		if = {
+			limit = {
+				planet.owner = {
+					has_event_chain = payback_out_of_warranty_chain
+				}
+			}
+			random_list = {
+				50 = { # still broken
+					planet.owner = {
+						country_event = { id = origin.4302 }
+					}
+					modifier = {
+						factor = 0
+						planet.owner = { has_technology = tech_frontier_health }
+					}
+				}
+				20 = { # repaired
+					planet.owner = {
+						country_event = { id = origin.4301 }
+					}
+					modifier = {
+						factor = 2
+						planet.owner = { num_research_agreements = 1 }
+					}
+					modifier = {
+						factor = 3
+						planet.owner = { num_research_agreements = 2 }
+					}
+					modifier = {
+						factor = 4
+						planet.owner = { num_research_agreements >= 3 }
+					}
+				}
+				10 = { # broken beyond repair
+					planet = {
+						planet_event = { id = origin.4303 }
+					}
+				}
+			}
+		}
+	}
 }
 
 #基因诊所
 building_hospital = {
-	base_buildtime = @b3_time
+	base_buildtime = @b2_time
 	can_build = no
 	category = pop_assembly
 	allow = {
@@ -1330,8 +1373,8 @@ building_hospital = {
 
 #基因医院
 building_medical_center = {
-	base_buildtime = @b1_time
-	base_cap_amount = 1
+	base_buildtime = @b3_time
+	can_build = no
 	category = pop_assembly
 	potential = {
 		has_building = building_hospital
