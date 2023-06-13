@@ -632,12 +632,7 @@ building_holo_theatres = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				NOR = {
-					has_valid_civic = civic_warrior_culture
-					has_valid_civic = civic_sparta_spirit
-				}
-			}
+			owner = { is_duelist_country = no }
 		}
 		modifier = {
 			job_entertainer_add = @b1_jobs
@@ -647,12 +642,7 @@ building_holo_theatres = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_warrior_culture
-					has_valid_civic = civic_sparta_spirit
-				}
-			}
+			owner = { is_duelist_country = yes }
 		}
 		modifier = {
 			job_duelist_add = @b1_jobs
@@ -740,12 +730,7 @@ building_hyper_entertainment_forum = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				NOR = {
-					has_valid_civic = civic_warrior_culture
-					has_valid_civic = civic_sparta_spirit
-				}
-			}
+			owner = {is_duelist_country = no }
 		}
 		modifier = {
 			job_entertainer_add = @b2_jobs
@@ -755,12 +740,7 @@ building_hyper_entertainment_forum = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_warrior_culture
-					has_valid_civic = civic_sparta_spirit
-				}
-			}
+			owner = {is_duelist_country = yes }
 		}
 		modifier = {
 			job_duelist_add = @b2_jobs
@@ -807,163 +787,6 @@ building_hyper_entertainment_forum = {
 			}
 		}
 		text = job_duelist_effect_desc
-	}
-}
-
-
-#基因诊所
-building_clinic = {
-	base_buildtime = @b2_time
-	can_build = no
-	category = amenity
-	allow = {
-		has_upgraded_capital = yes
-	}
-	potential = {
-		has_building = building_medical_center
-		owner = {
-			OR = {
-				is_regular_empire = yes
-				AND = {
-					has_origin = origin_fear_of_the_dark
-					is_country_type = primitive
-				}
-			}
-		}
-		NOT = { has_modifier = slave_colony }
-	}
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				NOR = {
-					is_regular_empire = yes
-					AND = {
-						has_origin = origin_fear_of_the_dark
-						is_country_type = primitive
-					}
-				}
-			}
-			has_modifier = slave_colony
-			AND = {
-				buildings_stop_pop = yes
-				owner = { is_ai = yes }
-			}
-		}
-	}
-	planet_modifier = {
-		job_healthcare_add = 3
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = mixed_healthcare
-			}
-		}
-		modifier = {
-			job_healthcare_add = 1
-			job_healthcare_per_pop = 0.03
-		}
-	}
-	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b2_minerals
-			exotic_gases = @b2_rare_cost
-		}
-		upkeep = {
-			energy = @b2_upkeep
-			exotic_gases = @b2_rare_upkeep
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					has_policy_flag = mixed_healthcare
-				}
-			}
-			energy = 1
-		}
-	}
-	prerequisites = {
-		"tech_frontier_health"
-	}
-	upgrades = {
-		"building_hospital"
-	}
-	triggered_desc = {
-		text = job_healthcare_effect_desc
-	}
-}
-
-#基因医院
-building_hospital = {
-	base_buildtime = @b3_time
-	can_build = no
-	category = amenity
-	potential = {
-		has_building = building_clinic
-	}
-	allow = {
-		has_major_upgraded_capital = yes
-	}
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				is_regular_empire = no
-			}
-			has_modifier = slave_colony
-			AND = {
-				buildings_stop_pop = yes
-				owner = {
-					is_ai = yes
-				}
-			}
-		}
-	}
-	planet_modifier = {
-		job_healthcare_add = 5
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = mixed_healthcare
-			}
-		}
-		modifier = {
-			job_healthcare_add = 2
-			job_healthcare_per_pop = 0.03
-		}
-	}
-	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b3_minerals
-			exotic_gases = @b3_rare_cost
-		}
-		upkeep = {
-			energy = @b3_upkeep
-			exotic_gases = @b3_rare_upkeep
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					has_policy_flag = mixed_healthcare
-				}
-			}
-			energy = 2
-		}
-	}
-	prerequisites = {
-		"tech_frontier_hospital"
-	}
-	show_tech_unlock_if = {
-		is_regular_empire = yes
-	}
-	triggered_desc = {
-		text = job_healthcare_effect_desc
 	}
 }
 
@@ -1165,15 +988,6 @@ building_ranger_lodge = {
 
 	allow = {
 		exists = owner
-		custom_tooltip = {
-			fail_text = no_free_district_for_ranger_lodge
-			planet = {
-				num_free_districts = {
-					type = any
-					value > 0
-				}
-			}
-		}
 		NOT = { owner = { has_policy_flag = industrial_unlimited } }
 		NOT = { has_building = holding_park_ranger_lodge }
 		NOT = { has_building_construction = holding_park_ranger_lodge }
@@ -1286,6 +1100,29 @@ building_ranger_lodge = {
 
 	prerequisites = {
 		"tech_global_production_strategy"
+	}
+
+	ai_resource_production = {
+		unity = 2
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 1
+		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 1
+		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 1
+		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		mult = value:natural_blocker_count
 	}
 }
 

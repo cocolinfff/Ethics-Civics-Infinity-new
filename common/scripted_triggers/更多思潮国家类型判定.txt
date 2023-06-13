@@ -126,6 +126,7 @@ is_regular_empire = {
 	OR = {
 		is_country_type = default
 		is_country_type = default_ev
+		is_country_type = eci_primitive
 		is_country_type = uo_une_member_active
 		is_country_type = fallen_empire
 		is_country_type = awakened_fallen_empire #for checks in buildings
@@ -160,6 +161,16 @@ is_gestalt = {
 	}
 }
 
+is_ture_gestalt = {
+	is_gestalt = yes
+	NOR = {
+		has_ethic = ethic_gestalt_consciousness
+		has_civic = civic_network_of_the_mind
+		has_civic = civic_network_of_the_mind_machine
+		has_civic = civic_network_of_the_mind_true_hive
+	}
+}
+
 #蜂巢（各种意义上的）
 is_hive_empire = {
 	OR = {
@@ -183,6 +194,41 @@ is_servitor_empire = { # 机仆类帝国，顺便兼容失控女仆
 	}
 }
 
+#直接民主
+is_direct_democratic = {
+	OR = {
+		has_authority = auth_direct_democratic
+		AND = {
+			exists = owner
+			owner = {
+				has_authority = auth_direct_democratic
+			}
+		}
+		AND = {
+			is_scope_type = country
+			has_authority = auth_direct_democratic
+		}
+	}
+}
+
+country_has_extra_council_position = {
+	if = {
+		limit = {
+			OR = {
+				has_civic = civic_galactic_sovereign
+				has_civic = civic_galactic_sovereign_megacorp
+				has_civic = civic_psionic_sovereign
+			}
+		}
+		# If Country has Galactic Sovereign Civic, they already have an extra Civic.
+		civics_count > 3
+	}
+	else = {
+		civics_count > 2
+	}
+	is_ture_gestalt = no
+}
+
 #贩奴国家
 is_slaver = {
 	OR = {
@@ -200,6 +246,7 @@ is_default_empire = {
 		is_country_type = ds_nomads
 		# Ethics & Civics Infinity
 		is_country_type = uo_une_member_active
+		is_country_type = eci_primitive
 		# The Empty Vagrant
 		is_country_type = default_ev
 		# ZOFE
@@ -207,6 +254,16 @@ is_default_empire = {
 		is_country_type = lost_empire
 		is_country_type = original_empire
 		is_country_type = awakened_original_empire
+	}
+}
+
+#近现代土著
+pre_ftl_modern_era = {
+	OR = {
+		has_pre_ftl_age = machine_age
+		has_pre_ftl_age = atomic_age
+		has_pre_ftl_age = early_space_age
+		has_origin = origin_galaxy_iron_curtain
 	}
 }
 

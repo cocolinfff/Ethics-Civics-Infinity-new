@@ -379,6 +379,26 @@ soldier = {
 		}
 		ship_fire_rate_mult = 0.01
 	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_military_junta" } 
+		}
+		modifier = {
+			planet_crime_add = -2
+		}
+		mult = value:councilor_level|TYPE|councilor_military_junta|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_private_military_companies" }
+		}
+
+		modifier = {
+			planet_stability_add = @councilor_private_military_companies_stability
+		}
+
+		mult = value:councilor_level|TYPE|councilor_private_military_companies|
+	}
 	weight = {
 		weight = 300
 		modifier = {
@@ -605,10 +625,8 @@ researcher = {
 			trigger = {
 				exists = owner
 				owner = {
-					OR = {
-						has_valid_civic = civic_science_knight
-						has_valid_civic = civic_cyber_dictatorship
-					}
+					has_valid_civic = civic_science_knight
+					NOT = { has_valid_civic = civic_cyber_dictatorship }
 				}
 			}
 			physics_research = 2
@@ -763,9 +781,7 @@ researcher = {
 
 	triggered_country_modifier = {
 		potential = {
-			trigger = {
-				has_councilor = { COUNCILOR = "councilor_science_directorates" } 
-			}
+			has_councilor = { COUNCILOR = "councilor_science_directorates" } 
 		}
 		modifier = {
 			country_edict_fund_add = 1
@@ -1708,7 +1724,7 @@ telepath = {
 		country_naval_cap_add = 7
 	}
 	weight = {
-		weight = @specialist_job_weight
+		weight = 20
 		modifier = {
 			# 可控的动态权重
 			factOR = value:job_weights_modifier|JOB|telepath|RESOURCE|unity|
@@ -1761,38 +1777,6 @@ entertainer = {
 		produces = {
 			unity = 1
 		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_art_country
-				}
-			}
-			unity = 1
-			society_research = 1
-		}
-		#无产阶级文化
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_proletarian_culture
-				}
-			}
-			unity = 1
-		}
-		#未来艺术
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_futuristic_art
-				}
-			}
-			physics_research = 2
-			engineering_research = 2
-			society_research = 2
-		}
 		#和平主义
 		produces = {
 			trigger = {
@@ -1808,26 +1792,6 @@ entertainer = {
 				exists = owner
 				owner = {
 					has_ethic = ethic_pacifist
-				}
-			}
-			unity = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = {
-						has_valid_civic = civic_proletarian_culture
-					}
-				}
-			}
-			consumer_goods = 1
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_commercial_entertainment
 				}
 			}
 			unity = 1
@@ -1910,6 +1874,14 @@ entertainer = {
 		}
 		mult = planet.value:count_job|JOB|manager|
 	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_corporate_hedonism" }
+		}
+
+		trade_value_add = @councilor_corporate_hedonism_entertainer_trade_value
+		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_trade_mult|TYPE|councilor_corporate_hedonism|
+	}
 	weight = {
 		weight = @high_prio_specialist_job_weight
 		modifier = {
@@ -1922,7 +1894,7 @@ entertainer = {
 		}
 		modifier = {
 			# 可控的动态权重
-			factOR = 100
+			factOR = 10
 			exists = owner
 			owner = {
 				has_valid_civic = civic_eternal_jihad
@@ -1996,6 +1968,14 @@ duelist = {
 			unity = 3
 		}
 		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_valid_civic = civic_proletarian_culture
+					}
+				}
+			}
 			alloys = 0.5
 		}
 	}
@@ -2005,6 +1985,81 @@ duelist = {
 		}
 		planet_amenities_add = 12
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_commercial_entertainment
+			}
+		}
+		modifier = {
+			trade_value_add = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_commercial_entertainment
+					has_valid_civic = civic_proletarian_culture
+				}
+			}
+		}
+		planet_amenities_add = -2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_futuristic_art
+			}
+		}
+		planet_amenities_add = -2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_pleasure_seekers
+					has_valid_civic = civic_corporate_hedonism
+				}
+			}
+		}
+		pop_growth_speed = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+			}
+		}
+		modifier = {
+			job_professional_star_fans_add = 2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+			}
+		}
+		modifier = {
+			job_professional_star_fans_add = 1
+		}
+		mult = planet.value:count_job|JOB|manager|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_corporate_hedonism" }
+		}
+
+		trade_value_add = @councilor_corporate_hedonism_entertainer_trade_value
+		mult = value:scripted_modifier_councilor_level_mult|MODIFIER|pop_job_trade_mult|TYPE|councilor_corporate_hedonism|
 	}
 	country_modifier = {
 		country_naval_cap_add = 2
@@ -2038,6 +2093,14 @@ duelist = {
 			is_enslaved = yes
 			has_slavery_type = {
 				type = slavery_military
+			}
+		}
+		modifier = {
+			# 可控的动态权重
+			factOR = 10
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
 			}
 		}
 		modifier = {
@@ -2636,7 +2699,7 @@ roboticist = {
 healthcare = {
 	category = specialist
 	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_medical_center
+	building_icon = building_clinic
 	clothes_texture_index = 3
 	possible_pre_triggers = {
 		has_owner = yes
@@ -2720,6 +2783,22 @@ healthcare = {
 		pop_environment_tolerance = -0.0025
 		pop_happiness = -0.0075
 		mult = planet.value:toxic_attendant_growth
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_private_healthcare_corporate }
+		}
+		planet_amenities_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_private_healthcare_corporate }
+		}
+		trade_value_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 	weight = {
 		weight = @high_prio_specialist_job_weight
@@ -3505,6 +3584,14 @@ pearl_diver = {
 		}
 		produces = {
 			trigger = {
+				has_councilor = { COUNCILOR = "councilor_anglers" }
+			}
+
+			consumer_goods = @councilor_anglers_pearl_diver_consumer_goods_bonus
+			mult = value:councilor_level|TYPE|councilor_anglers|
+		}
+		produces = {
+			trigger = {
 				exists = owner
 				owner = {
 					has_valid_civic = civic_anglers
@@ -3647,6 +3734,19 @@ reassigner = {
 	possible_precalc = can_fill_specialist_job
 	resources = {
 		category = planet_jobs
+		produces = {
+			society_research = 6
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					has_councilor = { COUNCILOR = "councilor_reanimated_armies" }
+				}
+			}
+			unity = @councilor_reanimated_armies_necromancer_unity
+			mult = value:councilor_level|TYPE|councilor_reanimated_armies|
+		}
 		upkeep = {
 			trigger = {
 				is_lithoid = no
@@ -3703,6 +3803,19 @@ bath_attendant = {
 		category = planet_bath_attendants
 		upkeep = {
 			consumer_goods = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = {
+					OR = {
+						has_councilor = { COUNCILOR = councilor_toxic_baths }
+						has_councilor = { COUNCILOR = councilor_corporate_toxic_baths }
+					}
+				}
+			}
+			unity = @councilor_toxic_baths_attendant_unity
+			mult = value:councilor_level_combo|COUNCILOR_1|councilor_toxic_baths|COUNCILOR_2|councilor_corporate_toxic_baths|
 		}
 	}
 	weight = {

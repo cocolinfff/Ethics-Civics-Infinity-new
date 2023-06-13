@@ -34,6 +34,7 @@ building_robot_assembly_plant = {
 	}
 	
 	convert_to = {
+		building_clone_vats
 		building_machine_assembly_plant
 	}
 	
@@ -41,9 +42,11 @@ building_robot_assembly_plant = {
 		hidden_trigger = {
 			OR = {
 				owner = { is_ai = no }
-				AND = {
-					num_buildings = { type = any value <= 14 }
-					NOT = { is_planet_class = pc_habitat }
+				NAND = {
+					free_district_slots = 0
+					free_building_slots <= 1
+					free_housing <= 0
+					free_jobs <= 0
 				}
 			}
 		}
@@ -72,8 +75,7 @@ building_robot_assembly_plant = {
 			}
 			owner = {
 				is_ai = yes
-				has_ascension_perk = ap_engineered_evolution
-				is_materialist = no
+				has_tradition = tr_genetics_adopt
 			}
 		}
 	}
@@ -143,6 +145,7 @@ building_robot_assembly_complex = {
 
 	convert_to = {
 		building_machine_assembly_complex
+		building_clone_vats
 	}
 
 	destroy_trigger = {
@@ -164,8 +167,7 @@ building_robot_assembly_complex = {
 			}
 			owner = {
 				is_ai = yes
-				has_ascension_perk = ap_engineered_evolution
-				is_materialist = no
+				has_tradition = tr_genetics_adopt
 			}
 		}
 	}
@@ -444,8 +446,9 @@ building_offspring_nest = {
 	category = pop_assembly
 
 	potential = {
+		exists = owner
 		owner = { has_origin = origin_progenitor_hive }
-		or = {
+		OR = {
 			num_buildings = { type = any value < 15 }
 			owner = { is_ai = no }
 		}
@@ -859,8 +862,7 @@ building_clone_vats = {
 				has_origin = origin_overtuned
 				has_civic = civic_network_of_the_mind
 				has_civic = civic_network_of_the_mind_true_hive
-				has_ascension_perk = ap_engineered_evolution
-				has_ascension_perk = ap_evolutionary_mastery
+				has_tradition = tr_genetics_adopt
 			}
 		}
 		NOR = {
@@ -868,24 +870,36 @@ building_clone_vats = {
 			has_planet_flag = planetary_station
 		}
 		OR = {
-			owner = {
-				is_ai = no
-			}
-			NOT = {
-				has_building = building_robot_assembly_plant
+			owner = { is_ai = no }
+			NAND = {
+				free_district_slots = 0
+				free_building_slots <= 1
+				free_housing <= 0
+				free_jobs <= 0
 			}
 		}
 	}
 	destroy_trigger = {
 		exists = owner
+		owner = {
+			is_ai = yes
+			OR = {
+				has_tradition = tr_cybernetics_adopt
+				has_tradition = tr_synthetics_adopt
+			}
+		}
 		owner = { 
 			NOR = { 
 				has_origin = origin_overtuned
-				has_ascension_perk = ap_engineered_evolution 
+				has_tradition = tr_genetics_adopt
 				has_civic = civic_network_of_the_mind
 				has_civic = civic_network_of_the_mind_true_hive
 			}
 		}
+	}
+	convert_to = {
+		building_robot_assembly_plant
+		building_machine_assembly_plant
 	}
 	planet_modifier = {
 		planet_pop_assembly_organic_add = 3
@@ -964,135 +978,6 @@ building_clone_vats = {
 	upgrades = {
 		building_advanced_clone_vats
 	}
-}
-
-building_clone_army_clone_vat = {
-	icon = building_ancient_relics
-	base_buildtime = 90
-	position_priority = 100
-
-	empire_limit = {
-		base = 5
-	}
-
-	category = pop_assembly
-
-	potential = {
-		exists = owner
-		owner = {
-			has_origin = origin_clone_army
-			NOT = {
-				has_country_flag = clone_army_fertility_unlocked
-			}
-		}
-		if = {
-			limit = {
-				owner = { is_ai = yes }
-			}
-			NOR = {
-				has_building = building_clone_army_clone_vat
-				AND = {
-					exists = assembling_species
-					assembling_species = { is_robotic_species = yes }
-				}
-			}
-		}
-		NOT = { has_planet_flag = planetary_station }
-	}
-
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				OR = {
-					NOT = { has_origin = origin_clone_army }
-					is_synthetic_empire = yes
-					has_country_flag = clone_army_fertility_unlocked
-				}
-			}
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { is_ai = yes }
-			can_assemble_clone_soldier_pop = yes
-		}
-		planet_pop_assembly_organic_add = 2
-	}
-
-	# Add growth from 0 to 25 depending on 'clone_pops_missing_per_vat'.
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_clone_soldier_pop = yes
-			check_variable = { which = clone_pops_missing_per_vat value > 0 }
-		}
-		modifier = { planet_pop_assembly_organic_add = 2 }
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_clone_soldier_pop = yes
-			check_variable = { which = clone_pops_missing_per_vat value > 1 }
-		}
-		modifier = { planet_pop_assembly_organic_add = 3 }
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_clone_soldier_pop = yes
-			check_variable = { which = clone_pops_missing_per_vat value > 4 }
-		}
-		modifier = { planet_pop_assembly_organic_add = 2 }
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_clone_soldier_pop = yes
-			check_variable = { which = clone_pops_missing_per_vat value > 8 }
-		}
-		modifier = { planet_pop_assembly_organic_add = 3 }
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_clone_soldier_pop = yes
-			years_passed > 10
-			check_variable = { which = clone_pops_missing_per_vat value > 12 }
-		}
-		modifier = { planet_pop_assembly_organic_add = 5 }
-	}
-
-	resources = {
-		category = planet_buildings
-		cost = {
-			minerals = @b2_minerals
-		}
-		upkeep = {
-			energy = @b2_upkeep
-		}
-	}
-
-	upgrades = {
-	}
-
-	prerequisites = {
-	}
-
-	triggered_desc = {
-		text = building_clone_army_clone_vat_effect_desc
-	}
-	triggered_desc = {
-		trigger = {
-			OR = {
-				has_building = building_robot_assembly_plant
-				AND = {
-					exists = assembling_species
-					assembling_species = { is_robotic_species = yes }
-				}
-			}
-		}
-		text = tooltip_organic_and_artificial_assembly_warning
-	}
-
-	is_essential = yes
 }
 
 #############
@@ -1275,27 +1160,18 @@ building_toxic_bath_machine = {
 # 医院
 #############
 
-#基因诊所
+#医学研究所
 building_clinic = {
-	base_buildtime = @b2_time
-	can_build = no
+	base_buildtime = @b1_time
+	base_cap_amount = 1
 	category = pop_assembly
-	allow = {
-		has_upgraded_capital = yes
-	}
 	potential = {
-		has_building = building_medical_center
 		owner = {
-			OR = {
-				is_regular_empire = yes
-				AND = {
-					has_origin = origin_fear_of_the_dark
-					is_country_type = primitive
-				}
-			}
+			is_regular_empire = yes
 		}
-		NOT = {
+		NOR = {
 			has_modifier = slave_colony
+			has_planet_flag = planetary_station
 		}
 	}
 	destroy_trigger = {
@@ -1314,6 +1190,133 @@ building_clinic = {
 			AND = {
 				buildings_stop_pop = yes
 				owner = { is_ai = yes }
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = mixed_healthcare
+					has_policy_flag = public_healthcare
+				}
+			}
+		}
+		modifier = {
+			job_healthcare_add = 1
+			job_healthcare_per_pop = 0.02
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 300
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 0.5
+		}
+	}
+	prerequisites = {
+		"tech_medical_system"
+	}
+	upgrades = {
+		"building_hospital"
+	}
+	triggered_desc = {
+		text = job_healthcare_effect_desc
+	}
+
+	on_repaired = {
+		if = {
+			limit = {
+				planet.owner = {
+					has_event_chain = payback_out_of_warranty_chain
+				}
+			}
+			random_list = {
+				50 = { # still broken
+					planet.owner = {
+						country_event = { id = origin.4302 }
+					}
+					modifier = {
+						factor = 0
+						planet.owner = { has_technology = tech_frontier_health }
+					}
+				}
+				20 = { # repaired
+					planet.owner = {
+						country_event = { id = origin.4301 }
+					}
+					modifier = {
+						factor = 2
+						planet.owner = { num_research_agreements = 1 }
+					}
+					modifier = {
+						factor = 3
+						planet.owner = { num_research_agreements = 2 }
+					}
+					modifier = {
+						factor = 4
+						planet.owner = { num_research_agreements >= 3 }
+					}
+				}
+				10 = { # broken beyond repair
+					planet = {
+						planet_event = { id = origin.4303 }
+					}
+				}
+			}
+		}
+	}
+}
+
+#基因诊所
+building_hospital = {
+	base_buildtime = @b2_time
+	can_build = no
+	category = pop_assembly
+	allow = {
+		has_upgraded_capital = yes
+	}
+	potential = {
+		has_building = building_clinic
+		owner = {
+			OR = {
+				is_regular_empire = yes
+				AND = {
+					has_origin = origin_fear_of_the_dark
+					is_country_type = primitive
+				}
+			}
+		}
+		NOT = {
+			has_modifier = slave_colony
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_regular_empire = no
+			}
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = {
+					is_ai = yes
+				}
 			}
 		}
 	}
@@ -1358,7 +1361,10 @@ building_clinic = {
 		"tech_frontier_health"
 	}
 	upgrades = {
-		"building_hospital"
+		"building_medical_center"
+	}
+	show_tech_unlock_if = {
+		is_regular_empire = yes
 	}
 	triggered_desc = {
 		text = job_healthcare_effect_desc
@@ -1366,12 +1372,12 @@ building_clinic = {
 }
 
 #基因医院
-building_hospital = {
+building_medical_center = {
 	base_buildtime = @b3_time
 	can_build = no
 	category = pop_assembly
 	potential = {
-		has_building = building_clinic
+		has_building = building_hospital
 	}
 	allow = {
 		has_major_upgraded_capital = yes
@@ -1385,9 +1391,7 @@ building_hospital = {
 			has_modifier = slave_colony
 			AND = {
 				buildings_stop_pop = yes
-				owner = {
-					is_ai = yes
-				}
+				owner = { is_ai = yes }
 			}
 		}
 	}
@@ -1430,9 +1434,6 @@ building_hospital = {
 	}
 	prerequisites = {
 		"tech_frontier_hospital"
-	}
-	show_tech_unlock_if = {
-		is_regular_empire = yes
 	}
 	triggered_desc = {
 		text = job_healthcare_effect_desc

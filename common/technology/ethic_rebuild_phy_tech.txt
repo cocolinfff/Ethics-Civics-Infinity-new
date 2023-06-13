@@ -6,7 +6,7 @@ tech_hyper_drive_1 = {
 	area = physics
 	tier = 0
 	category = { particles }
-	prerequisites = { "tech_space_exploration" }
+	prerequisites = { "tech_sublight_drive" }
 	start_tech = yes
 
 	is_reverse_engineerable = no
@@ -45,6 +45,7 @@ tech_hyper_drive_1 = {
 			has_origin = origin_warpdrive_start
 			has_origin = origin_true_yuht
 			has_origin = origin_taking_care_of_god
+			has_origin = origin_galaxy_iron_curtain
 		}
 		OR = {
 			is_eager_explorer_empire = no
@@ -154,7 +155,7 @@ tech_warp_drive_1 = {
 	category = { field_manipulation }
 	tier = 0
 	is_reverse_engineerable = no
-	prerequisites = { "tech_space_exploration" }
+	prerequisites = { "tech_sublight_drive" }
 	start_tech = yes
 	potential = {
 		allow_ftl_civilization = yes
@@ -288,8 +289,13 @@ tech_basic_science_lab_1 = {
 	starting_potential = {
 		OR = {
 			has_origin = origin_taking_care_of_god
+			has_origin = origin_galaxy_iron_curtain
 			is_low_tech_start = no # So Broken Shackles origin players don't start with it
 		}
+		is_primitive_society = no
+	}
+
+	potential = {
 		is_primitive_society = no
 	}
 }
@@ -299,10 +305,24 @@ tech_space_exploration = {
 	area = physics
 	start_tech = yes
 	category = { computing }
+	prerequisites = { "tech_hyper_drive_1" }
 	tier = 0
 
 	starting_potential = {
-		NOT = { has_origin = origin_taking_care_of_god }
+		NOR = {
+			has_origin = origin_taking_care_of_god
+			has_origin = origin_galaxy_iron_curtain
+		}
+	}
+
+	potential = {
+		OR = {
+			NOT = { has_origin = origin_galaxy_iron_curtain }
+			AND = {
+				has_origin = origin_galaxy_iron_curtain
+				is_capitalism = no
+			}
+		}
 	}
 
 	#allow auto-explore on science ships
@@ -359,7 +379,7 @@ tech_power_plant_1 = {
 	category = { field_manipulation }
 	start_tech = yes
 
-	starting_potential = {
+	potential = {
 		is_primitive_society = no
 	}
 }

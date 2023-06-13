@@ -1,0 +1,90 @@
+namespace = game_start
+
+country_event = {
+    id = game_start.60
+    hide_window = yes
+    trigger = {
+        is_default_empire = yes
+        #selectable = { host_has_dlc = "Galactic Paragons" }
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        set_variable = {
+            which = paragon_chance_negative
+            value = 0
+        }
+
+        # Give Empire the starting Council Agenda, and progress it to about 1-2 years from finishing.
+        if = {
+            limit = { is_gestalt = yes }
+            set_council_agenda = agenda_infinite_opportunities_gestalt
+        }
+        else_if = {
+            limit = {
+                has_authority = auth_direct_democratic
+                NOT = { has_origin =  origin_galaxy_iron_curtain }
+            }
+            set_council_agenda = agenda_infinite_opportunities
+        }
+        else_if = {
+            limit = {
+                is_gestalt = no
+                NOT = { has_authority = auth_direct_democratic }
+                NOT = { has_origin =  origin_galaxy_iron_curtain }
+            }
+            set_council_agenda = agenda_infinite_opportunities
+
+            # Prefer a Scientist as Head of Research (otherwise picks your Home planet Governor).
+            random_owned_leader = {
+                limit = {
+                    leader_class = scientist
+                    is_ruler = no
+                }
+                set_council_position = councilor_research
+            }
+        }
+        else_if = {
+            limit = { has_origin =  origin_galaxy_iron_curtain }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            random_owned_leader = {
+                limit = {
+                    leader_class = governor
+                    is_ruler = no
+                }
+                set_council_position = councilor_prime_oligarch_1
+            }
+            create_leader = {
+                class = scientist
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_prime_oligarch_2 }
+            }
+            create_leader = {
+                class = governor
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_prime_oligarch_3 }
+            }
+            create_leader = {
+                class = general
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_prime_oligarch_4 }
+            }
+            random_owned_leader = {
+                limit = {
+                    leader_class = admiral
+                    is_ruler = no
+                }
+                set_council_position = councilor_prime_oligarch_5
+            }
+        }
+        add_council_agenda_progress = 6000
+    }
+}

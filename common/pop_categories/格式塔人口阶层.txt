@@ -19,10 +19,6 @@ complex_drone = {
 	}
 
 	resettlement_cost = {
-		energy = 100
-	}
-
-	resettlement_cost = {
 		trigger = {
 			exists = owner
 			owner = {
@@ -32,7 +28,21 @@ complex_drone = {
 				}
 			}
 		}
-		unity = 10
+		energy = 100
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		planet_pop_assembly_organic_add = @plantoid_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
 	}
 
 	triggered_planet_modifier = {
@@ -116,42 +126,39 @@ complex_drone = {
 			society_research = 1
 		}
 
-		upkeep = {
-			trigger = {
-				has_phototrophic_energy_upkeep = yes
-			}
-			energy = @living_standard_phototrophic_normal
-		}
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
 
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		# Exotic Metabolism Upkeep
 		upkeep = {
 			trigger = {
 				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = no
+				has_trait = trait_exotic_metabolism
 			}
-			food = @living_standard_food_normal
+			exotic_gases = @exotic_metabolism
 		}
 
-		upkeep = {
-			trigger = {
-				is_phototrophic = yes
-			}
-			food = @living_standard_phototrophic_normal
-		}
+		# Resource Production
 
-		upkeep = {
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
 			trigger = {
 				is_organic_species = yes
-				is_lithoid = yes
+				has_trait = trait_inorganic_breath
 			}
-			minerals = @living_standard_food_normal
+			exotic_gases = @inorganic_breath
 		}
 
-		upkeep = {
+		produces = {
 			trigger = {
-				is_robotic_species = yes
+				has_trait = trait_drake_scaled
 			}
-			energy = @living_standard_energy_normal
+			alloys = @drake_scaled_trait_resource_production
 		}
 		
 		#合成之爱的额外食物维护
@@ -191,30 +198,6 @@ complex_drone = {
 			unity = 0.25
 		}
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_scintillating
-			}
-			rare_crystals = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_gaseous_byproducts
-			}
-			exotic_gases = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_volatile_excretions
-			}
-			volatile_motes = @lithoid_trait_resource_production
-		}
-
         # 复杂无人机天然神经网络修正
 		produces = {
 			trigger = {
@@ -224,7 +207,7 @@ complex_drone = {
 					has_civic = civic_hive_natural_neural_network
 				}
 			}
-			physics_research = 1
+			physics_research = 1.5
 			engineering_research = 1
 			society_research = 1.5
 		}
@@ -246,6 +229,20 @@ simple_drone = {
 		weight = 1
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		planet_pop_assembly_organic_add = @plantoid_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
 	pop_modifier = {
 		pop_housing_usage_base = 1
 		pop_amenities_usage_no_happiness_base = 1
@@ -260,13 +257,16 @@ simple_drone = {
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
 	# scope: pop to be resettled
 	allow_resettlement = {
 		always = yes
-	}
-
-	resettlement_cost = {
-		energy = 100
 	}
 
 	resettlement_cost = {
@@ -279,7 +279,7 @@ simple_drone = {
 				}
 			}
 		}
-		unity = 10
+		energy = 100
 	}
 
 	triggered_planet_modifier = {
@@ -303,6 +303,13 @@ simple_drone = {
 			can_assemble_budding_pop = yes
 		}
 		planet_pop_assembly_organic_add = @plantoid_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
 	}
 
 	#无尽虫群
@@ -374,50 +381,39 @@ simple_drone = {
 			society_research = 1
 		}
 
-		upkeep = {
-			trigger = {
-				has_phototrophic_energy_upkeep = yes
-			}
-			energy = @living_standard_phototrophic_normal
-		}
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
 
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		# Exotic Metabolism Upkeep
 		upkeep = {
 			trigger = {
 				is_organic_species = yes
-				is_phototrophic = no
-				is_lithoid = no
+				has_trait = trait_exotic_metabolism
 			}
-			food = @living_standard_food_normal
+			exotic_gases = @exotic_metabolism
 		}
 
-		upkeep = {
-			trigger = {
-				is_phototrophic = yes
-			}
-			food = @living_standard_phototrophic_normal
-		}
+		# Resource Production
 
-		upkeep = {
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
 			trigger = {
 				is_organic_species = yes
-				is_lithoid = yes
+				has_trait = trait_inorganic_breath
 			}
-			minerals = @living_standard_food_normal
+			exotic_gases = @inorganic_breath
 		}
 
-		upkeep = {
+		produces = {
 			trigger = {
-				is_robotic_species = yes
-				is_unemployed = no
+				has_trait = trait_drake_scaled
 			}
-			energy = @living_standard_energy_normal
-		}
-		upkeep = {
-			trigger = {
-				is_robotic_species = yes
-				is_unemployed = yes
-			}
-			energy = @living_standard_energy_unemployed
+			alloys = @drake_scaled_trait_resource_production
 		}
 		
 		#合成之爱的额外食物维护
@@ -457,30 +453,6 @@ simple_drone = {
 			unity = 0.15
 		}
 
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_scintillating
-			}
-			rare_crystals = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_gaseous_byproducts
-			}
-			exotic_gases = @lithoid_trait_resource_production
-		}
-
-		produces = {
-			trigger = {
-				is_lithoid = yes
-				has_trait = trait_lithoid_volatile_excretions
-			}
-			volatile_motes = @lithoid_trait_resource_production
-		}
-
         # 简单无人机天然神经网络修正
 		produces = {
 			trigger = {
@@ -491,8 +463,8 @@ simple_drone = {
 				}
 			}
 			physics_research = 1
-			engineering_research = 1
-			society_research = 1.5
+			engineering_research = 1.5
+			society_research = 1
 		}
 	}
 }

@@ -235,6 +235,119 @@ kill_one_owner_species_pop = {
 	}
 }
 
+build_bureaucratic_building = {
+	if = {
+		limit = {
+			planet = {
+				allow_bureaucratic_building = yes
+				free_building_slots > 0
+			}
+			owner = {
+				is_regular_empire = yes
+				OR = {
+					is_adminless_country = no
+					is_clean_government_country = yes
+				}
+			}
+		}
+		add_building = building_bureaucratic_1
+	}
+	else_if = {
+		limit = {
+			planet = {
+				allow_bureaucratic_building = yes
+				free_building_slots = 0
+				has_building = building_bureaucratic_1
+			}
+			owner = {
+				is_regular_empire = yes
+				has_technology = tech_colonial_bureaucracy
+				OR = {
+					is_adminless_country = no
+					is_clean_government_country = yes
+				}
+			}
+		}
+		remove_building = building_bureaucratic_1
+		add_building = building_bureaucratic_2
+	}
+	else_if = {
+		limit = {
+			planet = {
+				allow_bureaucratic_building = yes
+				free_building_slots = 0
+				has_building = building_bureaucratic_2
+				NOT = { has_building = building_bureaucratic_1 }
+			}
+			owner = {
+				is_regular_empire = yes
+				has_technology = tech_galactic_bureaucracy
+				OR = {
+					is_adminless_country = no
+					is_clean_government_country = yes
+				}
+			}
+		}
+		remove_building = building_bureaucratic_2
+		add_building = building_bureaucratic_3
+	}
+	else_if = {
+		limit = {
+			planet = {
+				free_building_slots > 0
+				num_buildings = { TYPE = building_planet_network_node value < 7 }
+			}
+			owner = {
+				has_valid_civic = civic_OGAS
+				NOT = { has_technology = tech_sapient_ai }
+			}
+		}
+		add_building = building_planet_network_node
+	}
+	else_if = {
+		limit = {
+			planet = {
+				free_building_slots > 0
+				NOT = { has_building = building_planet_network_node }
+				num_buildings = { TYPE = building_planetary_management_center value < 7 }
+			}
+			owner = {
+				has_valid_civic = civic_OGAS
+				has_technology = tech_sapient_ai
+			}
+		}
+		add_building = building_planetary_management_center
+	}
+	else_if = {
+		limit = {
+			planet = {
+				has_building = building_planet_network_node
+			}
+			owner = {
+				has_valid_civic = civic_OGAS
+				has_technology = tech_sapient_ai
+			}
+		}
+		remove_building = building_planet_network_node
+		add_building = building_planetary_management_center
+	}
+	else_if = {
+		limit = {
+			planet = {
+				free_building_slots > 0
+				NOT = { has_building = building_information_tower }
+			}
+			owner = {
+				OR = {
+					has_valid_civic = civic_cybercap
+					has_valid_civic = civic_corporate_cybercap
+				}
+			}
+		}
+		add_building = building_information_tower
+	}
+}
+
 build_city = {
 	if = {
 		limit = {
@@ -396,3 +509,417 @@ spawn_god_habitat = {
 	}
 }
 
+country_create_direct_democratic_councilor = {
+	create_leader = {
+		class = $CLASS$
+		species = this
+		name = $COUNCIL_POS$
+		gender = indeterminable
+		event_leader = yes
+		skip_background_generation = yes
+		immortal = yes
+		skill = 1
+		can_manually_change_location = no
+		can_see_in_list = no
+		custom_description = $DESC$
+		randomize_traits = no
+		background_ethic = ethic_egalitarian
+		effect = {
+			set_leader_flag = leader_death_events_blocked
+			set_leader_flag = direct_democratic_councilor
+		}
+	}
+	last_created_leader = {
+		set_owner = prev
+		change_leader_portrait = councilor_hive_$CLASS$_1
+		set_council_position = $COUNCIL_POS$
+		add_experience = 400
+		if = {
+			limit = {
+				has_paragon_dlc = yes
+			}
+			switch = {
+				trigger = leader_class
+				admiral = { add_trait_no_notify = subclass_admiral_strategist }
+				scientist = { add_trait_no_notify = subclass_scientist_researcher }
+				general = { add_trait_no_notify = subclass_general_marshall }
+				governor = { add_trait_no_notify = subclass_governor_visionary }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_leader_flag = direct_democratic_councilor }
+			}
+			set_leader_flag = direct_democratic_councilor
+		}
+	}
+}
+
+country_create_all_direct_democratic_councilor = {
+	country_create_direct_democratic_councilor = {
+		CLASS = governor
+		COUNCIL_POS = councilor_direct_democratic_governor
+		DESC = councilor_direct_democratic_governor_desc
+	}
+	country_create_direct_democratic_councilor = {
+		CLASS = scientist
+		COUNCIL_POS = councilor_direct_democratic_scientist
+		DESC = councilor_direct_democratic_scientist_desc
+	}
+	country_create_direct_democratic_councilor = {
+		CLASS = admiral
+		COUNCIL_POS = councilor_direct_democratic_admiral
+		DESC = councilor_direct_democratic_admiral_desc
+	}
+	country_create_direct_democratic_councilor = {
+		CLASS = general
+		COUNCIL_POS = councilor_direct_democratic_general
+		DESC = councilor_direct_democratic_general_desc
+	}
+	every_owned_leader = {
+		limit = {
+			has_leader_flag = direct_democratic_councilor
+			is_councilor = no
+			is_ruler = no
+		}
+		change_leader_portrait = species
+		remove_leader_flag = direct_democratic_councilor
+	}
+}
+
+direct_democratic_councilor_start_skill = {
+	every_owned_leader = {
+		limit = {
+			is_councilor = yes
+			is_ruler = no
+		}
+		if = {
+			limit = { owner = { has_valid_civic = civic_meritocracy } }
+			FROM = {
+				if = {
+					limit = {
+						is_pool_leader = yes
+					}
+					add_skill = 1
+				}
+				else = {
+					add_skill_without_trait_selection = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					is_memory_vault_empire = yes
+				}
+			}
+			FROM = {
+				if = {
+					limit = {
+						is_pool_leader = yes
+					}
+					add_skill = 1
+				}
+				else = {
+					add_skill_without_trait_selection = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = { has_valid_civic = civic_forever_with_us }
+				from = { leader_class = scientist }
+			}
+			FROM = {
+				if = {
+					limit = {
+						is_pool_leader = yes
+					}
+					add_skill = 1
+				}
+				else = {
+					add_skill_without_trait_selection = 1
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					has_tradition = tr_future_technology
+					has_technology = tech_ascension_theory
+				}
+				from = {
+					leader_class = scientist
+				}
+			}
+			FROM = {
+				if = {
+					limit = {
+						is_pool_leader = yes
+					}
+					add_skill = 2
+				}
+				else = {
+					add_skill_without_trait_selection = 2
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					has_tradition = tr_future_economy
+					has_technology = tech_ascension_theory
+				}
+				from = {
+					leader_class = governor
+				}
+			}
+			FROM = {
+				if = {
+					limit = {
+						is_pool_leader = yes
+					}
+					add_skill = 2
+				}
+				else = {
+					add_skill_without_trait_selection = 2
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					has_tradition = tr_future_military
+					has_technology = tech_ascension_theory
+				}
+				from = {
+					OR = {
+						leader_class = admiral
+						leader_class = general
+					}
+				}
+			}
+			FROM = {
+				if = {
+					limit = {
+						is_pool_leader = yes
+					}
+					add_skill = 2
+				}
+				else = {
+					add_skill_without_trait_selection = 2
+				}
+			}
+		}
+	}
+}
+
+synethic_ascension_change_portrait = {
+	if = {
+		limit = { host_has_dlc = "Synthetic Dawn Story Pack" }
+		prev = {
+			switch = {
+				trigger = is_species_class
+				HUM = { prev = { change_species_characteristics = { portrait = "sd_hum_robot" } } }
+				MAM = { prev = { change_species_characteristics = { portrait = "sd_mam_robot" } } }
+				REP = { prev = { change_species_characteristics = { portrait = "sd_rep_robot" } } }
+				AVI = { prev = { change_species_characteristics = { portrait = "sd_avi_robot" } } }
+				ART = { prev = { change_species_characteristics = { portrait = "sd_art_robot" } } }
+				MOL = { prev = { change_species_characteristics = { portrait = "sd_mol_robot" } } }
+				FUN = { prev = { change_species_characteristics = { portrait = "sd_fun_robot" } } }
+				PLANT = { prev = { change_species_characteristics = { portrait = "sd_pla_robot" } } }
+				LITHOID = { prev = { change_species_characteristics = { portrait = "lith_machine" } } }
+				NECROID = { prev = { change_species_characteristics = { portrait = "nec_machine" } } }
+				AQUATIC = { prev = { change_species_characteristics = { portrait = "aqu_machine" } } }
+				TOX = { prev = { change_species_characteristics = { portrait = "tox_machine" } } }
+			}
+		}
+	}
+
+	rename_species = {
+		prompt_country = root #If targeted country is a player they will get a popup asking for a name/plural/adjective combo. Otherwise the species will get a random name from the specified name_list
+		name_list = ascension_list
+	}
+}
+
+impose_ideology_effect = {
+	copy_ethos_and_authority = root
+	if = {
+		limit = {
+			has_civic = civic_galactic_sovereign
+		}
+		force_remove_civic = civic_galactic_sovereign
+	}
+	if = {
+		limit = {
+			has_civic = civic_galactic_sovereign_megacorp
+		}
+		force_remove_civic = civic_galactic_sovereign_megacorp
+	}
+	if = {
+		limit = {
+			has_civic = civic_psionic_sovereign
+		}
+		force_remove_civic = civic_psionic_sovereign
+	}
+	if = {
+		limit = {
+			root = { has_authority = auth_corporate }
+			has_authority = auth_corporate
+		}
+		set_merchant_government_effect = yes
+	}
+	if = {
+		limit = {
+			root = { has_civic = civic_crusader_spirit }
+		}
+		force_remove_civic = 1
+		force_add_civic = civic_crusader_spirit
+	}
+	add_modifier = { modifier = recently_liberated days = 7300 }
+	add_opinion_modifier = { modifier = opinion_liberated_us who = root }
+	root = {
+		add_opinion_modifier = { modifier = opinion_we_liberated who = from }
+	}
+}
+
+remove_theme_civics = {
+	if = {
+		limit = {
+			has_civic = civic_feudal_realm
+		}
+		force_remove_civic = civic_feudal_realm
+	}
+	if = {
+		limit = {
+			has_civic = civic_eternal_kingship
+		}
+		force_remove_civic = civic_eternal_kingship
+	}
+	if = {
+		limit = {
+			has_civic = civic_sovereign_federation
+		}
+		force_remove_civic = civic_sovereign_federation
+	}
+	if = {
+		limit = {
+			has_civic = civic_constitutional_parliament
+		}
+		force_remove_civic = civic_constitutional_parliament
+	}
+	if = {
+		limit = {
+			has_civic = civic_shared_burden
+		}
+		force_remove_civic = civic_shared_burden
+	}
+	if = {
+		limit = {
+			has_civic = civic_socialistic
+		}
+		force_remove_civic = civic_socialistic
+	}
+	if = {
+		limit = {
+			has_civic = civic_nazbol
+		}
+		force_remove_civic = civic_nazbol
+	}
+	if = {
+		limit = {
+			has_civic = civic_glory_and_dream
+		}
+		force_remove_civic = civic_glory_and_dream
+	}
+	if = {
+		limit = {
+			has_civic = civic_ultimate_collective
+		}
+		force_remove_civic = civic_ultimate_collective
+	}
+	if = {
+		limit = {
+			has_civic = civic_beacon_of_liberty
+		}
+		force_remove_civic = civic_beacon_of_liberty
+	}
+	if = {
+		limit = {
+			has_civic = civic_state_monopoly
+		}
+		force_remove_civic = civic_state_monopoly
+	}
+	if = {
+		limit = {
+			has_civic = civic_citizen_service
+		}
+		force_remove_civic = civic_citizen_service
+	}
+	if = {
+		limit = {
+			has_civic = civic_military_junta
+		}
+		force_remove_civic = civic_military_junta
+	}
+	if = {
+		limit = {
+			has_civic = civic_military_dictatorship
+		}
+		force_remove_civic = civic_military_dictatorship
+	}
+	if = {
+		limit = {
+			has_civic = civic_peaceful_republic
+		}
+		force_remove_civic = civic_peaceful_republic
+	}
+	if = {
+		limit = {
+			has_civic = civic_executive_committee
+		}
+		force_remove_civic = civic_executive_committee
+	}
+	if = {
+		limit = {
+			has_civic = civic_philosopher_king
+		}
+		force_remove_civic = civic_philosopher_king
+	}
+	if = {
+		limit = {
+			has_civic = civic_spiritual_democracy
+		}
+		force_remove_civic = civic_spiritual_democracy
+	}
+	if = {
+		limit = {
+			has_civic = civic_divine_council
+		}
+		force_remove_civic = civic_divine_council
+	}
+	if = {
+		limit = {
+			has_civic = civic_imperial_cult
+		}
+		force_remove_civic = civic_imperial_cult
+	}
+	if = {
+		limit = {
+			has_civic = civic_cyber_demos_cratos
+		}
+		force_remove_civic = civic_cyber_demos_cratos
+	}
+	if = {
+		limit = {
+			has_civic = civic_science_directorate
+		}
+		force_remove_civic = civic_science_directorate
+	}
+	if = {
+		limit = {
+			has_civic = civic_cyber_dictatorship
+		}
+		force_remove_civic = civic_cyber_dictatorship
+	}
+}

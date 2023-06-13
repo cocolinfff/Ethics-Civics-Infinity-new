@@ -14,10 +14,10 @@ country_event = {
 	}
 
 	immediate = {
-		FROMFROM = {
-			leader = { save_event_target_as = ruler }
-			solar_system = { save_event_target_as = system }
-			leader = { add_trait = trait_ruler_immortal }
+		every_owned_leader = {
+			limit = { is_ruler = yes }
+			add_trait = trait_ruler_immortal
+			save_event_target_as = ruler
 		}
 		
 		set_country_flag = flag_immortal_ruler
@@ -69,7 +69,7 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		has_valid_civic = civic_naval_traditions
+		has_valid_civic = civic_distinguished_admiralty
 		not = { has_country_flag = glorious_fleet }
 		not = { has_country_flag = unglorious_fleet }
 	}	
@@ -99,7 +99,7 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		has_valid_civic = civic_naval_traditions
+		has_valid_civic = civic_distinguished_admiralty
 		not = { has_country_flag = glorious_fleet }
 		not = { has_country_flag = unglorious_fleet }
 	}	
@@ -457,6 +457,29 @@ planet_event = {
 }
 
 
+namespace = ethic_bureaucratic_building
+planet_event = {
+	id = ethic_bureaucratic_building.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			is_ai = yes
+			is_regular_empire = yes
+			has_monthly_income = { resource = administrative_capacity_calculation value < 0 }
+		}
+		planet = {
+			allow_bureaucratic_building = yes
+		}
+	}
+
+	immediate = {
+		build_bureaucratic_building = yes
+	}
+}
+
+
 namespace = ethic_build_city
 planet_event = {
 	id = ethic_build_city.1
@@ -466,10 +489,7 @@ planet_event = {
 	trigger = {
 		owner = { is_ai = yes }
 		planet = {
-			OR = {
-				has_modifier = planet_housing_low
-				has_modifier = planet_housing_no_happiness_low
-			}
+			free_housing < -10
 			num_free_districts = {
 				type = any
 				value > 0
@@ -489,7 +509,7 @@ planet_event = {
 	trigger = {
 		owner = { is_ai = yes }
 		planet = {
-			has_modifier = planet_overcrowded
+			free_housing < 0
 			num_free_districts = {
 				type = any
 				value > 0
@@ -1300,6 +1320,192 @@ first_contact_event = {
 
 	immediate = {
 		owner = { set_country_flag = true_yuht_discovering_aliens }
+	}
+}
+
+namespace = eci_legendary_leader
+country_event = {
+	id = eci_legendary_leader.0
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = { is_gestalt = no }
+	}
+
+	immediate = {
+		every_owned_leader = {
+			limit = {
+				has_leader_flag = leader_laquly
+				NOT = { has_trait = leader_trait_eci_legendary_leader }
+			}
+			add_trait = leader_trait_eci_legendary_leader
+		}
+		every_owned_leader = {
+			limit = {
+				has_skill >= 10
+				NOR = {
+					has_trait = leader_trait_eci_legendary_leader
+					is_councilor_direct_democratic = yes
+				}
+			}
+			set_leader_flag = leader_laquly
+			add_trait = leader_trait_eci_legendary_leader
+		}
+		every_owned_leader = {
+			limit = {
+				has_skill >= 10
+				NOT = { has_trait = leader_trait_councilor_direct_democratic_legendary }
+				is_councilor_direct_democratic = yes
+			}
+			set_leader_flag = leader_laquly
+			add_trait = leader_trait_councilor_direct_democratic_legendary
+		}
+	}
+}
+
+namespace = eci_origin_galaxy_iron_curtain
+country_event = {
+	id = eci_origin_galaxy_iron_curtain.0
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = { has_origin = origin_galaxy_iron_curtain }
+	}
+
+	immediate = {
+		set_country_type = eci_primitive
+		remove_pre_ftl_flags = yes
+		set_pre_ftl_age = atomic_age
+		set_country_flag = atomic_age
+		set_country_flag = recently_advanced
+		eci_primitive_trade = yes
+		capital_scope = {
+			remove_all_buildings = yes
+			add_building = building_primitive_capital
+			add_building = building_commercial_zone
+			add_building = building_luxury_residence
+			add_building = building_luxury_residence
+			add_building = building_luxury_residence
+			add_building = building_luxury_residence
+			add_deposit = d_decrepit_dwellings
+			add_deposit = d_failing_infrastructure
+			add_deposit = d_ethic_primitive_trade
+			solar_system = {
+				starbase = { fleet = { delete_fleet = this } }
+			}
+		}
+		add_modifier = { modifier = patent_protection years = 99 }
+		add_modifier = { modifier = energy_revolution years = 99 }
+		add_modifier = { modifier = agriculturala_monopoly years = 99 }
+		add_modifier = { modifier = mineral_finance years = 99 }
+		add_modifier = { modifier = consumer_oligarch years = 99 }
+		add_modifier = { modifier = steel_tycoon years = 99 }
+	}
+}
+country_event = {
+	id = eci_origin_galaxy_iron_curtain.1
+	title = eci_origin_galaxy_iron_curtain.1.name
+	desc = eci_origin_galaxy_iron_curtain.1.desc
+	picture = GFX_evt_early_space_age
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			has_origin = origin_galaxy_iron_curtain
+			has_technology = tech_planetary_government
+			OR = {
+				has_technology = tech_warp_drive_1
+				has_technology = tech_hyper_drive_1
+			}
+		}
+	}
+
+	immediate = {
+		set_country_type = default
+		remove_pre_ftl_flags = yes
+		remove_country_flag = recently_advanced
+		capital_scope = {
+			remove_building = building_primitive_capital
+			add_building = building_capital
+			solar_system = {
+				create_starbase = {
+					size = starbase_outpost
+					owner = root.owner
+				}
+			}
+		}
+		set_origin = origin_default
+		remove_modifier = patent_protection
+		remove_modifier = energy_revolution
+		remove_modifier = agriculturala_monopoly
+		remove_modifier = mineral_finance
+		remove_modifier = consumer_oligarch
+		remove_modifier = steel_tycoon
+		country_event = { id = ethic_easter.0 days = 1 }
+		if = {
+			limit = { is_direct_democratic = yes }
+			force_add_civic = civic_debug
+			force_remove_civic = civic_debug
+		}
+	}
+
+	option = {
+		name = eci_origin_galaxy_iron_curtain.1.a
+		add_modifier = { modifier = look_into_the_future years = 15 }
+	}
+}
+
+namespace = eci_trade_optimization
+country_event = {
+	id = eci_trade_optimization.0
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_global_flag = PF_flg_glbl_trade_ban	#_|贸易禁止|
+			has_global_flag = PF_flg_glbl_trade_opt	#_|贸易优化|
+			owner = { is_country_type = eci_primitive }
+		}
+	}
+
+	immediate = {
+		eci_primitive_trade = yes
+		if = {
+			limit = {
+				any_owned_planet = { NOT = { has_deposit = d_ethic_primitive_trade } }
+			}
+			every_owned_planet = { add_deposit = d_ethic_primitive_trade }
+		}
+	}
+}
+country_event = {
+	id = eci_trade_optimization.1
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOR = {
+			has_global_flag = PF_flg_glbl_trade_ban	#_|贸易禁止|
+			has_global_flag = PF_flg_glbl_trade_opt	#_|贸易优化|
+			owner = { is_country_type = eci_primitive }
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				any_owned_planet = { has_deposit = d_ethic_primitive_trade }
+			}
+			every_owned_planet = { remove_deposit = d_ethic_primitive_trade }
+		}
 	}
 }
 

@@ -9,6 +9,9 @@
 @built_districts_medium_threshold = 4
 @built_districts_high_threshold = 8
 
+####################################################
+###		CAPITAL WORLD DESIGNATIONS		    	 ###
+####################################################
 # 帝国首都
 col_capital = {
 	icon = GFX_colony_type_capital
@@ -27,10 +30,18 @@ col_capital = {
 	}
 
 	planet_modifier = {
-		planet_stability_add = 10
+		planet_stability_add = 5
 		planet_amenities_add = 10
 		pop_government_ethic_attraction = 1
-		species_empire_size_mult = -0.5
+		planet_resettlement_unemployed_destination_mult = 0.1
+		planet_jobs_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -68,11 +79,286 @@ col_capital = {
 	}
 
 	weight_modifier = {
-		base = 15000
+		base = 1000
 	}
 }
 
-# 蜂群首都
+# 铸造首都
+col_capital_foundry = {
+	icon = GFX_colony_type_capital_foundry
+
+	potential = {
+		is_capital = yes
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+					is_ai = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		planet_stability_add = 5
+		planet_amenities_add = 10
+		pop_government_ethic_attraction = 1
+		planet_resettlement_unemployed_destination_mult = 0.1
+		planet_metallurgists_produces_mult = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 1
+		planet_metallurgists_energy_upkeep_add = 0.5
+		#planet_labour_hero_alloys_produces_add = 3.5
+		#planet_labour_hero_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_economic_controlled_economy = yes
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.5
+		planet_metallurgists_energy_upkeep_add = 0.25
+		#planet_labour_hero_alloys_produces_add = 1.5
+		#planet_labour_hero_energy_upkeep_add = 0.25
+	}
+
+	# used by AI to estimate what will happen when we change the designation
+	ai_resource_conversion = {
+		consumer_goods = 0
+		alloys = 2
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	ai_resource_current_conversion = {
+		alloys = 0.5
+		consumer_goods = -2
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	custom_tooltip = col_foundry_custom
+
+	weight_modifier = {
+		base = 0
+	}
+}
+
+# 工业首都
+col_capital_factory = {
+	icon = GFX_colony_type_capital_factory
+
+	potential = {
+		is_capital = yes
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+					is_ai = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		planet_stability_add = 5
+		planet_amenities_add = 10
+		pop_government_ethic_attraction = 1
+		planet_resettlement_unemployed_destination_mult = 0.1
+		planet_artisans_produces_mult = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 1.5
+		planet_artisans_energy_upkeep_add = 0.5
+		#planet_labour_hero_consumer_goods_produces_add = 3
+		#planet_labour_hero_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_economic_controlled_economy = yes
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 0.5
+		planet_artisans_energy_upkeep_add = 0.25
+		#planet_labour_hero_consumer_goods_produces_add = 2
+		#planet_labour_hero_energy_upkeep_add = 0.25
+	}
+
+	# used by AI to estimate what will happen when we change the designation
+	ai_resource_conversion = {
+		consumer_goods = 2
+		alloys = 0
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	custom_tooltip = col_factory_custom
+
+	# Used by AI to estimate the current effects of this designation
+	ai_resource_current_conversion = {
+		consumer_goods = 0.5
+		alloys = -0.5
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	weight_modifier = {
+		base = 0
+	}
+}
+
+# 贸易首都
+col_capital_trade = {
+	icon = GFX_colony_type_capital_trade
+
+	potential = {
+		is_capital = yes
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		planet_stability_add = 5
+		planet_amenities_add = 10
+		pop_government_ethic_attraction = 1
+		planet_resettlement_unemployed_destination_mult = 0.1
+		trade_value_mult = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_amenities_mult = 0.2
+		#planet_labour_hero_produces_mult = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_economic_controlled_economy = yes
+			}
+		}
+		planet_amenities_mult = 0.1
+		#planet_labour_hero_produces_mult = 0.25
+	}
+
+	weight_modifier = {
+		base = 0
+	}
+}
+
+# 矿业首都
+col_capital_extraction = {
+	icon = GFX_colony_type_capital_extraction
+
+	potential = {
+		is_capital = yes
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		planet_stability_add = 5
+		planet_amenities_add = 10
+		pop_government_ethic_attraction = 1
+		planet_resettlement_unemployed_destination_mult = 0.1
+		planet_jobs_worker_produces_mult = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	weight_modifier = {
+		base = 1000
+	}
+}
+
+# 蜂巢首都
 col_capital_hive = {
 	icon = GFX_colony_type_capital
 
@@ -86,9 +372,18 @@ col_capital_hive = {
 	}
 
 	planet_modifier = {
-		planet_stability_add = 10
+		planet_stability_add = 5
 		planet_amenities_no_happiness_add = 10
 		planet_crime_no_happiness_add = -20
+		planet_jobs_produces_mult = 0.1
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -112,11 +407,11 @@ col_capital_hive = {
 	}
 
 	weight_modifier = {
-		base = 15000
+		base = 0
 	}
 }
 
-# 智械首都
+# 机械首都
 col_capital_machine = {
 	icon = GFX_colony_type_capital
 
@@ -130,11 +425,18 @@ col_capital_machine = {
 	}
 
 	planet_modifier = {
-		planet_stability_add = 10
+		planet_stability_add = 5
 		planet_amenities_no_happiness_add = 10
 		planet_crime_no_happiness_add = -20
-		planet_jobs_complex_drone_produces_mult = 0.1
-		planet_jobs_simple_drone_produces_mult = 0.1
+		planet_jobs_produces_mult = 0.15
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -158,7 +460,7 @@ col_capital_machine = {
 	}
 
 	weight_modifier = {
-		base = 15000
+		base = 1000
 	}
 }
 
@@ -171,11 +473,14 @@ col_bureau = {
 		owner = {
 			is_regular_empire = yes
 			is_spiritualist = no
+			has_make_spiritualist_perk = no
 		}
-		NOT = {
+		NOR = {
 			uses_district_set = habitat
+			uses_district_set = pdplanethab
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -290,12 +595,17 @@ col_bureau_spiritualist = {
 		exists = owner
 		owner = {
 			is_regular_empire = yes
-			is_spiritualist = yes
+			OR = {
+				is_spiritualist = yes
+				has_make_spiritualist_perk = yes
+			}
 		}
-		NOT = {
+		NOR = {
 			uses_district_set = habitat
+			uses_district_set = pdplanethab
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -447,17 +757,9 @@ col_default = {
 		owner = { is_regular_empire = yes}
 		has_upgraded_capital = no
 		is_special_colony_type = no
+		is_capital = no
 		num_pops < 5
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
-		}
+		NOT = { uses_district_set = pdcrucible }
 	}
 
 	planet_modifier = {
@@ -502,17 +804,9 @@ col_default_machine = {
 		owner = { is_machine_empire = yes }
 		has_upgraded_capital = no
 		is_special_colony_type = no
+		is_capital = no
 		num_pops < 5
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
-		}
+		NOT = { uses_district_set = pdcrucible }
 	}
 
 	planet_modifier = {
@@ -556,18 +850,24 @@ col_city = {
 			uses_district_set = city_world
 			uses_district_set = ring_world
 			uses_district_set = habitat
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -642,18 +942,24 @@ col_mining = {
 			uses_district_set = city_world
 			uses_district_set = ring_world
 			uses_district_set = habitat
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -779,18 +1085,24 @@ col_farming = {
 			uses_district_set = ring_world
 			uses_district_set = habitat
 			uses_district_set = machine_world
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -912,18 +1224,24 @@ col_generator = {
 			uses_district_set = city_world
 			uses_district_set = ring_world
 			uses_district_set = habitat
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -1053,6 +1371,7 @@ col_hive = {
 		exists = owner
 		owner = { is_hive_empire = yes }
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -1120,20 +1439,26 @@ col_nexus = {
 			uses_district_set = machine_world
 			uses_district_set = ring_world
 			uses_district_set = habitat
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		exists = owner
 		owner = { is_machine_empire = yes }
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -1204,12 +1529,28 @@ col_industrial = {
 		}
 		NOR = {
 			uses_district_set = city_world
-			uses_district_set = ring_world
 			uses_district_set = habitat
 			uses_district_set = machine_world
 			uses_district_set = hive_world
+			uses_district_set = ring_world
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 
@@ -1250,6 +1591,23 @@ col_industrial = {
 		#planet_labour_hero_consumer_goods_produces_add = 2
 		#planet_labour_hero_alloys_produces_add = 1.5
 		#planet_labour_hero_energy_upkeep_add = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_artisans_produces_mult = 0.05
+			planet_metallurgists_produces_mult = 0.05
+		}
 	}
 
 
@@ -1296,21 +1654,24 @@ col_foundry = {
 		exists = owner
 		NOR = {
 			uses_district_set = city_world
-			uses_district_set = ring_world
 			uses_district_set = habitat
 			uses_district_set = machine_world
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = hive_world
+			uses_district_set = ring_world
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	custom_tooltip = col_foundry_custom
@@ -1438,23 +1799,29 @@ col_factory = {
 			owner = { has_civic = civic_machine_servitor }
 		}
 		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
-		}
-		NOR = {
 			uses_district_set = city_world
-			uses_district_set = ring_world
 			uses_district_set = habitat
 			uses_district_set = machine_world
 			uses_district_set = hive_world
+			uses_district_set = ring_world
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	custom_tooltip = col_factory_custom
@@ -1553,18 +1920,23 @@ col_refinery = {
 			uses_district_set = city_world
 			uses_district_set = ring_world
 			uses_district_set = habitat
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdmilarc
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -1723,18 +2095,20 @@ col_research = {
 			uses_district_set = city_world
 			uses_district_set = ring_world
 			uses_district_set = habitat
-		}
-		NOR = {
-			is_planet_class = pc_pd_barren_cold_hab
-			is_planet_class = pc_pd_barren_hab
-			is_planet_class = pc_pd_frozen_hab
-			is_planet_class = pc_pd_gas_giant_hab
-			is_planet_class = pc_pd_hothouse_hab
-			is_planet_class = pc_pd_toxic_hab
-			is_planet_class = pc_pd_molten_hab
-			is_planet_class = pc_pd_asteroid_hab
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdmilarc
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -1893,6 +2267,7 @@ col_fortress = {
 			is_planet_class = pc_pd_asteroid_hab
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -1979,7 +2354,12 @@ col_habitat = {
 	icon = GFX_colony_type_habitat
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 	}
 
 	triggered_planet_modifier = {
@@ -2014,7 +2394,12 @@ col_habitat_energy = {
 	icon = GFX_colony_type_habitat_energy
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 		exists = owner
 		OR = {
 			owner = { is_gestalt = yes }
@@ -2047,6 +2432,43 @@ col_habitat_energy = {
 		planet_technician_energy_produces_add = 0.5
 		#planet_labour_hero_energy_produces_add = 1
 	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = no
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_worker_produces_mult = 0.1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_simple_drone_produces_mult = 0.1
+		}
+	}
 	weight_modifier = {
 		base = 200
 		modifier = {
@@ -2073,7 +2495,12 @@ col_habitat_leisure = {
 	icon = GFX_colony_type_habitat_leisure
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 		exists = owner
 		owner = {
 			OR = {
@@ -2126,7 +2553,12 @@ col_habitat_trade = {
 	icon = GFX_colony_type_habitat_trade
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 		exists = owner
 		owner = { is_gestalt = no }
 	}
@@ -2180,7 +2612,12 @@ col_habitat_research = {
 	icon = GFX_colony_type_habitat_research
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 	}
 	planet_modifier = {
 		planet_district_hab_science_build_speed_mult = 0.25
@@ -2281,7 +2718,11 @@ col_habitat_mining = {
 	icon = GFX_colony_type_habitat_mining
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
 		has_planet_flag = mining_habitat
 	}
 	planet_modifier = {
@@ -2292,6 +2733,7 @@ col_habitat_mining = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
+			is_capital = no
 			owner = {
 				is_full_economic_stance_planned = yes
 			}
@@ -2312,6 +2754,43 @@ col_habitat_mining = {
 		planet_miners_minerals_produces_add = 0.75
 		planet_miners_energy_upkeep_add = 0.25
 		#planet_labour_hero_minerals_produces_add = 1.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = no
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_worker_produces_mult = 0.1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_simple_drone_produces_mult = 0.1
+		}
 	}
 
 	weight_modifier = {
@@ -2337,6 +2816,7 @@ col_habitat_farming = {
 
 	potential = {
 		uses_district_set = habitat
+		is_capital = no
 	}
 	custom_tooltip = col_habitat_farming_custom
 	planet_modifier = {
@@ -2437,7 +2917,12 @@ col_habitat_fortress = {
 	icon = GFX_colony_type_habitat_fortress
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 	}
 	planet_modifier = {
 		planet_building_stronghold_build_speed_mult = 0.25
@@ -2519,7 +3004,12 @@ col_habitat_industrial = {
 	icon = GFX_colony_type_industrial
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 	}
 	custom_tooltip = col_industrial_custom
 	planet_modifier = {
@@ -2609,7 +3099,12 @@ col_habitat_foundry = {
 	icon = GFX_colony_type_habitat_foundry
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 	}
 	custom_tooltip = col_habitat_foundry_custom
 	planet_modifier = {
@@ -2694,7 +3189,12 @@ col_habitat_factory = {
 	icon = GFX_colony_type_habitat_factory
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 		exists = owner
 		owner = {
 			OR = {
@@ -2786,7 +3286,12 @@ col_habitat_refinery = {
 	icon = GFX_colony_type_habitat_refinery
 
 	potential = {
-		uses_district_set = habitat
+		OR = {
+			uses_district_set = habitat
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+		}
+		is_capital = no
 	}
 	planet_modifier = {
 		planet_building_refinery_build_speed_mult = 0.25
@@ -2912,10 +3417,25 @@ col_rural_gestalt = {
 			uses_district_set = ring_world
 			uses_district_set = machine_world
 			uses_district_set = hive_world
+			uses_district_set = pdarchive
+			uses_district_set = pdwarform
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdplanethab
+			uses_district_set = pdbioforge
+			uses_district_set = pdbiocapital
+			uses_district_set = pdmachinefactory
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdfloraforge
+			uses_district_set = pdbiofort
+			uses_district_set = pdmachinefort
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdcrucible
 		}
 		exists = owner
 		owner = { is_gestalt = yes }
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -3006,6 +3526,7 @@ col_rural = {
 			uses_district_set = city_world
 		}
 		is_special_colony_type = no
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -3233,6 +3754,9 @@ col_ring_mix = {
 	planet_modifier = {
 		planet_immigration_pull_mult = 0.2
 		planet_jobs_produces_mult = 0.05
+		pop_growth_speed = 0.15
+		planet_pop_assembly_mult = 0.15
+		planet_pop_assembly_organic_mult = 0.15
 	}
 
 	triggered_planet_modifier = {
@@ -3276,6 +3800,9 @@ col_ring_research = {
 		planet_jobs_engineering_research_produces_mult = 0.15
 		planet_jobs_physics_research_produces_mult = 0.15
 		planet_jobs_society_research_produces_mult = 0.15
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3364,6 +3891,9 @@ col_ring_farming = {
 
 	planet_modifier = {
 		planet_farmers_food_produces_mult = 0.25
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3391,6 +3921,43 @@ col_ring_farming = {
 		#planet_labour_hero_food_produces_add = 1.5
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = no
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_worker_produces_mult = 0.1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_simple_drone_produces_mult = 0.1
+		}
+	}
+
 	weight_modifier = {
 		modifier = {
 			add = 100
@@ -3416,6 +3983,9 @@ col_ring_trade = {
 
 	planet_modifier = {
 		trade_value_mult = 0.2
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3463,6 +4033,9 @@ col_ring_generator = {
 
 	planet_modifier = {
 		planet_technician_energy_produces_mult = 0.25
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3485,6 +4058,43 @@ col_ring_generator = {
 		}
 		planet_technician_energy_produces_add = 0.5
 		#planet_labour_hero_energy_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = no
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_worker_produces_mult = 0.1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_gestalt = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_five_year_plans"
+				is_active_resolution = "resolution_greatergood_greater_than_ourselves"
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			planet_jobs_simple_drone_produces_mult = 0.1
+		}
 	}
 
 	weight_modifier = {
@@ -3512,6 +4122,9 @@ col_ring_foundry = {
 	planet_modifier = {
 		planet_district_rw_industrial_build_speed_mult = 0.25
 		planet_metallurgists_upkeep_mult = -0.2
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3606,6 +4219,9 @@ col_ring_factory = {
 	planet_modifier = {
 		planet_district_rw_industrial_build_speed_mult = 0.25
 		planet_artisans_upkeep_mult = -0.2
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3710,6 +4326,9 @@ col_ring_industry = {
 		planet_district_rw_industrial_build_speed_mult = 0.25
 		planet_metallurgists_upkeep_mult = -0.1
 		planet_artisans_upkeep_mult = -0.1
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
 	}
 
 	triggered_planet_modifier = {
@@ -3742,6 +4361,23 @@ col_ring_industry = {
 		#planet_labour_hero_consumer_goods_produces_add = 2
 		#planet_labour_hero_alloys_produces_add = 1.5
 		#planet_labour_hero_energy_upkeep_add = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_artisans_produces_mult = 0.05
+			planet_metallurgists_produces_mult = 0.05
+		}
 	}
 
 	weight_modifier = {
@@ -3815,6 +4451,22 @@ col_mac_foundry = {
 		planet_metallurgists_upkeep_mult = -0.2
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_metallurgists_produces_mult = 0.05
+		}
+	}
+
 	weight_modifier = {
 		base = 10
 		modifier = {
@@ -3851,7 +4503,10 @@ col_mac_factory = {
 	icon = GFX_colony_type_factory
 
 	potential = {
-		uses_district_set = machine_world
+		OR = {
+			uses_district_set = machine_world
+			uses_district_set = pdmachinefactory
+		}
 		owner = { has_civic = civic_machine_servitor }
 	}
 
@@ -3860,6 +4515,22 @@ col_mac_factory = {
 		custom_tooltip = col_factory_custom
 		planet_district_industrial_build_speed_mult = 0.25
 		planet_artisans_upkeep_mult = -0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_artisans_produces_mult = 0.05
+		}
 	}
 
 	weight_modifier = {
@@ -3899,6 +4570,7 @@ col_hiv = {
 
 	potential = {
 		uses_district_set = hive_world
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -3909,7 +4581,17 @@ col_hiv = {
 	}
 
 	weight_modifier = {
-		base = 10
+		modifier = {
+			factor = 0
+			exists = sector
+			sector = {
+				has_any_sector_focus = yes
+				NOR = {
+					has_sector_focus = "production"
+					has_sector_focus = "balanced"
+				}
+			}
+		}
 	}
 }
 
@@ -3924,6 +4606,22 @@ col_hiv_foundry = {
 	planet_modifier = {
 		planet_district_industrial_build_speed_mult = 0.25
 		planet_metallurgists_upkeep_mult = -0.20
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_metallurgists_produces_mult = 0.05
+		}
 	}
 
 	weight_modifier = {
@@ -3962,7 +4660,15 @@ col_ecu_mix = {
 	icon = GFX_colony_type_urban
 
 	potential = {
-		uses_district_set = city_world
+		OR = {
+			uses_district_set = city_world
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdmilarc
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdcorpoarc
+		}
 	}
 
 
@@ -4002,7 +4708,11 @@ col_ecu_foundry = {
 	icon = GFX_colony_type_foundry
 
 	potential = {
-		uses_district_set = city_world
+		OR = {
+			uses_district_set = city_world
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdmilarc
+		}
 	}
 
 
@@ -4107,7 +4817,10 @@ col_ecu_factory = {
 	icon = GFX_colony_type_factory
 
 	potential = {
-		uses_district_set = city_world
+		OR = {
+			uses_district_set = city_world
+			uses_district_set = pdcorpoarc
+		}
 		exists = owner
 		OR = {
 			owner = { is_regular_empire = yes }
@@ -4214,7 +4927,10 @@ col_ecu_industrial = {
 	icon = GFX_colony_type_industrial
 
 	potential = {
-		uses_district_set = city_world
+		OR = {
+			uses_district_set = city_world
+			uses_district_set = pdcorpoarc
+		}
 		exists = owner
 		OR = {
 			owner = { is_regular_empire = yes }
@@ -4262,6 +4978,23 @@ col_ecu_industrial = {
 		#planet_labour_hero_energy_upkeep_add = 0.25
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_industry_environmental_ordinance_waivers"
+				is_active_resolution = "resolution_industry_project_cornucopia"
+			}
+		}
+		modifier = {
+			planet_artisans_produces_mult = 0.05
+			planet_metallurgists_produces_mult = 0.05
+		}
+	}
+
 	weight_modifier = {
 		modifier = {
 			add = 5
@@ -4302,7 +5035,13 @@ col_ecu_research = {
 	icon = GFX_colony_type_research
 
 	potential = {
-		uses_district_set = city_world
+		OR = {
+			uses_district_set = city_world
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdmilarc
+			uses_district_set = pdcorpoarc
+		}
 	}
 
 
@@ -4421,6 +5160,7 @@ col_city_fortress = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -4509,6 +5249,7 @@ col_city_enforcer = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 		owner = {
 			is_regular_empire = yes
 			NOR = {
@@ -4556,6 +5297,7 @@ col_city_criminal = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 		owner = { has_valid_civic = civic_underworld_society }
 		has_district = district_criminal
 	}
@@ -4578,6 +5320,7 @@ col_city_refinery = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 	}
 
 	planet_modifier = {
@@ -4739,6 +5482,7 @@ col_city_farming = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 		owner = { is_machine_empire = no }
 	}
 
@@ -4820,6 +5564,7 @@ col_city_priest = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 		owner = { is_machine_empire = no }
 		owner = {
 			is_regular_empire = yes
@@ -4877,6 +5622,7 @@ col_city_noble = {
 
 	potential = {
 		uses_district_set = city_world
+		is_capital = no
 		owner = {
 			has_valid_civic = civic_aristocratic_elite
 		}		

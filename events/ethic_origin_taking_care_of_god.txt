@@ -8,7 +8,15 @@ country_event = {
 	is_triggered_only = yes
 	trigger = { has_origin = origin_taking_care_of_god }
 	immediate = {
+		set_country_type = eci_primitive
 		start_situation = { type = taking_care_of_god }
+		eci_primitive_trade = yes
+		capital_scope = {
+			add_deposit = d_ethic_primitive_trade
+			solar_system = {
+				starbase = { fleet = { delete_fleet = this } }
+			}
+		}
 		if = {
 			limit = { is_ai = no }
 			give_physics_research_option_tier_5_effect = yes
@@ -219,6 +227,40 @@ situation_event = {
 			give_technology = { message = no tech = tech_space_construction message = no }
 			give_technology = { message = no tech = tech_ship_armor_1 message = no }
 			give_technology = { message = no tech = tech_starbase_2 message = no }
+			create_fleet = {
+				name = "NAME_Space_Station"
+				effect = {
+					set_owner = root.owner
+					create_ship = {
+						name = "NAME_ISS_II"
+						design = "NAME_Space_Station"
+					}
+					set_location = root.owner.capital_scope
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = prev
+
+					create_ship = {
+						name = random
+						random_existing_design = science
+					}
+
+					set_fleet_stance = evasive
+					set_location = prev.capital_scope.star
+
+					owner = {
+						create_leader = {
+							class = scientist
+							sub_type = survey
+							name = random
+							species = owner_main_species
+						}
+					}
+					set_leader = last_created_leader
+				}
+			}
 		}
 	}
 	option = {
@@ -234,9 +276,55 @@ situation_event = {
 	is_triggered_only = yes
 	immediate = {
 		owner = {
+			set_country_type = default
 			give_technology = { message = no tech = tech_space_exploration message = no }
 			give_technology = { message = no tech = tech_colonization_1 message = no }
 			give_technology = { message = no tech = tech_assault_armies message = no }
+			capital_scope = {
+				solar_system = {
+					create_starbase = {
+						size = starbase_outpost
+						owner = root.owner
+					}
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = prev
+
+					create_ship = {
+						name = random
+						random_existing_design = science
+					}
+
+					set_fleet_stance = evasive
+					#set_location = prev.capital_star
+					set_location = prev.capital_scope.star
+
+					owner = {
+						create_leader = {
+							class = scientist
+							sub_type = survey
+							name = random
+							species = owner_main_species
+						}
+					}
+					set_leader = last_created_leader
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = prev
+
+					create_ship = {
+						name = random
+						random_existing_design = constructor
+					}
+
+					set_fleet_stance = evasive
+					set_location = prev.capital_star
+				}
+			}
 		}
 	}
 	option = {
@@ -269,6 +357,7 @@ country_event = {
 					}
 				}
 			}
+			country_event = { id = ethic_easter.0 days = 1 }
 		}
 		create_fleet = {
 			name = "NAME_Payback_Warship_GOD"
@@ -363,12 +452,20 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			set_country_type = default
 			capital_scope = {
+				solar_system = {
+					create_starbase = {
+						size = starbase_outpost
+						owner = root.owner
+					}
+				}
 				save_event_target_as = spawn_god_ship_planet
 				solar_system = {
 					spawn_god_habitat = yes
 				}
 			}
+			country_event = { id = ethic_easter.0 days = 1 }
 		}
 	}
 

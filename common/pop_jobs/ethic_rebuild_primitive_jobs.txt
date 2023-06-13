@@ -106,12 +106,7 @@ hunter_gatherer = {
 	}
 
 	weight = {
-		weight = @worker_job_weight
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-		modifier = {
-			factor = 0.5
-			owner = { is_primitive_society = yes }
-		}
+		weight = 0.1
 	}
 }
 
@@ -157,6 +152,75 @@ peasant = {
 
 	weight = {
 		weight = @worker_job_weight
+		modifier = { # 可控的动态权重
+			factor = value:job_weights_modifier|JOB|farmer|RESOURCE|food|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 1.1
+			owner = { has_valid_civic = civic_agrarian_idyll }
+		}
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { has_technology = tech_droid_workers }
+		}
+		modifier = {
+			factor = 200
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { NOT = { has_technology = tech_droid_workers } }
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_valid_civic = civic_agrarian_idyll }
+		}
+		# low income modifier
+		modifier = {
+			factor = 1.2
+			exists = planet
+			planet = {
+				has_available_jobs = farmer
+			}
+			exists = owner
+			owner = {
+				is_ai = yes
+				has_monthly_income = {
+					resource = food
+					value < 10
+				}
+			}
+		}
+
+		modifier = {
+			factor = 0.5
+			has_trait = trait_lithoid
+
+			owner = {
+				is_lithoid_empire = yes
+				has_monthly_income = {
+					resource = food
+					value >= 0
+				}
+			}
+		}
 	}
 }
 
@@ -445,6 +509,7 @@ primitive_miner = {
 		owner = {
 			OR = {
 				is_primitive_society = yes
+				has_origin = origin_galaxy_iron_curtain
 				AND = {
 					is_primitive = yes
 					OR = {
@@ -464,16 +529,59 @@ primitive_miner = {
 		produces = {
 			minerals = 3
 		}
-		produces = {
-			trigger = {
-				planet = { has_modifier = "ley_rift" }
-			}
-			sr_zro = 0.1
-		}
 	}
 
 	weight = {
 		weight = @worker_job_weight
+		modifier = { # 可控的动态权重
+			factor = value:job_weights_modifier|JOB|miner|RESOURCE|minerals|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 10
+			is_enslaved = yes
+			can_take_servant_job = no
+			NOT = { has_slavery_type = { type = slavery_indentured } }
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { has_technology = tech_droid_workers }
+		}
+		modifier = {
+			factor = 200
+			OR = {
+				is_non_sapient_robot = yes
+				is_shackled_robot = yes
+			}
+			can_take_servant_job = no
+			owner = { NOT = { has_technology = tech_droid_workers } }
+		}
+		modifier = {
+			factor = 0.25
+			can_take_servant_job = yes
+		}
+
+		# low income modifier
+		modifier = {
+			factor = 1.1
+			exists = planet
+			planet = {
+				has_available_jobs = "miner"
+			}
+			exists = owner
+			owner = {
+				is_ai = yes
+				has_monthly_income = {
+					resource = minerals
+					value < 0
+				}
+			}
+		}
 	}
 }
 
@@ -491,13 +599,18 @@ primitive_technician = {
 
 	possible = {
 		owner = {
-			is_primitive = yes
 			OR = {
-				has_country_flag = steam_age
-				has_country_flag = machine_age
-				has_country_flag = industrial_age
-				has_country_flag = atomic_age
-				has_country_flag = early_space_age
+				has_origin = origin_galaxy_iron_curtain
+				AND = {
+					is_primitive = yes
+					OR = {
+						has_country_flag = steam_age
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+				}
 			}
 		}
 	}
@@ -527,13 +640,19 @@ primitive_farmer = {
 
 	possible = {
 		owner = {
-			is_primitive = yes
 			OR = {
-				has_country_flag = steam_age
-				has_country_flag = machine_age
-				has_country_flag = industrial_age
-				has_country_flag = atomic_age
-				has_country_flag = early_space_age
+				is_primitive_society = yes
+				has_origin = origin_galaxy_iron_curtain
+				AND = {
+					is_primitive = yes
+					OR = {
+						has_country_flag = steam_age
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+				}
 			}
 		}
 	}
@@ -701,12 +820,17 @@ primitive_bureaucrat = {
 
 	possible = {
 		owner = {
-			is_primitive = yes
 			OR = {
-				has_country_flag = machine_age
-				has_country_flag = industrial_age
-				has_country_flag = atomic_age
-				has_country_flag = early_space_age
+				has_origin = origin_galaxy_iron_curtain
+				AND = {
+					is_primitive = yes
+					OR = {
+						has_country_flag = machine_age
+						has_country_flag = industrial_age
+						has_country_flag = atomic_age
+						has_country_flag = early_space_age
+					}
+				}
 			}
 		}
 	}

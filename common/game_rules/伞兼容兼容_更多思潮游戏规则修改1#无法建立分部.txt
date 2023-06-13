@@ -369,10 +369,17 @@ can_dismiss_leader = {
 			}
 		}
 	}
+	custom_tooltip = {
+		fail_text = "requires_actor_not_huazhang"
+		NOT = { has_leader_flag = huazhang }
+	}
 	if = {
 		limit = {
 			leader_class = admiral
 			is_idle = no
+			# Rulers and heirs can't be dismissed any way and can be non-idle
+			is_ruler = no
+			is_heir = no
 		}
 		custom_tooltip = {
 			fail_text = "requires_fleet_control"
@@ -383,6 +390,18 @@ can_dismiss_leader = {
 					is_same_value = prevprev.owner
 				}
 			}
+		}
+	}
+	if = {
+		limit = {
+			OR = {
+				is_heir = yes
+				is_ruler = yes
+			}
+		}
+		custom_tooltip = {
+			always = no
+			fail_text = "can_not_dismiss_rulers"
 		}
 	}
 }
@@ -554,7 +573,7 @@ can_species_be_assembled = {
 						#	星海帝皇
 						has_building = building_clone_guard_clone_vat
 						#	FW
-						check_modifier_value = { modifier = planet_pop_assembly_organic_add value > 0 }
+						#check_modifier_value = { modifier = planet_pop_assembly_organic_add value > 0 }
 						#	Ecar
 						has_building = building_advanced_clone_vats
 					}
@@ -725,5 +744,138 @@ can_modify_species = {
 			has_trait = trait_unnatural
 		}
 		is_same_species = root
+	}
+}
+
+#是否能够使用银河市场
+# This = country
+can_use_galactic_market = {
+	is_country_type = default
+	NOR = {
+		AND = {
+			has_ethic = ethic_gestalt_consciousness
+			NOT = {  has_tradition = tr_future_economy }
+		}
+		has_civic = civic_fanatic_purifiers
+		has_civic = civic_hive_devouring_swarm
+		has_civic = civic_machine_terminator
+	}
+}
+
+#是否能够更换内阁
+# this = country
+can_country_change_councilors = {
+	OR = {
+		is_gestalt = no
+		has_civic = civic_network_of_the_mind
+		has_civic = civic_network_of_the_mind_machine
+		has_civic = civic_network_of_the_mind_true_hive
+	}
+	NOT = { has_authority = auth_direct_democratic }
+}
+
+#能否获得额外内阁席位
+# this = country
+has_extra_council_position = {
+	country_has_extra_council_position = yes
+	NOT = { has_authority = auth_direct_democratic }
+}
+
+#计入领袖上限
+# this = leader
+should_count_towards_leader_cap = {
+	NOR = {
+		leader_class = envoy
+		AND = {
+			owner = {
+				OR = {
+					is_gestalt = yes
+					has_authority = auth_direct_democratic
+				}
+			}
+			is_councilor = yes
+			# We count all rulers as well
+			NOT = { is_ruler = yes }
+		}
+		has_leader_flag = marauder_merc_leader
+		has_leader_flag = hired_admiral_merc_leader
+		has_leader_flag = legendary_leader
+		AND = {
+			has_trait_tier1or2 = { TRAIT = leader_trait_eager }
+			has_skill < 4
+		}
+	}
+}
+
+#享受工资的领袖
+#This = leader
+should_pay_for_leader_upkeep = {
+	NOT = {
+		AND = {
+			exists = owner
+			owner = {
+				OR = {
+					is_gestalt = yes
+					has_authority = auth_direct_democratic
+				}
+			}
+			is_councilor = yes
+		}
+	}
+}
+
+#领袖能获得理事会特质吗
+# this = leader
+can_leader_get_council_trait = {
+	NAND = {
+		exists = owner
+		owner = {
+			OR = {
+				AND = {
+					is_gestalt = yes
+					NOR = {
+						has_civic = civic_network_of_the_mind
+						has_civic = civic_network_of_the_mind_machine
+						has_civic = civic_network_of_the_mind_true_hive
+					}
+				}
+				has_authority = auth_direct_democratic
+			}
+		}
+		is_councilor = no
+	}
+}
+
+#领袖能获得普通特质吗
+# this = leader
+can_leader_get_normal_trait = {
+	NOR = {
+		AND = {
+			exists = owner
+			owner = {
+				OR = {
+					AND = {
+						is_gestalt = yes
+						NOR = {
+							has_civic = civic_network_of_the_mind
+							has_civic = civic_network_of_the_mind_machine
+							has_civic = civic_network_of_the_mind_true_hive
+						}
+					}
+					has_authority = auth_direct_democratic
+				}
+			}
+			is_councilor = yes
+		}
+		AND = {
+			is_ruler = yes
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_dictatorial
+					has_authority = auth_imperial
+				}
+			}
+		}
 	}
 }

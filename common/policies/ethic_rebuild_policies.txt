@@ -951,7 +951,7 @@ war_doctrine = {
 		}
 		modifier = {
 			country_naval_cap_mult = 0.2
-			country_command_limit_add = 40
+			command_limit_add = 40
 			ships_upkeep_mult = -0.2
 			ship_disengage_chance_mult = 0.25
 		}
@@ -1127,7 +1127,7 @@ war_doctrine = {
 			shipsize_corvette_hull_add = 300
 			shipsize_destroyer_hull_add = 200
 			country_naval_cap_mult = 1
-			country_command_limit_add = 80
+			command_limit_add = 80
 			ship_hull_regen_add_perc = 0.05
 			ship_armor_regen_add_perc = 0.05
 		}
@@ -1157,6 +1157,158 @@ war_doctrine = {
 		}
 		AI_weight = {
 			factor = 100000
+		}
+	}
+}
+
+# 战争哲学
+war_philosophy = {
+	potential = {
+	}
+	allow = {
+		is_at_war = no		# Not allowed to change policies in this group while at war
+	}
+	option = {
+		name = "unrestricted_wars"
+		policy_flags = {
+			unrestricted_wars
+		}
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_last_resort_doctrine
+			}
+		}
+		valid = {
+			NOR = {
+				has_ethic = "ethic_pacifist"
+				has_ethic = "ethic_fanatic_pacifist"
+				has_valid_civic = "civic_inwards_perfection"
+				has_civic = "civic_crusader_spirit"
+				has_civic = "civic_liberator"
+			}
+		}
+		AI_weight = {
+			modifier = {
+				factor = 10
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				NOT = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+			modifier = {
+				factor = 10
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = purger
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+		}
+	}
+	option = {
+		name = "liberation_wars"
+		policy_flags = {
+			liberation_wars
+		}
+		potential = {
+			NOT = {
+				has_ethic = ethic_gestalt_consciousness
+			}
+		}
+		valid = {
+			NOR = {
+				has_ethic = "ethic_fanatic_pacifist"
+				has_valid_civic = "civic_fanatic_purifiers"
+			}
+		}
+		on_enabled = {
+			hidden_effect = {
+				check_casus_belli_valid = {
+					type = cb_ideology
+				}
+			}
+		}
+		on_disabled = {
+			hidden_effect = {
+				check_casus_belli_valid = {
+					type = cb_ideology
+				}
+			}
+		}
+		AI_weight = {
+			modifier = {
+				factor = 2
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				has_ethic = "ethic_pacifist"
+			}
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = liberator
+				}
+			}
+			modifier = {
+				factor = 20
+				has_valid_civic = civic_shared_burden
+			}
+		}
+	}
+	option = {
+		name = "no_wars"
+		policy_flags = {
+			no_wars
+		}
+		valid = {
+			NOR = {
+				has_ethic = "ethic_fanatic_militarist"
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_hive_devouring_swarm"
+				has_valid_civic = "civic_machine_terminator"
+				has_civic = "civic_crusader_spirit"
+				has_civic = "civic_liberator"
+			}
+		}
+		AI_weight = {
+			modifier = {
+				factor = 5
+				has_ethic = "ethic_fanatic_pacifist"
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
 		}
 	}
 }
@@ -2297,7 +2449,13 @@ economic_stance = {
 	option = {
 		name = "economic_stance_market_anarchism"
 		potential = {
-			has_valid_civic = civic_distributism
+			OR = {
+				has_valid_civic = civic_distributism
+				AND = {
+					has_ethic = ethic_fanatic_socialism
+					has_ethic = ethic_fanatic_egalitarian
+				}
+			}
 			NOR = {
 				has_policy_flag = tt_communist_road_2
 				has_policy_flag = tt_communist_road_3
@@ -2320,11 +2478,9 @@ economic_stance = {
 		}
 		valid = {
 			NOR = {
-				AND = {
-					is_socialism = yes
-					NOT = { has_policy_flag = reform_and_opening_up }
-				}
 				has_ethic = ethic_fanatic_authoritarian
+				has_valid_civic = civic_shared_burden
+				has_valid_civic = civic_socialistic
 				has_valid_civic = civic_state_monopoly
 				has_valid_civic = civic_glory_and_dream
 				has_valid_civic = civic_welfare_state
@@ -2348,6 +2504,10 @@ economic_stance = {
 		name = "economic_stance_market"
 		potential = {
 			NOR = {
+				AND = {
+					has_ethic = ethic_fanatic_socialism
+					has_ethic = ethic_fanatic_egalitarian
+				}
 				has_valid_civic = civic_distributism
 				has_policy_flag = tt_communist_road_2
 				has_policy_flag = tt_communist_road_3
@@ -2415,7 +2575,6 @@ economic_stance = {
 			NOR = {
 				has_valid_civic = civic_anarchism
 				has_valid_civic = civic_glory_and_dream
-				has_ethic = ethic_fanatic_socialism
 			}
 		}
 		modifier = {
@@ -2871,6 +3030,10 @@ trade_policy = {
 				factor = 30
 				has_ethic = "ethic_fanatic_capitalism"
 			}
+			modifier = {
+				factor = 30
+				has_origin = origin_galaxy_iron_curtain
+			}
 		}
 	}
 	# 基础投资
@@ -2965,8 +3128,8 @@ trade_policy = {
 			modifier = {
 				factor = 30
 				OR = {
-					has_valid_civic = civic_industrial_economy
-					has_valid_civic = civic_industrial_economy_corporate
+					has_valid_civic = civic_relentless_industrialists
+					has_valid_civic = civic_corporate_relentless_industrialists
 				}
 			}
 		}
@@ -3109,8 +3272,8 @@ trade_policy = {
 		valid = {
 			OR = {
 				has_tradition = tr_mercantile_adaptive_economic_policies
-				has_valid_civic = civic_industrial_economy
-				has_valid_civic = civic_industrial_economy_corporate
+				has_valid_civic = civic_relentless_industrialists
+				has_valid_civic = civic_corporate_relentless_industrialists
 			}
 		}
 		modifier = {
@@ -3123,8 +3286,8 @@ trade_policy = {
 			modifier = {
 				factor = 30
 				OR = {
-					has_valid_civic = civic_industrial_economy
-					has_valid_civic = civic_industrial_economy_corporate
+					has_valid_civic = civic_relentless_industrialists
+					has_valid_civic = civic_corporate_relentless_industrialists
 				}
 			}
 			modifier = {
@@ -3459,8 +3622,8 @@ trade_policy = {
 			modifier = {
 				factor = 20
 				OR = {
-					has_valid_civic = civic_industrial_economy
-					has_valid_civic = civic_industrial_economy_corporate
+					has_valid_civic = civic_relentless_industrialists
+					has_valid_civic = civic_corporate_relentless_industrialists
 					has_valid_civic = civic_crafters
 				}
 			}
@@ -5697,8 +5860,8 @@ industrial = {
 		name = "industrial_efficiency"
 		valid = {
 			NOR = {
-				has_valid_civic = civic_industrial_economy
-				has_valid_civic = civic_industrial_economy_corporate
+				has_valid_civic = civic_relentless_industrialists
+				has_valid_civic = civic_corporate_relentless_industrialists
 				has_valid_civic = civic_mining_guilds
 			}
 		}
@@ -5726,8 +5889,8 @@ industrial = {
 			modifier = {
 				factor = 0.1
 				OR = {
-					has_valid_civic = civic_industrial_economy
-					has_valid_civic = civic_industrial_economy_corporate
+					has_valid_civic = civic_relentless_industrialists
+					has_valid_civic = civic_corporate_relentless_industrialists
 					has_valid_civic = civic_consumerism
 				}
 			}
@@ -5741,7 +5904,7 @@ industrial = {
 				has_valid_civic = civic_keepers_harmony
 			}
 			NOR = {
-				has_valid_civic = civic_industrial_economy
+				has_valid_civic = civic_relentless_industrialists
 				has_valid_civic = civic_mining_guilds
 			}
 		}
@@ -5786,8 +5949,8 @@ industrial = {
 			modifier = {
 				factor = 10
 				OR = {
-					has_valid_civic = civic_industrial_economy
-					has_valid_civic = civic_industrial_economy_corporate
+					has_valid_civic = civic_relentless_industrialists
+					has_valid_civic = civic_corporate_relentless_industrialists
 					has_valid_civic = civic_consumerism
 				}
 			}
@@ -5805,8 +5968,8 @@ industrial = {
 		name = "industrial_unlimited"
 		valid = {
 			OR = {
-				has_valid_civic = civic_industrial_economy
-				has_valid_civic = civic_industrial_economy_corporate
+				has_valid_civic = civic_relentless_industrialists
+				has_valid_civic = civic_corporate_relentless_industrialists
 			}
 			NOR = {
 				has_valid_civic = civic_The_Druid_Way
@@ -5914,7 +6077,7 @@ transportation_logistics = {
 		modifier = {
 			ships_upkeep_mult = -0.2
 			country_starbase_capacity_add = 5
-			country_command_limit_add = 30
+			command_limit_add = 30
 			country_naval_coverage_mult = 0.33
 			station_gatherers_produces_mult = -0.25
 			station_researchers_produces_mult = -0.25
@@ -6391,7 +6554,7 @@ slavery = {
 ratio_of_slaves = {
 	potential = {
 		NOT = { has_ethic = ethic_gestalt_consciousness }
-		is_default_empire = yes
+		is_country_type = default
 	}
 	option = {
 		potential = {
@@ -6671,7 +6834,7 @@ leader_enhancement = {
 			leader_enhancement_selected_lineages
 		}
 		modifier = {
-			leader_skill_levels = 1
+			councilor_skill_add = 1
 			leader_age = 10
 			leaders_cost_mult = 0.5
 		}
@@ -6719,7 +6882,7 @@ leader_enhancement = {
 			leader_enhancement_capacity_boosters
 		}
 		modifier = {
-			leader_skill_levels = 2
+			councilor_skill_add = 2
 			leader_age = 20
 			leaders_cost_mult = 1
 		}
