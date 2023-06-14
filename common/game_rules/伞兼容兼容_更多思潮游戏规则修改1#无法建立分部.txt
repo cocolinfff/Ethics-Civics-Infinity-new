@@ -61,7 +61,22 @@ can_fill_ruler_job = {
 			OR = {
 				NOT = { has_trait = trait_mechanical }
 				AND = {
-					owner = { has_technology = tech_synthetic_workers }
+					owner = {
+						OR = {
+							AND = {
+								NOT = { has_trait = trait_thl_doll }
+								owner = {
+									has_technology = tech_synthetic_workers
+								}
+							}
+							AND = {
+								has_trait = trait_thl_doll
+								owner = {
+									has_technology = tech_sapient_dolls
+								}
+							}
+						}
+					}
 					owner = { has_policy_flag = ai_full_rights }
 				}
 			}
@@ -424,7 +439,44 @@ can_species_be_assembled = {
 				has_trait = trait_robot_mind_relic_core	# azl
 				has_trait = trait_reassembler			# 时与空
 			}
-
+			###车万领袖
+			OR = {
+				NOT = { has_trait = trait_thl_doll }
+				AND = {
+					root = {
+						check_variable_arithmetic = { which = value:doll_missing_per_maker value >= 0 }
+						OR = {
+							any_owned_pop = {
+								has_job = dollmaker
+							}
+							AND = {
+								exists = leader
+								leader = {
+									has_trait = leader_trait_dolls
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					root = {
+						owner = {
+							has_technology = tech_sapient_dolls
+						}
+						OR = {
+							any_owned_pop = {
+								has_job = dollmaker
+							}
+							AND = {
+								exists = leader
+								leader = {
+									has_trait = leader_trait_dolls
+								}
+							}
+						}
+					}
+				}
+			}
 			#	魔女
 			if = { limit = { has_trait = trait_dummy }
 				if = { limit = { root.owner = { has_origin = origin_garbage_princesses } }
