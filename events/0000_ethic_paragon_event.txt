@@ -203,3 +203,166 @@ country_event = { # Create Exakeides - 20 yo
         hidden_effect = { country_event = { id = paragon.3116 } }
     }
 }
+
+country_event = { #After the Fall - First negotiation batch - with Reformists
+	id = paragon.5210
+	title = "paragon.5210.name"
+	desc = "paragon.5210.desc"
+	picture = GFX_evt_galactic_senate
+	show_sound = event_factions
+
+	is_triggered_only = yes
+
+	trigger = {
+		exists = ruler
+		ruler = { has_leader_flag = paragon_origin_legendary_leader }
+	}
+
+	immediate = {
+		set_country_flag = main_player_empire_@this
+	}
+
+	option = {
+		name = paragon.5210.a
+		paragon_origin_reformists_negotiations_effect = yes
+		country_event = {
+			id = paragon.5220 days = 15 random = 30
+		}
+	}
+	option = {
+		name = paragon.5210.b
+		country_event = {
+			id = paragon.5221 days = 15 random = 15
+		}
+		custom_tooltip = paragon.5210.b.tt
+	}
+	option = {
+		trigger = {
+			ruler = {
+				check_variable = {
+					which = paragon_origin_delusion_tier
+					value >= 10
+				}
+			}
+		}
+		name = paragon.5210.c
+		hidden_effect = {
+			ruler = {
+				while = {
+					count = 5
+					paragon_origin_gain_delusion = yes
+				}	
+			}
+		}
+		country_event = {
+			id = paragon.5222 days = 15 random = 15
+		}
+		custom_tooltip = paragon.5210.c.tt
+	}
+	option = {
+		name = paragon.5210.d
+		trigger = {
+			any_system_within_border = {
+				is_capital_system = no
+				any_system_colony = { has_modifier = paragon_origin_reformists }
+			}
+			NOT = { has_valid_civic = civic_fanatic_purifiers }
+		}
+		hidden_effect = {
+			random_owned_leader = {
+				remove_leader_flag = paragon_origin_legendary_leader
+				limit = { is_ruler = yes }
+				kill_leader = { show_notification = no }
+			}
+		}
+		add_modifier = {
+			modifier = paragon_origin_rebel_player
+			days = -1
+		}
+		set_origin = origin_legendary_leader_death
+		shift_ethic = ethic_fanatic_egalitarian
+        shift_ethic = ethic_fanatic_socialism
+		hidden_effect = {
+			paragon_origin_launch_rebelion = yes
+			country_event = {
+				id = paragon.5211 days = 15 random = 15
+			}
+		}
+		if = {
+			limit = { host_has_dlc = "Megacorp" }
+			hidden_effect = {
+				force_remove_civic = 2
+			}
+			change_government = {
+				authority = auth_democratic
+				remove_invalid_civics = yes
+				civics = {
+					civic = civic_idealistic_foundation
+					civic = civic_shared_burden
+				}
+			}
+		}
+		else = {
+			hidden_effect = {
+				force_remove_civic = 2
+			}
+			change_government = {
+				authority = auth_democratic
+				remove_invalid_civics = yes
+				civics = {
+					civic = civic_stratocracy
+					civic = civic_idealistic_foundation
+				}
+			}
+		}
+		set_policy = {
+			policy = war_philosophy
+			option = liberation_wars
+			cooldown = yes
+		}
+		custom_tooltip = paragon.5210.d.tt
+	}
+	option = {
+		name = paragon.5210.e
+		trigger = {
+			any_system_within_border = {
+				is_capital_system = no
+				any_system_colony = { has_modifier = paragon_origin_reformists }
+			}
+			has_valid_civic = civic_fanatic_purifiers
+		}
+		hidden_effect = {
+			random_owned_leader = {
+				remove_leader_flag = paragon_origin_legendary_leader
+				limit = { is_ruler = yes }
+				kill_leader = { show_notification = no }
+			}
+		}
+		add_modifier = {
+			modifier = paragon_origin_rebel_player
+			days = -1
+		}
+		set_origin = origin_legendary_leader_death
+		hidden_effect = {
+			clear_ethos = yes
+			paragon_origin_launch_rebelion = yes
+			force_remove_civic = 3
+			country_event = {
+				id = paragon.5211 days = 15 random = 30
+			}
+		}
+		country_add_ethic = ethic_fanatic_xenophobe
+		country_add_ethic = ethic_fanatic_militarist
+        country_add_ethic = ethic_egalitarian
+		change_government = {
+			authority = auth_democratic
+			remove_invalid_civics = yes
+			civics = {
+				civic = civic_fanatic_purifiers
+                civic = civic_sparta_spirit
+				civic = civic_military_junta
+			}
+		}
+		custom_tooltip = paragon.5210.d.tt
+	}
+}
