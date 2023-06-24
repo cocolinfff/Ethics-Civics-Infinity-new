@@ -330,275 +330,6 @@ artisan_specialist = {
 	}
 }
 
-#基层干部
-grassroot_cadre = {
-	category = specialist
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_foundry_1
-	clothes_texture_index = 4
-
-	possible_pre_triggers = {
-		has_owner = yes
-		# is_enslaved = no
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-	possible_precalc = can_fill_specialist_job
-	possible = {
-		complex_specialist_job_check_trigger = yes
-	}
-
-	resources = {
-		category = planet_bureaucrats
-		produces = {
-			trigger = {
-				owner = { is_planned_type = yes }
-			}
-			unity = 4
-			consumer_goods = 2
-			alloys = 1
-		}
-		produces = {
-			trigger = {
-				owner = { is_planned_type = yes }
-				planet = { has_factory_designation = yes }
-			}
-			consumer_goods = 2
-			alloys = -1
-		}
-		produces = {
-			trigger = {
-				owner = { is_planned_type = yes }
-				planet = { has_foundry_designation = yes }
-			}
-			consumer_goods = -2
-			alloys = 1
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					is_catalytic_empire = no
-					is_planned_type = yes
-				}
-			}
-			minerals = 4
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					is_catalytic_empire = yes
-					is_planned_type = yes
-				}
-				planet = { has_foundry_designation = no }
-			}
-			minerals = 2
-			food = 2
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					is_catalytic_empire = yes
-					is_planned_type = yes
-				}
-				planet = { has_foundry_designation = yes }
-			}
-			food = 4
-		}
-
-		#余货征集
-		produces = {
-			trigger = {
-				owner = { is_planned_type = yes }
-				planet = { has_foundry_designation = yes }
-			}
-			unity = 3
-			alloys = 1
-		}
-	}
-
-	#固定加成
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 4
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = concentration_of_power
-					has_policy_flag = partial_decentralization
-				}
-			}
-		}
-		country_edict_fund_add = 5
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = concentration_of_power
-					has_policy_flag = partial_decentralization
-				}
-			}
-		}
-		species_empire_size_mult = -0.02
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = centralized_state
-					has_policy_flag = excessive_centralization
-				}
-			}
-		}
-		country_edict_fund_add = 10
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = full_decentralization
-					has_policy_flag = high_decentralization
-				}
-			}
-		}
-		species_empire_size_mult = -0.04
-	}
-
-	#浮动加成
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_any_generator_district_or_building = yes }
-		}
-		planet_technician_energy_produces_add = 0.2
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_any_mining_district_or_building = yes }
-		}
-		planet_miners_minerals_produces_add = 0.3
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_any_farming_district_or_buildings = yes }
-		}
-		planet_farmers_food_produces_add = 0.2
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				has_industrial_districts = yes
-				has_factory_designation = no
-			}
-		}
-		planet_metallurgists_alloys_produces_add = 0.1
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_foundry_designation = yes }
-		}
-		planet_metallurgists_alloys_produces_add = 0.1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				has_industrial_districts = yes
-				has_foundry_designation = no
-			}
-		}
-		planet_artisans_consumer_goods_produces_add = 0.1
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_factory_designation = yes }
-		}
-		planet_artisans_consumer_goods_produces_add = 0.1
-	}
-
-	#计划经济加成
-	triggered_planet_modifier = {
-		potential = {
-			owner = { is_planned_type = yes }
-		}
-		pop_government_ethic_attraction = 0.05
-	}
-
-	#余货征集
-	triggered_planet_modifier = {
-		potential = {
-			is_enslaved = yes
-			exists = owner 
-			owner = {
-				has_edict = the_industrial_constitution
-			}
-		}
-		job_labour_hero_add = 0.34
-		planet_labour_hero_produces_mult = 0.05
-		planet_jobs_worker_produces_mult = 0.025
-	}
-
-	#市场经济加成
-	triggered_planet_modifier = {
-		potential = {
-			owner = { is_market_type = yes }
-		}
-		trade_value_add = 6
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			owner = { is_market_type = yes }
-		}
-		pop_government_ethic_attraction = -0.05
-	}
-
-	# 共产主义社会
-	triggered_planet_modifier = {
-		potential = { owner = { is_community_society = yes } }
-		planet_crime_add = -5
-	}
-	triggered_country_modifier = {
-		potential = { owner = { is_community_society = yes } }
-		modifier = {
-			country_admin_cap_add = 0.5
-		}
-	}
-
-	#污染
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				is_planned_type = yes
-				OR = {
-					NOT = {
-						is_country_type = default_ev
-					}
-					has_origin = origin_ev_both_choosen
-					has_valid_civic = civic_ev_planet_and_fleet
-					has_ascension_perk = ev_land_planets
-				}
-			}
-		}
-		pop_environment_tolerance = -0.01
-		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
-	}
-
-	weight = {
-		weight = 50
-	}
-}
-
 
 #记者
 media_worker = {
@@ -985,7 +716,7 @@ PR_manager = {
 
 #工人模范
 model_worker = {
-	category = worker
+	category = specialist
 	condition_string = SPECIALIST_JOB_TRIGGER
 	building_icon = building_foundry_1
 	clothes_texture_index = 3
@@ -1001,69 +732,67 @@ model_worker = {
 	resources = {
 		category = planet_metallurgists
 		produces = {
-			alloys = 1.5
-			consumer_goods = 3
+			trigger = {
+				owner = { is_planned_type = yes }
+			}
+			consumer_goods = 2
+			alloys = 1
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
+				owner = { is_planned_type = yes }
+				planet = { has_factory_designation = yes }
 			}
-			society_research = 1
+			consumer_goods = 2
+			alloys = -1
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_crafters
-				}
+				owner = { is_planned_type = yes }
+				planet = { has_foundry_designation = yes }
 			}
-			consumer_goods = 1
-			engineering_research = 1
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_shared_burden
-						has_valid_civic = civic_socialistic
-						has_valid_civic = civic_forever_with_us
-					}
-				}
-			}
-			engineering_research = 0.25
-		}
-		upkeep = {
-			minerals = 6
+			consumer_goods = -2
+			alloys = 1
 		}
 		upkeep = {
 			trigger = {
-				exists = owner
 				owner = {
-					is_catalytic_empire = yes
+					is_catalytic_empire = no
+					is_planned_type = yes
 				}
 			}
-			minerals = -6
-			food = 6
+			minerals = 4
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					is_catalytic_empire = yes
+					is_planned_type = yes
+				}
+				planet = { has_foundry_designation = no }
+			}
+			minerals = 2
+			food = 2
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					is_catalytic_empire = yes
+					is_planned_type = yes
+				}
+				planet = { has_foundry_designation = yes }
+			}
+			food = 4
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_industry_pacesetter
-			}
-		}
-		modifier = {
-			planet_metallurgists_alloys_produces_mult = 0.05
-			planet_artisans_consumer_goods_produces_mult = 0.05
-		}
+	planet_modifier = {
+		planet_metallurgists_alloys_produces_mult = 0.05
+		planet_artisans_consumer_goods_produces_mult = 0.05
 	}
 
 	weight = {
-		weight = @worker_job_weight		# Fairly important job
+		weight = @specialist_job_weight		# Fairly important job
 		modifier = { # 可控的动态权重
 			factor = value:job_weights_modifier|JOB|model_worker|RESOURCE|consumer_goods|
 			owner = { has_edict = dynamic_weight }
@@ -3097,6 +2826,7 @@ future_specialist = {
 	}
 }
 
+#店主
 shopkeeper = {
 	category = specialist
 	condition_string = SPECIALIST_JOB_TRIGGER
