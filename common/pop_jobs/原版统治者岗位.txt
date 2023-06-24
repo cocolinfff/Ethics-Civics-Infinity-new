@@ -1,7 +1,8 @@
 ###################
 # Fancy Jobs
 ###################
-#企业家
+#商人 -> ruler
+#专家级商人已被店主取代
 merchant = {
 	category = ruler
 	condition_string = RULER_JOB_TRIGGER
@@ -15,28 +16,92 @@ merchant = {
 		is_sapient = yes
 	}
 	possible_precalc = can_fill_ruler_job
-
 	resources = {
 		category = planet_merchants
 		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_corporate_dominion
+				}
+			}
 			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_tradition = tr_mercantile_marketplace_of_better_ideas
+				}
+			}
+			unity = 1
+		}
+		#资本主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_capitalism
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_capitalism
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_consumerism
+				}
+			}
+			consumer_goods = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_industrial_automatation
+						has_valid_civic = civic_industrial_automatation_corporate
+					}
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
 		}
 		upkeep = {
 			consumer_goods = 1
 		}
 	}
+	planet_modifier = {
+		pop_job_trade_mult = 0.03
+	}
+	planet_modifier = {
+		job_clerk_add = 1
+	}
 	triggered_pop_modifier = {
 		potential = {
+			exists = owner
 			owner = {
 				has_policy_flag = market_operation
 			}
 		}
 		modifier = {
-			pop_cat_ruler_political_power = 1
+			pop_cat_ruler_political_power = 0.5
 		}
 	}
 	triggered_pop_modifier = {
 		potential = {
+			exists = owner
 			owner = {
 				has_valid_civic = civic_triple_the_profit
 			}
@@ -45,92 +110,33 @@ merchant = {
 			pop_cat_ruler_political_power = 3
 		}
 	}
-
-	triggered_planet_modifier = {
-		potential = { always = yes }
-		trade_value_add = 2
-		mult = planet.value:count_job|JOB|manager|
-	}
-
 	triggered_planet_modifier = {
 		potential = {
-			owner = { has_valid_civic = civic_glory_and_dream }
-		}
-		trade_value_add = 2
-		mult = planet.value:count_job|JOB|enforcer|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
+			exists = owner
 			owner = {
-				NOT = { has_valid_civic = civic_glory_and_dream }
+				has_valid_civic = civic_internet_market
 			}
 		}
-		job_shopkeeper_add = -1
-		job_manager_add = 1
+		modifier = {
+			trade_value_add = 1
+			planet_crime_add = 1
+		}
 	}
-
 	triggered_planet_modifier = {
 		potential = {
-			owner = { has_valid_civic = civic_glory_and_dream }
+			exists = owner
+			owner = {
+				has_tradition = tr_mercantile_marketplace_of_better_ideas
+			}
 		}
-		job_shopkeeper_add = -1
-		job_enforcer_add = 1
+		modifier = {
+			pop_job_trade_mult = 0.02
+		}
 	}
-
 	triggered_planet_modifier = {
 		potential = { always = yes }
-		trade_value_add = 6
+		trade_value_add = 12
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	planet_modifier = {
-		planet_jobs_produces_mult = 0.02
-		pop_job_trade_mult = 0.02
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_tradition = tr_mercantile_marketplace_of_better_ideas
-			}
-		}
-		modifier = {
-			trade_value_add = 3
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_tradition = tr_mercantile_marketplace_of_better_ideas
-			}
-		}
-		modifier = {
-			pop_job_trade_mult = 0.03
-		}
-	}
-	triggered_planet_modifier = {
-		potential = { always = yes }
-		planet_amenities_add = 7
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			owner = { has_valid_civic = civic_state_monopoly }
-		}
-		planet_jobs_energy_produces_mult = 0.03
-	}
-
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
 	}
 	weight = {
 		weight = @specialist_job_weight
@@ -384,17 +390,6 @@ head_researcher = {
 		mult = value:councilor_level|TYPE|councilor_cyber_dictatorship|
 	}
 
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
-	}
-
 	weight = {
 		weight = @ruler_job_weight
 		modifier = {
@@ -596,17 +591,6 @@ high_priest = {
 		}
 	}
 
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
-	}
-
 	weight = {
 		weight = @ruler_job_weight
 		modifier = {
@@ -736,17 +720,6 @@ politician = {
 		}
 	}
 
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
-	}
-
 	weight = {
 		weight = @ruler_job_weight
 		modifier = {
@@ -840,17 +813,6 @@ noble = {
 			}
 		}
 		country_admin_cap_add = 10
-	}
-
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
 	}
 
 	weight = {
@@ -957,17 +919,6 @@ executive = {
 			}
 		}
 		pop_cat_specialist_happiness = -0.05
-	}
-
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
 	}
 
 	weight = {
@@ -1088,17 +1039,6 @@ knight_commander = {
 			}
 		}
 		pop_cat_specialist_happiness = -0.05
-	}
-
-	#主权邦联
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_sovereign_federation
-			}
-		}
-		diplo_weight_mult = 0.01
 	}
 
 	weight = {
