@@ -1,3 +1,230 @@
+#大学生
+university_student = {
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_school_1
+	clothes_texture_index = 3
+	icon = overlord_academic
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		has_modifier = pop_educated
+		NOR = {
+			has_trait = trait_mechanical
+			has_trait = trait_hive_mind
+			has_trait = trait_zombie
+			has_trait = trait_nerve_stapled
+			has_trait = trait_syncretic_proles
+			has_trait = trait_slave_gene
+		}
+		OR = {
+			is_enslaved = no
+			has_slavery_type = { country = owner type = slavery_indentured }
+			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_ideal_slavery }
+		}
+		NAND = {
+			owner = {
+				OR = {
+					has_policy_flag = private_education
+					has_policy_flag = mixed_education
+				}
+			}
+			has_living_standard = {
+				type = living_standard_subsistence
+			}
+		}
+	}
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+		}
+		produces = {
+			trigger = {
+				owner = { is_ai = yes }
+			}
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+		}
+		upkeep = {
+			consumer_goods = 1
+		}
+		produces = {
+			trigger = {
+				owner = { has_policy_flag = public_education }
+			}
+			unity = 0.5
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_policy_flag = public_education }
+			}
+			energy = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_policy_flag = private_education }
+		}
+		modifier = {
+			trade_value_add = 3
+		}
+	}
+
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_policy_flag = private_education }
+			has_trait = trait_thrifty
+		}
+		modifier = {
+			trade_value_add = 0.75
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_policy_flag = private_education }
+			has_trait = trait_nuumismatic_administration
+		}
+		modifier = {
+			trade_value_add = 0.75
+		}
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		modifier = {
+			factor = 0.1
+			is_enslaved = yes
+		}
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 3
+			has_trait = trait_erudite
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_robot_logic_engines
+				has_trait = trait_intelligent
+			}
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_brainslug
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_natural_engineers
+				has_trait = trait_natural_physicists
+				has_trait = trait_natural_sociologists
+			}
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_quick_learners
+		}
+		modifier = {
+			factor = 1.1
+			has_trait = trait_talented
+		}
+		modifier = {
+			factor = 0.9
+			has_trait = trait_slow_learners
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 0.65
+			has_trait = trait_presapient_proles
+		}
+		modifier = {
+			factor = 1.5
+			has_job = university_student
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_latent_psionic
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_psionic
+		}
+		modifier = {
+			factor = 0.1
+			has_trait = trait_enigmatic_intelligence_failed
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_enigmatic_intelligence
+				has_trait = trait_enigmatic_intelligence_poor
+			}
+		}
+		modifier = {
+			factor = 2
+			has_trait = trait_presapient_natural_intellectuals
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_robust
+				has_trait = trait_robot_efficient_processors
+			}
+		}
+		modifier = {
+			factor = 0.8
+			is_enslaved = yes
+			has_slavery_type = { type = slavery_indentured }
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_void_dweller_1
+			exists = planet
+			planet = { is_planet_class = pc_habitat }
+		}
+		modifier = {
+			factor = 0.85
+			has_trait = trait_void_dweller_1
+			exists = planet
+			planet = { is_artificial = no }
+		}
+		modifier = {
+			factor = 1.5
+			has_trait = trait_necrophage
+		}
+		modifier = {
+			factor = 10
+			has_citizenship_rights = yes
+		}
+	}
+}
+
 #专家冶金师
 foundry_specialist = {
 	category = specialist
@@ -127,6 +354,13 @@ foundry_specialist = {
 			factOR = value:job_weights_modifier|JOB|foundry|RESOURCE|alloys|
 			exists = owner
 			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
 		}
 		modifier = {
 			factOR = 2
@@ -300,6 +534,13 @@ artisan_specialist = {
 			factOR = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
 			exists = owner
 			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
 		}
 		modifier = {
 			factOR = 2
@@ -742,7 +983,7 @@ media_worker = {
 			country_edict_fund_add = 2
 		}
 	}
-	triggered_planet_modifier = { #大共和国
+	triggered_country_modifier = { #大共和国
 		potential = {
 			owner = {
 				has_valid_civic = civic_constitutional_parliament
@@ -758,6 +999,13 @@ media_worker = {
 		modifier = { # 可控的动态权重
 			factor = value:job_weights_modifier|JOB|media_worker|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
 		}
 		modifier = {
 			factor = 0.2
@@ -870,6 +1118,13 @@ PR_manager = {
 
 	weight = {
 		weight = @specialist_job_weight
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
@@ -1069,6 +1324,13 @@ model_worker = {
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
+		modifier = {
 			factor = 20
 			is_enslaved = yes
 			can_take_servant_job = no
@@ -1130,6 +1392,13 @@ democratic_politician = {
 	}
 	weight = {
 		weight = @specialist_job_weight
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
@@ -1252,6 +1521,13 @@ deep_miner = {
 	}
 	weight = {
 		weight = @specialist_job_weight
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
@@ -1433,6 +1709,13 @@ templar = {
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
+		modifier = {
 			mult = value:job_weights_research_modifier|JOB|researcher|
 		}
 	}
@@ -1586,6 +1869,13 @@ death_knight = {
 		modifier = {
 			mult = value:job_weights_modifier|JOB|bureaucrat|RESOURCE|unity|
 			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
 		}
 		modifier = {
 			mult = value:job_weights_research_modifier|JOB|researcher|
@@ -1774,6 +2064,13 @@ transcend = {
 			factor = 0.2
 			has_citizenship_rights = no
 			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
 		}
 		modifier = {
 			factor = 2
@@ -2014,6 +2311,13 @@ techno_priest = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
+		modifier = {
 			factor = 2
 			owner = {
 				has_origin = origin_machine_cult
@@ -2252,6 +2556,13 @@ primitive_foundry = {
 			owner = { has_edict = dynamic_weight }
 		}
 		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
+		modifier = {
 			factor = 2
 			is_enslaved = yes
 			can_take_servant_job = no
@@ -2463,6 +2774,13 @@ primitive_artisan = {
 			factOR = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
 			exists = owner
 			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
 		}
 		modifier = {
 			factOR = 2
@@ -2679,6 +2997,13 @@ magician = {
 			}
 		}
 		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
+		modifier = {
 			factOR = 0.2
 			has_citizenship_rights = no
 			NOT = {
@@ -2736,6 +3061,13 @@ geoengineer = {
 	}
 	weight = {
 		weight = @worker_job_weight
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
@@ -2816,6 +3148,13 @@ xenobiologist = {
 	}
 	weight = {
 		weight = @worker_job_weight
+		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
 		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
@@ -3092,6 +3431,13 @@ future_specialist = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
+			factOR = 0.01
+			OR = {
+				has_modifier = pop_uneducated
+				has_modifier = pop_slave_educated
+			}
+		}
+		modifier = {
 			factor = 100
 		}
 	}
@@ -3245,6 +3591,10 @@ shopkeeper = {
 			owner = {
 				has_edict = dynamic_weight
 			}
+		}
+		modifier = {
+			factOR = 0.01
+			has_modifier = pop_slave_educated
 		}
 		modifier = {
 			#限制条件的sv mult

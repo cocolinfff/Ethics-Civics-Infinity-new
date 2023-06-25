@@ -1,0 +1,651 @@
+############################
+#
+# Clone Army Origin Events
+#
+############################
+
+namespace = education_mod
+
+# 初始化人口教育水平
+pop_event = {
+	id = education_mod.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		NOR = {
+			has_modifier = pop_uneducated
+			has_modifier = pop_educated
+			has_modifier = pop_highly_educated
+			has_trait = trait_machine_unit
+			has_trait = trait_mechanical
+			has_trait = trait_hive_mind
+			has_trait = trait_zombie
+			has_trait = trait_nerve_stapled
+		}
+		planet = {
+			num_pops > 5
+		}
+	}
+
+	immediate = {
+		add_modifier = {
+			modifier = "pop_uneducated"
+			days = -1
+		}
+	}
+}
+
+
+# 初始化人口教育水平
+planet_event = {
+	id = education_mod.2
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		fromfrom = {
+			NOR = {
+				has_trait = trait_machine_unit
+				has_trait = trait_mechanical
+				has_trait = trait_hive_mind
+				has_trait = trait_zombie
+				has_trait = trait_nerve_stapled
+			}
+		}
+		num_pops > 5
+	}
+
+	immediate = {
+		fromfrom = {
+			add_modifier = {
+				modifier = "pop_uneducated"
+				days = -1
+			}
+			clear_pop_category = yes
+		}
+	}
+}
+
+# 每两年的毕业人数
+country_event = {
+	id = education_mod.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		any_owned_pop = {
+			OR = {
+				has_job = student
+				has_job = university_student
+			}
+		}
+	}
+
+	immediate = {
+		every_owned_pop = {
+			limit = {
+				has_job = student
+				has_modifier = pop_uneducated
+				OR = {
+					is_enslaved = no
+					NOR = {
+						has_trait = trait_nerve_stapled
+						has_trait = trait_syncretic_proles
+						has_trait = trait_slave_gene
+					}
+					has_slavery_type = { country = owner type = slavery_indentured }
+					owner = { has_valid_civic = civic_ideal_slavery }
+					owner = { has_valid_civic = civic_du_contrat_social }
+				}
+			}
+			if = {
+				limit = {
+					owner = { NOT = { has_policy_flag = private_education } }
+				}
+				random_list = {
+					40 = {
+					}
+					60 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					OR = {
+						has_living_standard = { type = living_standard_stratified }
+						has_living_standard = { type = living_standard_subsistence }
+						has_living_standard = { type = living_standard_chemical_bliss }
+					}
+				}
+				random_list = {
+					70 = {
+					}
+					30 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					OR = {
+						has_living_standard = { type = living_standard_normal }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+				random_list = {
+					50 = {
+					}
+					50 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_decadent }
+					}
+				}
+				random_list = {
+					30 = {
+					}
+					60 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_educated"
+							days = -1
+						}
+					}
+					10 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					has_living_standard = { type = living_standard_academic_privilege }
+				}
+				random_list = {
+					15 = {
+					}
+					65 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_educated"
+							days = -1
+						}
+					}
+					20 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+		}
+		every_owned_pop = {
+			limit = {
+				has_job = university_student
+				has_modifier = pop_educated
+			}
+			if = {
+				limit = {
+					owner = { NOT = { has_policy_flag = private_education } }
+				}
+				random_list = {
+					65 = {
+					}
+					35 = {
+						remove_modifier = "pop_educated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					OR = {
+						has_living_standard = { type = living_standard_stratified }
+						has_living_standard = { type = living_standard_subsistence }
+						has_living_standard = { type = living_standard_chemical_bliss }
+					}
+				}
+				random_list = {
+					85 = {
+					}
+					15 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					OR = {
+						has_living_standard = { type = living_standard_normal }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+				random_list = {
+					75 = {
+					}
+					25 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_decadent }
+					}
+				}
+				random_list = {
+					50 = {
+					}
+					50 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner = { has_policy_flag = private_education }
+					has_living_standard = { type = living_standard_academic_privilege }
+				}
+				random_list = {
+					35 = {
+					}
+					65 = { 
+						remove_modifier = "pop_uneducated"
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+					}
+				}
+			}
+		}
+		every_owned_pop = {
+			limit = {
+				has_job = student
+				has_modifier = pop_uneducated
+				OR = {
+					is_enslaved = yes
+					AND = {
+						OR = {
+							has_trait = trait_nerve_stapled
+							has_trait = trait_syncretic_proles
+							has_trait = trait_slave_gene
+							NOT = { has_slavery_type = { country = owner type = slavery_indentured } }
+						}
+					}
+					owner = {
+						NOR = {
+							has_valid_civic = civic_ideal_slavery
+							has_valid_civic = civic_du_contrat_social
+						}
+					}
+				}
+			}
+			random_list = {
+				50 = {
+				}
+				50 = { 
+					remove_modifier = "pop_uneducated"
+					add_modifier = {
+						modifier = "pop_slave_educated"
+						days = -1
+					}
+				}
+			}
+		}
+		every_owned_pop = {
+			limit = {
+				has_job_category = bio_trophy
+				has_modifier = pop_uneducated
+			}
+			random_list = {
+				50 = {
+				}
+				50 = { 
+					remove_modifier = "pop_uneducated"
+					add_modifier = {
+						modifier = "pop_highly_educated"
+						days = -1
+					}
+				}
+			}
+		}
+	}
+}
+
+# 开局
+country_event = {
+	id = education_mod.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_regular_empire = yes
+	}
+
+	immediate = {
+		country_event = {
+			id = education_mod.7
+			days = 3
+		}
+		every_owned_pop = {
+			if = {
+				limit = {
+					OR = {
+						is_enslaved = no
+						owner = { has_valid_civic = civic_du_contrat_social }
+						owner = { has_valid_civic = civic_ideal_slavery }
+					}
+					OR = {
+						has_job_category = ruler
+						has_job_category = precursor
+						has_job_category = bio_trophy
+						has_job = researcher
+						has_job = dimensional_portal_researcher
+						has_job = space_time_anomaly_researcher
+					}
+				}
+				add_modifier = {
+					modifier = "pop_highly_educated"
+					days = -1
+				}
+			}
+			if = {
+				limit = {
+					has_job_category = specialist
+					OR = {
+						AND = {
+							is_enslaved = yes
+							owner = {
+								NOR = {
+									has_valid_civic = civic_du_contrat_social
+									has_valid_civic = civic_ideal_slavery
+								}
+							}
+						}
+						NOR = {
+							has_job = researcher
+							has_job = dimensional_portal_researcher
+							has_job = space_time_anomaly_researcher
+						}
+					}
+				}
+				add_modifier = {
+					modifier = "pop_educated"
+					days = -1
+				}
+			}
+			if = {
+				limit = {
+					has_job_category = worker
+					OR = {
+						is_enslaved = no
+						has_slavery_type = { country = owner type = slavery_indentured }
+						owner = { has_valid_civic = civic_du_contrat_social }
+					}
+					OR = {
+						has_job = clerk
+						has_job = technician
+						has_job = labour_hero
+					}
+				}
+				add_modifier = {
+					modifier = "pop_educated"
+					days = -1
+				}
+			}
+			if = {
+				limit = {
+					has_job_category = worker
+					OR = {
+						is_enslaved = no
+						has_slavery_type = { country = owner type = slavery_indentured }
+						owner = { has_valid_civic = civic_du_contrat_social }
+						owner = { has_valid_civic = civic_ideal_slavery }
+					}
+					NOR = {
+						has_job = clerk
+						has_job = technician
+						has_job = labour_hero
+					}
+				}
+				add_modifier = {
+					modifier = "pop_uneducated"
+					days = -1
+				}
+			}
+			if = {
+				limit = {
+					is_enslaved = yes
+					NOR = {
+						has_job_category = specialist
+						has_slavery_type = { country = owner type = slavery_indentured }
+						owner = { has_valid_civic = civic_du_contrat_social }
+						owner = { has_valid_civic = civic_ideal_slavery }
+					}
+				}
+				add_modifier = {
+					modifier = "pop_slave_educated"
+					days = -1
+				}
+			}
+		}
+		every_owned_planet = {
+			if = {
+				limit = {
+					OR = {
+						has_building = building_system_capital
+						has_building = building_imperial_capital
+					}
+					NOT = { has_building = building_school_3 }
+				}
+				add_building = building_school_3
+			}
+			else_if = {
+				limit = {
+					has_building = building_major_capital
+					NOT = { has_building = building_school_2 }
+				}
+				add_building = building_school_2
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_building = building_capital
+						has_building = building_hab_major_capital
+					}
+					NOT = { has_building = building_school_1 }
+				}
+				add_building = building_school_1
+			}
+		}
+	}
+}
+
+# 把鬼变成人
+country_event = {
+	id = education_mod.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		owner = {
+			OR = {
+				is_egalitarian = yes
+				has_valid_civic = civic_ideal_slavery
+				has_valid_civic = civic_du_contrat_social
+			}
+			NOT = { has_valid_civic = civic_triple_the_profit }
+		}
+	}
+
+	immediate = {
+		every_owned_pop = {
+			limit = {
+				has_modifier = pop_slave_educated
+				is_enslaved = no
+			}
+			random_list = {
+				50 = {
+				}
+				50 = { 
+					remove_modifier = "pop_slave_educated"
+					add_modifier = {
+						modifier = "pop_educated"
+						days = -1
+					}
+				}
+			}
+		}
+	}
+}
+
+planet_event = {
+	id = education_mod.6
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		OR = {
+			last_building_changed = building_capital
+			last_building_changed = building_major_capital
+			last_building_changed = building_system_capital
+		}
+		owner = { is_ai = yes }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				last_building_changed = building_system_capital
+				NOT = { has_building = building_school_3 }
+			}
+			remove_building = building_school_1
+			remove_building = building_school_2
+			add_building = building_school_3
+		}
+		else_if = {
+			limit = {
+				last_building_changed = building_major_capital
+				NOT = { has_building = building_school_2 }
+			}
+			remove_building = building_school_1
+			add_building = building_school_2
+		}
+		else_if = {
+			limit = {
+				last_building_changed = building_capital
+				NOT = { has_building = building_school_1 }
+			}
+			add_building = building_school_1
+		}
+	}
+}
+
+# 教育水平刷新
+country_event = {
+	id = education_mod.7
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = eci_educated_no }
+		is_regular_empire = yes
+	}
+
+	immediate = {
+		if = {
+			limit = { NOT = { has_global_flag = eci_educated_no } }
+			set_global_flag = ethic_educated_preheat
+		}
+		every_owned_pop = {
+			if = {
+				limit = {
+					NOR = {
+						has_modifier = "pop_highly_educated"
+						has_modifier = "pop_educated"
+						has_modifier = "pop_uneducated"
+					}
+				}
+				add_modifier = {
+					modifier = "pop_educated"
+					days = -1
+				}
+			}
+			if = {
+				limit = {
+					has_modifier = "pop_highly_educated"
+					OR = {
+						has_modifier = "pop_educated"
+						has_modifier = "pop_uneducated"
+					}
+				}
+				remove_modifier = "pop_educated"
+				remove_modifier = "pop_uneducated"
+			}
+			if = {
+				limit = {
+					has_modifier = "pop_educated"
+					has_modifier = "pop_uneducated"
+				}
+				remove_modifier = "pop_uneducated"
+			}
+		}
+	}
+}
