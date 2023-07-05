@@ -252,109 +252,163 @@ country_event = {
 	}
 
 	immediate = {
-		every_owned_pop = {
-			if = {
-				limit = {
-					OR = {
-						is_enslaved = no
-						owner = { has_valid_civic = civic_du_contrat_social }
-						owner = { has_valid_civic = civic_ideal_slavery }
-					}
-					OR = {
-						has_job_category = ruler
-						has_job_category = precursor
-						has_job_category = bio_trophy
-						has_job = researcher
-						has_job = healthcare
-						has_job = magician
-						has_job = archaeoengineers
-						has_job = roboticist
-						has_job = democratic_politician
-					}
-				}
-				add_modifier = {
-					modifier = "pop_highly_educated"
-					days = -1
+		if = {
+			limit = {
+				NOR = {
+					has_valid_civic = civic_moth_chasing_flames
+					has_valid_civic = civic_ruthless_competition
 				}
 			}
-			if = {
-				limit = {
-					has_job_category = specialist
-					NOR = {
-						has_job = researcher
-						has_job = healthcare
-						has_job = magician
-						has_job = archaeoengineers
-						has_job = roboticist
-						has_job = democratic_politician
+			every_owned_pop = {
+				if = {
+					limit = {
+						OR = {
+							is_enslaved = no
+							owner = { has_valid_civic = civic_du_contrat_social }
+							owner = { has_valid_civic = civic_ideal_slavery }
+						}
+						OR = {
+							has_job_category = ruler
+							has_job_category = precursor
+							has_job_category = bio_trophy
+							has_job = researcher
+							has_job = healthcare
+							has_job = magician
+							has_job = archaeoengineers
+							has_job = roboticist
+							has_job = democratic_politician
+						}
 					}
-					OR = {
-						is_enslaved = no
-						owner = {
-							NOR = {
-								has_valid_civic = civic_du_contrat_social
-								has_valid_civic = civic_ideal_slavery
+					add_modifier = {
+						modifier = "pop_highly_educated"
+						days = -1
+					}
+				}
+				if = {
+					limit = {
+						has_job_category = specialist
+						NOR = {
+							has_job = researcher
+							has_job = healthcare
+							has_job = magician
+							has_job = archaeoengineers
+							has_job = roboticist
+							has_job = democratic_politician
+						}
+						OR = {
+							is_enslaved = no
+							owner = {
+								NOR = {
+									has_valid_civic = civic_du_contrat_social
+									has_valid_civic = civic_ideal_slavery
+								}
 							}
 						}
 					}
+					add_modifier = {
+						modifier = "pop_educated"
+						days = -1
+					}
 				}
-				add_modifier = {
-					modifier = "pop_educated"
-					days = -1
+				if = {
+					limit = {
+						has_job_category = worker
+						OR = {
+							is_enslaved = no
+							has_slavery_type = { country = owner type = slavery_indentured }
+							owner = { has_valid_civic = civic_du_contrat_social }
+						}
+						OR = {
+							has_job = clerk
+							has_job = technician
+							has_job = labour_hero
+						}
+					}
+					add_modifier = {
+						modifier = "pop_educated"
+						days = -1
+					}
+				}
+				if = {
+					limit = {
+						has_job_category = worker
+						OR = {
+							is_enslaved = no
+							has_slavery_type = { country = owner type = slavery_indentured }
+							owner = { has_valid_civic = civic_du_contrat_social }
+							owner = { has_valid_civic = civic_ideal_slavery }
+						}
+						NOR = {
+							has_job = clerk
+							has_job = technician
+							has_job = labour_hero
+						}
+					}
+					add_modifier = {
+						modifier = "pop_uneducated"
+						days = -1
+					}
+				}
+				if = {
+					limit = {
+						is_enslaved = yes
+						NOR = {
+							has_job_category = specialist
+							has_slavery_type = { country = owner type = slavery_indentured }
+							owner = { has_valid_civic = civic_du_contrat_social }
+							owner = { has_valid_civic = civic_ideal_slavery }
+						}
+					}
+					add_modifier = {
+						modifier = "pop_slave_educated"
+						days = -1
+					}
 				}
 			}
-			if = {
-				limit = {
-					has_job_category = worker
-					OR = {
-						is_enslaved = no
-						has_slavery_type = { country = owner type = slavery_indentured }
-						owner = { has_valid_civic = civic_du_contrat_social }
-					}
-					OR = {
-						has_job = clerk
-						has_job = technician
-						has_job = labour_hero
-					}
-				}
-				add_modifier = {
-					modifier = "pop_educated"
-					days = -1
+		}
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_moth_chasing_flames
+					has_valid_civic = civic_ruthless_competition
 				}
 			}
-			if = {
-				limit = {
-					has_job_category = worker
-					OR = {
-						is_enslaved = no
-						has_slavery_type = { country = owner type = slavery_indentured }
-						owner = { has_valid_civic = civic_du_contrat_social }
-						owner = { has_valid_civic = civic_ideal_slavery }
+			every_owned_pop = {
+				random_list = {
+					15 = {
+						add_modifier = {
+							modifier = "pop_uneducated"
+							days = -1
+						}
 					}
-					NOR = {
-						has_job = clerk
-						has_job = technician
-						has_job = labour_hero
+					15 = {
+						add_modifier = {
+							modifier = "pop_educated"
+							days = -1
+						}
 					}
-				}
-				add_modifier = {
-					modifier = "pop_uneducated"
-					days = -1
-				}
-			}
-			if = {
-				limit = {
-					is_enslaved = yes
-					NOR = {
-						has_job_category = specialist
-						has_slavery_type = { country = owner type = slavery_indentured }
-						owner = { has_valid_civic = civic_du_contrat_social }
-						owner = { has_valid_civic = civic_ideal_slavery }
+					60 = {
+						add_modifier = {
+							modifier = "pop_highly_educated"
+							days = -1
+						}
+						modifier = { factor = value:enrollment_rate }
 					}
-				}
-				add_modifier = {
-					modifier = "pop_slave_educated"
-					days = -1
+					10 = {
+						add_modifier = {
+							modifier = "pop_slave_educated"
+							days = -1
+						}
+						modifier = {
+							factor = 0
+							NOR = {
+								is_enslaved = no
+								has_slavery_type = { country = owner type = slavery_indentured }
+								owner = { has_valid_civic = civic_du_contrat_social }
+								owner = { has_valid_civic = civic_ideal_slavery }
+							}
+						}
+					}
 				}
 			}
 		}
