@@ -3653,6 +3653,10 @@ basic_state_policy = {
 		name = "continuous_revolution"
 		potential = {
 			is_characteristic_socialism = no
+			NOR = {
+				has_country_flag = not_revolution
+				has_modifier = post_revolutionary_unret
+			}
 		}
 		valid = {
 			OR = {
@@ -3665,6 +3669,18 @@ basic_state_policy = {
 		}
 		policy_flags = {
 			continuous_revolution
+		}
+		on_enabled = {
+			hidden_effect = {
+				if = {
+					limit = {
+						has_modifier = post_revolutionary
+					}
+					owner = {
+						remove_modifier = post_revolutionary
+					}
+				}
+			}
 		}
 		modifier = {
 			pop_ethic_socialism_attraction_mult = 0.5
@@ -3683,13 +3699,32 @@ basic_state_policy = {
 	option = {
 		name = "the_internal_construction"
 		potential = {
+			is_characteristic_socialism = no
 			NOR = {
-				has_valid_civic = civic_characteristic_socialism
 				has_valid_civic = civic_liberator
+				has_country_flag = not_revolution
+				has_modifier = post_revolutionary_unret
 			}
 		}
 		policy_flags = {
 			the_internal_construction
+		}
+		on_enabled = {
+			hidden_effect = {
+				if = {
+					limit = {
+						has_modifier = post_revolutionary
+						NOT = { has_modifier = post_revolutionary_unret }
+					}
+					owner = {
+						remove_modifier = post_revolutionary
+						add_modifier = {
+							modifier = post_revolutionary_unret
+							years = @post_revolutionary_check_years
+						}
+					}
+				}
+			}
 		}
 		modifier = {
 			country_admin_cap_mult = 0.15
@@ -3714,8 +3749,10 @@ basic_state_policy = {
 			reform_and_opening_up
 		}
 		valid = {
-			NOT = {
-				has_valid_civic = civic_liberator
+			OR = {
+				has_modifier = post_revolutionary
+				has_modifier = post_revolutionary_unret
+				NOT = { has_valid_civic = civic_liberator }
 			}
 		}
 		modifier = {
@@ -3749,6 +3786,7 @@ basic_state_policy = {
 			OR = {
 				has_tradition = tr_mercantile_adaptive_economic_policies
 				is_characteristic_socialism = yes
+				has_modifier = post_revolutionary
 			}
 		}
 		modifier = {

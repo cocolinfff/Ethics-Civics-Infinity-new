@@ -511,144 +511,41 @@ spawn_god_habitat = {
 	}
 }
 
-country_create_direct_democratic_councilor = {
-	create_leader = {
-		class = $CLASS$
-		species = this
-		name = $COUNCIL_POS$
-		gender = indeterminable
-		event_leader = yes
-		skip_background_generation = yes
-		immortal = yes
-		skill = 1
-		can_manually_change_location = no
-		can_see_in_list = no
-		custom_description = $DESC$
-		randomize_traits = no
-		background_ethic = ethic_egalitarian
-		effect = {
-			set_leader_flag = leader_death_events_blocked
-			set_leader_flag = direct_democratic_councilor
-		}
-	}
-	last_created_leader = {
-		set_owner = prev
-		change_leader_portrait = councilor_hive_$CLASS$_1
-		set_council_position = $COUNCIL_POS$
-		add_experience = 400
-		if = {
-			limit = {
-				has_paragon_dlc = yes
-			}
-			switch = {
-				trigger = leader_class
-				admiral = { add_trait_no_notify = subclass_admiral_strategist }
-				scientist = { add_trait_no_notify = subclass_scientist_researcher }
-				general = { add_trait_no_notify = subclass_general_marshall }
-				governor = { add_trait_no_notify = subclass_governor_visionary }
-			}
-		}
-		if = {
-			limit = {
-				NOT = { has_leader_flag = direct_democratic_councilor }
-			}
-			set_leader_flag = direct_democratic_councilor
-		}
-		direct_democratic_councilor_start_skill_leader = yes
-	}
-}
-
 country_create_all_direct_democratic_councilor = {
-	country_create_direct_democratic_councilor = {
-		CLASS = governor
-		COUNCIL_POS = councilor_direct_democratic_governor
-		DESC = councilor_direct_democratic_governor_desc
-	}
-	country_create_direct_democratic_councilor = {
-		CLASS = scientist
-		COUNCIL_POS = councilor_direct_democratic_scientist
-		DESC = councilor_direct_democratic_scientist_desc
-	}
-	country_create_direct_democratic_councilor = {
-		CLASS = admiral
-		COUNCIL_POS = councilor_direct_democratic_admiral
-		DESC = councilor_direct_democratic_admiral_desc
-	}
-	country_create_direct_democratic_councilor = {
-		CLASS = general
-		COUNCIL_POS = councilor_direct_democratic_general
-		DESC = councilor_direct_democratic_general_desc
-	}
-	every_owned_leader = {
+	random_owned_leader = {
 		limit = {
-			has_leader_flag = direct_democratic_councilor
-			is_councilor = no
-			is_ruler = no
-		}
-		change_leader_portrait = species
-		remove_leader_flag = direct_democratic_councilor
-	}
-}
-
-direct_democratic_councilor_start_skill_leader = {
-
-	if = {
-		limit = { owner = { has_valid_civic = civic_meritocracy } }
-		add_skill_without_trait_selection = 1
-	}
-	if = {
-		limit = { owner = { is_memory_vault_empire = yes } }
-		add_skill_without_trait_selection = 1
-	}
-	if = {
-		limit = {
-			owner = { has_valid_civic = civic_forever_with_us }
-			leader_class = scientist
-		}
-		add_skill_without_trait_selection = 1
-	}
-	if = {
-		limit = {
-			owner = {
-				has_tradition = tr_future_technology
-				has_technology = tech_ascension_theory
-			}
-			leader_class = scientist
-		}
-		add_skill_without_trait_selection = 2
-	}
-	if = {
-		limit = {
-			owner = {
-				has_tradition = tr_future_economy
-				has_technology = tech_ascension_theory
-			}
 			leader_class = governor
-		}
-		add_skill_without_trait_selection = 2
-	}
-	if = {
-		limit = {
-			owner = {
-				has_tradition = tr_future_military
-				has_technology = tech_ascension_theory
-			}
-			OR = {
-				leader_class = admiral
-				leader_class = general
-			}
-		}
-		add_skill_without_trait_selection = 2
-	}
-}
-
-direct_democratic_councilor_start_skill = {
-	every_owned_leader = {
-		limit = {
-			is_councilor = yes
 			is_ruler = no
 		}
-		direct_democratic_councilor_start_skill_leader = yes
+		set_council_position = councilor_direct_democratic_governor
+	}
+	create_leader = {
+		class = scientist
+		sub_type = survey
+		name = random
+		species = owner_main_species
+		effect = { set_council_position = councilor_direct_democratic_scientist }
+	}
+	create_leader = {
+		class = general
+		sub_type = survey
+		name = random
+		species = owner_main_species
+		effect = { set_council_position = councilor_direct_democratic_general }
+	}
+	create_leader = {
+		class = governor
+		sub_type = survey
+		name = random
+		species = owner_main_species
+		effect = { set_council_position = councilor_direct_democratic_culture }
+	}
+	random_owned_leader = {
+		limit = {
+			leader_class = admiral
+			is_ruler = no
+		}
+		set_council_position = councilor_direct_democratic_admiral
 	}
 }
 
