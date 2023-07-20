@@ -1,0 +1,245 @@
+# The Last Starfighter
+# By ViolentBeetle
+# Suggested for ripping off by Anon
+
+namespace = ethic_rural_teachers
+
+# Initializing MTTH event
+situation_event = {
+	id = ethic_rural_teachers.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			is_regular_pre_ftl = yes
+			current_awareness_level < high
+			OR = {
+				has_pre_ftl_age = machine_age
+				has_pre_ftl_age = atomic_age
+				has_pre_ftl_age = early_space_age
+#				has_pre_ftl_age = mem_lunar_age
+			}
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = {
+					is_ai = no
+					NOT = { has_country_flag = ethic_rural_teachers_offered_quest }
+					is_socialism = yes
+				}
+			}
+		}
+	}
+
+	immediate = {
+		owner.capital_scope = {
+			save_event_target_as = the_planet
+		}
+		owner = {
+			save_event_target_as = primitive_civ
+		}
+		owner.capital_scope.observation_outpost_owner = {
+			set_country_flag = ethic_rural_teachers_offered_quest
+			set_country_flag = ethic_rural_teachers_planting_on@root
+			country_event = { id = ethic_rural_teachers.2 }
+		}
+		set_situation_flag = has_ongoing_observation_event_chain
+		# 为整个事件链的持续时间设置此标志，以防止MEM其他观测事件干扰。
+	}
+}
+
+# Proposing the experiment
+country_event = {
+	id = ethic_rural_teachers.2
+	title = ethic_rural_teachers.2.name
+	desc = ethic_rural_teachers.2.desc
+
+	is_triggered_only = yes
+
+	picture = GFX_evt_alien_abduction
+	location = from.capital_scope
+	show_sound = event_sensor_ping
+
+	option = {
+		name = ethic_rural_teachers.2.a
+
+		trigger = {
+			NOT = { has_ethic = ethic_fanatic_xenophobe }
+		}
+
+		hidden_effect = {
+			event_target:primitive_civ = {
+				country_event = {
+					id = ethic_rural_teachers.3
+					days = 360
+					random = 540
+				}
+			}
+		}
+	}
+
+	option = {
+		name = NOTIME
+
+		add_resource = {
+			influence = 50
+		}
+		hidden_effect = {
+			event_target:primitive_civ = {
+				random_situation = {
+					limit = {
+						is_situation_type = pre_ftl_tech_progress_situation
+					}
+					remove_situation_flag = has_ongoing_observation_event_chain
+				}
+			}
+		}
+	}
+}
+
+# Pingback on the country to decide the outcome and roll. 
+country_event = {
+	id = ethic_rural_teachers.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = primitive_civ
+		capital_scope = {
+			save_event_target_as = primitive_planet
+			observation_outpost_owner = {
+				country_event = {
+					id = ethic_rural_teachers.4
+				}
+			}
+		}
+	}
+}
+
+# Quest proposition
+country_event = {
+	id = ethic_rural_teachers.4
+	title = ethic_rural_teachers.4.name
+	desc = ethic_rural_teachers.4.desc
+
+	is_triggered_only = yes
+
+	picture = GFX_evt_acquire_asset
+	show_sound = event_sensor_ping
+	location = from.capital_scope
+
+	immediate = {
+		# log = "From is [From.GetName]"
+		# log = "From.Species is [From.Species.GetName]"
+		create_saved_leader = {
+			key = ethic_rural_teachers_leader
+			event_leader = yes
+			class = scientist
+			species = from.species
+
+			effect = {
+				save_event_target_as = teacher
+				IF = {
+					limit = { is_lithoid = no }
+					set_age = 25
+				}
+				ELSE = {
+					set_age = 40
+				}
+				add_trait = leader_trait_knowledge_for_the_masses
+			}
+		}
+		if = {
+			limit = {
+				from = {
+					NOT = { current_awareness_level = full }
+				}
+			}
+			set_country_flag = engineering_insights
+			set_predictive_observation_insight = {
+				VALUE = 10
+			}
+		}
+	}
+
+	option = {
+		name = ethic_rural_teachers.4.a
+		hidden_effect = {
+			from.capital_scope = {
+				enable_special_project = {
+					name = MEM_STARFIGHTER_PROJECT
+					location = THIS
+					owner = ROOT
+				}
+			}
+		}
+	}
+
+	option = {
+		name = ethic_rural_teachers.4.b
+		hidden_effect = {
+			event_target:primitive_civ = {
+				random_situation = {
+					limit = {
+						is_situation_type = pre_ftl_tech_progress_situation
+					}
+					remove_situation_flag = has_ongoing_observation_event_chain
+				}
+			}
+		}
+	}
+	
+	after = {
+		if = {
+			limit = {
+				from = {
+					NOT = { current_awareness_level = full }
+				}
+			}
+			add_observation_insight_effect = {
+				VALUE = 10
+				OUTPOST = from.capital_scope.observation_outpost 
+			}
+		}
+	}
+}
+
+# Project completion
+ship_event = {
+	id = ethic_rural_teachers.5
+	title = ethic_rural_teachers.5.name
+	desc = ethic_rural_teachers.5.desc
+
+	is_triggered_only = yes
+
+	location = event_target:primitive_planet
+	show_sound = event_sensor_ping
+	picture = GFX_evt_alien_abduction
+
+	option = {
+		name = ethic_rural_teachers.5.a
+
+		owner = {
+			hidden_effect = {
+				activate_saved_leader = {
+					key = ethic_rural_teachers_leader
+					background_ethic = ethic_socialism
+					custom_catch_phrase = socialism2_catch_phrase
+					custom_description = socialism2
+				}
+				country_event = { id = ethic_paragon.52000 days = 1 }
+			}
+		}
+		
+		hidden_effect = {
+			event_target:primitive_civ = {
+				random_situation = {
+					limit = {
+						is_situation_type = pre_ftl_tech_progress_situation
+					}
+					remove_situation_flag = has_ongoing_observation_event_chain
+				}
+			}
+		}
+	}
+}
