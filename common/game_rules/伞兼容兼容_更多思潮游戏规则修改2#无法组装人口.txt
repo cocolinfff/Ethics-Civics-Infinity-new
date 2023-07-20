@@ -207,11 +207,12 @@ is_criminal_syndicate_rule = {
 #This = pop
 can_generate_leader_from_pop = {
 	has_citizenship_rights = yes
+#	NOT = { has_trait = trait_syncretic_proles }
+	can_think = yes
 	## +无言/Ereb/hiveDLC/PTep/Eevt/ETCPM
 	NOR = {
 		has_trait = trait_syncretic_proles
-		has_trait = trait_nerve_stapled
-		has_trait = trait_zombie
+
 		# 无言
 		has_trait = trait_protoss_probe
 		# Ecar
@@ -227,19 +228,30 @@ can_generate_leader_from_pop = {
 		has_trait = trait_infested_basic
 		# 莉莉
 		has_trait = trait_AL_puffer
+		# 魔女
+		has_trait = trait_servitude
+		# GF
+		has_trait = GF_trait_doll
 	}
-	## +gsf
+	## +GF/魔女
 	OR = {
 		is_robot_pop = no
+		#	东方领袖
+		AND = {
+			root = { has_technology = tech_doll_leaders }
+			has_trait = trait_thl_doll
+		}
 		root = {
 			OR = {
 				has_technology = tech_synthetic_leaders
 				has_authority = auth_machine_intelligence
 				is_mechanical_empire = yes
+				#	GF
+				has_technology = tech_mind_plus
+				#	魔女
+				has_technology = tech_dummy_leaders
 			}
 		}
-		# gsf
-		root = { has_technology = tech_mind_plus }
 	}
 	OR = {
 		is_same_species = root
@@ -249,6 +261,15 @@ can_generate_leader_from_pop = {
 				has_trait = trait_necrophage
 			}
 		}
+	}
+
+	##	rmaid
+	if = {
+		limit = {
+			has_global_flag = flag_rogue_maid_mod_activated
+			root = { has_civic = civic_machine_servitor }
+		}
+		is_same_species = root
 	}
 }
 
@@ -328,8 +349,7 @@ species_has_happiness = {
 	NOR = {
 		has_trait = trait_machine_unit
 		has_trait = trait_hive_mind
-		has_trait = trait_nerve_stapled
-		has_trait = trait_zombie
+		can_think = no
 		# Ecar
 		has_trait = trait_flesh_components
 		# wsg
@@ -345,12 +365,26 @@ species_has_happiness = {
 		# 无言
 		has_trait = trait_protoss_probe
 		
+		#	+|魔女|
 		AND = {
 			has_trait = trait_mechanical
 			OR = {
 				NOT = { exists = from }
 				from = { has_authority = auth_machine_intelligence }
-				from = { NOT = { has_technology = tech_synthetic_workers } }
+				from = {
+					NOR = {
+						has_technology = tech_synthetic_workers
+						has_technology = tech_dummy_leaders	# 魔女
+						has_technology = tech_sapient_dolls
+					}
+				}
+				#	东方领袖
+				AND = {
+					has_trait = trait_thl_doll
+					from = {
+						NOT = { has_technology = tech_sapient_dolls }
+					}
+				}
 				from = { has_policy_flag = ai_outlawed }
 			}
 		}
@@ -360,6 +394,23 @@ species_has_happiness = {
 			from = {
 				has_authority = auth_machine_intelligence
 				has_civic = civic_machine_assimilator # Assimilator empire
+			}
+		}
+
+		#	魔女
+		has_trait = trait_servitude
+		AND = { has_trait = trait_dummy
+			OR = {
+				NOT = { exists = from }
+				from = { 
+					NOR = { 
+						has_technology = tech_synthetic_workers 
+						has_technology = tech_dummy_leaders
+						has_origin = origin_garbage_princesses
+						has_country_flag = synthetic_empire
+					} 
+				}
+				from = { has_policy_flag = ai_outlawed }
 			}
 		}
 	}
