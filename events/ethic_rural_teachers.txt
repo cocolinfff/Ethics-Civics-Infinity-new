@@ -5,46 +5,48 @@
 namespace = ethic_rural_teachers
 
 # Initializing MTTH event
-situation_event = {
+ship_event = {
 	id = ethic_rural_teachers.1
 	hide_window = yes
 	is_triggered_only = yes
 
 	trigger = {
+		NOT = { has_global_flag = ethic_rural_teachers_offered }
 		owner = {
-			is_regular_pre_ftl = yes
-			current_awareness_level < high
-			OR = {
-				has_pre_ftl_age = machine_age
-				has_pre_ftl_age = atomic_age
-				has_pre_ftl_age = early_space_age
-#				has_pre_ftl_age = mem_lunar_age
-			}
-			capital_scope = {
-				has_observation_outpost = yes
-				observation_outpost_owner = {
-					is_ai = no
-					NOT = { has_country_flag = ethic_rural_teachers_offered_quest }
-					is_socialism = yes
+			is_ai = no
+			NOT = { has_country_flag = ethic_rural_teachers_offered_quest }
+			is_socialism = yes
+			from = {
+				owner = {
+					is_regular_pre_ftl = yes
+					current_awareness_level < high
+					OR = {
+						has_pre_ftl_age = industrial_age
+						has_pre_ftl_age = machine_age
+						has_pre_ftl_age = atomic_age
+						has_pre_ftl_age = early_space_age
+					}
 				}
 			}
 		}
 	}
 
 	immediate = {
-		owner.capital_scope = {
+		from = {
 			save_event_target_as = the_planet
 		}
-		owner = {
+		from.owner = {
 			save_event_target_as = primitive_civ
 		}
-		owner.capital_scope.observation_outpost_owner = {
+		owner = {
 			set_country_flag = ethic_rural_teachers_offered_quest
 			set_country_flag = ethic_rural_teachers_planting_on@root
-			country_event = { id = ethic_rural_teachers.2 }
+			country_event = {
+				id = ethic_rural_teachers.2
+				days = 360
+				random = 720
+			}
 		}
-		set_situation_flag = has_ongoing_observation_event_chain
-		# 为整个事件链的持续时间设置此标志，以防止MEM其他观测事件干扰。
 	}
 }
 
@@ -71,7 +73,7 @@ country_event = {
 			event_target:primitive_civ = {
 				country_event = {
 					id = ethic_rural_teachers.3
-					days = 360
+					days = 720
 					random = 540
 				}
 			}
@@ -80,7 +82,6 @@ country_event = {
 
 	option = {
 		name = NOTIME
-
 		add_resource = {
 			influence = 50
 		}
@@ -131,22 +132,30 @@ country_event = {
 	immediate = {
 		# log = "From is [From.GetName]"
 		# log = "From.Species is [From.Species.GetName]"
-		create_saved_leader = {
-			key = ethic_rural_teachers_leader
-			event_leader = yes
-			class = scientist
-			species = from.species
+		event_target:primitive_civ = {
+			create_saved_leader = {
+				key = ethic_rural_teachers_leader
+				event_leader = yes
+				class = scientist
+				species = from.species
+				custom_catch_phrase = socialism2_catch_phrase
+				custom_description = socialism2
 
-			effect = {
-				save_event_target_as = teacher
-				IF = {
-					limit = { is_lithoid = no }
-					set_age = 25
+				effect = {
+					save_event_target_as = teacher
+					set_leader_flag = renowned_leader
+					change_background_ethic = ethic_socialism
+					change_background_job = teacher
+					add_trait = leader_trait_knowledge_for_the_masses
+					IF = {
+						limit = { is_lithoid = no }
+						set_age = 25
+					}
+					ELSE = {
+						set_age = 40
+					}
+					set_owner = root
 				}
-				ELSE = {
-					set_age = 40
-				}
-				add_trait = leader_trait_knowledge_for_the_masses
 			}
 		}
 		if = {
@@ -164,19 +173,29 @@ country_event = {
 
 	option = {
 		name = ethic_rural_teachers.4.a
-		hidden_effect = {
-			from.capital_scope = {
-				enable_special_project = {
-					name = MEM_STARFIGHTER_PROJECT
-					location = THIS
-					owner = ROOT
-				}
+		trigger = {
+			OR = {
+				NOT = { has_ethic = ethic_fanatic_xenophobe }
+				has_ethic = ethic_fanatic_pacifist
+			}
+		}
+		from.capital_scope = {
+			enable_special_project = {
+				name = ETHIC_RURAL_TEACHERS_PROJECT
+				location = THIS
+				owner = ROOT
 			}
 		}
 	}
 
 	option = {
 		name = ethic_rural_teachers.4.b
+		trigger = {
+			NOR = {
+				has_ethic = ethic_fanatic_pacifist
+				has_ethic = ethic_fanatic_xenophile
+			}
+		}
 		hidden_effect = {
 			event_target:primitive_civ = {
 				random_situation = {
@@ -188,7 +207,7 @@ country_event = {
 			}
 		}
 	}
-	
+
 	after = {
 		if = {
 			limit = {
@@ -198,7 +217,7 @@ country_event = {
 			}
 			add_observation_insight_effect = {
 				VALUE = 10
-				OUTPOST = from.capital_scope.observation_outpost 
+				OUTPOST = from.capital_scope.observation_outpost
 			}
 		}
 	}
@@ -223,15 +242,13 @@ ship_event = {
 			hidden_effect = {
 				activate_saved_leader = {
 					key = ethic_rural_teachers_leader
-					background_ethic = ethic_socialism
-					custom_catch_phrase = socialism2_catch_phrase
-					custom_description = socialism2
 				}
 				country_event = { id = ethic_paragon.52000 days = 1 }
 			}
 		}
 		
 		hidden_effect = {
+			set_global_flag = ethic_rural_teachers_offered
 			event_target:primitive_civ = {
 				random_situation = {
 					limit = {
