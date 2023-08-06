@@ -852,3 +852,373 @@ leader_event = {
         custom_tooltip = ethic_paragon.51020.b.custom_tooltip
     }
 }
+
+namespace = ethic_royal_family
+
+country_event = { # 国王继位
+    id = ethic_royal_family.1
+    title = "ethic_royal_family.1.title"
+    desc = "ethic_royal_family.1.desc"
+    is_triggered_only = yes
+
+    trigger = {
+        from = {
+            is_councilor_type = councilor_king
+        }
+    }
+
+    picture = GFX_evt_coronation
+
+    immediate = {
+        if = {
+            limit = {
+                any_owned_leader = {
+                    has_trait = leader_trait_eci_heir
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    has_trait = leader_trait_eci_heir
+                }
+                save_event_target_as = heirname
+            }
+        }
+        else_if = {
+            limit = {
+                any_owned_leader = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                }
+                save_event_target_as = heirname
+            }
+        }
+        else = {
+            generate_random_royalty = yes
+            last_created_leader = {
+                save_event_target_as = heirname
+            }
+        }
+        event_target:heirname = {
+            remove_trait = leader_trait_eci_royalty
+            remove_trait = leader_trait_eci_heir
+            add_trait = leader_trait_eci_king
+            set_council_position = councilor_king
+        }
+    }
+
+    option = {
+        name = ethic_royal_family.1.a
+        custom_tooltip = ethic_royal_family.1.tooltip
+    }
+}
+
+country_event = { # 挑选继承人
+    id = ethic_royal_family.2
+    title = "ethic_royal_family.2.title"
+    desc = {
+        text = "ethic_royal_family.2.desc"
+        trigger = {
+            any_owned_leader = {
+                is_pool_leader = no
+                    is_ruler = no
+                NOT = { has_leader_flag = generated }
+                has_trait = leader_trait_eci_royalty
+            }
+        }
+    }
+    desc = {
+        text = "ethic_royal_family.2.desc.noleader"
+        trigger = {
+            NOT = {
+                any_owned_leader = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    NOT = { has_leader_flag = generated }
+                    has_trait = leader_trait_eci_royalty
+                }
+            }
+        }
+    }
+    is_triggered_only = yes
+
+    picture = GFX_evt_throne_room
+
+    immediate = {
+        if = {
+            limit = {
+                any_owned_leader = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                }
+                save_event_target_as = heir1
+                set_leader_flag = heir1
+            }
+        }
+        if = {
+            limit = {
+                any_owned_leader = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                    NOT = {
+                        has_leader_flag = heir1
+                    }
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                    NOT = {
+                        has_leader_flag = heir1
+                    }
+                }
+                save_event_target_as = heir2
+                set_leader_flag = heir2
+            }
+        }
+        if = {
+            limit = {
+                any_owned_leader = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                    NOR = {
+                        has_leader_flag = heir1
+                        has_leader_flag = heir2
+                    }
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                    NOR = {
+                        has_leader_flag = heir1
+                        has_leader_flag = heir2
+                    }
+                }
+                save_event_target_as = heir3
+                set_leader_flag = heir3
+            }
+        }
+        if = {
+            limit = {
+                any_owned_leader = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                    NOR = {
+                        has_leader_flag = heir1
+                        has_leader_flag = heir2
+                        has_leader_flag = heir3
+                    }
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    is_pool_leader = no
+                    is_ruler = no
+                    has_trait = leader_trait_eci_royalty
+                    NOR = {
+                        has_leader_flag = heir1
+                        has_leader_flag = heir2
+                        has_leader_flag = heir3
+                    }
+                }
+                save_event_target_as = heir4
+                set_leader_flag = heir4
+            }
+        }
+        if = {
+            limit = {
+                NOT = {
+                    exists = event_target:heir1
+                }
+            }
+            generate_random_royalty = yes
+            last_created_leader = {
+                set_leader_flag = generated
+                save_event_target_as = heir1
+            }
+        }
+    }
+
+    option = {
+        trigger = {
+            exists = event_target:heir1
+        }
+        name = ethic_royal_family.2.a
+        if = {
+            limit = {
+                any_owned_leader = {
+                    has_trait = leader_trait_eci_heir
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    has_trait = leader_trait_eci_heir
+                }
+                remove_trait = leader_trait_eci_heir
+                add_trait = leader_trait_eci_royalty
+            }
+        }
+        event_target:heir1 = {
+            remove_trait = leader_trait_eci_royalty
+            add_trait = leader_trait_eci_heir
+        }
+    }
+    option = {
+        trigger = {
+            exists = event_target:heir2
+        }
+        name = ethic_royal_family.2.b
+        if = {
+            limit = {
+                any_owned_leader = {
+                    has_trait = leader_trait_eci_heir
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    has_trait = leader_trait_eci_heir
+                }
+                remove_trait = leader_trait_eci_heir
+                add_trait = leader_trait_eci_royalty
+            }
+        }
+        event_target:heir2 = {
+            remove_trait = leader_trait_eci_royalty
+            add_trait = leader_trait_eci_heir
+        }
+    }
+    option = {
+        trigger = {
+            exists = event_target:heir3
+        }
+        name = ethic_royal_family.2.c
+        if = {
+            limit = {
+                any_owned_leader = {
+                    has_trait = leader_trait_eci_heir
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    has_trait = leader_trait_eci_heir
+                }
+                remove_trait = leader_trait_eci_heir
+                add_trait = leader_trait_eci_royalty
+            }
+        }
+        event_target:heir3 = {
+            remove_trait = leader_trait_eci_royalty
+            add_trait = leader_trait_eci_heir
+        }
+    }
+    option = {
+        trigger = {
+            exists = event_target:heir4
+        }
+        name = ethic_royal_family.2.d
+        if = {
+            limit = {
+                any_owned_leader = {
+                    has_trait = leader_trait_eci_heir
+                }
+            }
+            random_owned_leader = {
+                limit = {
+                    has_trait = leader_trait_eci_heir
+                }
+                remove_trait = leader_trait_eci_heir
+                add_trait = leader_trait_eci_royalty
+            }
+        }
+        event_target:heir4 = {
+            remove_trait = leader_trait_eci_royalty
+            add_trait = leader_trait_eci_heir
+        }
+    }
+    option = {
+        trigger = {
+            any_owned_leader = {
+                has_trait = leader_trait_eci_heir
+            }
+        }
+        name = ethic_royal_family.2.e
+    }
+    after = {
+        every_owned_leader = {
+            remove_leader_flag = heir1
+            remove_leader_flag = heir2
+            remove_leader_flag = heir3
+            remove_leader_flag = heir4
+            remove_leader_flag = generated
+        }
+    }
+}
+
+country_event = { # 挑选继承人
+    id = ethic_royal_family.3
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_civic = civic_constitutional_monarchy
+        NOT = {
+            any_owned_leader = {
+                has_trait = leader_trait_eci_heir
+            }
+        }
+    }
+
+    immediate = {
+        country_event = { id = ethic_royal_family.2 }
+    }
+}
+
+country_event = {
+    id = ethic_royal_family.5
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        has_civic = civic_constitutional_monarchy
+    }
+
+    immediate = {
+        from = {
+            if = {
+                limit = {
+                    is_same_species = root.owner_main_species
+                }
+                random_list = {
+                    4 = {}
+                    1 = {
+                        add_trait = leader_trait_eci_royalty
+                    }
+                }
+            }
+        }
+    }
+}
