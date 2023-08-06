@@ -849,14 +849,98 @@ noble = {
 	resources = {
 		category = planet_nobles
 		produces = {
+			trigger = {
+				owner = {
+					NOT = { has_valid_civic = civic_labor_aristocracy }
+				}
+			}
 			unity = 4
 		}
 		upkeep = {
 			consumer_goods = @ruler_upkeep_consumer_goods_base
 		}
+
+
+		##工人贵族##
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = { is_planned_type = yes }
+			}
+			unity = 4
+			consumer_goods = 2
+			alloys = 1
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = { is_planned_type = yes }
+				planet = { has_factory_designation = yes }
+			}
+			consumer_goods = 2
+			alloys = -1
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = { is_planned_type = yes }
+				planet = { has_foundry_designation = yes }
+			}
+			consumer_goods = -2
+			alloys = 1
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = {
+					is_catalytic_empire = no
+					is_planned_type = yes
+				}
+			}
+			minerals = 4
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = {
+					is_catalytic_empire = yes
+					is_planned_type = yes
+				}
+				planet = { has_foundry_designation = no }
+			}
+			minerals = 2
+			food = 2
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = {
+					is_catalytic_empire = yes
+					is_planned_type = yes
+				}
+				planet = { has_foundry_designation = yes }
+			}
+			food = 4
+		}
+
+		#余货征集
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_labor_aristocracy }
+				owner = { is_planned_type = yes }
+				planet = { has_foundry_designation = yes }
+			}
+			unity = 3
+			alloys = 1
+		}
 	}
 
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				NOT = { has_valid_civic = civic_labor_aristocracy }
+			}
+		}
 		job_slave_overseer_add = 1
 	}
 
@@ -890,6 +974,125 @@ noble = {
 			}
 		}
 		country_admin_cap_add = 10
+	}
+
+	#浮动加成
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = { has_any_generator_district_or_building = yes }
+		}
+		planet_technician_energy_produces_add = 0.2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = { has_any_mining_district_or_building = yes }
+		}
+		planet_miners_minerals_produces_add = 0.3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = { has_any_farming_district_or_buildings = yes }
+		}
+		planet_farmers_food_produces_add = 0.2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = {
+				has_industrial_districts = yes
+				has_factory_designation = no
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = { has_foundry_designation = yes }
+		}
+		planet_metallurgists_alloys_produces_add = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = {
+				has_industrial_districts = yes
+				has_foundry_designation = no
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			planet = { has_factory_designation = yes }
+		}
+		planet_artisans_consumer_goods_produces_add = 0.1
+	}
+
+	#计划经济加成
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			owner = { is_planned_type = yes }
+		}
+		pop_government_ethic_attraction = 0.05
+	}
+
+	#余货征集
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = yes
+			exists = owner
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			owner = {
+				has_edict = the_industrial_constitution
+			}
+		}
+		job_labour_hero_add = 0.34
+		planet_labour_hero_produces_mult = 0.05
+		planet_jobs_worker_produces_mult = 0.025
+	}
+
+	#市场经济加成
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			owner = { is_market_type = yes }
+		}
+		trade_value_add = 6
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			owner = { is_market_type = yes }
+		}
+		pop_government_ethic_attraction = -0.05
+	}
+
+	#污染
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_labor_aristocracy }
+			owner = {
+				is_planned_type = yes
+				OR = {
+					NOT = {
+						is_country_type = default_ev
+					}
+					has_origin = origin_ev_both_choosen
+					has_valid_civic = civic_ev_planet_and_fleet
+					has_ascension_perk = ev_land_planets
+				}
+			}
+		}
+		pop_environment_tolerance = -0.01
+		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
 	}
 
 	weight = {
