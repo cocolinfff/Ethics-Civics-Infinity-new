@@ -11,6 +11,14 @@ country_event = {
             limit = { is_direct_democratic = yes }
             set_country_flag = ethic_direct_democratic
         }
+        if = {
+            limit = {  has_valid_civic =  civic_parliamentary_system }
+            set_country_flag = civic_parliamentary_system
+        }
+        if = {
+            limit = {  has_valid_civic =  civic_constitutional_monarchy }
+            set_country_flag = civic_constitutional_monarchy
+        }
         country_event = { id = ethic_direct_democratic_councilor.5 days = 1 }
     }
 }
@@ -20,10 +28,6 @@ country_event = {
     id = ethic_direct_democratic_councilor.5
     hide_window = yes
     is_triggered_only = yes
-
-    trigger = {
-        has_country_flag = government_changed
-    }
 
     trigger = {
         has_country_flag = government_changed
@@ -39,6 +43,38 @@ country_event = {
             force_remove_civic = civic_debug
             country_create_all_direct_democratic_councilor = yes
             set_country_flag = ethic_direct_democratic
+        }
+        if = {
+            limit = {
+                has_valid_civic =  civic_parliamentary_system
+                NOT = { has_country_flag = civic_parliamentary_system }
+            }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            random_owned_leader = {
+                limit = {
+                    leader_class = governor
+                    is_ruler = no
+                }
+                set_council_position = councilor_parliamentary_system
+            }
+            set_country_flag = civic_parliamentary_system
+        }
+        if = {
+            limit = {
+                has_valid_civic =  civic_constitutional_monarchy
+                NOT = { has_country_flag = civic_constitutional_monarchy }
+            }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            random_owned_leader = {
+                limit = {
+                    is_ruler = no
+                }
+                add_trait_no_notify = leader_trait_eci_king
+                set_council_position = councilor_king
+            }
+            set_country_flag = civic_constitutional_monarchy
         }
         remove_country_flag = government_changed
     }

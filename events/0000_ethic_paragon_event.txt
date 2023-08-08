@@ -96,111 +96,135 @@ country_event = { #Leader grows - 10 yo
     }
 }
 
-country_event = { # Create Exakeides - 20 yo
-    id = paragon.3115
-    title = "paragon.3115.name"
-    desc = "paragon.3115.desc"
-    picture = GFX_evt_board_meeting
-    show_sound = par_event_keides
+country_event = { # HIRE/DISMISS Exakeides
+    id = paragon.3116
+    title = "paragon.3116.name"
+    desc = "paragon.3116.desc"
+    diplomatic = yes
     fire_only_once = yes
     is_triggered_only = yes
-    event_window_type = leader_story
-    event_picture_background = "GFX_leader_recruitment_bg_legendary_keides"
+    show_sound = par_event_keides
 
-    immediate = {
-        random_system = {
-            limit = { has_star_flag = legendary_leader_1st_system }
-            save_event_target_as = 1st_system_legendary
-        }
-        random_system = {
-            limit = { has_star_flag = legendary_leader_2nd_system }
-            save_event_target_as = 2nd_system_legendary
-        }
-        random_system = {
-            limit = { has_star_flag = legendary_leader_3rd_system }
-            save_event_target_as = 3rd_system_legendary
-        }
-
-        create_species = {
-            name = "NAME_Unknown"
-            class = HUM
-            portrait = paragon_exakeides_artifact_1 #Exakeides portrait
-            namelist = "PRT1"
-            traits = {
-                trait = "trait_enduring"
-                trait = "trait_quick_learners"
-                trait = "trait_erudite"
-            }
-            effect = {
-                save_event_target_as = exakeides_species
-            }
-        }
-
-        create_leader = {
-            class = scientist
-            species = event_target:exakeides_species
-            name = "NAME_Exakeides"
-            skill = 1
-            gender = male
-            event_leader = yes
-            skip_background_generation = yes
-            custom_catch_phrase = keides_catch_phrase
-            custom_description = desc_exakeides
-            effect = {
-                set_leader_flag = legendary_leader
-                set_leader_flag = exakeides
-            }
-        }
-        last_created_leader = {
-            set_age = 21
-            set_leader_flag = NAME
-            set_leader_flag = immune_to_negative_traits
-            save_global_event_target_as = legendary_lost_leader
-            add_trait_no_notify = leader_trait_legendary_far_from_home
-        }
-        switch = {
-            trigger = has_global_flag
-            leader_raised_xenophile = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_xenophile }
-            }
-            leader_raised_xenophobe = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_xenophobe }
-            }
-            leader_raised_militarist = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_militarist }
-            }
-            leader_raised_pacifist = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_pacifist }
-            }
-            leader_raised_egalitarian = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_egalitarian }
-            }
-            leader_raised_authoritarian = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_authoritarian }
-            }
-            leader_raised_spiritualist = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_spiritualist }
-            }
-            leader_raised_materialist = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_materialist }
-            }
-            leader_raised_socialism = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_socialism }
-            }
-            leader_raised_capitalism = {
-                event_target:legendary_lost_leader = { change_background_ethic = ethic_capitalism }
-            }
-        }
-    }
+    picture = GFX_leader_recruitment_bg_legendary_keides
+    event_window_type = leader_recruit
 
     picture_event_data = {
         portrait = event_target:legendary_lost_leader
         room = galactic_custodian_room
     }
 
+    trigger = {
+        exists = event_target:legendary_lost_leader
+    }
+
     option = {
-        name = paragon.3115.a
-        hidden_effect = { country_event = { id = paragon.3116 } }
+        # Special tag to make mark this is the hire option
+        name = HIRE
+        tag = hire_leader
+        sound = "par_keides_hire"
+
+        hidden_effect = {
+            clone_leader = {
+                target = event_target:legendary_lost_leader
+            }
+            last_created_leader = {
+                set_leader_flag = exakeides
+                set_leader_flag = legendary_leader
+                save_global_event_target_as = legendary_lost_leader
+                set_leader_flag = immune_to_negative_traits
+                add_trait_no_notify = leader_trait_legendary_far_from_home
+                set_owner = root
+            }
+            switch = {
+                trigger = has_global_flag
+                leader_raised_xenophile = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_xenophile }
+                }
+                leader_raised_xenophobe = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_xenophobe }
+                }
+                leader_raised_militarist = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_militarist }
+                }
+                leader_raised_pacifist = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_pacifist }
+                }
+                leader_raised_egalitarian = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_egalitarian }
+                }
+                leader_raised_authoritarian = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_authoritarian }
+                }
+                leader_raised_spiritualist = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_spiritualist }
+                }
+                leader_raised_materialist = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_materialist }
+                }
+                leader_raised_socialism = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_socialism }
+                }
+                leader_raised_capitalism = {
+                    event_target:legendary_lost_leader = { change_background_ethic = ethic_capitalism }
+                }
+            }
+
+            random_owned_planet = {
+                limit = {
+                    is_variable_set = paragon_memory_vault
+                }
+                change_variable = {
+                    which = paragon_memory_vault
+                    value = 1
+                }
+            }
+            country_event = { id = paragon.3117 days = 60 random = 60 }
+        }
+
+        create_message = {
+            type = MESSAGE_RECRUITED_LEADER
+            localization =  MESSAGE_RECRUITED_LEADER_DESC
+            days = @toast_message_days
+            target = event_target:legendary_lost_leader
+            variable = {
+                type = name
+                localization = LEADER
+                scope = event_target:legendary_lost_leader
+            }
+            variable = {
+                key = "border"
+                value = "GFX_border_legendary"
+            }
+        }
+    }
+
+    option = {
+        name = DISMISS
+        # Special tag to mark this as the dismiss option
+        tag = dismiss_leader
+        sound = "par_keides_dismiss"
+
+        hidden_effect = {
+            event_target:legendary_lost_leader = {
+                kill_leader = { show_notification = no }
+            }
+        }
+    }
+
+    option = {
+        name = paragon.3116.a
+        response_text = paragon.3116.a.response
+        is_dialog_only = yes
+    }
+    option = {
+        name = paragon.3116.b
+        response_text = paragon.3116.b.response
+        is_dialog_only = yes
+    }
+    option = {
+        name = paragon.3116.c
+        response_text = paragon.3116.c.response
+        is_dialog_only = yes
     }
 }
 
