@@ -684,6 +684,133 @@ grassroot_cadre = {
 	}
 }
 
+#机械医生
+healthcare_synthetic = {
+	icon = healthcare
+	category = specialist
+	condition_string = SPECIALIST_JOB_TRIGGER
+	building_icon = building_clinic_synthetic
+	clothes_texture_index = 3
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_specialist_job
+	resources = {
+		category = planet_doctors
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			unity = 2
+		}
+		produces = {
+			engineering_research = 1.5
+		}
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 6
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	planet_modifier = {
+		planet_pop_assembly_mult = 0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = public_healthcare
+			}
+		}
+		modifier = {
+			planet_pop_assembly_mult = 0.05
+			planet_amenities_add = -2
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = private_healthcare
+			}
+		}
+		modifier = {
+			pop_cat_ruler_happiness = 0.05
+			pop_lifestyle_trade_mult = 0.02
+			planet_pop_assembly_mult = -0.05
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_planet_flag = has_private_clinics }
+		}
+		planet_amenities_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_planet_flag = has_private_clinics }
+		}
+		trade_value_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+
+	weight = {
+		weight = @high_prio_specialist_job_weight
+		modifier = {
+			# 可控的动态权重
+			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = {
+				has_edict = dynamic_weight
+			}
+		}
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = {
+				has_trait = trait_mechanical
+			}
+		}
+		modifier = {
+			factor = 0.1
+			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 1.5
+			has_job = healthcare_synthetic
+		}
+		modifier = {
+			factor = 0.5
+			is_enslaved = yes
+			has_slavery_type = {
+				type = slavery_indentured
+			}
+		}
+		modifier = {
+			factor = 10
+			NOT = {
+				has_job = healthcare_synthetic
+			}
+			planet = {
+				free_amenities < 0
+				has_available_jobs = healthcare_synthetic
+			}
+		}
+	}
+}
+
 
 #记者
 media_worker = {
