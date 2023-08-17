@@ -37,6 +37,9 @@ operation_revolution_underground = {
 	allow = {
 		target = { 
 			can_be_revolution_target = yes
+			any_owned_planet = {
+				NOT = { has_deposit = d_guerrilla_warzone }
+			}
 		}
 		custom_tooltip = {
 			is_running_espionage_operation = no
@@ -72,7 +75,7 @@ operation_launch_a_general_uprising = {
 	categories = { op_cat_subterfuge op_cat_military }
 	picture = GFX_evt_open_revolt
 	desc = operation_launch_a_general_uprising_desc
-	stages = 5
+	stages = 1
 
 	resources = {
 		category = operations
@@ -94,6 +97,7 @@ operation_launch_a_general_uprising = {
 	allow = {
 		target = {
 			can_be_revolution_target = yes
+			any_owned_planet = { has_deposit = d_guerrilla_warzone }
 		}
 		custom_tooltip = {
 			is_running_espionage_operation = no
@@ -102,6 +106,51 @@ operation_launch_a_general_uprising = {
 	}
 	stage = {
 		difficulty = @diff_t9
+		icon = GFX_espionage_chapter_icon_motion
+		event = revolution_op.6
+	}
+	on_roll_failed = {
+		standard_espionage_operation_on_roll_failed = {
+			RANDOM_EVENTS = operation_random_events_generic
+		}
+	}
+	on_create = { }
+}
+
+### 撤回根据地
+operation_withdrawal_of_base_area = {
+	target = none
+	categories = {  op_cat_infiltration op_cat_government op_cat_diplomacy }
+	picture = GFX_evt_crisis_defeated
+	desc = operation_launch_a_general_uprising_desc
+	stages = 1
+
+	resources = {
+		category = operations
+		cost = {
+			influence = 200
+		}
+	}
+
+	spy_power_cost = 1
+	potential = {
+		root.owner = {
+			has_tradition = tr_revolution_adopt
+			NOT = { has_country_flag = not_revolution }
+		}
+	}
+	allow = {
+		target = {
+			can_be_revolution_target = no
+			any_owned_planet = { has_deposit = d_guerrilla_warzone }
+		}
+		custom_tooltip = {
+			is_running_espionage_operation = no
+			fail_text = operation_one_at_a_time
+		}
+	}
+	stage = {
+		difficulty = @diff_t1
 		icon = GFX_espionage_chapter_icon_motion
 		event = revolution_op.6
 	}
