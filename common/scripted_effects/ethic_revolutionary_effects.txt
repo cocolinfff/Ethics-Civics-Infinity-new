@@ -66,65 +66,127 @@ galactic_revolution_accept_threat_effect = {
 revolution_operation_merge = {
 	event_target:branch_planet = {
 		set_owner = event_target:revolution_empire
-		solar_system = {
-			if = {
-				limit = { exists = starbase }
-				starbase = {
-					if = {
-						limit = { is_owned_by = event_target:revolution_target_empire }
-						set_owner = event_target:revolution_empire
+		hidden_effect = {
+			solar_system = {
+				if = {
+					limit = { exists = starbase }
+					starbase = {
 						if = {
-							limit = { has_starbase_size = starbase_outpost }
-							set_starbase_size = starbase_starport
-							set_starbase_module = {
-								slot = 1
-								module = shipyard
+							limit = { is_owned_by = root.owner }
+							set_owner = event_target:rebel_empire
+							if = {
+								limit = { has_starbase_size = starbase_outpost }
+								set_starbase_size = starbase_starport
+								set_starbase_module = {
+									slot = 1
+									module = shipyard
+								}
+								set_starbase_module = {
+									slot = 2
+									module = shipyard
+								}
 							}
-							set_starbase_module = {
-								slot = 2
-								module = shipyard
-							}
-						}
-						else_if = {
-							limit = {
-								NOT = { has_starbase_module = shipyard }
-							}
-							set_starbase_module = {
-								slot = 1
-								module = shipyard
-							}
-							set_starbase_module = {
-								slot = 2
-								module = shipyard
+							else_if = {
+								limit = {
+									NOT = { has_starbase_module = shipyard }
+								}
+								set_starbase_module = {
+									slot = 1
+									module = shipyard
+								}
+								set_starbase_module = {
+									slot = 2
+									module = shipyard
+								}
 							}
 						}
 					}
 				}
-			}
-			else = {
-				create_starbase = {
-					size = starbase_starport
-					module = shipyard
-					module = shipyard
-					owner = event_target:revolution_empire
+				else = {
+					create_starbase = {
+						size = starbase_starport
+						module = shipyard
+						module = shipyard
+						owner = event_target:rebel_empire
+					}
+				}
+				add_claims = {
+					who = root.owner
+					show_notification = no
+				}
+				every_system_planet = {
+					limit = {
+						is_colony = yes
+						NOT = { is_same_value = event_target:branch_planet }
+						is_owned_by = root.owner
+					}
+					set_owner = event_target:rebel_empire
+				}
+				every_fleet_in_system = {
+					limit = { is_owned_by = root.owner }
+					set_mia = mia_return_home
 				}
 			}
-			add_claims = {
-				who = event_target:revolution_target_empire
-				show_notification = no
-			}
-			every_system_planet = {
-				limit = {
-					is_colony = yes
-					NOT = { is_same_value = event_target:branch_planet }
-					is_owned_by = event_target:revolution_target_empire
+		}
+	}
+	random_system = {
+		if = {
+			limit = { exists = starbase }
+			starbase = {
+				if = {
+					limit = { is_owned_by = event_target:revolution_target_empire }
+					set_owner = event_target:revolution_empire
+					if = {
+						limit = { has_starbase_size = starbase_outpost }
+						set_starbase_size = starbase_starport
+						set_starbase_module = {
+							slot = 1
+							module = shipyard
+						}
+						set_starbase_module = {
+							slot = 2
+							module = shipyard
+						}
+					}
+					else_if = {
+						limit = {
+							NOT = { has_starbase_module = shipyard }
+						}
+						set_starbase_module = {
+							slot = 1
+							module = shipyard
+						}
+						set_starbase_module = {
+							slot = 2
+							module = shipyard
+						}
+					}
 				}
-				set_owner = event_target:revolution_empire
 			}
-			every_fleet_in_system = {
-				limit = { is_owned_by = event_target:revolution_target_empire }
-				set_mia = mia_return_home
+		}
+		else = {
+			create_starbase = {
+				size = starbase_starport
+				module = shipyard
+				module = shipyard
+				owner = event_target:revolution_empire
 			}
+		}
+		add_claims = {
+			who = event_target:revolution_target_empire
+			show_notification = no
+		}
+		every_system_planet = {
+			limit = {
+				is_colony = yes
+				NOT = { is_same_value = event_target:branch_planet }
+				is_owned_by = event_target:revolution_target_empire
+			}
+			set_owner = event_target:revolution_empire
+		}
+		every_fleet_in_system = {
+			limit = { is_owned_by = event_target:revolution_target_empire }
+			set_mia = mia_return_home
 		}
 	}
 }
@@ -144,13 +206,13 @@ revolution_operation_civil_war = {
 					is_owned_by = root
 				}
 			}
-			random_system_colony = {
+			every_system_colony = {
 				limit = {
 					has_deposit = d_guerrilla_warzone
 					has_owner = yes
 					is_owned_by = root
 				}
-				save_event_target_as = rebel_planet
+				remove_deposit = d_guerrilla_warzone
 				create_rebels = {
 					name = random
 					authority = auth_democratic
@@ -196,6 +258,7 @@ revolution_operation_civil_war = {
 						declare_war = {
 							target = root
 							attacker_war_goal = wg_galactic_revolution
+							name = casus_belli_cb_galactic_revolution
 						}
 						create_fleet_from_naval_cap = 0.4
 					}
@@ -252,7 +315,7 @@ revolution_operation_civil_war = {
 						every_system_planet = {
 							limit = {
 								is_colony = yes
-								NOT = { is_same_value = event_target:rebel_planet }
+								NOT = { is_same_value = event_target:branch_planet }
 								is_owned_by = root.owner
 							}
 							set_owner = event_target:rebel_empire
@@ -281,7 +344,7 @@ revolution_operation_civil_war = {
 					has_owner = yes
 					is_owned_by = root
 				}
-				save_event_target_as = rebel_planet
+				remove_deposit = d_guerrilla_warzone
 				set_owner = event_target:rebel_empire
 				hidden_effect = {
 					solar_system = {
@@ -334,7 +397,7 @@ revolution_operation_civil_war = {
 						every_system_planet = {
 							limit = {
 								is_colony = yes
-								NOT = { is_same_value = event_target:rebel_planet }
+								NOT = { is_same_value = event_target:branch_planet }
 								is_owned_by = root.owner
 							}
 							set_owner = event_target:rebel_empire
