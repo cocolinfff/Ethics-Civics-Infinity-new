@@ -1172,6 +1172,7 @@ building_clinic = {
 		NOR = {
 			has_modifier = slave_colony
 			has_planet_flag = planetary_station
+			owner = { has_country_flag = synthetic_empire }
 		}
 	}
 	destroy_trigger = {
@@ -1186,6 +1187,7 @@ building_clinic = {
 					}
 				}
 			}
+			owner = { has_country_flag = synthetic_empire }
 			has_modifier = slave_colony
 			AND = {
 				buildings_stop_pop = yes
@@ -1311,6 +1313,7 @@ building_hospital = {
 			owner = {
 				is_regular_empire = no
 			}
+			owner = { has_country_flag = synthetic_empire }
 			has_modifier = slave_colony
 			AND = {
 				buildings_stop_pop = yes
@@ -1388,6 +1391,7 @@ building_medical_center = {
 			owner = {
 				is_regular_empire = no
 			}
+			owner = { has_country_flag = synthetic_empire }
 			has_modifier = slave_colony
 			AND = {
 				buildings_stop_pop = yes
@@ -1437,5 +1441,292 @@ building_medical_center = {
 	}
 	triggered_desc = {
 		text = job_healthcare_effect_desc
+	}
+}
+
+#合成体修复中心
+building_clinic_synthetic = {
+	base_buildtime = @b1_time
+	base_cap_amount = 1
+	category = pop_assembly
+	icon = building_clinic
+	potential = {
+		owner = {
+			is_regular_empire = yes
+		}
+		owner = { has_country_flag = synthetic_empire }
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				NOR = {
+					is_regular_empire = yes
+					AND = {
+						has_origin = origin_fear_of_the_dark
+						is_country_type = primitive
+					}
+				}
+			}
+			owner = { NOT = { has_country_flag = synthetic_empire } }
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = { is_ai = yes }
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_synthetic_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = mixed_healthcare
+					has_policy_flag = public_healthcare
+				}
+			}
+		}
+		modifier = {
+			job_healthcare_synthetic_add = 1
+			job_healthcare_synthetic_per_pop = 0.02
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 300
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 0.5
+		}
+	}
+	prerequisites = {
+		"tech_medical_system"
+	}
+	upgrades = {
+		"building_hospital_synthetic"
+	}
+	triggered_desc = {
+		text = job_healthcare_synthetic_effect_desc
+	}
+
+	on_repaired = {
+		if = {
+			limit = {
+				planet.owner = {
+					has_event_chain = payback_out_of_warranty_chain
+				}
+			}
+			random_list = {
+				50 = { # still broken
+					planet.owner = {
+						country_event = { id = origin.4302 }
+					}
+					modifier = {
+						factor = 0
+						planet.owner = { has_technology = tech_frontier_health }
+					}
+				}
+				20 = { # repaired
+					planet.owner = {
+						country_event = { id = origin.4301 }
+					}
+					modifier = {
+						factor = 2
+						planet.owner = { num_research_agreements = 1 }
+					}
+					modifier = {
+						factor = 3
+						planet.owner = { num_research_agreements = 2 }
+					}
+					modifier = {
+						factor = 4
+						planet.owner = { num_research_agreements >= 3 }
+					}
+				}
+				10 = { # broken beyond repair
+					planet = {
+						planet_event = { id = origin.4303 }
+					}
+				}
+			}
+		}
+	}
+}
+
+#合成诊所
+building_hospital_synthetic = {
+	base_buildtime = @b2_time
+	can_build = no
+	category = pop_assembly
+	icon = building_hospital
+	allow = {
+		has_upgraded_capital = yes
+	}
+	potential = {
+		has_building = building_clinic
+		owner = {
+			OR = {
+				is_regular_empire = yes
+				AND = {
+					has_origin = origin_fear_of_the_dark
+					is_country_type = primitive
+				}
+			}
+		}
+		NOT = {
+			has_modifier = slave_colony
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_regular_empire = no
+			}
+			owner = { NOT = { has_country_flag = synthetic_empire } }
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = {
+					is_ai = yes
+				}
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_synthetic_add = 3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = mixed_healthcare
+					has_policy_flag = public_healthcare
+				}
+			}
+		}
+		modifier = {
+			job_healthcare_synthetic_add = 1
+			job_healthcare_synthetic_per_pop = 0.03
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 1
+		}
+	}
+	prerequisites = {
+		"tech_frontier_health"
+	}
+	upgrades = {
+		"building_medical_center_synthetic"
+	}
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+	}
+	triggered_desc = {
+		text = job_healthcare_synthetic_effect_desc
+	}
+}
+
+#合成研究所
+building_medical_center_synthetic = {
+	base_buildtime = @b3_time
+	can_build = no
+	category = pop_assembly
+	icon = building_medical_center
+	potential = {
+		has_building = building_hospital
+	}
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_regular_empire = no
+			}
+			owner = { NOT = { has_country_flag = synthetic_empire } }
+			has_modifier = slave_colony
+			AND = {
+				buildings_stop_pop = yes
+				owner = { is_ai = yes }
+			}
+		}
+	}
+	planet_modifier = {
+		job_healthcare_synthetic_add = 5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = mixed_healthcare
+					has_policy_flag = public_healthcare
+				}
+			}
+		}
+		modifier = {
+			job_healthcare_synthetic_add = 2
+			job_healthcare_synthetic_per_pop = 0.03
+		}
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b3_minerals
+			rare_crystals = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			rare_crystals = @b3_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					has_policy_flag = mixed_healthcare
+				}
+			}
+			energy = 2
+		}
+	}
+	prerequisites = {
+		"tech_frontier_hospital"
+	}
+	triggered_desc = {
+		text = job_healthcare_synthetic_effect_desc
 	}
 }

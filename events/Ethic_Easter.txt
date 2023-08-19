@@ -484,6 +484,22 @@ country_event = {
 				establish_communications_no_message = root
 			}
 			save_global_event_target_as = red_dawn_database_owner
+
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization =  MESSAGE_RECRUITED_LEADER_DESC
+				days = @toast_message_days
+				target = event_target:huazhang
+				variable = {
+					type = name
+					localization = LEADER
+					scope = event_target:huazhang
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
 		}
 	}
 
@@ -625,7 +641,7 @@ country_event = {
 	event_picture_background = "GFX_leader_recruitment_bg_renowned"
 
 	picture_event_data = {
-		portrait = stardust_huazhang
+		portrait = stardust
 	}
 
 	is_triggered_only = yes
@@ -657,7 +673,11 @@ country_event = {
 		custom_tooltip = fallen_empire_happy_tooltip
 
 		hidden_effect = {
-			event_target:FallenEmpireTaskOrigin = { add_opinion_modifier = { who = root modifier = opinion_accepted_fallen_empire_request } }
+			event_target:FallenEmpireTaskOrigin = {
+				add_opinion_modifier = { who = root modifier = opinion_accepted_fallen_empire_request }
+				country_event = { id = ethic_easter.201 days = 3600 random = 3600 }
+				save_global_event_target_as = red_dawn_enemy
+			}
 			event_target:FallenEmpireScientistTarget = {
 				kill_leader = {
 					show_notification = no
@@ -667,6 +687,146 @@ country_event = {
 				fleet = {
 					delete_fleet = this
 				}
+			}
+			save_global_event_target_as = huazhang_rest_area
+		}
+	}
+}
+
+country_event = {
+	id = ethic_easter.201
+	title = ethic_easter.201.name
+	desc = ethic_easter.201.desc
+	picture = GFX_evt_hongan
+	is_triggered_only = yes
+
+	option = {
+		name = ethic_easter.201.a
+		country_event = { id = ethic_easter.202 }
+	}
+}
+
+country_event = {
+	id = ethic_easter.202
+	title = ethic_easter.202.name
+	desc = ethic_easter.202.desc
+
+	is_triggered_only = yes
+	diplomatic = yes
+	picture_event_data = {
+		portrait = stardust_huazhang
+		room = "paragon_skrand_room"
+		planet_background = pc_city
+		graphical_culture = fallen_empire_01
+	}
+
+	option = {
+		name = ethic_easter.202.a
+		response_text = ethic_easter.202.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = ethic_easter.202.b
+		response_text = ethic_easter.202.b.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = ethic_easter.202.c
+		trigger = {
+			OR = {
+				is_true_scientific_socialism = no
+				is_subject = yes
+			}
+		}
+		response_text = ethic_easter.202.c.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = ethic_easter.202.c.soc
+		trigger = {
+			is_true_scientific_socialism = yes
+			is_subject = no
+		}
+		response_text = ethic_easter.202.c.soc.response
+		is_dialog_only = yes
+	}
+	option = {
+		trigger = {
+			OR = {
+				is_true_scientific_socialism = no
+				is_subject = yes
+			}
+		}
+		name = ethic_easter.202.d
+		hidden_effect = {
+			capital_scope = {
+				red_dowm_gift = yes
+			}
+			event_target:red_dawn_enemy = {
+				red_dowm_redux = yes
+				red_dowm_war = yes
+			}
+		}
+	}
+	option = {
+		trigger = {
+			is_true_scientific_socialism = yes
+			is_subject = no
+		}
+		name = ethic_easter.202.d.soc1
+		hidden_effect = {
+			capital_scope = {
+				red_dowm_gift = yes
+			}
+			if = {
+				limit = { has_federation = yes }
+				event_target:red_dawn_enemy = {
+					join_alliance = {
+						who = event_target:huazhang_rest_area
+						override_requirements = yes
+					}
+				}
+				federation = {
+					set_federation_type = TT_communist_federation
+					set_name = random
+					add_cohesion = 200
+				}
+			}
+			if = {
+				limit = { has_federation = no }
+				event_target:red_dawn_enemy = {
+					join_alliance = {
+						who = event_target:huazhang_rest_area
+						override_requirements = yes
+					}
+					federation = {
+						set_federation_type = TT_communist_federation
+						set_name = random
+						add_cohesion = 200
+						add_federation_experience = 2000
+					}
+					set_federation_leader = yes
+				}
+			}
+			event_target:red_dawn_enemy = {
+				red_dowm_redux = yes
+				red_dowm_war = yes
+			}
+		}
+	}
+	option = {
+		trigger = {
+			is_true_scientific_socialism = yes
+			is_subject = no
+		}
+		name = ethic_easter.202.d.soc2
+		hidden_effect = {
+			capital_scope = {
+				red_dowm_gift = yes
+			}
+			event_target:red_dawn_enemy = {
+				red_dowm_redux = yes
+				red_dowm_war = yes
 			}
 		}
 	}

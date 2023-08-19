@@ -19,7 +19,8 @@ country_event = {
         # Give Empire the starting Council Agenda, and progress it to about 1-2 years from finishing.
         if = {
             limit = { is_direct_democratic = yes }
-            unlock_council_selection = yes
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
             random_owned_leader = {
                 limit = {
                     leader_class = governor
@@ -83,7 +84,8 @@ country_event = {
         }
         else_if = {
             limit = { has_origin =  origin_galaxy_iron_curtain }
-            unlock_council_selection = yes
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
             random_owned_leader = {
                 limit = {
                     leader_class = governor
@@ -121,7 +123,7 @@ country_event = {
                     species = owner_main_species
                     effect = {
                         change_background_job = royalty
-                        add_trait = leader_trait_eci_king
+                        add_trait_no_notify = leader_trait_eci_king
                         set_council_position = councilor_king
                     }
                 }
@@ -131,15 +133,34 @@ country_event = {
                         NOT = { is_councilor_type = councilor_king }
                     }
                     change_background_job = royalty
-                    add_trait = leader_trait_eci_heir
+                    add_trait_no_notify = leader_trait_eci_heir
                 }
             }
-            create_leader = {
-                class = general
-                sub_type = survey
-                name = random
-                species = owner_main_species
-                effect = { set_council_position = councilor_prime_oligarch_4 }
+            if = {
+                limit = {
+                    NOT = { has_valid_civic =  civic_constitutional_monarchy }
+                }
+                create_leader = {
+                    class = general
+                    sub_type = survey
+                    name = random
+                    species = owner_main_species
+                    effect = { set_council_position = councilor_prime_oligarch_4 }
+                }
+            }
+            if = {
+                limit = {
+                    has_valid_civic =  civic_parliamentary_system
+                }
+                create_leader = {
+                    class = governor
+                    sub_type = survey
+                    name = random
+                    species = owner_main_species
+                    effect = {
+                        set_council_position = councilor_parliamentary_system
+                    }
+                }
             }
             random_owned_leader = {
                 limit = {
@@ -154,7 +175,8 @@ country_event = {
                 NOT = { has_origin =  origin_galaxy_iron_curtain }
                 has_valid_civic =  civic_constitutional_monarchy
             }
-            unlock_council_selection = yes
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
             generate_royal_family = yes
             if = {
                 limit = {
@@ -164,6 +186,23 @@ country_event = {
                 }
                 ruler = {
                     remove_trait = leader_trait_eci_royalty
+                }
+            }
+        }
+        if = {
+            limit = {
+                NOT = { has_origin =  origin_galaxy_iron_curtain }
+                has_valid_civic =  civic_parliamentary_system
+            }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            create_leader = {
+                class = governor
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = {
+                    set_council_position = councilor_parliamentary_system
                 }
             }
         }
