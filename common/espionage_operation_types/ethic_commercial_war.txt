@@ -1,0 +1,84 @@
+@diff_t0 = 4
+@diff_t1 = 5
+@diff_t2 = 6
+@diff_t3 = 7
+@diff_t4 = 8
+@diff_t5 = 9
+@diff_t6 = 10
+@diff_t7 = 11
+@diff_t8 = 12
+@diff_t9 = 13
+
+operation_commercial_war = {
+    target = none
+    categories = { op_cat_infiltration op_cat_economy op_cat_government }
+    picture = GFX_evt_enclave_overlord
+    desc = operation_commercial_war_on_success
+    stages = 3
+
+    resources = {
+        category = operations
+        cost = {
+            energy = 2000
+            influence = 100
+        }
+        upkeep = {
+            energy = 20
+        }
+    }
+
+    spy_power_cost = 35
+    potential = {
+        owner = {
+            has_active_tradition = tr_future_economy_corporate
+            OR = {
+                is_valid_state_monopoly = yes
+                is_eci_megacorp = yes
+            }
+        }
+        target = {
+            any_owned_planet = {
+                has_branch_office = yes
+                branch_office_owner = {
+                    is_same_value = root.owner
+                }
+            }
+        }
+    }
+    allow = {
+        custom_tooltip = {
+            target = {
+                OR = {
+                    is_economic_stance_planned = no
+                    has_policy_flag = reform_and_opening_up
+                }
+            }
+            fail_text = BRANCH_OFFICE_NOT_HAS_SOCIALIST_COUNTRY
+        }
+        custom_tooltip = {
+            is_running_espionage_operation = no
+            fail_text = operation_one_at_a_time
+        }
+    }
+    stage = {
+        difficulty = @diff_t2
+        icon = GFX_espionage_chapter_icon_motion
+        event = commercial_war.1
+    }
+    stage = {
+        difficulty = @diff_t4
+        icon = GFX_espionage_chapter_icon_surveillance
+        event = commercial_war.2
+    }
+    stage = {
+        difficulty = @diff_t3
+        icon = GFX_espionage_chapter_icon_success
+        event = commercial_war.3
+    }
+    on_roll_failed = {
+        standard_espionage_operation_on_roll_failed = {
+            RANDOM_EVENTS = operation_random_events_generic
+        }
+    }
+    on_create = { }
+}
