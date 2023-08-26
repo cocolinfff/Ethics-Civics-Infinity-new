@@ -344,56 +344,20 @@ can_dismiss_leader = {
 can_species_be_assembled = {
 	is_sapient = yes
 	has_population_control = {
-		value = no
+		type = no
 		country = root.owner
 	}
 	##_|基础条件|
 	OR = {
-		#_|原版智械|	+azl/GF/魔女/久远
+		#_|原版组装|	+azl/GF/魔女/久远/时与空
 		AND = {
 			is_robotic = yes	# 含|是wsg物种|
 			NOR = {
 				has_trait = trait_robot_mind_relic_core	# azl
 				has_trait = trait_reassembler			# 时与空
 			}
-			###车万领袖
-			OR = {
-				NOT = { has_trait = trait_thl_doll }
-				AND = {
-					root = {
-						check_variable_arithmetic = { which = value:doll_missing_per_maker value >= 0 }
-						OR = {
-							any_owned_pop = {
-								has_job = dollmaker
-							}
-							AND = {
-								exists = leader
-								leader = {
-									has_trait = leader_trait_dolls
-								}
-							}
-						}
-					}
-				}
-				AND = {
-					root = {
-						owner = {
-							has_technology = tech_sapient_dolls
-						}
-						OR = {
-							any_owned_pop = {
-								has_job = dollmaker
-							}
-							AND = {
-								exists = leader
-								leader = {
-									has_trait = leader_trait_dolls
-								}
-							}
-						}
-					}
-				}
-			}
+			KZ_VOY_trgr_plnt_ASSEMBLY = yes	# 久远
+
 			#	魔女
 			if = { limit = { has_trait = trait_dummy }
 				if = { limit = { root.owner = { has_origin = origin_garbage_princesses } }
@@ -428,12 +392,7 @@ can_species_be_assembled = {
 				}
 			}
 			#	久远
-			if = {
-				limit = { root = { has_active_building = building_KZ_VOY_homunculus_furnace } }
-				root = { has_planet_flag = KZ_VOY_homunculus_furnace_assembly_integration_off_flag }
-			}
-			else_if = {
-				limit = { has_trait = trait_KZ_VOY_magic_puppet }
+			else_if = { limit = { has_trait = trait_KZ_VOY_magic_puppet }
 				KZ_VOY_can_assemble_magic_puppet = yes
 			}
 			#	GF
@@ -445,27 +404,26 @@ can_species_be_assembled = {
 					}
 				}
 			}
+			#	thl
+			else_if = { limit = { has_trait = trait_thl_doll }
+				THL_trgr_spcs_RULE_doll_assembly = yes
+			}
 			#_|v默认|	+azl
 			else = {
 				root = {
-					check_modifier_value = {
-						modifier = planet_pop_assembly_add
-						value > 0
-					}
+					check_modifier_value = { modifier = planet_pop_assembly_add	value > 0 }
 					owner = {
 						NOR = {# 这类mod国家不组装机器人
 							# azl
 							has_authority = auth_azur_lane_1
 							has_authority = auth_azur_lane_2
 							has_authority = auth_azur_lane_K
-							# GF
-							has_authority = auth_commonwealth
 						}
 					}
 				}
 			}
 		}
-		#_|原版克隆|
+		#_|原版克隆|	+Ecar/星海皇帝/thl
 		AND = {
 			is_organic_species = yes
 			#_|v蜂群|	+Ecar
@@ -525,46 +483,45 @@ can_species_be_assembled = {
 					}
 				}
 			}
-			#_|通用|=|存在克隆+特殊spcs|		+FW/星海帝皇/Ecar
+			#_|通用|=|存在克隆+特殊spcs|		+FW/星海帝皇/Ecar/thl
 			else = {
 				root = {
-					OR = {
-						#	vanilla
-						has_building = building_clone_vats	# 提供|planet_pop_assembly_organic_add|
-						has_modifier = tiyanki_trophy
-						owner = { has_modifier = syamelles_curse }
-						AND = {
-							has_building = building_posthumous_employment_center
-							owner = { has_civic = civic_permanent_employment }
-						}
-						has_planet_flag = can_organic_assemble_flag #for mod compatibility
-
-						#	星海帝皇
-						has_building = building_clone_guard_clone_vat
-						#	FW
-						#check_modifier_value = { modifier = planet_pop_assembly_organic_add value > 0 }
-						#	Ecar
-						has_building = building_advanced_clone_vats
-					}
+					#	FW	|全能条件|
+					check_modifier_value = { modifier = planet_pop_assembly_organic_add value > 0 }
+					#OR = {
+					#	#	vanilla
+					#	has_building = building_clone_vats	# |ap_engineered_evolution/tr_genetics_adopt|
+					#	has_modifier = tiyanki_trophy
+					#	owner = { has_modifier = syamelles_curse }
+					#	AND = {
+					#		has_building = building_posthumous_employment_center
+					#		owner = { has_civic = civic_permanent_employment }
+					#	}
+					#	has_planet_flag = can_organic_assemble_flag #for mod compatibility
+					#
+					#	#	FW
+					#	check_modifier_value = { modifier = planet_pop_assembly_organic_add value > 0 }
+					#	#	星海帝皇
+					#	has_building = building_clone_guard_clone_vat
+					#	#	Ecar
+					#	has_building = building_advanced_clone_vats
+					#	#	thl
+					#	THL_trgr_plnt_RULE_can_assembly_organic = yes
+					#}
 				}
 			}
 		}
-		#	UGRC组装物种
-		UGRC_trgr_spcs_ASSEMBLY = yes
-		#	WSG物种/wsg
-		UGRC_trgr_spcs_WSG = yes
-
-		#	Ecar苗床
-		AND = {
-			root = {
-				check_modifier_value = {
-					modifier = planet_pop_assembly_organic_add
-					value > 0
-				}
-				has_building = building_equipment_breeding_plant
-				owner = { has_civic = civic_libido_equipment }
-			}
-		}
+		is_archetype = LILY						# 莉莉
+		is_archetype = STARSHIPGIRLS			# swg
+		is_archetype = KANMUSU					# kc
+		is_archetype = DATEALIVE				# DAL
+		is_archetype = DPURIFIER				# SC|净化者|
+		is_archetype = ASCENDED					# EE
+		#	wsg
+		is_archetype = WARSHIPGIRL
+		is_archetype = SHENHAI
+		is_archetype = UNITED_FLEET
+		is_archetype = NANITES_CROP
 		#	久远
 		KZ_VOY_trgr_plnt_CLONE = yes
 		#	azl/azlr
@@ -580,20 +537,13 @@ can_species_be_assembled = {
 				}
 			}
 		}
-		#	GF
-		AND = {
-			has_trait = trait_doll
-			root.owner = { has_authority = auth_commonwealth }
-		}
 		#	PTep
 		AND = {
 			has_trait = trait_plentiful_traditions_pt_cocoon
 			root.owner = { has_ascension_perk = ap_total_assimilation }
 		}
-		#	SC
-		is_archetype = DPURIFIER	# 净化者
-		#	EE
-		is_archetype = ASCENDED
+		#	精灵
+		ELF_species_assembled_rules = yes
 	}
 
 	##	微械
@@ -656,8 +606,10 @@ can_species_be_assembled = {
 			}
 		}
 	}
+	##	精灵
+	ELF_can_not_be_assembled_species = yes
 	##	久远
-	else_if = {
+	if = {
 		limit = {
 			OR = {
 				has_trait = trait_KZ_VOY_sub_terran_dragon
