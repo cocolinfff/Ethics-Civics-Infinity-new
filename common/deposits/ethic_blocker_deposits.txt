@@ -1,0 +1,982 @@
+## Possible Deposit Variables ##
+# resources, resource and amount
+# potential trigger (planet scope)
+# planet_modifier - applied to planet only when deposit blocker has been cleared
+# constant_modifier - applied to planet always
+# station = station class in orbit to gather
+# ai_weight = AI willingness to clear blocker. Note: weight 1 is default and is treated specially - 
+#	it is set to weight 0 if the planet has no need of more max districts or of districts
+#   of the type gained from clearing the blocker.
+
+@blocker_high = 10
+@blocker_low = 5
+@ranger_small_production = 0.5
+@ranger_large_production = 1
+
+d_mountain_range = {
+	time = 270
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 1000
+		}
+	}
+
+	potential = {
+		planet_size >= 10
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_minerals_produces_add = @ranger_large_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 2
+			pop_environment_tolerance = 0.03
+			job_druid_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 2
+			planet_max_buildings_add = 1
+			job_geoengineer_add = 2
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { minerals = 300 } }
+		}
+	}
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_low
+		modifier = {
+			factor = 2
+			is_planet_class = pc_alpine
+		}
+		modifier = {
+			factor = 0.5
+			planet_size < 15
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_mountain_range" }
+}
+
+d_active_volcano = {
+	time = 270
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 1000
+		}
+	}
+
+	potential = {
+		planet_size >= 10
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_energy_produces_add = @ranger_large_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 2
+			pop_environment_tolerance = 0.03
+			job_druid_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 2
+			planet_max_buildings_add = 1
+			job_geoengineer_add = 2
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { minerals = 200 energy = 200 } }
+		}
+	}
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_low
+		modifier = {
+			factor = 0.5
+			is_planet_class = pc_alpine
+		}
+		modifier = {
+			factor = 0.5
+			planet_size < 15
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_volcano" }
+}
+
+d_dangerous_wildlife_blocker = {
+	time = 270
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		planet_size >= 10
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_society_research_produces_add = @ranger_large_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 2
+			pop_environment_tolerance = 0.03
+			job_druid_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 2
+			planet_max_buildings_add = 1
+			job_xenobiologist_add = 2
+		}
+	}
+
+	on_cleared = {
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_civic = civic_hive_devouring_swarm
+					}
+				}
+				owner = { add_resource = { food = 200 } }
+			}
+
+			if = {
+				limit = {
+					exists = owner
+					owner = {
+						has_valid_civic = civic_terraforming
+					}
+				}
+				owner = { add_resource = { society_research = 200 } }
+			}
+		}
+	}
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_low
+		modifier = {
+			factor = 0.5
+			planet_size < 15
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_dangerous_wildlife" }
+}
+
+d_dense_jungle = {
+	time = 180
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		is_wet = yes
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_food_produces_add = @ranger_small_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.02
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_xenobiologist_add = 1
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { food = 200 } }
+		}
+	}
+
+	all_blocker_swap_types = yes
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_high
+		modifier = {
+			factor = 2
+			OR = {
+				is_planet_class = pc_continental
+				is_planet_class = pc_tropical
+			}
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_dense_jungle" }
+}
+
+d_toxic_kelp = {
+	time = 180
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		is_wet = yes
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_food_produces_add = @ranger_small_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.02
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_xenobiologist_add = 1
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { food = 100 } }
+		}
+	}
+
+	all_blocker_swap_types = yes
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_high
+		modifier = {
+			factor = 2
+			is_planet_class = pc_ocean
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_toxic_kelp" }
+}
+
+d_deep_sinkhole = {
+	time = 180
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		is_dry = yes
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_minerals_produces_add = @ranger_small_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.02
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_geoengineer_add = 1
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { minerals = 200 } }
+		}
+	}
+
+	all_blocker_swap_types = yes
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_high
+		modifier = {
+			factor = 2
+			OR = {
+				is_planet_class = pc_arid
+				is_planet_class = pc_savannah
+			}
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_deep_sinkhole" }
+}
+
+
+d_quicksand_basin = {
+	time = 180
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		is_dry = yes
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_minerals_produces_add = @ranger_small_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.02
+			job_druid_add = 1
+
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_geoengineer_add = 1
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { minerals = 100 } }
+		}
+	}
+
+	all_blocker_swap_types = yes
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_high
+		modifier = {
+			factor = 2
+			is_planet_class = pc_desert
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_quicksand_basin" }
+}
+
+d_noxious_swamp = {
+	time = 180
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		is_cold = yes
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_food_produces_add = @ranger_small_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.02
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_xenobiologist_add = 1
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { food = 100 } }
+		}
+	}
+
+	all_blocker_swap_types = yes
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_high
+		modifier = {
+			factor = 2
+			is_planet_class = pc_tundra
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_noxious_swamp" }
+}
+
+d_massive_glacier = {
+	time = 180
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers_natural
+
+	can_be_cleared = {
+		custom_tooltip = {
+			fail_text = has_ranger_lodge
+			planet = {
+				NOT = { has_building = building_ranger_lodge }
+			}
+		}
+	}
+
+	resources = {
+		category = deposit_blockers_natural
+		cost = {
+			energy = 500
+		}
+	}
+
+	potential = {
+		is_cold = yes
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_civic = civic_environmentalist }
+		}
+		planet_rangers_minerals_produces_add = @ranger_small_production
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.02
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			job_geoengineer_add = 1
+		}
+	}
+
+	on_cleared = {
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { add_resource = { minerals = 100 } }
+		}
+	}
+
+	all_blocker_swap_types = yes
+
+	inline_script = deposits/ai_weight_natural_blocker
+
+	drop_weight = {
+		weight = @blocker_high
+		modifier = {
+			factor = 2
+			OR = {
+				is_planet_class = pc_alpine
+				is_planet_class = pc_arctic
+			}
+		}
+		modifier = {
+			factor = 0
+			num_free_districts = {
+				type = district_city
+				value < 2
+			}
+		}
+	}
+
+	prerequisites = { "tech_massive_glacier" }
+}
+
+### SPECIAL
+
+d_wandering_forests = {
+	icon = d_dense_jungle
+
+	is_for_colonizable = yes
+	category = deposit_cat_blockers
+
+	potential = {
+		always = no
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.05
+			planet_jobs_unity_produces_mult = 0.05
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			planet_jobs_society_research_produces_mult = 0.05
+			job_xenobiologist_add = 1
+		}
+	}
+}
+
+d_titanic_life_blocker = {	#Added via event
+
+	is_for_colonizable = yes
+	category = deposit_cat_rare
+
+	potential = { always = no }
+
+	resources = {
+		produces = {
+			society_research = 8
+		}
+	}
+
+	planet_modifier = {
+		planet_max_districts_add = -1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		modifier = {
+			planet_housing_add = 1
+			pop_environment_tolerance = 0.05
+			planet_jobs_unity_produces_mult = 0.05
+			job_druid_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		modifier = {
+			planet_housing_add = 1
+			planet_jobs_society_research_produces_mult = 0.05
+			job_xenobiologist_add = 1
+		}
+	}
+}
