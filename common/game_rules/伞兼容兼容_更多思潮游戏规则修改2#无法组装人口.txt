@@ -564,6 +564,9 @@ can_support_branch_offices = {
 				has_authority = auth_corporate
 				has_civic = civic_galactic_sovereign_megacorp
 
+				# Ecar
+				is_eci_megacorp = yes
+
 				#_|巨企国家|	ETCPM/hiveDLC/MCA/驴岛/wsg
 				# ETCPM
 				has_authority = auth_private
@@ -604,8 +607,33 @@ can_support_branch_offices = {
 			is_regular_empire = yes
 			# +ZOFE
 			AND = {
+				is_primitive = yes
+				is_gestalt = no
+				OR = {
+					has_pre_ftl_age = industrial_age
+					has_pre_ftl_age = machine_age
+					has_pre_ftl_age = atomic_age
+					has_pre_ftl_age = early_space_age
+				}
+			}
+			# +ZOFE
+			AND = {
 				is_gestalt = no
 				is_country_type = ascended_empire
+			}
+		}
+	}
+	custom_tooltip = {
+		fail_text = BRANCH_OFFICE_NOT_ADVANCED_PRE_FTL
+		NOR = {
+			is_primitive = yes
+			OR = {
+				has_pre_ftl_age = stone_age
+				has_pre_ftl_age = bronze_age
+				has_pre_ftl_age = iron_age
+				has_pre_ftl_age = late_medieval_age
+				has_pre_ftl_age = renaissance_age
+				has_pre_ftl_age = steam_age
 			}
 		}
 	}
@@ -654,41 +682,42 @@ can_build_branch_office_on_planet = {
 				OR = {
 					is_criminal_syndicate = yes
 
-					# hiveDLC
+					#	hiveDLC
 					has_valid_civic = civic_mutualistic_behavior
-					# wsg
+					#	wsg
 					has_civic = civic_sh_criminal_syndicate
-					# azl
+					#	azl
 					has_authority = auth_azur_lane_1
-					# 莉莉
+					#	莉莉
 					has_authority = auth_AL_democratic
 					has_authority = auth_AL_arsenal
-					# 久远
+					#	久远
 					KZ_VOY_can_build_branch_offices = yes
-					# azlr
+					#	azlr
 					AND = {
 						exists = event_target:elizabeth_leader
 						has_country_flag = azur_lane_leader_elizabeth
 					}
+					#	rmaid
+					Maid_trigger_0_can_build_branch_offices = yes
+					#	精灵
+					is_ELF_can_force_build_branch_offices_on_planet = yes
 				}
 			}
+			# Ecar	=|自我建造|
+			owner = { is_same_value = root }	# <建造者>和<接受者>相同
 			owner = { has_commercial_pact = root }
 			owner = { is_in_federation_with = root }
-			# Ecar	=|自我建造|
 			AND = {
-				has_global_flag = ideological_revolution	# |Ecar激活|
-				owner = {
-					is_same_value = root	# <建造者>和<接受者>相同
+				has_observation_outpost = yes
+				observation_outpost = {
+					has_modifier = preftl_action_trade_pact
 				}
 			}
 			# allow branch offices in subsidiaries and vice versa (and fellow subjects)
 			##_|附庸国建造|
 			root = {
 				is_subject = yes
-				OR = {
-					has_authority = auth_corporate
-					has_civic = civic_galactic_sovereign_megacorp
-				}
 				overlord = {
 					OR = {
 						is_same_value = prevprev.owner
@@ -705,8 +734,7 @@ can_build_branch_office_on_planet = {
 						is_same_value = root.overlord
 					}
 					OR = {
-						has_authority = auth_corporate
-						has_civic = civic_galactic_sovereign_megacorp
+						is_eci_megacorp = yes
 
 						# |wsg|	=宗主必然建造
 						has_authority = auth_warshipgirls
@@ -763,20 +791,58 @@ can_build_branch_office_on_planet = {
 			}
 		}
 	}
-	###_|贸易协议|
+	###_|巨企附庸|
+	custom_tooltip = {
+		fail_text = BRANCH_OFFICE_MEGACORP_OVERLORD
+		exists = owner
+		# failure message for having a corporate overlord
+
+		if = {
+			limit = {
+				OR = {
+					# Not valid if you aren't a subject.
+					root = {
+						is_subject = no
+					}
+					# Or if your overlord isn't a megacorp.
+					root = {
+						is_subject = yes
+						overlord = {
+							is_eci_megacorp = no
+						}
+					}
+				}
+			}
+			always = yes
+		}
+		else = {
+			AND = {
+				root = {
+					is_subject = yes
+					overlord = {
+						is_eci_megacorp = yes
+					}
+				}
+				owner = {
+					OR = {
+						is_subject = no
+						AND = {
+							is_subject = yes
+							overlord = { NOT = { is_same_value = root.overlord } }
+						}
+					}
+				}
+			}
+		}
+	}
+	###_|和平协议|
 	custom_tooltip = {
 		fail_text = BRANCH_OFFICE_CRIMINAL_HERITAGE_HAS_TRUCE
 		exists = owner
 		OR = {
-			#_|非罪企| +wsg/azl
-			root = {
-				is_criminal_syndicate = no
-				NOR = {
-					has_civic = civic_sh_criminal_syndicate	# wsg
-					has_authority = auth_azur_lane_1		# azl
-				}
-			}
-			#_|和平状态|
+			##	|非罪企|
+			root = { is_criminal_syndicate = no }
+			##	|和平状态|
 			owner = {
 				NOR = {
 					has_truce = root
@@ -784,15 +850,13 @@ can_build_branch_office_on_planet = {
 				}
 			}
 
-			# wsg|贸易战争|
+			##	|wsg|
+			#	深海罪企
+			owner = { has_civic = civic_sh_criminal_syndicate }
+			#	贸易战争
 			AND = {
 				owner = { has_country_flag = lose_wg_shop_war }
-				root = {
-					OR = {
-						has_country_flag = pantsu_shop_origin
-						has_civic = civic_sh_criminal_syndicate
-					}
-				}
+				root = { has_country_flag = pantsu_shop_origin }
 			}
 		}
 	}
@@ -845,6 +909,7 @@ can_build_branch_office_on_planet = {
 			}
 		}
 	}
+
 	### MCA
 	hidden_trigger = {
 		NAND = {
