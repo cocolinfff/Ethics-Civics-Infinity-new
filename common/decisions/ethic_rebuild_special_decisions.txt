@@ -553,6 +553,139 @@ decision_promote_research_models = {
 	}
 }
 
+#收购私人企业
+decision_acquisition_of_private_enterprises = {
+	enactment_time = 30
+	owned_planets_only = yes
+
+	resources = {
+		category = decisions
+		cost = {
+			energy = 2000
+			unity = 100
+		}
+	}
+
+	potential = {
+		owner = { is_economic_stance_planned = no }
+		num_buildings = {
+			type = building_private_commercial_megaplex
+			value >= 1
+		}
+	}
+
+	allow = {
+		num_buildings = {
+			type = building_private_commercial_megaplex
+			value >= 1
+		}
+	}
+
+	effect = {
+		remove_building = building_private_commercial_megaplex
+		if = {
+			limit = { owner = { is_ai = no } }
+			add_building = building_commercial_zone
+		}
+		if = {
+			limit = { owner = { is_ai = yes } }
+			random_list = {
+				4 = { add_building = building_commercial_zone }
+				3 = {
+					add_building = building_media_worker_1
+					modifier = {
+						factor = 0
+						OR = {
+							has_modifier = slave_colony
+							has_planet_flag = planetary_station
+						}
+						owner = { is_spiritualist = yes }
+					}
+				}
+				3 = {
+					add_building = building_temple
+					modifier = {
+						factor = 0
+						owner = { is_spiritualist = no }
+						has_modifier = slave_colony
+					}
+				}
+				3 = {
+					add_building = building_research_lab_1
+					modifier = {
+						factor = 0
+						OR = {
+							has_modifier = resort_colony
+							has_modifier = slave_colony
+							has_modifier = crucible_colony
+							has_planet_flag = planetary_station
+							AND = {
+								exists = owner
+								owner = { has_origin =  origin_wizarding_world }
+							}
+						}
+					}
+				}
+				3 = {
+					add_building = building_temple
+					modifier = {
+						factor = 0
+						OR = {
+							has_modifier = resort_colony
+							has_modifier = slave_colony
+							has_modifier = crucible_colony
+							has_planet_flag = planetary_station
+							AND = {
+								exists = owner
+								owner = { NOT = { has_origin =  origin_wizarding_world } }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 2
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value > 1
+			}
+		}
+		modifier = {
+			factor = 4
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value > 3
+			}
+		}
+		modifier = {
+			factor = 6
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value > 5
+			}
+		}
+		modifier = {
+			factor = 8
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value > 7
+			}
+		}
+		modifier = {
+			factor = 10
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value > 9
+			}
+		}
+	}
+}
+
 #关停非法企业
 decision_close_illegal_office = {
 	enactment_time = 30
@@ -567,18 +700,32 @@ decision_close_illegal_office = {
 	}
 
 	potential = {
-		has_branch_office = yes
 		owner = { is_economic_stance_planned = yes }
-		branch_office_owner = {
-			NOT = { is_same_value = root }
+		OR = {
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value >= 1
+			}
+			AND = {
+				has_branch_office = yes
+				branch_office_owner = {
+					NOT = { is_same_value = root.owner }
+				}
+			}
 		}
 	}
 
 	allow = {
-		has_branch_office = yes
-		owner = {
-			NOT = {
-				is_same_value = root
+		OR = {
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value >= 1
+			}
+			AND = {
+				has_branch_office = yes
+				branch_office_owner = {
+					NOT = { is_same_value = root.owner }
+				}
 			}
 		}
 		branch_office_owner = {
@@ -587,26 +734,42 @@ decision_close_illegal_office = {
 	}
 
 	effect = {
-		custom_tooltip = decision_close_illegal_office_effects
+		remove_building = building_private_commercial_megaplex
 		hidden_effect = {
-			planet_event = { id = ethic_close_illegal_office.1 }
+			remove_building_private_commercial_megaplex = yes
+			custom_tooltip = decision_close_illegal_office_effects
+			if = {
+				limit = {
+					has_branch_office = yes
+					branch_office_owner = {
+						NOT = { is_same_value = root.owner }
+					}
+				}
+				planet_event = { id = ethic_close_illegal_office.1 }
+			}
 		}
 	}
 
 	ai_weight = {
 		weight = 1
 		modifier = {
-			factor = 99999
+			add = 99999
 			branch_office_owner = {
 				NOT = {
-					owner = {
-						is_same_value = root
-					}
+					is_same_value = root.owner
 				}
 				OR = {
 					has_civic = civic_criminal_heritage
 					has_civic = civic_underworld_society
 				}
+			}
+		}
+		modifier = {
+			add = 99999
+			owner = { is_economic_stance_planned = yes }
+			num_buildings = {
+				type = building_private_commercial_megaplex
+				value >= 1
 			}
 		}
 	}
@@ -680,6 +843,9 @@ decision_reorganize_the_guerrilla = {
 	resources = {
 		category = decisions
 		cost = {
+			trigger = { 
+				owner = { is_ai = no }
+			}
 			energy = 1000
 		}
 	}
