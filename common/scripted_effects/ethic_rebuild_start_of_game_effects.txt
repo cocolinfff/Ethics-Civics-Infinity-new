@@ -1,5 +1,6 @@
 
 generate_start_pops = {
+	optimize_memory
 	if = {
 		limit = {
 			owner = {
@@ -98,9 +99,10 @@ generate_start_pops = {
 				if = {
 					limit = {
 						prev.owner = {
-							has_origin = origin_syncretic_evolution
-					    	has_origin = origin_symbiotic_race
-					    	has_origin = origin_slave_race
+							OR = {
+								has_origin = origin_syncretic_evolution
+								has_origin = origin_slave_race
+							}
 						}
 					}
 					set_citizenship_type = {
@@ -604,7 +606,7 @@ generate_start_pops = {
 	if = {
 		limit = {
 			owner = {
-				has_civic = civic_permanent_employment	
+				has_civic = civic_permanent_employment
 			}
 		}
 		while = {
@@ -639,43 +641,6 @@ generate_start_pops = {
 	if = {
 		limit = {
 			owner = {
-				has_civic = civic_corpus	
-			}
-		}
-		add_building = building_nuumismatic_shrine
-		remove_building = building_temple
-		while = {
-			count = 4
-			random_owned_pop = {
-				limit = {
-					OR = {
-						has_job = clerk
-						has_job = technician
-						has_job = miner
-						has_job = farmer
-					}
-					is_robotic_species = no
-				}
-				modify_species = {
-					species = this
-					add_trait = trait_flesh_components
-					add_traits_at_start_of_list = yes
-				}
-				if = {
-					limit = {
-						has_trait = trait_syncretic_proles
-					}
-					modify_species = {
-						species = this
-						remove_trait = trait_syncretic_proles
-					}	
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
 				has_civic = civic_libido_equipment	
 			}
 		}
@@ -683,141 +648,12 @@ generate_start_pops = {
 	}
 }
 
-generate_home_planet_final_pass = {
+generate_home_planet_final_pass_true_yuht = {
 	optimize_memory
-	# Adjust life-seeded colonies
 	if = {
 		limit = {
 			owner = {
-				has_origin = origin_life_seeded
-			}
-		}
-
-		owner = {
-			# Nuke other colonies gained from advanced empire, etc
-			every_owned_planet = {
-				limit = { is_capital = no }
-				remove_all_buildings = yes
-				destroy_colony = yes
-			}
-			if = {
-				limit = { NOT = { has_valid_civic = civic_permanent_employment } }
-				change_dominant_species = { species = last_created_species change_all = yes }
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					has_origin = origin_shattered_ring
-					has_origin = origin_machine
-				}
-			}
-		}
-		owner = {
-			capital_scope = {
-				system_star = {
-					set_deposit = d_energy_10
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_origin = origin_tree_of_life
-			}
-		}
-		owner = {
-			capital_scope = {
-				add_deposit = d_tree_of_life_home
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_origin = origin_lithoid
-			}
-		}
-		owner = {
-			capital_scope = {
-				add_deposit = d_lithoid_crater
-				add_deposit = d_buried_lithoids
-				add_deposit = d_buried_lithoids
-				add_deposit = d_buried_lithoids
-				add_deposit = d_buried_lithoids
-				add_modifier = { modifier = lithoid_crater }
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_origin = origin_lost_colony
-			}
-		}
-		owner = {
-			capital_scope = {
-				add_modifier = { modifier = colonial_spirit_mod }
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_origin = origin_broken_shackles
-			}
-		}
-		owner = {
-			capital_scope = {
-				add_modifier = { modifier = free_at_last_broken_shackles days = 7200 }
-				add_modifier = { modifier = culture_shock_broken_shackles days = 3600 }
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_origin = origin_progenitor_hive
-			}
-		}
-		owner = {
-			capital_scope = {
-				add_deposit = d_progenitor
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				has_origin = origin_default
-			}
-		}
-		owner = {
-			if = {
-				limit = {
-					is_gestalt = no
-				}
-				capital_scope = {
-					add_modifier = { modifier = prosp_uni_mod days = 7200 }
-				}
-			}
-			else = {
-				capital_scope = {
-					add_modifier = { modifier = prosp_uni_mod_gestalt days = 7200 }
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				OR = {
-					has_origin = origin_machine
-					has_origin = origin_true_yuht
-				}
+				has_origin = origin_true_yuht
 			}
 		}
 		owner = {
@@ -867,49 +703,6 @@ generate_home_planet_final_pass = {
 							change_planet_size = -6
 						}
 					}
-				}
-			}
-		}
-	}
-	if = {
-		limit = {
-			owner = {
-				any_owned_pop = {
-					has_trait = trait_exotic_metabolism
-				}
-			}
-		}
-
-		add_deposit = d_exotic_mountain
-	}
-}
-
-advanced_cap_start = {
-	add_district_and_planet_size_if_needed_effect = {
-		district = district_mining
-	}
-	add_district_and_planet_size_if_needed_effect = {
-		district = district_industrial
-	}
-
-	if = {
-		limit = {
-			owner = {
-				has_valid_civic = civic_reanimated_armies
-			}
-		}
-		add_building = building_dread_encampment
-
-		solar_system = { #Necromancers do not give engineering. So make sure there's some readily-accessible engineering
-			while = {
-				count = 2
-				random_system_planet = {
-					limit = {
-						has_deposit_for = shipclass_research_station
-						NOT = { has_deposit = d_engineering_6 }
-					}
-					clear_deposits = yes
-					add_deposit = d_engineering_6
 				}
 			}
 		}
