@@ -1,128 +1,119 @@
-namespace = observation
-
-# 反叛特工（原版）
-planet_event = {
-	id = observation.3100
+namespace = preftl_espionage
+country_event = {
+	id = preftl_espionage.1000
 	hide_window = yes
-	
-	trigger = {
-		has_observation_outpost = yes
-		observation_outpost = { 
-			has_mission = covert_infiltration
-			mission_progress > 0.2
-		}
-		observation_outpost_owner = {
-			NOR = {
-				has_country_flag = observation_rogue_agent
-				has_ethic = ethic_gestalt_consciousness
-			}
-			NOR = {
-			    has_civic = civic_shared_burden
-				has_civic = civic_advanced_socialism
-			    AND = {
-			    	has_ethic = ethic_fanatic_xenophile
-			        NOR = {
-			    	    has_ethic = ethic_authoritarian
-			    	    has_ethic = ethic_fanatic_authoritarian
-			    	}
-			    }
-			    AND = {
-			    	has_ethic = ethic_fanatic_egalitarian
-			        NOR = {
-			    	    has_ethic = ethic_xenophobe
-			    	    has_ethic = ethic_fanatic_xenophobe
-			    	}
-			    }
-			}
-		}
-	}
-	
-	mean_time_to_happen = {
-		months = 120
-	}
-	
-	immediate = {
-		observation_outpost_owner = {
-			set_country_flag = observation_rogue_agent
-			root = { set_planet_flag = rogue_agent_planet@prev }
-			country_event = { id = observation.3101 }
-		}
-	}
-}
+	is_triggered_only = yes
 
-# 反叛特工（整活）
-planet_event = {
-	id = observation.3120
-	hide_window = yes
-	
 	trigger = {
-		has_observation_outpost = yes
-		observation_outpost = { 
-			has_mission = covert_infiltration
-			mission_progress > 0.6
-		}
-		observation_outpost_owner = {
-			NOR = {
-				has_country_flag = observation_rogue_agent
-				has_ethic = ethic_gestalt_consciousness
+		is_ai = no
+		is_regular_empire = yes
+		any_spynetwork = {
+			owner = { is_same_value = root }
+			target = {
+				is_country_type = primitive
+				is_gestalt = no
+				is_pre_industrial = no
+				has_country_flag = preftl_espionage_operation_targeted_by@root
+				NOR = {
+					has_country_flag = ongoing_preftl_espionage_chain
+					is_broken_shackles_pre_ftl_to_scope = { SCOPE = root }
+				}
 			}
-			OR = {
-			    has_civic = civic_shared_burden
-				has_civic = civic_advanced_socialism
-			    AND = {
-			    	has_ethic = ethic_fanatic_xenophile
-			        NOR = {
-			    	    has_ethic = ethic_authoritarian
-			    	    has_ethic = ethic_fanatic_authoritarian
-			    	}
-			    }
-			    AND = {
-			    	has_ethic = ethic_fanatic_egalitarian
-			        NOR = {
-			    	    has_ethic = ethic_xenophobe
-			    	    has_ethic = ethic_fanatic_xenophobe
-			    	}
-			    }
-			}
+			is_running_espionage_operation = no
 		}
+		NOT = { has_country_flag = rogue_agent_chain } # only once per game
 	}
-	
-	mean_time_to_happen = {
-		months = 120
-	}
-	
+
 	immediate = {
-		observation_outpost_owner = {
-			set_country_flag = observation_rogue_agent
-			root = { set_planet_flag = rogue_agent_planet@prev }
+		random_country = {
+			limit = {
+				is_country_type = primitive
+				is_gestalt = no
+				is_pre_industrial = no
+				has_country_flag = preftl_espionage_operation_targeted_by@root
+				NOR = {
+					has_country_flag = ongoing_preftl_espionage_chain
+					is_broken_shackles_pre_ftl_to_scope = { SCOPE = root }
+				}
+			}
+			set_country_flag = ongoing_preftl_espionage_chain
+			save_event_target_as = rogue_agent_country
+			capital_scope = {
+				save_event_target_as = rogue_agent_planet
+			}
+		}
+		random_spynetwork = {
+			limit = {
+				owner = { is_same_value = root }
+				target = { is_same_value = event_target:rogue_agent_country }
+			}
+			leader = {
+				save_event_target_as = rogue_agent_spymaster
+				exile_leader_as = rogue_agent_spymaster
+			}
+		}
+		set_country_flag = rogue_agent_chain
+		if = {
+			limit = {
+				NOR = {
+					is_scientific_socialism = yes
+					is_community_society = yes
+					AND = {
+						has_ethic = ethic_fanatic_egalitarian
+						NOR = {
+							has_ethic = ethic_xenophobe
+							has_ethic = ethic_fanatic_xenophobe
+						}
+					}
+				}
+			}
+			country_event = { id = preftl_espionage.1001 }
+		}
+		if = {
+			limit = {
+				OR = {
+					is_scientific_socialism = yes
+					is_community_society = yes
+					AND = {
+						has_ethic = ethic_fanatic_egalitarian
+						NOR = {
+							has_ethic = ethic_xenophobe
+							has_ethic = ethic_fanatic_xenophobe
+						}
+					}
+				}
+			}
 			country_event = { id = observation.3121 }
 		}
 	}
 }
 
+namespace = observation
+# 反叛特工（整活）
 country_event = {
 	id = observation.3121
 	title = "observation.3101.name"
 	desc = "observation.3101.desc"
-	picture = GFX_evt_smugglers_in_bar
+	picture = GFX_evt_infiltration_neutral
 	show_sound = event_conversation
-	location = FROM
-	
+	location = event_target:rogue_agent_planet
 	is_triggered_only = yes
-	
-	immediate = {
-		country_event = {
-			id = observation.3123
-			days = 180
+
+	trigger = {
+		exists = event_target:rogue_agent_country
+		event_target:rogue_agent_planet = {
+			has_observation_outpost = yes
 		}
 	}
-	
+
 	option = {
 		name = "observation.3101.a"
-		tooltip = {
-			FROM = {
-				observation_outpost = { add_mission_progress = -0.2 }
-			}
+
+	}
+
+	after = { # 450 days
+		hidden_effect = {
+			country_event = { id = preftl_espionage.1002 days = 1 random = 15 }
 		}
 	}
 }
@@ -134,9 +125,15 @@ country_event = {
 	desc = "observation.3103.desc"
 	picture = GFX_evt_satellite_in_orbit
 	show_sound = event_radio_chatter
-	location = FROM
-	
+	location = event_target:rogue_agent_planet
 	is_triggered_only = yes
+
+	trigger = {
+		exists = event_target:rogue_agent_country
+		event_target:rogue_agent_planet = {
+			has_observation_outpost = yes
+		}
+	}
 	
 	option = {
 		name = "ONSCREEN"
@@ -172,9 +169,13 @@ country_event = {
 		name = "observation.3104.c"
 		response_text = "observation.3124.c.response"
 		hidden_effect = {
-			FROM = {
-			    observation_outpost = { add_mission_progress = 0.4 }
-		    }
+			random_spynetwork = {
+				limit = {
+					owner = { is_same_value = root }
+					target = { is_same_value = event_target:rogue_agent_country }
+				}
+				add_spy_network_level = 30
+			}
 		}
 	}
 }

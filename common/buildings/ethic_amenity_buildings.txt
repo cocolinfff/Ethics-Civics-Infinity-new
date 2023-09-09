@@ -970,8 +970,229 @@ building_toxic_bath = {
 	}
 }
 
-# 环境监管署
+# 护林员小屋
 building_ranger_lodge = {
+	base_buildtime = @b1_time
+	base_cap_amount = 1
+	category = amenity
+	icon = holding_park_ranger_lodge
+	potential = {
+		NOR = {
+			has_modifier = slave_colony
+			has_planet_flag = planetary_station
+		}
+		owner = {
+			OR = {
+				is_environmentalist_country = yes
+				has_valid_civic = civic_keepers_harmony
+				has_valid_civic = civic_terraforming
+			}
+		}
+		planet = {
+			NOR = {
+				uses_district_set = city_world
+				uses_district_set = pdecocity
+				uses_district_set = pdpalacearc
+				uses_district_set = pdmachinecapital
+				uses_district_set = pdmilarc
+				uses_district_set = pdmachinecapital
+				uses_district_set = pdcorpoarc
+				is_planet_class = pc_hive
+				is_planet_class = pc_machine
+				is_planet_class = pc_relic
+			}
+		}
+	}
+
+	allow = {
+		exists = owner
+		NOT = { owner = { has_policy_flag = industrial_unlimited } }
+		NOT = { has_building = holding_park_ranger_lodge }
+		NOT = { has_building_construction = holding_park_ranger_lodge }
+	}
+
+	destroy_trigger = {
+		OR = {
+			uses_district_set = city_world
+			uses_district_set = pdecocity
+			uses_district_set = pdpalacearc
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdmilarc
+			uses_district_set = pdmachinecapital
+			uses_district_set = pdcorpoarc
+			is_planet_class = pc_hive
+			is_planet_class = pc_machine
+			is_planet_class = pc_relic
+		}
+		exists = owner
+		OR = {
+			owner = {
+				NOR = {
+					is_environmentalist_country = yes
+					has_valid_civic = civic_keepers_harmony
+					has_valid_civic = civic_terraforming
+				}
+			}
+			owner = { has_policy_flag = industrial_unlimited }
+			has_modifier = slave_colony
+		}
+	}
+
+	on_built = {
+		planet = {
+			add_blocker = { type = d_nature_preserve_blocker }
+		}
+	}
+
+	on_destroy = {
+		planet = {
+			if = {
+				limit = { has_deposit = d_nature_preserve_blocker }
+				remove_deposit = d_nature_preserve_blocker
+			}
+		}
+	}
+
+	planet_modifier = {
+		deposit_blockers_natural_unity_produces_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_environmentalist_country = yes
+			}
+		}
+		planet_housing_add = 2
+		pop_environment_tolerance = 0.05
+		job_ranger_add = 2
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		pop_amenities_usage_mult = -0.05
+		pop_citizen_happiness = 0.02
+		job_druid_add = 2
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		planet_housing_add = 4
+		planet_max_buildings_add = 1
+		job_geoengineer_add = 1
+		job_xenobiologist_add = 1
+		mult = value:natural_blocker_count
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_active_resolution = resolution_ecology_integrated_gardens
+			}
+		}
+		deposit_blockers_natural_unity_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_active_resolution = resolution_ecology_environmental_control_board
+			}
+		}
+		deposit_blockers_natural_unity_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+				is_active_resolution = resolution_ecology_paradise_initiative
+			}
+		}
+		deposit_blockers_natural_unity_produces_add = 1
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_environmentalist_country = yes }
+		}
+		text = job_ranger_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_valid_civic = civic_keepers_harmony }
+		}
+		text = job_druid_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		text = job_geoengineer_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_valid_civic = civic_terraforming }
+		}
+		text = job_xenobiologist_effect_desc
+	}
+
+	ai_resource_production = {
+		unity = 2
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 1
+		trigger = { owner_has_resolution = { RES = resolution_ecology_integrated_gardens } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 1
+		trigger = { owner_has_resolution = { RES = resolution_ecology_environmental_control_board } }
+		mult = value:natural_blocker_count
+	}
+
+	ai_resource_production = {
+		unity = 1
+		trigger = { owner_has_resolution = { RES = resolution_ecology_paradise_initiative } }
+		mult = value:natural_blocker_count
+	}
+}
+
+# 环境监管署
+building_ranger_regulatory_authority = {
 	base_buildtime = @b1_time
 	base_cap_amount = 1
 	category = amenity
@@ -1168,7 +1389,9 @@ building_ranger_center = {
 				}
 			}
 		}
-		NOT = { has_policy_flag = industrial_unlimited }
+		owner = {
+			NOT = { has_policy_flag = industrial_unlimited }
+		}
 		NOT = { has_building = holding_park_ranger_lodge }
 		NOT = { has_building_construction = holding_park_ranger_lodge }
 	}
