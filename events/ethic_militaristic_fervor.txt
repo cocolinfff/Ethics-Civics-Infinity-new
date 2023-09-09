@@ -1,0 +1,503 @@
+namespace = ethic_militaristic_fervor
+
+# 摧毁敌舰
+# Menace Objective - Destroy Enemy Ships
+country_event = {
+	id = ethic_militaristic_fervor.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	# This = owner of ship 1 (combatant)
+	# From = owner of ship 2 (destroyed)
+	# FromFrom = ship 1
+	# FromFromFrom = ship 2
+
+	trigger = {
+		owner = {
+			any_situation = {
+				is_situation_type = situation_militaristic_fervor
+			}
+		}
+
+		# check to exclude starbase kills in the future;
+		# right now they're included and the starbase kill objective does nothing,
+		# as the menace reward is the same
+
+		fromfrom = {
+			OR = {
+				NOT = { is_ship_class = shipclass_starbase }
+				fleet = { is_mobile = yes } #juggernauts
+			}
+		}
+	}
+
+	immediate = {
+		owner = {
+			random_situation = {
+				limit = {
+					is_situation_type = situation_militaristic_fervor
+					situation_progress = -1
+				}
+			}
+		}
+	}
+}
+
+# 自己战舰被摧毁
+# Menace Objective - Destroy Enemy Ships
+country_event = {
+	id = ethic_militaristic_fervor.2
+	hide_window = yes
+	is_triggered_only = yes
+
+	# This = owner of ship 1 (destroyed)
+	# From = owner of ship 2 (combatant)
+	# FromFrom = ship 1
+	# FromFromFrom = ship 2
+
+	trigger = {
+		owner = {
+			any_situation = {
+				is_situation_type = situation_militaristic_fervor
+			}
+		}
+
+		# check to exclude starbase kills in the future;
+		# right now they're included and the starbase kill objective does nothing,
+		# as the menace reward is the same
+
+		fromfrom = {
+			OR = {
+				NOT = { is_ship_class = shipclass_starbase }
+				fleet = { is_mobile = yes } #juggernauts
+			}
+		}
+	}
+
+	immediate = {
+		owner = {
+			random_situation = {
+				limit = {
+					is_situation_type = situation_militaristic_fervor
+					situation_progress = 1
+				}
+			}
+			start_situation = {
+				type = situation_militaristic_fervor
+				target = root
+			}
+		}
+	}
+}
+
+# 征服星球
+# Menace Objective - Conquer Worlds
+# Fired from on_action 'on_planet_conquer'
+planet_event = {
+	id = ethic_militaristic_fervor.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	# From = Country scope (new owner)
+	# This = Planet scope
+
+	trigger = {
+		from = {
+			any_situation = {
+				is_situation_type = situation_militaristic_fervor
+			}
+		}
+		OR = {
+			is_colony = yes
+			AND = {
+				exists = owner
+				owner = {
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	immediate = {
+		every_owned_pop = {
+			from = {
+				random_situation = {
+					limit = {
+						is_situation_type = situation_militaristic_fervor
+						situation_progress = -1
+					}
+				}
+			}
+		}
+	}
+}
+
+# 自己星球被征服
+# Menace Objective - Conquer Worlds
+# Fired from on_action 'on_planet_conquer'
+planet_event = {
+	id = ethic_militaristic_fervor.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	# From = Country scope (new owner)
+	# This = Planet scope
+
+	trigger = {
+		fromfrom = {
+			any_situation = {
+				is_situation_type = situation_militaristic_fervor
+			}
+		}
+		OR = {
+			is_colony = yes
+			AND = {
+				exists = owner
+				owner = {
+					is_primitive = yes
+				}
+			}
+		}
+	}
+
+	immediate = {
+		every_owned_pop = {
+			fromfrom = {
+				random_situation = {
+					limit = {
+						is_situation_type = situation_militaristic_fervor
+						situation_progress = 1
+					}
+				}
+			}
+		}
+	}
+}
+
+first_contact_event = {
+	id = ethic_militaristic_fervor.5
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			owner = {
+				has_ethic = ethic_fanatic_militarist
+				OR = {
+					has_valid_civic = civic_sparta_spirit
+					has_valid_civic = civic_glory_and_dream
+					has_valid_civic = civic_nazbol
+					has_valid_civic = civic_military_dictatorship
+				}
+				NOT = { has_country_flag = first_strike }
+			}
+			from = {
+				has_ethic = ethic_fanatic_militarist
+				OR = {
+					has_valid_civic = civic_sparta_spirit
+					has_valid_civic = civic_glory_and_dream
+					has_valid_civic = civic_nazbol
+					has_valid_civic = civic_military_dictatorship
+				}
+				NOT = { has_country_flag = first_strike }
+			}
+		}
+		from = { is_country_type = default }
+		owner = { is_country_type = default }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+					OR = {
+						has_valid_civic = civic_sparta_spirit
+						has_valid_civic = civic_glory_and_dream
+						has_valid_civic = civic_nazbol
+						has_valid_civic = civic_military_dictatorship
+					}
+					NOT = { has_country_flag = first_strike }
+				}
+			}
+			owner = {
+				country_event = {
+					id = ethic_militaristic_fervor.6
+					days = 14
+					scopes = { from = from }
+				}
+			}
+		}
+	}
+}
+
+country_event = { # Finishing First Contact
+	id = ethic_militaristic_fervor.6
+	title = ethic_militaristic_fervor.6.name
+	desc = ethic_militaristic_fervor.6.desc
+
+	location = event_target:target_system
+
+	picture = GFX_evt_machine_space_battle
+	show_sound = event_ship_explosion
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = {
+			has_country_flag = first_strike
+		}
+		From = { is_country_type = default }
+		has_ethic = ethic_fanatic_militarist
+		OR = {
+			has_valid_civic = civic_sparta_spirit
+			has_valid_civic = civic_glory_and_dream
+			has_valid_civic = civic_nazbol
+			has_valid_civic = civic_military_dictatorship
+		}
+		capital_scope = {
+			closest_system = {
+				limit = {
+					exists = space_owner
+					space_owner = {
+						is_same_value = from
+					}
+					any_system_planet = {
+						NOT = { is_capital = yes }
+					}
+				}
+				max_steps = 20
+			}
+		}
+	}
+
+	immediate = {
+		set_country_flag = encountered_alien_life
+		set_country_flag = first_strike
+		set_country_flag = finished_sapient_first_contact
+		capital_scope = {
+			closest_system = {
+				limit = {
+					exists = space_owner
+					space_owner = {
+						is_same_value = from
+					}
+					any_system_planet = {
+						NOT = { is_capital = yes }
+					}
+				}
+				max_steps = 20
+				save_event_target_as = target_system
+			}
+		}
+	}
+
+	option = { #Stop them and Apologize
+		name = ethic_militaristic_fervor.6.a
+		from = {
+			add_opinion_modifier = {
+				who = root
+				modifier = fotd_apoligized
+			}
+		}
+		ai_chance = {
+			base = 6
+		}
+	}
+	option = { #Explosion happens, reprimand Seperatists
+		name = ethic_militaristic_fervor.6.b
+		custom_tooltip = origin.6045.starbase_destroyed.tt
+		from = {
+			add_opinion_modifier = {
+				who = root
+				modifier = fotd_destroyed_starbase
+			}
+		}
+		hidden_effect = {
+			event_target:target_system = {
+				starbase.fleet = { destroy_fleet = this }
+			}
+			from = {
+				country_event = { id = origin.6046 } #They blew up our starbase!
+			}
+		}
+		ai_chance = {
+			base = 3
+		}
+	}
+	option = { #Use this chance
+		allow = {
+			is_pacifist = no
+		}
+		name = ethic_militaristic_fervor.6.c
+		custom_tooltip = ethic_militaristic_fervor.6.c.tt
+		hidden_effect = {
+			event_target:target_system = {
+				starbase.fleet = { destroy_fleet = this }
+			}
+			set_visited = event_target:target_system
+			declare_war = {
+				target = from
+				attacker_war_goal = wg_fotd_really_bad_contact
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					while = {
+						count = 5
+						create_ship = {
+							name = random
+							random_existing_design = corvette
+						}
+					}
+					set_location = event_target:target_system
+					set_cloaking_active = yes
+				}
+			}
+			start_situation = {
+				type = situation_militaristic_fervor
+				target = root
+			}
+			from = {
+				add_opinion_modifier = {
+					who = root
+					modifier = fotd_destroyed_starbase
+				}
+			}
+			from = {
+				country_event = { id = origin.6047 } #They blew up our starbase and declared war!
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+country_event = {
+	id = ethic_militaristic_fervor.7
+	is_triggered_only = yes
+	title = ethic_militaristic_fervor.7.name
+	desc = ethic_militaristic_fervor.7.desc
+	picture = GFX_evt_open_revolt
+	immediate = {
+		save_event_target_as = from_country
+		random_owned_planet = {
+			limit = {
+				is_capital = no
+			}
+			create_country = {
+				name = random
+				type = default
+				species = prev.owner_species
+				ignore_initial_colony_error = yes
+				day_zero_contact = no
+				ethos = { ethic = ethic_fanatic_militarist ethic = random }
+				civics = random
+				origin = origin_separatists
+				flag = random
+				effect = {
+					save_event_target_as = rebel_country
+					establish_contact = { who = event_target:from_country location = root }
+					establish_communications_no_message = event_target:from_country
+					event_target:from_country = {
+						every_owned_planet = {
+							limit = { is_capital = no }
+							random_list = {
+								1 = {}
+								1 = {
+									set_owner = event_target:rebel_country
+									set_controller = event_target:rebel_country
+									solar_system = {
+										every_fleet_in_system = {
+											set_owner = event_target:rebel_country
+											set_controller = event_target:rebel_country
+										}
+										every_neighbor_system = {
+											limit = {
+												NOT = {
+													any_system_planet = {
+														is_colony = yes
+													}
+												}
+											}
+											every_fleet_in_system = {
+												set_owner = event_target:rebel_country
+												set_controller = event_target:rebel_country
+											}
+										}
+									}
+								}
+							}
+						}
+						random_owned_leader = {
+							limit = { leader_class = admiral }
+							save_event_target_as = rebel_country_admiral
+							event_target:rebel_country = {
+								assign_leader = event_target:rebel_country_admiral
+								set_leader = event_target:rebel_country_admiral
+							}
+							unassign_leader = event_target:rebel_country_admiral
+							fleet = {
+								set_owner = event_target:rebel_country
+								set_controller = event_target:rebel_country
+							}
+						}
+					}
+					event_target:rebel_country_capital = {
+						set_capital = yes
+					}
+
+					event_target:rebel_country = {
+						copy_techs_from = {
+							target = event_target:from_country
+						}
+						add_basic_resources_effect = { VALUE = 3000 }
+						add_manufactured_resources_effect = { VALUE = 1500 }
+
+
+						create_fleet_from_naval_cap = 1
+						random_owned_planet = {
+							last_created_fleet = {
+								set_location = event_target:rebel_country_capital
+							}
+						}
+						set_player = event_target:from_country
+						declare_war = {
+							target = event_target:from_country
+							name = {
+								key = NAME_WAR_OF_REVOLT
+								variable_string = "Root.Target.GetName"
+							}
+							attacker_war_goal = "wg_imperial_war"
+						}
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = ethic_militaristic_fervor.7.a
+		custom_tooltip = ethic_militaristic_fervor.7.tooltip
+	}
+}
+
+country_event = {
+	id = ethic_militaristic_fervor.8
+	is_triggered_only = yes
+	title = ethic_militaristic_fervor.8.name
+	desc = ethic_militaristic_fervor.8.desc
+	picture = GFX_evt_open_revolt
+	immediate = {
+		capital_scope = {
+			add_modifier = {
+				modifier = paragon_origin_one_system_war
+				days = 3600
+			}
+		}
+	}
+	option = {
+		name = ethic_militaristic_fervor.8.a
+		custom_tooltip = ethic_militaristic_fervor.8.tooltip
+	}
+}
