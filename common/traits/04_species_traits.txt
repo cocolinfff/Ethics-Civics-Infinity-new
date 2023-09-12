@@ -389,12 +389,26 @@ trait_talented = {
 	}
 	potential_crossbreeding_chance = 1.0
 	allowed_archetypes = { BIOLOGICAL LITHOID }
-	opposites = { "trait_nerve_stapled" }
+	opposites = { "trait_humanoid_jinxed" "trait_nerve_stapled" }
 	modifier = {
-		leader_trait_selection_options_add = 1
+		negative_leader_traits_species = -1
 	}
 	slave_cost = {
 		energy = 500
+	}
+}
+
+trait_humanoid_jinxed = {
+	cost = -1
+	potential_crossbreeding_chance = 0.3
+	opposites = { "trait_talented" }
+	allowed_archetypes = { BIOLOGICAL LITHOID  }
+	icon = "gfx/interface/icons/traits/trait_jinxed.dds"
+	modifier = {
+		negative_leader_traits_species = 1
+	}
+	slave_cost = {
+		energy = -500
 	}
 }
 
@@ -410,8 +424,8 @@ trait_quick_learners = {
 	opposites = { "trait_slow_learners" }
 	allowed_archetypes = { BIOLOGICAL LITHOID }
 	modifier = {
-		species_leader_exp_gain = 0.25
-		negative_leader_traits_species = -1
+		species_leader_exp_gain = 0.1
+		leader_trait_selection_options_add = 1
 	}
 	slave_cost = {
 		energy = 500
@@ -427,8 +441,8 @@ trait_slow_learners = {
 	opposites = { "trait_quick_learners" "trait_enigmatic_intelligence" }
 	allowed_archetypes = { BIOLOGICAL LITHOID }
 	modifier = {
-		species_leader_exp_gain = -0.25
-		negative_leader_traits_species = 1
+		species_leader_exp_gain = -0.1
+		leader_trait_selection_options_add = -1
 	}
 	ai_weight = {
 		weight = 0
@@ -1562,6 +1576,43 @@ trait_plantoid_budding = {
 	}
 }
 
+trait_invasive = {
+	icon = "gfx/interface/icons/traits/trait_plantoid_invasive_species.dds"
+	cost = 2
+	potential_crossbreeding_chance = 0
+	opposites = { "trait_agrarian" "trait_ingenious" "trait_industrious" "trait_intelligent" "trait_thrifty" "trait_natural_engineers" "trait_natural_physicists" "trait_natural_sociologists" "trait_extremely_adaptive" "trait_adaptive" "trait_rapid_breeders" "trait_talented" "trait_quick_learners" "trait_traditional" "trait_docile" "trait_very_strong" "trait_strong" "trait_nomadic" "trait_communal" "trait_charismatic" "trait_conformists" "trait_venerable" "trait_enduring"
+		"trait_resilient" "trait_conservational" "trait_noxious" "trait_inorganic_breath" "trait_humanoid_existential_iteroparity" "trait_incubator" "trait_delicious" "trait_nerve_stapled" "trait_fertile" "trait_robust" "trait_erudite" "trait_vat_grown" "trait_felsic" "trait_natural_machinist" "trait_drake_scaled" "trait_voidling" "trait_tiyanki" "trait_advanced_scintillating" "trait_advanced_gaseous_byproducts" "trait_advanced_volatile_excretions" "trait_exotic_metabolism"}
+	host_has_dlc = "Plantoids Species Pack"
+	sorting_priority = 30
+
+	initial = yes
+	randomized = no
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		can_do_advanced_gene_modding = yes
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	allowed_archetypes = { BIOLOGICAL }
+	species_class = { FUN PLANT }
+
+	custom_tooltip_with_modifiers = TRAIT_INVASIVE_EFFECT
+	triggered_planet_growth_habitability_modifier = {
+		pop_growth_speed = 0.05
+		mult = value:count_negative_traits
+	}
+	triggered_planet_growth_habitability_modifier = {
+		potential = {
+			exists = from
+		}
+		pop_environment_tolerance = 0.05
+		mult = value:count_negative_traits
+	}
+}
+
 trait_lithoid_budding = {
 	host_has_dlc = "Plantoids Species Pack"
 	cost = 2
@@ -1657,5 +1708,61 @@ trait_zombie = {
 	custom_tooltip = TRAIT_ZOMBIE_EFFECT
 	slave_cost = {
 		energy = 500
+	}
+}
+
+trait_humanoid_existential_iteroparity = {
+	host_has_dlc = "Humanoids Species Pack"
+	cost = 2
+	species_possible_remove = {
+		can_remove_beneficial_genetic_traits = yes
+	}
+	potential_crossbreeding_chance = 0.5
+	opposites = { "trait_humanoid_psychological_infertility" "trait_rapid_breeders" "trait_fertile" "trait_rapid_breeders_lithoid" "trait_plantoid_budding" "trait_lithoid_budding" "trait_vat_grown" "trait_tiyanki" }
+	allowed_archetypes = { BIOLOGICAL LITHOID  }
+	icon = "gfx/interface/icons/traits/trait_existential_iteroparity.dds"
+	custom_tooltip = TRAIT_HUMANOID_EXISTENTIAL_ITEROPARITY_EFFECT
+	triggered_planet_growth_habitability_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					is_at_war = yes
+					has_crisis = yes
+				}
+			}
+		}
+		pop_growth_speed = 0.3
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+trait_humanoid_psychological_infertility = {
+	host_has_dlc = "Humanoids Species Pack"
+	cost = -2
+	species_potential_add = {
+		can_do_advanced_gene_modding = yes
+	}
+	potential_crossbreeding_chance = 0.5
+	opposites = { "trait_humanoid_existential_iteroparity" "trait_slow_breeders" "trait_vat_grown" }
+	allowed_archetypes = { BIOLOGICAL LITHOID  }
+	icon = "gfx/interface/icons/traits/trait_psychological_infertility.dds"
+	custom_tooltip = TRAIT_HUMANOID_PSYCHOLOGICAL_INFERTILITY_EFFECT
+	triggered_planet_growth_habitability_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					is_at_war = yes
+					has_crisis = yes
+				}
+			}
+		}
+		pop_growth_speed = -0.3
+	}
+	slave_cost = {
+		energy = -1000
 	}
 }
