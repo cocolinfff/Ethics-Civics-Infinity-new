@@ -334,7 +334,7 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 		any_system = {
 			has_star_flag = ratling_system
 			NOT = { #At least one Ratling system does not have ongoing starbase construction
-				any_fleet_in_system = {
+				any_ship_in_system = {
 					is_ship_size = constructor
 					is_constructing = starbase
 				}
@@ -363,17 +363,17 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 		create_country = {
 			name = "NAME_Ketling_Multitude"
 			ethos = {
-			    ethic = ethic_fanatic_xenophile
+				ethic = ethic_fanatic_xenophile
 				ethic = ethic_materialist
 				ethic = ethic_egalitarian
 				ethic = ethic_pacifist
 			}
 			authority = auth_oligarchic
 			civics = {
-				civic = civic_star_settlers
-				civic = civic_exploration
+				civic = civic_functional_architecture
+				civic = civic_mining_guilds
+				civic = civic_scavengers
 			}
-			origin = origin_star_pack
 			flag = {
 				icon = {
 					category = "zoological"
@@ -393,21 +393,63 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 			species = event_target:ratling_species
 			ignore_initial_colony_error = yes
 			type = default
-		}
-		last_created_country = {
-			set_graphical_culture = mammalian_01
-			save_global_event_target_as = ratling_country
-			country_event = {
-				id = ariphaos_patch.9998
-				days = 1
-			}
-			country_event = {
-				id = distar.23600
-				days = 1
-			}
-			country_event = {
-				id = distar.20330
-				days = 1
+
+			effect = {
+				set_graphical_culture = mammalian_01
+				save_global_event_target_as = ratling_country
+
+				##Copy technology
+				if = {
+					limit = {
+						any_country = { is_ai = no }
+					}
+					random_country = {
+						limit = { is_ai = no }
+						save_event_target_as = tech_country
+					}
+					copy_techs_from = {
+						target = event_target:tech_country
+						except = {
+							# Horizon Signal
+							tech_akx_worm_1
+							tech_akx_worm_2
+							tech_akx_worm_3
+						}
+					}
+				}
+				else = {
+					random_country = {
+						limit = { is_country_type = default	}
+						save_event_target_as = tech_country
+					}
+					copy_techs_from = {
+						target = event_target:tech_country
+						except = {
+							# Horizon Signal
+							tech_akx_worm_1
+							tech_akx_worm_2
+							tech_akx_worm_3
+						}
+					}
+				}
+				if = {
+					limit = {
+						NOT = { has_technology = tech_starbase_3 }
+					}
+					give_technology = { tech = tech_starbase_3 }
+				}
+				if = {
+					limit = {
+						NOT = { has_technology = tech_destroyers }
+					}
+					give_technology = { tech = tech_destroyers }
+				}
+				if = {
+					limit = {
+						NOT = { has_technology = tech_cruisers }
+					}
+					give_technology = { tech = tech_cruisers }
+				}
 			}
 		}
 
@@ -420,9 +462,11 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 			every_system_planet = {
 				limit = {
 					has_planet_flag = ratling_planet
-					exists = owner
-					owner = {
-						is_same_value = event_target:ratling_pre_space_country
+					AND = {
+						exists = owner
+						owner = {
+							is_same_value = event_target:ratling_pre_space_country
+						}
 					}
 					NOR = {
 						has_orbital_bombardment = yes
@@ -520,7 +564,7 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 					AND = {
 						exists = owner
 						NOT = {
-							owner = { is_same_empire = event_target:ratling_country }
+							owner = { is_same_value = event_target:ratling_country }
 						}
 					}
 				}
@@ -578,107 +622,24 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 		}
 
 		event_target:ratling_country = {
-			##Copy technology
-			IF = {
-				LIMIT = {
-					any_neighbor_country = {
-						exists = this
-						is_country_type = default
-						NOT = { has_ascension_perk = ap_enigmatic_engineering }
-					}
-				}
-				random_neighbor_country = {
-					limit = {
-						is_country_type = default
-						NOT = { has_ascension_perk = ap_enigmatic_engineering }
-					}
-					save_event_target_as = tech_country
-				}
-				copy_techs_from = {
-					target = event_target:tech_country
-					except = {
-						# Horizon Signal
-						tech_akx_worm_1
-						tech_akx_worm_2
-						tech_akx_worm_3
-					}
-				}
-			}
-			ELSE_IF = {
-				LIMIT = {
-					any_country = {
-						is_country_type = default
-						is_ai = no
-						NOT = { has_ascension_perk = ap_enigmatic_engineering }
-					}
-				}
-				random_country = {
-					limit = {
-						is_country_type = default
-						is_ai = no
-						NOT = { has_ascension_perk = ap_enigmatic_engineering }
-					}
-					save_event_target_as = tech_country
-				}
-				copy_techs_from = {
-					target = event_target:tech_country
-					except = {
-						# Horizon Signal
-						tech_akx_worm_1
-						tech_akx_worm_2
-						tech_akx_worm_3
-					}
-				}
-			}
-			ELSE = {
-				random_country = {
-					limit = {
-						is_country_type = default
-						NOT = { has_ascension_perk = ap_enigmatic_engineering }
-					}
-					save_event_target_as = tech_country
-				}
-				copy_techs_from = {
-					target = event_target:tech_country
-					except = {
-						# Horizon Signal
-						tech_akx_worm_1
-						tech_akx_worm_2
-						tech_akx_worm_3
-					}
-				}
-			}
-			##Add some new technologies
-			inverted_switch = {
-				trigger = has_technology
-				tech_power_plant_4 = { give_technology = { tech = tech_power_plant_4 } }
-				tech_mining_3 = { give_technology = { tech = tech_mining_3 } }
-				tech_starbase_4 = { give_technology = { tech = tech_starbase_4 } }
-				tech_nano_vitality_crops = { give_technology = { tech = tech_nano_vitality_crops } }
-				tech_power_hub_1 = { give_technology = { tech = tech_power_hub_1 } }
-				tech_food_processing_1 = { give_technology = { tech = tech_food_processing_1 } }
-			}
 
 			##Add resources
-			add_resource = {
-				minerals = 7000
-				energy = 7000
-				food = 3000
-				consumer_goods = 3000
-				alloys = 2000
-				influence = 1000
-				unity = 27000
-			}
+			add_resource = { minerals = 7000 }
+			add_resource = { energy = 7000 }
+			add_resource = { food = 3000 }
+			add_resource = { consumer_goods = 3000 }
+			add_resource = { alloys = 2000 }
+			add_resource = { influence = 1000 }
+			add_resource = { unity = 27000 }
 
 			event_target:ratling_country = {
 				##Create Mining Stations
-				# Handle with .23600
-				#every_planet_within_border = {
-				#	limit = {
-				#		has_deposit_for = shipclass_mining_station
-				#	}
-				#	create_mining_station = { owner = event_target:ratling_country }
-				#}
+				every_planet_within_border = {
+					limit = {
+						has_deposit_for = shipclass_mining_station
+					}
+					create_mining_station = { owner = event_target:ratling_country }
+				}
 				##Create fleets
 				create_fleet = {
 					effect = {
@@ -692,6 +653,7 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 							}
 						}
 						while = {
+							limit = { owner = { has_technology = tech_destroyers } }
 							count = 4
 							create_ship = {
 								name = random
@@ -701,6 +663,7 @@ country_event = { #Create Full Ratling Empire #Root = Global Event Country
 						}
 						while = {
 							count = 2
+							limit = { owner = { has_technology = tech_cruisers } }
 							create_ship = {
 								name = random
 								random_existing_design = cruiser

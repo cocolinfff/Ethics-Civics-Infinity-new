@@ -12,6 +12,23 @@ origin_default = {
 		base = 30
 	}
 	description = "origin_tooltip_default_effects"
+
+	swap_type = {
+		description = "origin_tooltip_default_effects_lithoid"
+
+		trigger = {
+			OR = {
+				AND = {
+					is_scope_valid = no
+					local_human_species_class = LITHOID
+				}
+				AND = {
+					is_scope_valid = yes
+					is_lithoid_empire = yes
+				}
+			}
+		}
+	}
 	advanced_start = yes
 }
 
@@ -203,7 +220,7 @@ origin_khan_successor = {
 	}
 	possible = {
 	}
-	description = origin_no_effect
+	description = allow_raiding
 	random_weight = {
 		base = 0
 	}
@@ -228,6 +245,7 @@ origin_mechanists = {
 		civics = {
 			NOR = {
 				value = civic_network_of_the_mind
+				value = civic_permanent_employment
 			}
 		}
 	}
@@ -302,7 +320,7 @@ origin_syncretic_evolution = {
 			}
 		}
 	}
-	description = civic_tooltip_syncretic_evolution_effects
+	description = origin_tooltip_syncretic_evolution_effects
 	has_secondary_species = {
 		# see game_start.11
 		title = civic_syncretic_evolution_secondary_species
@@ -426,9 +444,29 @@ origin_life_seeded = {
 			}
 		}
 	}
-	description = "civic_tooltip_life_seeded_effects"
+	description = "origin_tooltip_life_seeded_effects"
 	random_weight = {
 		base = 10
+	}
+}
+
+origin_life_seeded_habinte = {
+	is_origin = yes
+	icon = "gfx/interface/icons/origins/origins_life_seeded.dds"
+	picture = GFX_origin_life_seeded
+
+	starting_colony = pc_gaia
+	habitability_preference = pc_gaia
+	preferred_planet_class_neighbor = no
+
+	playable = {
+		always = no # Non-player origin
+	}
+
+	description = "origin_tooltip_life_seeded_effects"
+	negative_description = "origin_tooltip_life_seeded_negative_effects"
+	random_weight = {
+		base = 5
 	}
 }
 
@@ -453,7 +491,7 @@ origin_post_apocalyptic = {
 			}
 		}
 	}
-	description = "civic_tooltip_post_apocalyptic_effects"
+	description = "origin_tooltip_post_apocalyptic_effects"
 	traits = {
 		trait = trait_survivor
 	}
@@ -566,20 +604,29 @@ origin_void_dwellers = {
 	}
 
 	possible = {
-		ethics = { NOT = { value = ethic_gestalt_consciousness } }
-		civics = {
-			NOT = {	value = civic_agrarian_idyll }
-		}
+		authority = { NOT = { value = auth_machine_intelligence } }
 		civics = {
 			NOR = {
 				text = civic_tooltip_not_idyllic_bloom
 				value = civic_idyllic_bloom
 				value = civic_hive_idyllic_bloom
 			}
+			NOT = { value = civic_agrarian_idyll }
+			NOR = {
+				text = civic_tooltip_not_anglers
+				value = civic_anglers
+				value = civic_corporate_anglers
+			}
 		}
 	}
 
 	description = "origin_tooltip_void_dwellers_effects"
+	modifier = {
+		megastructures_habitat_cost_mult = -0.25
+		habitat_districts_building_slots_add = 0.25
+		habitat_max_districts_add = 2
+		habitat_district_jobs_add = 1
+	}
 	flags = { custom_start_screen }
 
 	traits = {
@@ -610,8 +657,8 @@ origin_scion = {
 		civics = {
 			NOR = {
 				value = civic_network_of_the_mind
+				value = civic_pompous_purists
 			}
-			NOT = { value = civic_pompous_purists }
 		}
 	}
 	description = "origin_tooltip_scion_effects"
@@ -664,9 +711,7 @@ origin_tree_of_life = {
 				value = auth_hive_mind
 			}
 			civics = {
-				OR = {
-					value = civic_network_of_the_mind
-				}
+				value = civic_network_of_the_mind
 			}
 		}
 		civics = {
@@ -676,6 +721,11 @@ origin_tree_of_life = {
 		}
 	}
 	description = "origin_tooltip_tree_effects"
+
+	modifier = {
+		ship_colonizer_food_cost_add = 500
+		ship_colonizer_alloys_cost_mult = -0.50
+	}
 	flags = {
 		custom_start_screen
 	}
@@ -763,6 +813,7 @@ origin_machine = {
 		}
 	}
 	description = "origin_tooltip_machine_effects"
+	negative_description = "origin_tooltip_machine_negative_effects"
 	#flags = { custom_start_screen }
 	traits = {
 	}
@@ -791,7 +842,6 @@ origin_common_ground = {
 		}
 		civics = {
 			NOR = {
-				value = civic_barbaric_despoilers
 				value = civic_fanatic_purifiers
 				value = civic_inwards_perfection
 				value = civic_network_of_the_mind
@@ -894,7 +944,7 @@ origin_doomsday = {
 	}
 	possible = {
 	}
-	description = "origin_tooltip_doomsday_effects"
+	negative_description = "origin_tooltip_doomsday_negative_effects"
 	flags = {
 		custom_start_screen
 	}
@@ -915,11 +965,7 @@ origin_lost_colony = {
 		always = yes
 	}
 	possible = {
-		ethics = {
-			NOT = {
-				value = ethic_gestalt_consciousness
-			}
-		}
+		always = yes
 	}
 	description = "origin_tooltip_lost_colony_effects"
 	flags = {
@@ -955,11 +1001,13 @@ origin_necrophage = {
 			NOR = {
 				value = civic_death_cult
 				value = civic_death_cult_corporate
-				value = civic_network_of_the_mind
+				value = civic_hive_empath
+				value = civic_permanent_employment
 			}
 		}
 	}
-	description = civic_tooltip_necrophage_effects
+	description = origin_tooltip_necrophage_effects
+	negative_description = origin_tooltip_necrophage_negative_effects
 	traits = {
 		trait = trait_necrophage
 	}
@@ -1189,7 +1237,10 @@ origin_star_slingshot = {
 	description = "origin_tooltip_star_slingshot_effects"
 	flags = { custom_start_screen }
 
-	traits = {}
+	modifier = {
+		country_starbase_influence_cost_distance_mult = -0.75
+		catapult_spread_mult = 0.5
+	}
 
 	random_weight = {
 		base = 10
@@ -1208,16 +1259,16 @@ origin_shroudwalker_apprentice = {
 	}
 
 	possible = {
-		species_archetype = {
-			OR = {
-				value = BIOLOGICAL
-				value = LITHOID
-			}
-		}
 		ethics = {
 			OR = {
+				text = civic_tooltip_spiritualist
 				value = ethic_spiritualist
 				value = ethic_fanatic_spiritualist
+			}
+		}
+		civics = {
+			NOT = {
+				value = civic_fanatic_purifiers
 			}
 		}
 	}
@@ -1451,6 +1502,9 @@ origin_payback = {
 				value = civic_pompous_purists
 				value = civic_slaver_guilds
 				value = civic_indentured_assets
+				# Or low tech starts
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
 			}
 		}
 	}
@@ -1498,7 +1552,13 @@ origin_broken_shackles = {
 			}
 		}
 		civics = {
-			NOT = { value = civic_fanatic_purifiers }
+			NOR = {
+				value = civic_fanatic_purifiers
+				value = civic_selective_kinship
+				# Or low tech starts
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
+			}
 		}
 	}
 
@@ -1537,6 +1597,9 @@ origin_fear_of_the_dark = {
 			NOR = {
 				value = civic_inwards_perfection
 				value = civic_fanatic_purifiers
+				# Or low tech starts
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
 			}
 		}
 	}
@@ -1569,6 +1632,10 @@ origin_slavers = { # AI only origin for the evil slaver empire for Payback and B
 	advanced_start = yes
 
 	description = "origin_tooltip_slavers_effects"
+
+	modifier = {
+		country_naval_cap_add = 50
+	}
 
 	random_weight = {
 		base = 0
