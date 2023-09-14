@@ -752,6 +752,162 @@ synethic_ascension_change_portrait = {
 }
 
 impose_ideology_effect = {
+	root = { save_event_target_as = victorious_country }
+	from = {
+		save_event_target_as = defeated_country
+		every_system_within_border = {
+			limit = {
+				has_owner = yes
+				is_owned_by = event_target:defeated_country
+				any_system_colony = {
+					is_capital = yes
+					has_owner = yes
+					is_owned_by = event_target:defeated_country
+				}
+			}
+			every_system_colony = {
+				limit = {
+					is_capital = yes
+					has_owner = yes
+					is_owned_by = event_target:defeated_country
+				}
+				create_rebels = {
+					name = random
+					species = event_target:defeated_country
+					authority = random
+					civics = {
+						civic = random
+					}
+					ethos = random
+					origin = "origin_liberated"
+					flag = random
+					effect = {
+						set_country_type = default
+						copy_ethos_and_authority = event_target:victorious_country
+						save_event_target_as = be_liberated
+						add_resource = {
+							minerals = 7500
+							energy = 7500
+							food = 7500
+							consumer_goods = 5000
+							alloys = 5000
+							rare_crystals = 500
+							volatile_motes = 500
+							exotic_gases = 500
+							influence = 500
+							unity = 5000
+						}
+						establish_communications_no_message = event_target:defeated_country
+						establish_communications_no_message = event_target:victorious_country
+						add_modifier = { modifier = recently_liberated days = 7300 }
+						add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:victorious_country }
+						event_target:victorious_country = {
+							add_opinion_modifier = { modifier = opinion_we_liberated who = event_target:be_liberated }
+						}
+					}
+				}
+				set_owner = event_target:be_liberated
+				hidden_effect = {
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								if = {
+									limit = { is_owned_by = event_target:defeated_country }
+									set_owner = event_target:be_liberated
+								}
+							}
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+								is_owned_by = event_target:defeated_country
+							}
+							set_owner = event_target:be_liberated
+						}
+					}
+				}
+			}
+		}
+		every_system_within_border = {
+			limit = {
+				has_owner = yes
+				is_owned_by = event_target:defeated_country
+				any_system_colony = {
+					has_owner = yes
+					is_owned_by = event_target:defeated_country
+				}
+			}
+			every_system_colony = {
+				limit = {
+					has_owner = yes
+					is_owned_by = event_target:defeated_country
+				}
+				set_owner = event_target:be_liberated
+				hidden_effect = {
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								if = {
+									limit = { is_owned_by = event_target:defeated_country }
+									set_owner = event_target:be_liberated
+								}
+							}
+						}
+						add_claims = {
+							who = event_target:defeated_country
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+								is_owned_by = event_target:defeated_country
+							}
+							set_owner = event_target:be_liberated
+						}
+					}
+				}
+			}
+		}
+	}
+	event_target:be_liberated = {
+		if = {
+			limit = {
+				has_civic = civic_galactic_sovereign
+			}
+			force_remove_civic = civic_galactic_sovereign
+		}
+		if = {
+			limit = {
+				has_civic = civic_galactic_sovereign_megacorp
+			}
+			force_remove_civic = civic_galactic_sovereign_megacorp
+		}
+		if = {
+			limit = {
+				has_civic = civic_psionic_sovereign
+			}
+			force_remove_civic = civic_psionic_sovereign
+		}
+		if = {
+			limit = {
+				root = { has_authority = auth_corporate }
+				has_authority = auth_corporate
+			}
+			set_merchant_government_effect = yes
+		}
+		if = {
+			limit = {
+				root = { has_civic = civic_crusader_spirit }
+			}
+			force_remove_civic = 1
+			force_add_civic = civic_crusader_spirit
+		}
+	}
+}
+
+impose_subject_ideology_effect = {
 	copy_ethos_and_authority = root
 	if = {
 		limit = {
