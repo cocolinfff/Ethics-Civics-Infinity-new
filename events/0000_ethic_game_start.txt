@@ -56,6 +56,40 @@ country_event = {
                 }
                 set_council_position = councilor_direct_democratic_admiral
             }
+            set_council_agenda = agenda_infinite_opportunities
+        }
+        else_if = {
+            limit = { has_valid_civic = civic_network_of_the_mind }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            random_owned_leader = {
+                limit = {
+                    leader_class = governor
+                    is_ruler = no
+                }
+                set_council_position = councilor_gestalt_governor
+            }
+            create_leader = {
+                class = scientist
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_gestalt_scientist }
+            }
+            create_leader = {
+                class = general
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_gestalt_general }
+            }
+            random_owned_leader = {
+                limit = {
+                    leader_class = admiral
+                    is_ruler = no
+                }
+                set_council_position = councilor_gestalt_admiral
+            }
             set_council_agenda = agenda_infinite_opportunities_gestalt
         }
         else_if = {
@@ -207,6 +241,61 @@ country_event = {
             }
         }
         add_council_agenda_progress = 6000
+    }
+}
+
+country_event = {
+    id = game_start.61
+    hide_window = yes
+    trigger = {
+        OR = {
+            is_country_type = default
+            is_country_type = fallen_empire
+        }
+        is_gestalt = yes
+        NOR = {
+            has_civic = civic_network_of_the_mind
+            has_civic = civic_network_of_the_mind_machine
+            has_civic = civic_network_of_the_mind_true_hive
+        }
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        country_create_gestalt_councilor = {
+            CLASS = governor
+            COUNCIL_POS = councilor_gestalt_governor
+            DESC = councilor_gestalt_governor_desc
+        }
+        country_create_gestalt_councilor = {
+            CLASS = scientist
+            COUNCIL_POS = councilor_gestalt_scientist
+            DESC = councilor_gestalt_scientist_desc
+        }
+        country_create_gestalt_councilor = {
+            CLASS = admiral
+            COUNCIL_POS = councilor_gestalt_admiral
+            DESC = councilor_gestalt_admiral_desc
+        }
+        country_create_gestalt_councilor = {
+            CLASS = general
+            COUNCIL_POS = councilor_gestalt_general
+            DESC = councilor_gestalt_general_desc
+        }
+        if = {
+            limit = {
+                is_country_type = fallen_empire
+            }
+            every_owned_leader = {
+                limit = {
+                    is_councilor = yes
+                    is_ruler = no
+                }
+                add_skill = 9
+                set_gestalt_node_protrait_effect = yes
+            }
+        }
     }
 }
 
