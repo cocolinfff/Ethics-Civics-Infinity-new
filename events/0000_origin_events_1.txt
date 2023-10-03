@@ -1308,8 +1308,10 @@ country_event = {
 	immediate = {
 		set_country_flag = first_contact_event
 		set_country_flag = Story2 # Already encountered spacefarers
-		add_tradition = tr_diplomacy_adopt
-		add_tradition = tr_diplomacy_the_federation
+		give_technology = {
+			message = no
+			tech = tech_federal_state
+		}
 
 		# Choose member capitals from amongst guaranteed habitable planets
 		if = {
@@ -1320,16 +1322,26 @@ country_event = {
 						limit = { has_star_flag = neighbor_t1_first_colony }
 						random_system_planet = {
 							limit = { has_planet_flag = prescripted_ideal }
-							save_event_target_as = fed_planet_1
-							federation_origin_planet_setup = yes
+							change_pc = pc_barren
+						}
+						spawn_random_home_system = yes
+						last_created_system = {
+							federation_origin_planet_setup = {
+								NUM = 1
+							}
 						}
 					}
 					closest_system = {
 						limit = { has_star_flag = neighbor_t2_second_colony }
 						random_system_planet = {
 							limit = { has_planet_flag = prescripted_ideal }
-							save_event_target_as = fed_planet_2
-							federation_origin_planet_setup = yes
+							change_pc = pc_barren
+						}
+						spawn_random_home_system = yes
+						last_created_system = {
+							federation_origin_planet_setup = {
+								NUM = 2
+							}
 						}
 					}
 				}
@@ -1343,41 +1355,24 @@ country_event = {
 						limit = { has_star_flag = neighbor_t1_first_colony }
 						random_system_planet = {
 							limit = { has_planet_flag = prescripted_ideal }
-							save_event_target_as = fed_planet_1
-							federation_origin_planet_setup = yes
+							change_pc = pc_barren
+						}
+						spawn_random_home_system = yes
+						last_created_system = {
+							federation_origin_planet_setup = {
+								NUM = 1
+							}
 						}
 					}
 					closest_system = {
 						limit = {
 							NOT = { has_star_flag = neighbor_t1_first_colony }
 							has_owner = no
-							any_system_planet = {
-								is_ringworld = no
-								is_asteroid = no
-								is_star = no
-								is_moon = no
-							}
 						}
-						if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = { habitable_planet = yes }
-								save_event_target_as = fed_planet_2
-								set_planet_size = 16
-							}
-						}
-						else = {
-							random_system_planet = {
-								limit = {
-									is_ringworld = no
-									is_asteroid = no
-									is_star = no
-									is_moon = no
-								}
-								save_event_target_as = fed_planet_2
-								federation_origin_planet_setup = yes
+						spawn_random_home_system = yes
+						last_created_system = {
+							federation_origin_planet_setup = {
+								NUM = 2
 							}
 						}
 					}
@@ -1390,27 +1385,10 @@ country_event = {
 				solar_system = {
 					closest_system = {
 						limit = { has_owner = no }
-						set_star_flag = fed_origin_system_1
-						if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = { habitable_planet = yes }
-								save_event_target_as = fed_planet_1
-								set_planet_size = 16
-							}
-						}
-						else = {
-							random_system_planet = {
-								limit = {
-									is_ringworld = no
-									is_asteroid = no
-									is_star = no
-									is_moon = no
-								}
-								save_event_target_as = fed_planet_1
-								federation_origin_planet_setup = yes
+						spawn_random_home_system = yes
+						last_created_system = {
+							federation_origin_planet_setup = {
+								NUM = 1
 							}
 						}
 					}
@@ -1418,33 +1396,11 @@ country_event = {
 						limit = {
 							NOT = { has_star_flag = fed_origin_system_1 }
 							has_owner = no
-							any_system_planet = {
-								is_ringworld = no
-								is_asteroid = no
-								is_star = no
-								is_moon = no
-							}
 						}
-						if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = { habitable_planet = yes }
-								save_event_target_as = fed_planet_2
-								set_planet_size = 16
-							}
-						}
-						else = {
-							random_system_planet = {
-								limit = {
-									is_ringworld = no
-									is_asteroid = no
-									is_star = no
-									is_moon = no
-								}
-								save_event_target_as = fed_planet_2
-								federation_origin_planet_setup = yes
+						spawn_random_home_system = yes
+						last_created_system = {
+							federation_origin_planet_setup = {
+								NUM = 2
 							}
 						}
 					}
@@ -1455,14 +1411,34 @@ country_event = {
 		# Create first member
 		event_target:fed_planet_1 = {
 			solar_system = { generate_home_system_resources = yes }
-			create_species = {
-				name = random
-				class = random_non_machine
-				portrait = random
-				traits = random
-				homeworld = this
-				effect = {
-					save_event_target_as = fed_planet_1_species
+			if = {
+				limit = {
+					root = {
+						NOT = {
+							has_valid_civic = civic_selective_kinship
+						}
+					}
+				}
+				create_fed_planet_1_species = { CLASS = random }
+			}
+			else = {
+				root = {
+					switch = {
+						trigger = is_species_class
+						HUM =		{ create_fed_planet_1_species = { CLASS = HUM } }
+						MAM =		{ create_fed_planet_1_species = { CLASS = MAM } }
+						FUN =		{ create_fed_planet_1_species = { CLASS = FUN } }
+						AVI =		{ create_fed_planet_1_species = { CLASS = AVI } }
+						PLANT =		{ create_fed_planet_1_species = { CLASS = PLANT } }
+						ART =		{ create_fed_planet_1_species = { CLASS = ART } }
+						REP =		{ create_fed_planet_1_species = { CLASS = REP } }
+						MOL =		{ create_fed_planet_1_species = { CLASS = MOL } }
+						LITHOID =	{ create_fed_planet_1_species = { CLASS = LITHOID } }
+						NECROID =	{ create_fed_planet_1_species = { CLASS = NECROID } }
+						AQUATIC =	{ create_fed_planet_1_species = { CLASS = AQUATIC } }
+						TOX =		{ create_fed_planet_1_species = { CLASS = TOX } }
+						default =	{ create_fed_planet_1_species = { CLASS = HUM } }
+					}
 				}
 			}
 			# Common Ground
@@ -1514,14 +1490,34 @@ country_event = {
 		# Create second member
 		event_target:fed_planet_2 = {
 			solar_system = { generate_home_system_resources = yes }
-			create_species = {
-				name = random
-				class = random_non_machine
-				portrait = random
-				traits = random
-				homeworld = this
-				effect = {
-					save_event_target_as = fed_planet_2_species
+			if = {
+				limit = {
+					root = {
+						NOT = {
+							has_valid_civic = civic_selective_kinship
+						}
+					}
+				}
+				create_fed_planet_2_species = { CLASS = random }
+			}
+			else = {
+				root = {
+					switch = {
+						trigger = is_species_class
+						HUM =		{ create_fed_planet_2_species = { CLASS = HUM } }
+						MAM =		{ create_fed_planet_2_species = { CLASS = MAM } }
+						FUN =		{ create_fed_planet_2_species = { CLASS = FUN } }
+						AVI =		{ create_fed_planet_2_species = { CLASS = AVI } }
+						PLANT =		{ create_fed_planet_2_species = { CLASS = PLANT } }
+						ART =		{ create_fed_planet_2_species = { CLASS = ART } }
+						REP =		{ create_fed_planet_2_species = { CLASS = REP } }
+						MOL =		{ create_fed_planet_2_species = { CLASS = MOL } }
+						LITHOID =	{ create_fed_planet_2_species = { CLASS = LITHOID } }
+						NECROID =	{ create_fed_planet_2_species = { CLASS = NECROID } }
+						AQUATIC =	{ create_fed_planet_2_species = { CLASS = AQUATIC } }
+						TOX =		{ create_fed_planet_2_species = { CLASS = TOX } }
+						default =	{ create_fed_planet_2_species = { CLASS = HUM } }
+					}
 				}
 			}
 			# Common Ground
