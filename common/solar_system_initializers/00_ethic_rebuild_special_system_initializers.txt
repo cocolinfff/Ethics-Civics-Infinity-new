@@ -118,7 +118,7 @@ com_sol_system = {
                 save_event_target_as = commonwealth
                 owner_species = {
                     save_event_target_as = human_species
-                    set_species_homeworld = prevprev
+                    set_species_homeworld = event_target:sol_system_earth
                 }
             }
             create_country = {
@@ -548,7 +548,7 @@ lost_colony_sol_system = {
                 save_event_target_as = human_lost_colony
                 owner_species = {
                     save_event_target_as = human_species
-                    set_species_homeworld = prevprev
+                    set_species_homeworld = event_target:sol_system_earth
                 }
             }
             random_list = {
@@ -923,6 +923,408 @@ lost_colony_sol_system = {
     neighbor_system = {
         hyperlane_jumps = { min = 1 max = @jumps }
         initializer = "lost_colony_sol_neighbor_t1_first_colony"
+    }
+}
+
+# AI太阳系（忒伊亚人连锁生成）
+ai_sol_system = {
+    name = "NAME_Sol"
+    class = "sc_g"
+
+    asteroid_belt = {
+        type = rocky_asteroid_belt
+        radius = 145
+    }
+    asteroid_belt = {
+        type = icy_asteroid_belt
+        radius = 290
+    }
+    flags = { sol_system com_sol sol empire_home_system }
+
+    usage = misc_system_init
+
+    init_effect = {
+        every_neighbor_system = {
+            set_star_flag = empire_cluster
+            every_neighbor_system = {
+                set_star_flag = empire_cluster
+            }
+        }
+        generate_home_system_resources = yes
+    }
+
+    planet = {
+        name = "NAME_Sol"
+        class = "pc_g_star"
+        orbit_distance = 0
+        orbit_angle = 1
+        size = 30
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_Mercury"
+        class = "pc_molten"
+        orbit_distance = 40
+        orbit_angle = 15
+        size = 10
+        has_ring = no
+        init_effect = {
+            set_planet_entity = {
+                entity = molten_planet_mercury_entity
+                atmosphere_color = hsv { 0.8 0.1 0.2 }
+                atmosphere_intensity = 0.1
+                atmosphere_width = 1.0
+            }
+        }
+    }
+
+    planet = {
+        name = "NAME_Venus"
+        class = "pc_toxic"
+        orbit_distance = 25
+        orbit_angle = 125
+        size = 17
+        has_ring = no
+        init_effect = {
+            set_planet_entity = {
+                entity = toxic_planet_venus_entity
+                atmosphere_color = hsv { 0.854 0.072 0.7 }
+                atmosphere_intensity = 0.2
+                atmosphere_width = 1.0
+            }
+        }
+    }
+
+    planet = {
+        class = "pc_continental"
+        orbit_distance = 25
+        orbit_angle = 120
+        size = 18
+        starting_planet = yes
+        has_ring = no
+        entity = "continental_planet_earth_entity"
+        deposit_blockers = none
+        modifiers = none
+        flags = { planet_earth }
+
+        init_effect = {
+            save_global_event_target_as = sol_system_earth
+            create_species = {
+                name = NAME_Human
+                plural = NAME_Human_plural
+                class = "HUM"
+                portrait = "human"
+                homeworld = event_target:sol_system_earth
+                traits = {
+                    trait = "trait_thrifty"
+                    trait = "trait_conformists"
+                    trait = "trait_chikunailao"
+                    trait = "trait_unruly"
+                    trait = "trait_slow_learners"
+                }
+            }
+            last_created_species = {
+                save_event_target_as = human_species
+            }
+            prevent_anomaly = yes
+            create_country = {
+                name = "NAME_United_Nations_of_Earth"
+                adjective = "PRESCRIPTED_adjective_humans1"
+                authority = auth_oligarchic
+                civics = {
+                    civic = civic_state_monopoly
+                    civic = civic_coalition_government
+                    civic = civic_characteristic_socialism
+                }
+                species = event_target:human_species
+                name_list = "HUMAN1"
+                ship_prefix = "UNS"
+                ethos = {
+                    ethic = "ethic_fanatic_xenophile"
+                    ethic = "ethic_pacifist"
+                    ethic = "ethic_fanatic_capitalism"
+                }
+                flag = {
+                    icon = {
+                        category = "human"
+                        file = "flag_human_8.dds"
+                    }
+                    background = {
+                        category = "backgrounds"
+                        file = "00_solid.dds"
+                    }
+                    colors = {
+                        "dark_blue"
+                        "dark_blue"
+                        "null"
+                        "null"
+                    }
+                }
+                type = default
+                origin = "origin_default"
+                effect = {
+                    save_event_target_as = npc_UNoE
+                    add_resource = {
+                        minerals = 2400
+                        energy = 2400
+                        food = 2400
+                        alloys = 800
+                        consumer_goods = 1200
+                        influence = 600
+                    }
+                }
+            }
+            create_colony = {
+                owner = event_target:npc_UNoE
+            }
+            generate_earth_deposits_and_blockers = yes
+            set_earth_entity = yes
+            clear_blockers = yes
+            generate_start_buildings_and_districts = yes
+            generate_start_pops = yes
+            generate_lost_colony_parent_bonus = yes
+            event_target:npc_UNoE = {
+                set_country_flag = human_1
+                create_starting_leaders = yes
+                country_event = { id = game_start.9 }
+                country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+            }
+            set_name = "NAME_Earth"
+        }
+
+        moon = {
+            name = "NAME_Luna"
+            class = "pc_barren_cold"
+            size = 5
+            orbit_distance = 12
+            orbit_angle = 40
+            has_ring = no
+            entity = "cold_barren_planet_luna_entity"
+        }
+    }
+
+    planet = {
+        name = "NAME_Mars"
+        class = "pc_barren"
+        orbit_distance = 25
+        orbit_angle = 60
+        size = 13
+        has_ring = no
+        entity = "barren_planet_mars_entity"
+        flags = { planet_mars }
+
+        init_effect = {
+            add_modifier = {
+                modifier = "terraforming_candidate"
+                days = -1
+            }
+        }
+    }
+
+    planet = {
+        name = "NAME_1_Ceres"
+        class = "pc_asteroid"
+        orbit_distance = 30
+        orbit_angle = -210
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_2_Pallas"
+        class = "pc_asteroid"
+        orbit_distance = 0
+        orbit_angle = -95
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_3_Juno"
+        class = "pc_asteroid"
+        orbit_distance = 0
+        orbit_angle = 285
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_4_Vesta"
+        class = "pc_asteroid"
+        orbit_distance = 0
+        orbit_angle = -80
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_Jupiter"
+        class = "pc_gas_giant"
+        orbit_distance = 40
+        orbit_angle = -160
+        size = 35
+        has_ring = no
+        entity = "gas_giant_jupiter_entity"
+        change_orbit = 6
+
+        moon = {
+            name = "NAME_Io"
+            class = "pc_molten"
+            size = 6
+            orbit_distance = 10
+            orbit_angle = 110
+            has_ring = no
+        }
+        moon = {
+            name = "NAME_Europa"
+            class = "pc_frozen"
+            size = 6
+            orbit_distance = 2.5
+            orbit_angle = 190
+            has_ring = no
+        }
+        moon = {
+            name = "NAME_Ganymede"
+            class = "pc_frozen"
+            size = 9
+            orbit_distance = 2.5
+            orbit_angle = 80
+            has_ring = no
+        }
+        moon = {
+            name = "NAME_Callisto"
+            class = "pc_frozen"
+            size = 7
+            orbit_distance = 2.5
+            orbit_angle = -155
+            has_ring = no
+        }
+    }
+
+    planet = {
+        name = "NAME_Saturn"
+        class = "pc_gas_giant"
+        orbit_distance = 25
+        orbit_angle = 170
+        size = 30
+        has_ring = yes
+        entity = "gas_giant_05_entity"
+        change_orbit = 7
+
+        moon = {
+            name = "NAME_Titan"
+            class = "pc_frozen"
+            size = 8
+            orbit_distance = 12
+            orbit_angle = 320
+            has_ring = no
+        }
+    }
+
+    planet = {
+        name = "NAME_Uranus"
+        class = "pc_gas_giant"
+        orbit_distance = 25
+        orbit_angle = 125
+        size = 20
+        has_ring = no
+        init_effect = {
+            set_planet_entity = {
+                entity = gas_giant_uranus_entity
+                atmosphere_color = hsv { 0.548 0.519 0.9 }
+                atmosphere_intensity = 0.1
+                atmosphere_width = 1.0
+            }
+        }
+    }
+
+    planet = {
+        name = "NAME_Neptune"
+        class = "pc_gas_giant"
+        orbit_distance = 25
+        orbit_angle = -195
+        size = 20
+        has_ring = no
+        change_orbit = 4
+
+        moon = {
+            name = "NAME_Triton"
+            class = "pc_frozen"
+            size = 6
+            orbit_distance = 7
+            orbit_angle = 115
+            has_ring = no
+        }
+
+        init_effect = {
+            set_planet_entity = {
+                entity = gas_giant_neptune_entity
+                atmosphere_color = hsv { 0.626 0.782 0.9 }
+                atmosphere_intensity = 0.1
+                atmosphere_width = 1.0
+            }
+        }
+    }
+
+    planet = {
+        name = "NAME_134340_Pluto"
+        class = "pc_asteroid"
+        orbit_distance = 30
+        orbit_angle = -210
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_136472_Makemake"
+        class = "pc_ice_asteroid"
+        orbit_distance = 0
+        orbit_angle = -95
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_136108_Haumea"
+        class = "pc_ice_asteroid"
+        orbit_distance = 0
+        orbit_angle = 285
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_20000_Varuna"
+        class = "pc_ice_asteroid"
+        orbit_distance = 0
+        orbit_angle = -80
+        size = 5
+        has_ring = no
+    }
+
+    init_effect = {
+        create_starbase = {
+            size = starbase_starport
+            module = shipyard
+            building = crew_quarters
+            owner = event_target:npc_UNoE
+            effect = {
+                set_starbase_module = {
+                    slot = 2
+                    module = trading_hub
+                }
+            }
+        }
+    }
+
+    neighbor_system = {
+        hyperlane_jumps = { min = 1 max = @jumps }
+        initializer = "com_sol_neighbor_t1"
+    }
+    neighbor_system = {
+        hyperlane_jumps = { min = 1 max = @jumps }
+        initializer = "com_sol_neighbor_t1_first_colony"
     }
 }
 
@@ -2268,6 +2670,252 @@ une_deneb_system = {
         trigger = { num_guaranteed_colonies >= 1 }
         hyperlane_jumps = { min = 1 max = @jumps }
         initializer = "deneb_neighbor_t1_first_colony"
+    }
+}
+
+# AI天大将军六
+ai_titawin_init = {
+    class = "rl_binary_starting_stars"
+    name = "NAME_Titawin"
+    usage = misc_system_init
+
+    flags = { empire_home_system theian_system }
+
+    asteroid_belt = {
+        type = rocky_asteroid_belt
+        radius = 160
+    }
+
+    planet = {
+        count = 1
+        class = pc_f_star
+        orbit_distance = 0
+        orbit_angle = 0
+        name = "NAME_Titawin_A"
+        size = 32
+        has_ring = no
+        planet = {
+            name = "NAME_Saffar"
+            class = "pc_gas_giant"
+            orbit_distance = 210
+            orbit_angle = { min = 30 max = 270 }
+            size = 20
+            has_ring = no
+            change_orbit = 4
+
+            moon = {
+                orbit_angle = { min = 90 max = 270 }
+                size = 7
+                class = "pc_barren_cold"
+                orbit_distance = 12
+            }
+        }
+        planet = {
+            name = "NAME_Samh"
+            class = "pc_gas_giant"
+            orbit_distance = 35
+            orbit_angle = { min = 30 max = 270 }
+            size = 20
+            has_ring = no
+            change_orbit = 4
+        }
+        planet = {
+            name = "NAME_Majriti"
+            class = "pc_gas_giant"
+            orbit_distance = 35
+            orbit_angle = { min = 30 max = 270 }
+            size = 20
+            has_ring = no
+            change_orbit = 4
+
+            moon = {
+                count = 2
+                size = 7
+                class = "pc_frozen"
+                orbit_angle = { min = 90 max = 270 }
+                orbit_distance = 7
+            }
+        }
+        planet = {
+            class = "pc_gas_giant"
+            name = "NAME_Curiel"
+            orbit_distance = 35
+            orbit_angle = { min = 30 max = 270 }
+            size = 20
+            has_ring = no
+            change_orbit = 4
+        }
+    }
+    planet = {
+        name = "NAME_PHS_03"
+        class = "pc_asteroid"
+        orbit_distance = 160
+        orbit_angle = -230
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_PHS_02"
+        class = "pc_asteroid"
+        orbit_distance = 0
+        orbit_angle = -95
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_PHS_04"
+        class = "pc_asteroid"
+        orbit_distance = 0
+        orbit_angle = 285
+        size = 5
+        has_ring = no
+    }
+
+    planet = {
+        name = "NAME_PHS_01"
+        class = "pc_asteroid"
+        orbit_distance = 0
+        orbit_angle = -80
+        size = 5
+        has_ring = no
+    }
+    planet = {
+        count = 1
+        name = "NAME_Titawin_B"
+        class = pc_m_star
+        orbit_distance = -70
+        orbit_angle = 250
+        size = 16
+        has_ring = no
+        satellite_naming_policy = upper_case_roman_numerals
+        change_orbit = 25
+
+        planet = {
+            count = 1
+            orbit_distance = 20
+            home_planet = yes
+            class = pc_desert
+            orbit_angle = 190
+            size = 20
+            deposit_blockers = none
+            modifiers = none
+
+            init_effect = {
+                create_species = {
+                    class = "LITHOID"
+                    portrait = "lith_human"
+                    name = "PRESCRIPTED_species_name_lithoid_humans"
+                    plural = "PRESCRIPTED_species_plural_lithoid_humans"
+                    adjective = "PRESCRIPTED_species_adjective_lithoid_humans"
+                    name_list = "LITHOID4"
+                    gender = indeterminable
+                    traits = {
+                        trait = "trait_lithoid"
+                        trait = "trait_industrious"
+                        trait = "trait_natural_engineers"
+                        trait = "trait_deviants"
+                    }
+                }
+                last_created_species = {
+                    save_event_target_as = lith_human
+                }
+                create_country = {
+                    name = "EMPIRE_DESIGN_lithoid_humans"
+                    adjective = "PRESCRIPTED_adjective_lithoid_humans"
+                    authority = "auth_oligarchic"
+                    civics = {
+                        civic = civic_mining_guilds
+                        civic = civic_meritocracy
+                        civic = civic_zhaowen_dao
+                    }
+                    species = event_target:lith_human
+                    name_list = "LITHOID4"
+                    ship_prefix = "TPC"
+                    ethos = {
+                        ethic = "ethic_xenophile"
+                        ethic = "ethic_authoritarian"
+                        ethic = "ethic_pacifist"
+                        ethic = "ethic_fanatic_materialist"
+                    }
+                    flag = {
+                        icon = {
+                            category = "lithoid"
+                            file = "lithoid_03.dds"
+                        }
+                        background = {
+                            category = "backgrounds"
+                            file = "circle.dds"
+                        }
+                        colors = {
+                            "black"
+                            "dark_red"
+                            "null"
+                            "null"
+                        }
+                    }
+                    type = default
+                    origin = "origin_lithoid"
+                    effect = {
+                        save_global_event_target_as = npc_TPC
+                        add_resource = {
+                            minerals = 1200
+                            energy = 800
+                            alloys = 400
+                            consumer_goods = 400
+                            influence = 200
+                        }
+                    }
+                }
+                create_colony = {
+                    owner = event_target:npc_TPC
+                }
+                generate_start_deposits_and_blockers = yes
+                generate_start_buildings_and_districts = yes
+                generate_start_pops = yes
+                generate_home_planet_final_pass = yes
+                event_target:npc_TPC = {
+                    set_country_flag = human_lithoid
+                    create_starting_leaders = yes
+                    country_event = { id = game_start.9 }
+                    country_event = { id = game_start.33 days = 1 } # needs delay for system ownership to settle
+                }
+                set_name = "NAME_Theia"
+            }
+
+            change_orbit = @base_moon_distance
+
+            moon = {
+                class = pc_barren
+                name = "NAME_Akal_Amectuh"
+                size = 4
+                orbit_angle = 120
+                orbit_distance = 5
+            }
+        }
+
+        planet = {
+            class = pc_molten
+            name = "NAME_Yessefsi"
+            size = 7
+            orbit_angle = 90
+            orbit_distance = 15
+            satellite_naming_policy = lower_case_latin_letters
+        }
+    }
+
+    change_orbit = -245
+
+    neighbor_system = {
+        trigger = { num_guaranteed_colonies >= 2 }
+        hyperlane_jumps = { min = 1 max = @jumps }
+        initializer = "neighbor_t1"
+    }
+    neighbor_system = {
+        trigger = { num_guaranteed_colonies >= 1 }
+        hyperlane_jumps = { min = 1 max = @jumps }
+        initializer = "neighbor_t1_first_colony"
     }
 }
 

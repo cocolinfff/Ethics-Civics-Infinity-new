@@ -69,20 +69,24 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		has_valid_civic = civic_distinguished_admiralty
-		not = { has_country_flag = glorious_fleet }
-		not = { has_country_flag = unglorious_fleet }
+		has_valid_civic = civic_nationalistic_zeal
+		NOT = { has_country_flag = glorious_fleet }
 	}	
 
 	immediate = { 	
 		add_modifier = {
 			modifier = "glorious_fleet"
-			days = 30
+			days = 360
 		}
 		set_timed_country_flag = {
 			flag = glorious_fleet
-			days = 30 
-		}		
+			days = 360
+		}
+		if = {
+			limit = { has_country_flag = unglorious_fleet }
+			remove_modifier = unglorious_fleet
+			remove_country_flag = unglorious_fleet
+		}
 	}
 	
 }
@@ -99,20 +103,24 @@ country_event = {
 	is_triggered_only = yes
 	
 	trigger = {
-		has_valid_civic = civic_distinguished_admiralty
-		not = { has_country_flag = glorious_fleet }
-		not = { has_country_flag = unglorious_fleet }
+		has_valid_civic = civic_nationalistic_zeal
+		NOT = { has_country_flag = unglorious_fleet }
 	}	
 
 	immediate = { 	
 		add_modifier = {
 			modifier = "unglorious_fleet"
-			days = 30
+			days = 360
 		}
 		set_timed_country_flag = {
 			flag = unglorious_fleet
-			days = 30 
-		}		
+			days = 360
+		}
+		if = {
+			limit = { has_country_flag = glorious_fleet }
+			remove_modifier = glorious_fleet
+			remove_country_flag = glorious_fleet
+		}
 	}
 	
 }
@@ -556,6 +564,27 @@ planet_event = {
 		}
 	}
 }
+planet_event = {
+	id = ethic_build_city.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			is_ai = yes
+			has_active_tradition = tr_future_industry
+			has_technology = tech_ascension_theory
+		}
+		planet = {
+			num_unemployed > 15
+			NOT = { has_modifier = planet_unemployment_benefits }
+		}
+	}
+
+	immediate = {
+		add_modifier = { modifier = "planet_unemployment_benefits" days = -1 }
+	}
+}
 
 namespace = ethic_auto_base
 country_event = {
@@ -944,347 +973,6 @@ planet_event = {
 	}
 }
 
-country_event = {
-	id = ethic_advanced_start.1
-	hide_window = yes
-	is_triggered_only = yes
-	trigger = { has_origin = origin_advanced_start }
-	immediate = {
-		if = {
-			limit = { num_guaranteed_colonies >= 2 }
-			capital_scope = {
-				solar_system = {
-					closest_system = {
-						limit = { has_star_flag = neighbor_t1_first_colony }
-						random_system_planet = {
-							limit = { has_planet_flag = prescripted_ideal }
-							save_event_target_as = adv_planet_1
-							federation_origin_planet_setup = yes
-							create_colony = {
-								owner = root.owner
-								species = root.owner
-							}
-							planet_event = { id = game_start.21 }
-							planet_event = { id = game_start.22 }
-							planet_event = { id = game_start.23 }
-							advanced_start = yes
-						}
-						create_starbase = {
-							size = starbase_outpost
-							owner = root.owner
-						}
-					}
-					closest_system = {
-						limit = { has_star_flag = neighbor_t2_second_colony }
-						random_system_planet = {
-							limit = { has_planet_flag = prescripted_ideal }
-							save_event_target_as = adv_planet_2
-							federation_origin_planet_setup = yes
-							create_colony = {
-								owner = root.owner
-								species = root.owner
-							}
-							planet_event = { id = game_start.21 }
-							planet_event = { id = game_start.22 }
-							planet_event = { id = game_start.23 }
-							advanced_start = yes
-						}
-						create_starbase = {
-							size = starbase_outpost
-							owner = root.owner
-						}
-					}
-				}
-			}
-		}
-		if = {
-			limit = { num_guaranteed_colonies >= 1 }
-			capital_scope = {
-				solar_system = {
-					closest_system = {
-						limit = { has_star_flag = neighbor_t1_first_colony }
-						random_system_planet = {
-							limit = { has_planet_flag = prescripted_ideal }
-							save_event_target_as = adv_planet_1
-							federation_origin_planet_setup = yes
-						}
-						create_starbase = {
-							size = starbase_outpost
-							owner = root.owner
-						}
-					}
-					closest_system = {
-						limit = {
-							NOT = { has_star_flag = neighbor_t1_first_colony }
-							has_owner = no
-							any_system_planet = {
-								is_ringworld = no
-								is_asteroid = no
-								is_star = no
-								is_moon = no
-							}
-						}
-						create_starbase = {
-							size = starbase_outpost
-							owner = root.owner
-						}
-						if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = {
-									habitable_planet = yes
-									habitability = {
-										who = root.owner
-										value >= 0.7
-									}
-								}
-								save_event_target_as = adv_planet_2
-								set_planet_size = 16
-								create_colony = {
-									owner = root.owner
-									species = root.owner
-								}
-								planet_event = { id = game_start.21 }
-								planet_event = { id = game_start.22 }
-								planet_event = { id = game_start.23 }
-								advanced_start = yes
-							}
-						}
-						else_if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = {
-									habitable_planet = yes
-									habitability = {
-										who = root.owner
-										value >= 0.7
-									}
-								}
-								random_list = {
-									40 = {
-										save_event_target_as = adv_planet_2
-										set_planet_size = 16
-										create_colony = {
-											owner = root.owner
-											species = root.owner
-										}
-										planet_event = { id = game_start.21 }
-										planet_event = { id = game_start.22 }
-										planet_event = { id = game_start.23 }
-										advanced_start = yes
-									}
-									60 = {}
-								}
-							}
-						}
-						else = {
-							random_system_planet = {
-								limit = {
-									is_ringworld = no
-									is_asteroid = no
-									is_star = no
-									is_moon = no
-								}
-								save_event_target_as = adv_planet_2
-								federation_origin_planet_setup = yes
-								create_colony = {
-									owner = root.owner
-									species = root.owner
-								}
-								planet_event = { id = game_start.21 }
-								planet_event = { id = game_start.22 }
-								planet_event = { id = game_start.23 }
-								advanced_start = yes
-							}
-						}
-					}
-				}
-			}
-		}
-		if = {
-			limit = { num_guaranteed_colonies = 0 }
-			capital_scope = {
-				solar_system = {
-					closest_system = {
-						limit = { has_owner = no }
-						set_star_flag = fed_origin_system_1
-						create_starbase = {
-							size = starbase_outpost
-							owner = root.owner
-						}
-						if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = {
-									habitable_planet = yes
-									habitability = {
-										who = root.owner
-										value >= 0.7
-									}
-								}
-								save_event_target_as = adv_planet_1
-								set_planet_size = 16
-								create_colony = {
-									owner = root.owner
-									species = root.owner
-								}
-								planet_event = { id = game_start.21 }
-								planet_event = { id = game_start.22 }
-								planet_event = { id = game_start.23 }
-								advanced_start = yes
-							}
-						}
-						else_if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = {
-									habitable_planet = yes
-									habitability = {
-										who = root.owner
-										value >= 0.7
-									}
-								}
-								random_list = {
-									40 = {
-										save_event_target_as = adv_planet_1
-										set_planet_size = 16
-										create_colony = {
-											owner = root.owner
-											species = root.owner
-										}
-										planet_event = { id = game_start.21 }
-										planet_event = { id = game_start.22 }
-										planet_event = { id = game_start.23 }
-										advanced_start = yes
-									}
-									60 = {}
-								}
-							}
-						}
-						else = {
-							random_system_planet = {
-								limit = {
-									is_ringworld = no
-									is_asteroid = no
-									is_star = no
-									is_moon = no
-								}
-								save_event_target_as = adv_planet_1
-								federation_origin_planet_setup = yes
-								create_colony = {
-									owner = root.owner
-									species = root.owner
-								}
-								planet_event = { id = game_start.21 }
-								planet_event = { id = game_start.22 }
-								planet_event = { id = game_start.23 }
-								advanced_start = yes
-							}
-						}
-					}
-					closest_system = {
-						limit = {
-							NOT = { has_star_flag = fed_origin_system_1 }
-							has_owner = no
-							any_system_planet = {
-								is_ringworld = no
-								is_asteroid = no
-								is_star = no
-								is_moon = no
-							}
-						}
-						create_starbase = {
-							size = starbase_outpost
-							owner = root.owner
-						}
-						if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = {
-									habitable_planet = yes
-									habitability = {
-										who = root.owner
-										value >= 0.7
-									}
-								}
-								save_event_target_as = adv_planet_2
-								set_planet_size = 16
-								create_colony = {
-									owner = root.owner
-									species = root.owner
-								}
-								planet_event = { id = game_start.21 }
-								planet_event = { id = game_start.22 }
-								planet_event = { id = game_start.23 }
-								advanced_start = yes
-							}
-						}
-						else_if = {
-							limit = {
-								any_system_planet = { habitable_planet = yes }
-							}
-							random_system_planet = {
-								limit = {
-									habitable_planet = yes
-									habitability = {
-										who = root.owner
-										value >= 0.7
-									}
-								}
-								random_list = {
-									40 = {
-										save_event_target_as = adv_planet_2
-										set_planet_size = 16
-										create_colony = {
-											owner = root.owner
-											species = root.owner
-										}
-										planet_event = { id = game_start.21 }
-										planet_event = { id = game_start.22 }
-										planet_event = { id = game_start.23 }
-										advanced_start = yes
-									}
-									60 = {}
-								}
-							}
-						}
-						else = {
-							random_system_planet = {
-								limit = {
-									is_ringworld = no
-									is_asteroid = no
-									is_star = no
-									is_moon = no
-								}
-								save_event_target_as = adv_planet_2
-								federation_origin_planet_setup = yes
-								create_colony = {
-									owner = root.owner
-									species = root.owner
-								}
-								planet_event = { id = game_start.21 }
-								planet_event = { id = game_start.22 }
-								planet_event = { id = game_start.23 }
-								advanced_start = yes
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
 
 namespace = ethic_true_yuht_start
 
@@ -1539,7 +1227,6 @@ country_event = {
 			remove_modifier = consumer_oligarch
 			remove_modifier = steel_tycoon
 		}
-		country_event = { id = ethic_easter.0 days = 1 }
 		if = {
 			limit = { is_direct_democratic = yes }
 			force_add_civic = civic_debug

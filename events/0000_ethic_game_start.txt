@@ -1,61 +1,4 @@
 namespace = game_start
-planet_event = {
-    id = game_start.12
-    hide_window = yes
-    is_triggered_only = yes
-
-    immediate = {
-        if = {
-            limit = { NOT = { has_planet_flag = special_start_planet } }
-            if = {
-                limit = {
-                    OR = {
-                        NOT = { has_planet_flag = planet_earth }
-                        owner = { has_origin = origin_remnants } #no special earth for you, sorry
-                    }
-                    NOT = {
-                        owner = { has_origin = origin_shattered_ring }	#setup in initializer
-                    }
-                }
-                generate_start_deposits_and_blockers = yes
-            }
-            else_if = {
-                limit = {
-                    has_planet_flag = planet_earth
-                    NOR = {
-                        owner = { has_origin = origin_shattered_ring }	 #setup in initializer
-                        owner = { has_origin = origin_remnants }		 #custom blockers
-                    }
-                }
-                generate_earth_deposits_and_blockers = yes
-                set_earth_entity = yes
-            }
-            generate_start_buildings_and_districts = yes
-            generate_start_pops = yes
-            generate_home_planet_final_pass = yes
-            if = {
-                limit = {
-                    OR = {
-                        owner = { has_origin = origin_true_yuht }
-                    }
-                }
-                generate_home_planet_final_pass_true_yuht = yes
-            }
-        }
-
-        if = {
-            limit = { has_planet_flag = void_dweller_habitat_1 }
-            void_dweller_home_planet_setup = yes
-        }
-
-
-        if = {
-            limit = { has_planet_flag = toxic_knights_homeworld }
-            toxic_knights_order_habitat_setup = yes
-        }
-
-    }
-}
 
 country_event = {
     id = game_start.60
@@ -112,6 +55,40 @@ country_event = {
                     is_ruler = no
                 }
                 set_council_position = councilor_direct_democratic_admiral
+            }
+            set_council_agenda = agenda_infinite_opportunities
+        }
+        else_if = {
+            limit = { has_valid_civic = civic_network_of_the_mind }
+            force_add_civic = civic_debug
+            force_remove_civic = civic_debug
+            random_owned_leader = {
+                limit = {
+                    leader_class = governor
+                    is_ruler = no
+                }
+                set_council_position = councilor_gestalt_governor
+            }
+            create_leader = {
+                class = scientist
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_gestalt_scientist }
+            }
+            create_leader = {
+                class = general
+                sub_type = survey
+                name = random
+                species = owner_main_species
+                effect = { set_council_position = councilor_gestalt_general }
+            }
+            random_owned_leader = {
+                limit = {
+                    leader_class = admiral
+                    is_ruler = no
+                }
+                set_council_position = councilor_gestalt_admiral
             }
             set_council_agenda = agenda_infinite_opportunities_gestalt
         }
@@ -264,5 +241,109 @@ country_event = {
             }
         }
         add_council_agenda_progress = 6000
+    }
+}
+
+country_event = {
+    id = game_start.61
+    hide_window = yes
+    trigger = {
+        OR = {
+            is_country_type = default
+            is_country_type = fallen_empire
+        }
+        is_gestalt = yes
+        NOR = {
+            has_civic = civic_network_of_the_mind
+            has_civic = civic_network_of_the_mind_machine
+            has_civic = civic_network_of_the_mind_true_hive
+        }
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        country_create_gestalt_councilor = {
+            CLASS = governor
+            COUNCIL_POS = councilor_gestalt_governor
+            DESC = councilor_gestalt_governor_desc
+        }
+        country_create_gestalt_councilor = {
+            CLASS = scientist
+            COUNCIL_POS = councilor_gestalt_scientist
+            DESC = councilor_gestalt_scientist_desc
+        }
+        country_create_gestalt_councilor = {
+            CLASS = admiral
+            COUNCIL_POS = councilor_gestalt_admiral
+            DESC = councilor_gestalt_admiral_desc
+        }
+        country_create_gestalt_councilor = {
+            CLASS = general
+            COUNCIL_POS = councilor_gestalt_general
+            DESC = councilor_gestalt_general_desc
+        }
+        if = {
+            limit = {
+                is_country_type = fallen_empire
+            }
+            every_owned_leader = {
+                limit = {
+                    is_councilor = yes
+                    is_ruler = no
+                }
+                add_skill = 9
+                set_gestalt_node_protrait_effect = yes
+            }
+        }
+    }
+}
+
+# Change Ethic of first Ruler to empire's fanatic ethic.
+# More likely they would've been elected, and easier to re-elect them.
+country_event = {
+    id = game_start.63
+    hide_window = yes
+    trigger = {
+        is_country_type = default
+        is_gestalt = no
+    }
+
+    is_triggered_only = yes
+
+    immediate = {
+        switch = {
+            trigger = has_ethic
+            ethic_fanatic_pacifist = {
+                ruler = { change_background_ethic = ethic_pacifist }
+            }
+            ethic_fanatic_militarist = {
+                ruler = { change_background_ethic = ethic_militarist }
+            }
+            ethic_fanatic_xenophile = {
+                ruler = { change_background_ethic = ethic_xenophile }
+            }
+            ethic_fanatic_xenophobe = {
+                ruler = { change_background_ethic = ethic_xenophobe }
+            }
+            ethic_fanatic_egalitarian = {
+                ruler = { change_background_ethic = ethic_egalitarian }
+            }
+            ethic_fanatic_authoritarian = {
+                ruler = { change_background_ethic = ethic_authoritarian }
+            }
+            ethic_fanatic_spiritualist = {
+                ruler = { change_background_ethic = ethic_spiritualist }
+            }
+            ethic_fanatic_materialist = {
+                ruler = { change_background_ethic = ethic_materialist }
+            }
+            ethic_fanatic_socialism = {
+                ruler = { change_background_ethic = ethic_socialism }
+            }
+            ethic_fanatic_capitalism = {
+                ruler = { change_background_ethic = ethic_capitalism }
+            }
+        }
     }
 }
