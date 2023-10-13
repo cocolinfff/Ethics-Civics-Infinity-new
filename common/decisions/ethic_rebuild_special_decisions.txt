@@ -1129,3 +1129,106 @@ decision_abolish_economic_zone = {
 		}
 	}
 }
+
+#本地动员
+decision_mobilizing_local_reserves = {
+	owned_planets_only = yes
+	icon = decision_martial_law
+
+	resources = {
+		category = decisions
+		cost = {
+			minerals = 50
+			unity = 10
+			mult = num_pops
+		}
+	}
+
+	potential = {
+		owner = {
+			is_at_war = yes
+		}
+	}
+
+	allow = {
+		NOT = {
+			has_modifier = modifier_mobilization
+		}
+	}
+
+	effect = {
+		hidden_effect = {
+			mobilize_planet = yes
+		}
+		add_modifier = {
+			modifier = modifier_mobilization
+			days = -1
+		}
+		custom_tooltip = decision_mobilizing_local_reserves_effect
+	}
+
+	ai_weight = {
+		base = 0
+	}
+}
+
+#总动员
+
+decision_general_mobilization = {
+	owned_planets_only = yes
+	icon = decision_martial_law
+
+	resources = {
+		category = decisions
+		cost = {
+			minerals = 50
+			unity = 10
+			mult = owner.num_pops
+		}
+	}
+
+	potential = {
+		owner = {
+			is_at_war = yes
+		}
+	}
+
+	allow = {
+		NOT = {
+			has_modifier = modifier_mobilization
+		}
+	}
+
+	effect = {
+		hidden_effect = {
+			owner = {
+				every_owned_planet = {
+					limit = {
+						NOT = {
+							has_modifier = modifier_mobilization
+						}
+					}
+					mobilize_planet = yes
+				}
+			}
+		}
+		owner = {
+			every_owned_planet = {
+				limit = {
+					NOT = {
+						has_modifier = modifier_mobilization
+					}
+				}
+				add_modifier = {
+					modifier = modifier_mobilization
+					days = -1
+				}
+			}
+		}
+		custom_tooltip = decision_general_mobilization_effect
+	}
+
+	ai_weight = {
+		base = 100
+	}
+}
