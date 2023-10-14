@@ -1152,7 +1152,7 @@ decision_mobilizing_local_reserves = {
 		cost = {
 			minerals = 50
 			unity = 10
-			mult = num_pops
+			mult = root.value:num_mobilization_pop
 		}
 	}
 
@@ -1162,6 +1162,12 @@ decision_mobilizing_local_reserves = {
 				is_at_war = yes
 			}
 			has_crisis = yes
+		}
+		owner = {
+			NOR = {
+				has_policy_flag = demilitarized_state
+				has_policy_flag = military_group
+			}
 		}
 	}
 
@@ -1173,7 +1179,48 @@ decision_mobilizing_local_reserves = {
 
 	effect = {
 		hidden_effect = {
-			mobilize_planet = yes
+			while = {
+				count = root.value:num_mobilization_pop
+				random_owned_pop = {
+					limit = {
+						OR = {
+							has_military_service_type = { type = military_service_full }
+							has_military_service_type = { type = military_service_limited }
+						}
+						NOR = {
+							has_modifier = modifier_mobilization_pop_1
+							has_modifier = modifier_mobilization_pop_2
+							has_modifier = modifier_mobilization_pop_3
+							has_modifier = modifier_mobilization_pop_4
+						}
+					}
+					weights = {
+						base = 10
+						modifier = {
+							mult = 1000
+							is_enslaved = yes
+							has_slavery_type = { type = slavery_military }
+						}
+						modifier = {
+							mult = 20
+							is_pop_category = criminal
+						}
+						modifier = {
+							mult = 10
+							is_pop_category = worker
+						}
+						modifier = {
+							mult = 5
+							is_pop_category = slave
+						}
+						modifier = {
+							mult = 0.1
+							is_pop_category = ruler
+						}
+					}
+					mobilize_pop = yes
+				}
+			}
 		}
 		add_modifier = {
 			modifier = modifier_mobilization
@@ -1183,7 +1230,8 @@ decision_mobilizing_local_reserves = {
 	}
 
 	ai_weight = {
-		base = 0
+		base = 10
+		mult = value:num_mobilization_pop
 	}
 }
 
@@ -1198,7 +1246,7 @@ decision_general_mobilization = {
 		cost = {
 			minerals = 50
 			unity = 10
-			mult = owner.num_pops
+			mult = root.owner.value:num_mobilization_pop
 		}
 	}
 
@@ -1208,6 +1256,12 @@ decision_general_mobilization = {
 				is_at_war = yes
 			}
 			has_crisis = yes
+		}
+		owner = {
+			NOR = {
+				has_policy_flag = demilitarized_state
+				has_policy_flag = military_group
+			}
 		}
 	}
 
@@ -1219,14 +1273,67 @@ decision_general_mobilization = {
 
 	effect = {
 		hidden_effect = {
-			owner = {
+			root.owner = {
 				every_owned_planet = {
 					limit = {
 						NOT = {
 							has_modifier = modifier_mobilization
 						}
 					}
-					mobilize_planet = yes
+					while = {
+						count = this.value:num_mobilization_pop
+						random_owned_pop = {
+							limit = {
+								OR = {
+									has_military_service_type = { type = military_service_full }
+									has_military_service_type = { type = military_service_limited }
+								}
+								NOR = {
+									has_modifier = modifier_mobilization_pop_1
+									has_modifier = modifier_mobilization_pop_2
+									has_modifier = modifier_mobilization_pop_3
+									has_modifier = modifier_mobilization_pop_4
+								}
+							}
+							weights = {
+								base = 10
+								modifier = {
+									mult = 1000
+									is_enslaved = yes
+									has_slavery_type = { type = slavery_military }
+								}
+								modifier = {
+									mult = 30
+									has_job_category = criminal
+								}
+								modifier = {
+									mult = 10
+									has_job_category = worker
+								}
+								modifier = {
+									mult = 0.1
+									has_job_category = ruler
+								}
+								modifier = {
+									factor = 2
+									has_trait = trait_very_strong
+								}
+								modifier = {
+									factor = 1.5
+									has_trait = trait_strong
+								}
+								modifier = {
+									factor = 0.5
+									has_trait = trait_weak
+								}
+								modifier = {
+									factor = 1.1
+									has_trait = trait_limited_regeneration
+								}
+							}
+							mobilize_pop = yes
+						}
+					}
 				}
 			}
 		}
@@ -1247,6 +1354,47 @@ decision_general_mobilization = {
 	}
 
 	ai_weight = {
+		base = 1000
+	}
+}
+
+#招募佣兵
+
+decision_recruiting_local_mercenaries = {
+	owned_planets_only = yes
+	icon = decision_martial_law
+
+	resources = {
+		category = decisions
+	}
+
+	potential = {
+		OR = {
+			owner = {
+				is_at_war = yes
+			}
+			has_crisis = yes
+		}
+		owner = {
+			has_policy_flag = military_group
+		}
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+		NOT = {
+			has_modifier = modifier_mercenaries
+		}
+	}
+
+	effect = {
+		planet_event = {
+			id = ethic_society.3
+		}
+	}
+
+	ai_weight = {
 		base = 100
 	}
 }
+

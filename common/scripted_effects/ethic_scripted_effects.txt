@@ -1177,22 +1177,67 @@ red_dowm_war = {
 	}
 }
 
-mobilize_planet = {
-	every_owned_pop = {
+mobilize_pop = {
+	if = {
 		limit = {
-			OR = {
-				has_military_service_type = { type = military_service_full country = from }
-				has_military_service_type = { type = military_service_limited country = from }
-			}
+			is_robot_pop = yes
 		}
 		if = {
 			limit = {
-				is_robot_pop = yes
+				owner = {
+					has_technology = tech_synthetic_workers
+				}
+			}
+			planet = {
+				create_army = {
+					name = random
+					owner = root.owner
+					species = prev
+					type = "robotic_conscript_army_3"
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				owner = {
+					has_technology = tech_droid_workers
+				}
+			}
+			planet = {
+				create_army = {
+					name = random
+					owner = root.owner
+					species = prev
+					type = "robotic_conscript_army_2"
+				}
+			}
+		}
+		else = {
+			planet = {
+				create_army = {
+					name = random
+					owner = root.owner
+					species = prev
+					type = "robotic_conscript_army"
+				}
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				is_enslaved = yes
 			}
 			if = {
 				limit = {
-					owner = {
-						has_technology = tech_synthetic_workers
+					AND = {
+						has_slavery_type = { type = slavery_military }
+						OR = {
+							has_trait = trait_psionic
+							has_job = legendary_mage
+							has_job = magician
+							has_job = magical_apprentice
+						}
 					}
 				}
 				planet = {
@@ -1200,22 +1245,20 @@ mobilize_planet = {
 						name = random
 						owner = root.owner
 						species = prev
-						type = "robotic_conscript_army_3"
+						type = "psionic_conscript_army"
 					}
 				}
 			}
 			else_if = {
 				limit = {
-					owner = {
-						has_technology = tech_droid_workers
-					}
+					has_slavery_type = { type = slavery_military }
 				}
 				planet = {
 					create_army = {
 						name = random
 						owner = root.owner
 						species = prev
-						type = "robotic_conscript_army_2"
+						type = "thrall_conscript_army"
 					}
 				}
 			}
@@ -1225,7 +1268,7 @@ mobilize_planet = {
 						name = random
 						owner = root.owner
 						species = prev
-						type = "robotic_conscript_army"
+						type = "slave_conscript_army"
 					}
 				}
 			}
@@ -1233,100 +1276,82 @@ mobilize_planet = {
 		else = {
 			if = {
 				limit = {
-					is_enslaved = yes
+					owner = {
+						has_policy_flag = sparta_system
+					}
 				}
-				if = {
-					limit = {
-						AND = {
-							has_slavery_type = { type = slavery_military }
-							has_trait = trait_psionic
+				planet = {
+					create_army = {
+						name = random
+						owner = root.owner
+						species = prev
+						type = "citizen_warrior"
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_trait = trait_psionic
+						has_job = legendary_mage
+						has_job = magician
+						has_job = magical_apprentice
+					}
+				}
+				planet = {
+					if = {
+						limit = {
+							owner = {
+								has_policy_flag = militia_association
+							}
+						}
+						create_army = {
+							name = random
+							owner = root.owner
+							species = prev
+							type = "psionic_militia_army"
 						}
 					}
-					planet = {
+					else = {
 						create_army = {
 							name = random
 							owner = root.owner
 							species = prev
 							type = "psionic_conscript_army"
-						}
-					}
-				}
-				else_if = {
-					limit = {
-						has_slavery_type = { type = slavery_military }
-					}
-					planet = {
-						create_army = {
-							name = random
-							owner = root.owner
-							species = prev
-							type = "thrall_conscript_army"
-						}
-					}
-				}
-				else = {
-					planet = {
-						create_army = {
-							name = random
-							owner = root.owner
-							species = prev
-							type = "slave_conscript_army"
 						}
 					}
 				}
 			}
-			else = {
-				if = {
-					limit = {
-						has_trait = trait_psionic
-					}
-					planet = {
-						create_army = {
-							name = random
-							owner = root.owner
-							species = prev
-							type = "psionic_conscript_army"
+			else_if = {
+				limit = {
+					AND = {
+						OR = {
+							has_trait = trait_clone_soldier_infertile
+							has_trait = trait_clone_soldier_infertile
 						}
-					}
-				}
-				else_if = {
-					limit = {
-						AND = {
-							OR = {
-								has_trait = trait_clone_soldier_infertile
-								has_trait = trait_clone_soldier_infertile
-							}
-							has_trait = trait_latent_psionic
-						}
-					}
-					planet = {
-						random_list = {
-							1 = {
-								create_army = {
-									name = random
-									owner = root.owner
-									species = prev
-									type = "psionic_conscript_army"
-								}
-							}
-							4 = {
-								create_army = {
-									name = random
-									owner = root.owner
-									species = prev
-									type = "clone_conscript_army"
-								}
-							}
-						}
-					}
-				}
-				else_if = {
-					limit = {
 						has_trait = trait_latent_psionic
 					}
-					planet = {
-						random_list = {
-							1 = {
+				}
+				planet = {
+					random_list = {
+						1 = {
+							if = {
+								limit = {
+									owner = {
+										OR = {
+											has_policy_flag = militia_association
+											has_civic = civic_martial_brotherhood
+										}
+									}
+								}
+								create_army = {
+									name = random
+									owner = root.owner
+									species = prev
+									type = "psionic_militia_army"
+								}
+							}
+							else = {
 								create_army = {
 									name = random
 									owner = root.owner
@@ -1334,7 +1359,68 @@ mobilize_planet = {
 									type = "psionic_conscript_army"
 								}
 							}
-							4 = {
+						}
+						4 = {
+							create_army = {
+								name = random
+								owner = root.owner
+								species = prev
+								type = "clone_conscript_army"
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_trait = trait_latent_psionic
+				}
+				planet = {
+					random_list = {
+						1 = {
+							if = {
+								limit = {
+									owner = {
+										OR = {
+											has_policy_flag = militia_association
+											has_civic = civic_martial_brotherhood
+										}
+									}
+								}
+								create_army = {
+									name = random
+									owner = root.owner
+									species = prev
+									type = "psionic_militia_army"
+								}
+							}
+							else = {
+								create_army = {
+									name = random
+									owner = root.owner
+									species = prev
+									type = "psionic_conscript_army"
+								}
+							}
+						}
+						4 = {
+							if = {
+								limit = {
+									owner = {
+										OR = {
+											has_policy_flag = militia_association
+											has_civic = civic_martial_brotherhood
+										}
+									}
+								}
+								create_army = {
+									name = random
+									owner = root.owner
+									species = prev
+									type = "militia_army"
+								}
+							}
+							else = {
 								create_army = {
 									name = random
 									owner = root.owner
@@ -1345,42 +1431,12 @@ mobilize_planet = {
 						}
 					}
 				}
-				else_if = {
-					limit = {
-						OR = {
-							has_trait = trait_clone_soldier_infertile
-							has_trait = trait_clone_soldier_infertile
-						}
-					}
-					planet = {
-						create_army = {
-							name = random
-							owner = root.owner
-							species = prev
-							type = "clone_conscript_army"
-						}
-					}
-				}
-				else = {
-					planet = {
-						create_army = {
-							name = random
-							owner = root.owner
-							species = prev
-							type = "conscript_army"
-						}
-					}
-				}
 			}
-			if = {
+			else_if = {
 				limit = {
-					planet = {
-						OR = {
-							has_building = building_clone_vats
-							has_building = building_advanced_clone_vats
-							has_building = building_clone_army_clone_vat
-							has_building = building_clone_guard_clone_vat
-						}
+					OR = {
+						has_trait = trait_clone_soldier_infertile
+						has_trait = trait_clone_soldier_infertile
 					}
 				}
 				planet = {
@@ -1392,15 +1448,62 @@ mobilize_planet = {
 					}
 				}
 			}
-			if = {
-				limit = {
-					planet = {
-						any_owned_pop = {
-							has_job = necromancer
+			else = {
+				planet = {
+					if = {
+						limit = {
+							owner = {
+								OR = {
+									has_policy_flag = militia_association
+									has_civic = civic_martial_brotherhood
+								}
+							}
+						}
+						create_army = {
+							name = random
+							owner = root.owner
+							species = prev
+							type = "militia_army"
+						}
+					}
+					else = {
+						create_army = {
+							name = random
+							owner = root.owner
+							species = prev
+							type = "conscript_army"
 						}
 					}
 				}
+			}
+		}
+		if = {
+			limit = {
 				planet = {
+					OR = {
+						has_building = building_clone_vats
+						has_building = building_advanced_clone_vats
+						has_building = building_clone_army_clone_vat
+						has_building = building_clone_guard_clone_vat
+					}
+				}
+			}
+			planet = {
+				create_army = {
+					name = random
+					owner = root.owner
+					species = prev
+					type = "clone_conscript_army"
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_job = necromancer
+			}
+			planet = {
+				while = {
+					count = 5
 					create_army = {
 						name = random
 						owner = root.owner
@@ -1409,6 +1512,45 @@ mobilize_planet = {
 					}
 				}
 			}
+		}
+	}
+	if = {
+		limit = {
+			owner = {
+				has_policy_flag = all_people_are_soldiers
+			}
+		}
+		add_modifier = {
+			modifier = modifier_mobilization_pop_4
+			days = -1
+		}
+	}
+	else_if = {
+		limit = {
+			owner = {
+				has_policy_flag = extensive_conscription
+			}
+		}
+		add_modifier = {
+			modifier = modifier_mobilization_pop_3
+			days = -1
+		}
+	}
+	else_if = {
+		limit = {
+			owner = {
+				has_policy_flag = limited_conscription
+			}
+		}
+		add_modifier = {
+			modifier = modifier_mobilization_pop_2
+			days = -1
+		}
+	}
+	else = {
+		add_modifier = {
+			modifier = modifier_mobilization_pop_1
+			days = -1
 		}
 	}
 }
