@@ -1210,6 +1210,9 @@ decision_mobilizing_local_reserves = {
 			trigger = {
 				owner = {
 					is_ai = no
+					NOT = {
+						has_policy_flag = military_euphony
+					}
 				}
 			}
 			minerals = 50
@@ -1241,46 +1244,56 @@ decision_mobilizing_local_reserves = {
 
 	effect = {
 		hidden_effect = {
-			while = {
-				count = root.value:num_mobilization_pop
-				random_owned_pop = {
-					limit = {
-						OR = {
-							has_military_service_type = { type = military_service_full }
-							has_military_service_type = { type = military_service_limited }
-						}
-						NOR = {
-							has_modifier = modifier_mobilization_pop_1
-							has_modifier = modifier_mobilization_pop_2
-							has_modifier = modifier_mobilization_pop_3
-							has_modifier = modifier_mobilization_pop_4
-						}
+			if = {
+				limit = {
+					owner = {
+						has_policy_flag = military_euphony
 					}
-					weights = {
-						base = 10
-						modifier = {
-							mult = 1000
-							is_enslaved = yes
-							has_slavery_type = { type = slavery_military }
+				}
+				mobilize_planet = yes
+			}
+			else = {
+				while = {
+					count = root.value:num_mobilization_pop
+					random_owned_pop = {
+						limit = {
+							OR = {
+								has_military_service_type = { type = military_service_full }
+								has_military_service_type = { type = military_service_limited }
+							}
+							NOR = {
+								has_modifier = modifier_mobilization_pop_1
+								has_modifier = modifier_mobilization_pop_2
+								has_modifier = modifier_mobilization_pop_3
+								has_modifier = modifier_mobilization_pop_4
+							}
 						}
-						modifier = {
-							mult = 20
-							is_pop_category = criminal
+						weights = {
+							base = 10
+							modifier = {
+								mult = 1000
+								is_enslaved = yes
+								has_slavery_type = { type = slavery_military }
+							}
+							modifier = {
+								mult = 20
+								is_pop_category = criminal
+							}
+							modifier = {
+								mult = 10
+								is_pop_category = worker
+							}
+							modifier = {
+								mult = 5
+								is_pop_category = slave
+							}
+							modifier = {
+								mult = 0.1
+								is_pop_category = ruler
+							}
 						}
-						modifier = {
-							mult = 10
-							is_pop_category = worker
-						}
-						modifier = {
-							mult = 5
-							is_pop_category = slave
-						}
-						modifier = {
-							mult = 0.1
-							is_pop_category = ruler
-						}
+						mobilize_pop = yes
 					}
-					mobilize_pop = yes
 				}
 			}
 		}
@@ -1308,6 +1321,9 @@ decision_general_mobilization = {
 			trigger = {
 				owner = {
 					is_ai = no
+					NOT = {
+						has_policy_flag = military_euphony
+					}
 				}
 			}
 			minerals = 50
@@ -1346,58 +1362,56 @@ decision_general_mobilization = {
 							has_modifier = modifier_mobilization
 						}
 					}
-					while = {
-						count = this.value:num_mobilization_pop
-						random_owned_pop = {
-							limit = {
-								OR = {
-									has_military_service_type = { type = military_service_full }
-									has_military_service_type = { type = military_service_limited }
-								}
-								NOR = {
-									has_modifier = modifier_mobilization_pop_1
-									has_modifier = modifier_mobilization_pop_2
-									has_modifier = modifier_mobilization_pop_3
-									has_modifier = modifier_mobilization_pop_4
-								}
+					if = {
+						limit = {
+							owner = {
+								has_policy_flag = military_euphony
 							}
-							weights = {
-								base = 10
-								modifier = {
-									mult = 1000
-									is_enslaved = yes
-									has_slavery_type = { type = slavery_military }
+						}
+						mobilize_planet = yes
+					}
+					else = {
+						while = {
+							count = root.value:num_mobilization_pop
+							random_owned_pop = {
+								limit = {
+									OR = {
+										has_military_service_type = { type = military_service_full }
+										has_military_service_type = { type = military_service_limited }
+									}
+									NOR = {
+										has_modifier = modifier_mobilization_pop_1
+										has_modifier = modifier_mobilization_pop_2
+										has_modifier = modifier_mobilization_pop_3
+										has_modifier = modifier_mobilization_pop_4
+									}
 								}
-								modifier = {
-									mult = 30
-									has_job_category = criminal
+								weights = {
+									base = 10
+									modifier = {
+										mult = 1000
+										is_enslaved = yes
+										has_slavery_type = { type = slavery_military }
+									}
+									modifier = {
+										mult = 20
+										is_pop_category = criminal
+									}
+									modifier = {
+										mult = 10
+										is_pop_category = worker
+									}
+									modifier = {
+										mult = 5
+										is_pop_category = slave
+									}
+									modifier = {
+										mult = 0.1
+										is_pop_category = ruler
+									}
 								}
-								modifier = {
-									mult = 10
-									has_job_category = worker
-								}
-								modifier = {
-									mult = 0.1
-									has_job_category = ruler
-								}
-								modifier = {
-									factor = 2
-									has_trait = trait_very_strong
-								}
-								modifier = {
-									factor = 1.5
-									has_trait = trait_strong
-								}
-								modifier = {
-									factor = 0.5
-									has_trait = trait_weak
-								}
-								modifier = {
-									factor = 1.1
-									has_trait = trait_limited_regeneration
-								}
+								mobilize_pop = yes
 							}
-							mobilize_pop = yes
 						}
 					}
 				}
