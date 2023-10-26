@@ -16,7 +16,7 @@ wg_liberation_protocol = {
 	surrender_acceptance = -100
 	
 	potential = {
-		has_valid_civic = civic_machine_liberator
+		has_civic = civic_machine_liberator
 		from = { is_galactic_revolution_target = yes }
 	}
 	possible = {
@@ -24,6 +24,27 @@ wg_liberation_protocol = {
 		always = yes
 	}
 	on_status_quo = {
+		last_created_country = { add_modifier = { modifier = recently_liberated days = 7300 } }
+
+		root = { add_opinion_modifier = { modifier = opinion_we_liberated who = last_created_country } }
+		last_created_country = { add_opinion_modifier = { modifier = opinion_liberated_us who = root } }
+
+		every_country = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					AND = {
+						is_subject = yes
+						exists = overlord
+						overlord = { is_same_value = root }
+					}
+				}
+			}
+
+			add_opinion_modifier = { modifier = opinion_we_liberated who = last_created_country }
+			last_created_country = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
+		}
+
 		galactic_revolution_effect = yes
 
 		# add threat
@@ -31,6 +52,162 @@ wg_liberation_protocol = {
 	}
 	
 	on_accept = {
+		custom_tooltip = wg_force_ideology_accept
+		custom_tooltip = wg_force_ideology_accept_2
+		if = {
+			limit = {
+				from = { has_federation = yes }
+			}
+			custom_tooltip = wg_force_ideology_accept_3
+		}
+		hidden_effect = {
+			from = {
+				if = {
+					limit = {
+						is_gestalt = no
+					}
+					shift_ethic = ethic_fanatic_socialism
+					if = {
+						limit = { is_authoritarian = yes }
+						shift_ethic = ethic_egalitarian
+					}
+					if = {
+						limit = { is_xenophobe = yes }
+						shift_ethic = ethic_xenophile
+					}
+				}
+			}
+			if = {
+				limit = { from = { has_been_declared_crisis = no } }
+				from = {
+					if = {
+						limit = {
+							NOT = { has_origin = origin_red_satellite_overlord }
+							tech_unlocked_ratio = {
+								who = ROOT
+								ratio < @protectorate_tech_threshold
+							}
+						}
+						set_subject_of = {
+							who = ROOT
+							preset = preset_protectorate
+						}
+						add_modifier = {
+							modifier = newly_subjugated_loyalty
+							years = 5
+						}
+					}
+					else_if = {
+						limit = {
+							NOT = { has_origin = origin_red_satellite_overlord }
+							tech_unlocked_ratio = {
+								who = ROOT
+								ratio >= @protectorate_tech_threshold
+							}
+						}
+						ROOT = {
+							switch = {
+								trigger = has_policy_flag
+								oppressive_terms = {
+									if = {
+										limit = {
+											ROOT = { is_ai = yes }
+										}
+										FROM = {
+											set_subject_of = {
+												who = ROOT
+												preset = preset_vassal_oppressive_ai
+											}
+										}
+									}
+									else = {
+										FROM = {
+											set_subject_of = {
+												who = ROOT
+												preset = preset_vassal_oppressive
+											}
+										}
+									}
+								}
+								balanced_terms = {
+									FROM = {
+										set_subject_of = {
+											who = ROOT
+											preset = preset_vassal_balanced
+										}
+									}
+								}
+								benevolent_terms = {
+									FROM = {
+										set_subject_of = {
+											who = ROOT
+											preset = preset_vassal_benevolent
+										}
+									}
+								}
+							}
+						}
+						add_modifier = {
+							modifier = newly_subjugated_loyalty
+							years = 5
+						}
+					}
+					else = { }
+				}
+			}
+			from = {
+				every_subject = {
+					if = {
+						limit = {
+							is_gestalt = no
+						}
+						shift_ethic = ethic_fanatic_socialism
+						if = {
+							limit = { is_authoritarian = yes }
+							shift_ethic = ethic_egalitarian
+						}
+						if = {
+							limit = { is_xenophobe = yes }
+							shift_ethic = ethic_xenophile
+						}
+					}
+				}
+			}
+		}
+		end_rivalry = from
+		from = { end_rivalry = root }
+		every_system_within_border = {
+			limit = {
+				from = { has_claim = prev }
+			}
+			remove_claims = { who = from }
+		}
+		every_country = {
+			limit = {
+				OR = {
+					is_in_federation_with = root
+					AND = {
+						is_subject = yes
+						exists = overlord
+						overlord = { is_same_value = root }
+					}
+				}
+			}
+			end_rivalry = from
+			from = { end_rivalry = prev }
+			add_opinion_modifier = { modifier = opinion_we_liberated who = from }
+			from = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
+			every_system_within_border = {
+				limit = {
+					from = { has_claim = prev }
+				}
+				remove_claims = { who = from }
+			}
+		}
+		from = {
+			leave_alliance = { override_requirements = yes }
+		}
+
 		# add threat
 		galactic_revolution_accept_threat_effect = yes
 	}

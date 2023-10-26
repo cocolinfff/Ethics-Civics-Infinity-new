@@ -45,10 +45,36 @@ planet_event = { # 社会状态更新（星球月检与触发）
 		set_variable = { which = society_trade_value_original value = value:society_trade_value_original }
 		set_variable = { which = society_trade_value_target value = value:society_trade_value_target }
 		set_variable = { which = society_trade_value_sub value = value:society_trade_value_sub }
-		add_modifier = {
-			modifier = trade_value_reduction_modifier
-			multiplier = society_trade_value_sub
-			clear_on_owner_change = yes
+		if = {
+			limit = {
+				owner = { is_market_type = yes }
+				check_variable = { which = society_trade_value_sub value > 0 }
+			}
+			remove_modifier = trade_value_reduction_modifier_2
+			add_modifier = {
+				modifier = trade_value_reduction_modifier
+				multiplier = society_trade_value_sub
+				clear_on_owner_change = yes
+			}
+		}
+		if = {
+			limit = {
+				owner = { is_market_type = yes }
+				check_variable = { which = society_trade_value_sub value < 0 }
+			}
+			remove_modifier = trade_value_reduction_modifier
+			add_modifier = {
+				modifier = trade_value_reduction_modifier_2
+				multiplier = society_trade_value_sub
+				clear_on_owner_change = yes
+			}
+		}
+		if = {
+			limit = {
+				owner = { is_market_type = no }
+			}
+			remove_modifier = trade_value_reduction_modifier
+			remove_modifier = trade_value_reduction_modifier_2
 		}
 		
 		if = {
