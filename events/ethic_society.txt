@@ -32,40 +32,56 @@ country_event = { # 社会状态更新（国家月检）
 				planet_event = { id = ethic_society.1 }
 			}
 		}
-    }
-}
-
-planet_event = { # 社会状态更新（星球月检与触发）
-	id = ethic_society.1
-    is_triggered_only = yes
-    hide_window = yes
-    immediate = {
 
 		# 通货膨胀buff
-		set_variable = { which = society_trade_value_original value = value:society_trade_value_original }
-		set_variable = { which = society_trade_value_target value = value:society_trade_value_target }
-		set_variable = { which = society_trade_value_sub value = value:society_trade_value_sub }
+		set_variable = { which = society_trade_value_target_country value = value:society_trade_value_target }
 		if = {
 			limit = {
 				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_sub value > 0 }
+				check_variable = { which = society_trade_value_target_country value >= 100 }
 			}
 			remove_modifier = trade_value_reduction_modifier_2
 			add_modifier = {
 				modifier = trade_value_reduction_modifier
-				multiplier = society_trade_value_sub
+				multiplier = 100
 				clear_on_owner_change = yes
 			}
 		}
 		if = {
 			limit = {
 				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_sub value < 0 }
+				check_variable = { which = society_trade_value_target_country value > 0 }
+				check_variable = { which = society_trade_value_target_country value < 100 }
+			}
+			remove_modifier = trade_value_reduction_modifier_2
+			add_modifier = {
+				modifier = trade_value_reduction_modifier
+				multiplier = society_trade_value_target_country
+				clear_on_owner_change = yes
+			}
+		}
+		if = {
+			limit = {
+				owner = { is_market_type = yes }
+				check_variable = { which = society_trade_value_target_country value > -100 }
+				check_variable = { which = society_trade_value_target_country value < 0 }
 			}
 			remove_modifier = trade_value_reduction_modifier
 			add_modifier = {
 				modifier = trade_value_reduction_modifier_2
-				multiplier = society_trade_value_sub
+				multiplier = society_trade_value_target_country
+				clear_on_owner_change = yes
+			}
+		}
+		if = {
+			limit = {
+				owner = { is_market_type = yes }
+				check_variable = { which = society_trade_value_target_country value <= -100 }
+			}
+			remove_modifier = trade_value_reduction_modifier
+			add_modifier = {
+				modifier = trade_value_reduction_modifier_2
+				multiplier = -100
 				clear_on_owner_change = yes
 			}
 		}
@@ -76,6 +92,14 @@ planet_event = { # 社会状态更新（星球月检与触发）
 			remove_modifier = trade_value_reduction_modifier
 			remove_modifier = trade_value_reduction_modifier_2
 		}
+    }
+}
+
+planet_event = { # 社会状态更新（星球月检与触发）
+	id = ethic_society.1
+    is_triggered_only = yes
+    hide_window = yes
+    immediate = {
 		
 		if = {
 			limit = { NOT = { has_deposit = d_ethic_society } }
