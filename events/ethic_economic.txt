@@ -581,6 +581,12 @@ situation_event = { # 计算情况改善-其它 26号
 			}
 		}
 		change_variable = { which = rec_situation_add_market_temp value = owner.modifier:rec_market_situation_improve_add }
+		if = { # 通货紧缩
+			limit = {
+				owner = { check_variable = { which = society_trade_value_target_country value < 0 } }
+			}
+			change_variable = { which = rec_situation_add_market_temp value = society_trade_value_target_country }
+		}
 		if = { # 新近贸易协定
 			limit = {
 				owner = { has_country_flag = rec_commercial_pact }
@@ -1327,12 +1333,21 @@ situation_event = { # 计算危机增长-无危机时-其它 28号
 			}
 			change_variable = { which = rec_crisis_add_market value = -0.15 }
 		}
-		if = { # 通货膨胀
+		# 通货膨胀
+		if = {
 			limit = {
-				owner = { NOT = { check_variable = { which = society_trade_value_sub value = 0 } } }
+				check_variable = { which = society_trade_value_target_country value > 0 }
+				check_variable = { which = society_trade_value_target_country value < 10 }
 			}
-			set_variable = { which = rec_crisis_add_market value = value:society_trade_value_sub }
-			multiply_variable = { which = rec_crisis_add_market value = 0.05 }
+			set_variable = { which = rec_crisis_add_market value = society_trade_value_target_country }
+			multiply_variable = { which = rec_crisis_add_market value = 0.1 }
+		}
+		if = {
+			limit = {
+				check_variable = { which = society_trade_value_target_country value > 10 }
+			}
+			set_variable = { which = rec_crisis_add_market value = 10 }
+			multiply_variable = { which = rec_crisis_add_market value = 0.1 }
 		}
 		round_variable_to_closest = {
 			which = rec_crisis_add_market
