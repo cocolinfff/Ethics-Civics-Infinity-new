@@ -2153,7 +2153,10 @@ mortal_initiate = {
 	}
 	possible_precalc = can_fill_worker_job
 	possible = {
-		ethic_is_not_enslaved = yes
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
 		NOT = { has_trait = trait_mechanical } #No machines
 		NOT = { has_trait = trait_zombie } #How do you kill that which has no life?
 	}
@@ -2551,7 +2554,10 @@ squire = {
 	}
 	possible_precalc = can_fill_specialist_job #Who said that squires must be future knights?
 	possible = {
-		ethic_is_not_enslaved = yes
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
 	}
 	
 	planet_modifier = {
@@ -2984,6 +2990,66 @@ puddle_technician_drone = {
 					value >= 0
 				}
 			}
+		}
+	}
+}
+
+#拾荒者
+broken_shackles_scavenger = {
+	category = worker
+	building_icon = building_crude_huts
+	clothes_texture_index = 3
+
+	possible_pre_triggers = {
+		has_planet = yes
+		is_sapient = yes
+	}
+
+	possible = {
+		planet = { has_deposit = d_crashed_slaver_ship }
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 2
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			alloys = 1
+			consumer_goods = 2
+			physics_research = 0.5
+			engineering_research = 0.5
+			society_research = 0.5
+		}
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			planet = {
+				exists = army_leader
+				army_leader = {
+					has_trait = leader_trait_academia_recruiter
+				}
+			}
+		}
+		modifier = {
+			pop_defense_armies_add = 1
+		}
+	}
+
+	weight = {
+		weight = @worker_job_weight
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		mult = value:job_weights_research_modifier|JOB|broken_shackles_scavenger|
+		mult = value:job_weights_modifier|JOB|broken_shackles_scavenger|RESOURCE|alloys|
+		modifier = {
+			factor = 5
+			has_job = broken_shackles_scavenger
 		}
 	}
 }

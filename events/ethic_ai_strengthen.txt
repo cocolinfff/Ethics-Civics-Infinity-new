@@ -1,0 +1,256 @@
+
+# 自动行政楼
+namespace = ethic_bureaucratic_building
+planet_event = {
+    id = ethic_bureaucratic_building.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        owner = {
+            is_ai = yes
+            is_regular_empire = yes
+            has_monthly_income = { resource = administrative_capacity_calculation value < 0 }
+        }
+        planet = {
+            allow_bureaucratic_building = yes
+        }
+    }
+
+    immediate = {
+        build_bureaucratic_building = yes
+    }
+}
+
+# 自动城市区
+namespace = ethic_build_city
+planet_event = {
+    id = ethic_build_city.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        owner = { is_ai = yes }
+        planet = {
+            free_housing < -10
+            num_free_districts = {
+                type = any
+                value > 0
+            }
+        }
+    }
+
+    immediate = {
+        build_city = yes
+    }
+}
+planet_event = {
+    id = ethic_build_city.2
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        owner = { is_ai = yes }
+        planet = {
+            free_housing < 0
+            num_free_districts = {
+                type = any
+                value > 0
+            }
+        }
+    }
+
+    immediate = {
+        build_city = yes
+    }
+}
+planet_event = {
+    id = ethic_build_city.3
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        owner = {
+            OR = {
+                has_policy_flag = private_ownership
+                has_policy_flag = mixed_ownership
+                has_policy_flag = family_ownership
+            }
+        }
+        planet = {
+            has_upgraded_capital = yes
+            free_building_slots > 0
+        }
+    }
+
+    immediate = {
+        random_list = {
+            5 = {}
+            5 = {
+                add_building = building_private_commercial_megaplex
+                owner = {
+                    add_resource = { energy = 1000 }
+                }
+                modifier = {
+                    add = 5
+                    owner = { has_policy_flag = private_ownership }
+                }
+            }
+        }
+    }
+}
+planet_event = {
+    id = ethic_build_city.4
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        owner = {
+            is_ai = yes
+            has_active_tradition = tr_future_industry
+            has_technology = tech_ascension_theory
+        }
+        planet = {
+            num_unemployed > 15
+            NOT = { has_modifier = planet_unemployment_benefits }
+        }
+    }
+
+    immediate = {
+        add_modifier = { modifier = "planet_unemployment_benefits" days = -1 }
+    }
+}
+
+# 贸易优化
+namespace = eci_trade_optimization
+country_event = {
+    id = eci_trade_optimization.0
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        OR = {
+            has_global_flag = PF_flg_glbl_trade_ban	#_|贸易禁止|
+            has_global_flag = PF_flg_glbl_trade_opt	#_|贸易优化|
+            owner = { is_country_type = eci_primitive }
+        }
+    }
+
+    immediate = {
+        eci_primitive_trade = yes
+        if = {
+            limit = {
+                any_owned_planet = { NOT = { has_deposit = d_ethic_primitive_trade } }
+            }
+            every_owned_planet = { add_deposit = d_ethic_primitive_trade }
+        }
+    }
+}
+country_event = {
+    id = eci_trade_optimization.1
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        NOR = {
+            has_global_flag = PF_flg_glbl_trade_ban	#_|贸易禁止|
+            has_global_flag = PF_flg_glbl_trade_opt	#_|贸易优化|
+            owner = { is_country_type = eci_primitive }
+        }
+    }
+
+    immediate = {
+        if = {
+            limit = {
+                any_owned_planet = { has_deposit = d_ethic_primitive_trade }
+            }
+            every_owned_planet = { remove_deposit = d_ethic_primitive_trade }
+        }
+    }
+}
+
+# 狗开的AI专精
+namespace = origin
+country_event = {
+    id = origin.5711
+    title = TRANSMISSION
+    desc = {
+        trigger = {
+            has_country_flag = imperial_fiefdom_harsh_response
+        }
+        text = origin.5705.desc.harsh
+    }
+    desc = {
+        trigger = {
+            has_country_flag = imperial_fiefdom_grateful_response
+        }
+        text = origin.5705.desc.grateful
+    }
+    desc = {
+        trigger = {
+            has_country_flag = imperial_fiefdom_reconsider_response
+        }
+        text = origin.5705.desc.reconsider
+    }
+    desc = {
+        trigger = {
+            NOR = {
+                has_country_flag = imperial_fiefdom_harsh_response
+                has_country_flag = imperial_fiefdom_grateful_response
+                has_country_flag = imperial_fiefdom_reconsider_response
+            }
+        }
+        text = origin.5705.desc
+    }
+
+    diplomatic = yes
+
+    is_triggered_only = yes
+
+    picture_event_data = {
+        portrait = event_target:overlord_empire
+        planet_background = event_target:overlord_empire
+        graphical_culture = event_target:overlord_empire
+        city_level = event_target:overlord_empire
+        room = event_target:overlord_empire.ruler
+    }
+
+    trigger = {
+        has_origin = origin_imperial_vassal
+        is_ai = no
+    }
+
+    option = {
+        trigger = {
+            has_valid_civic = civic_warrior_culture
+        }
+        name = origin.5705.a
+        origin_imperial_fiefdom_bulwark_specialization_effect = yes
+    }
+    option = {
+        trigger = {
+            is_valid_cyber_dictatorship = yes
+        }
+        name = origin.5705.c
+        default_hide_option = yes
+        origin_imperial_fiefdom_scholarium_specialization_effect = yes
+    }
+    option = {
+        trigger = {
+            OR = {
+                has_authority = auth_corporate
+                is_valid_philosopher_king = yes
+            }
+        }
+        name = origin.5705.e
+        origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+    }
+
+
+    after = {
+        remove_country_flag = imperial_fiefdom_harsh_response
+        remove_country_flag = imperial_fiefdom_grateful_response
+    }
+}
