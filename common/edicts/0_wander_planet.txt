@@ -1,0 +1,60 @@
+ECI_wanderplanetshipplanet = {
+    length = 1
+    icon = "GFX_edict_type_time"
+    resources = {
+        category = edicts
+
+    }
+    potential = {
+        has_country_flag = ECIhomewanderplanet_shiptoplanet
+    }
+    effect = {
+        remove_country_flag = ECIhomewanderplanet_shiptoplanet
+        every_owned_fleet = {
+            limit = {
+                any_owned_ship = {
+                    is_ship_size = wandering_planet
+                }
+            }
+            solar_system = {
+                spawn_planet = {
+                    class = pc_relic
+                    location = prev
+                    size = 30
+                    init_effect = {
+                        save_event_target_as = wandering_planet_con
+                    }
+                }
+            }
+            event_target:wandering_planet_con = {
+                create_colony = {
+                    owner = root
+                    species = root.owner_main_species
+                }
+                add_deposit = d_ethic_space_industry_cluster
+                while = {
+                    count = 5
+                    add_district = district_city
+                    add_district = district_industrial
+                    add_building = building_hydroponics_farm
+                }
+                while = {
+                    count = 4
+                    add_deposit = d_wanderplanet_engine
+                }
+                while = {
+                    count = 74
+                    create_pop = {
+                        species = root.owner_main_species
+                    }
+                }
+                set_name = wandering_planet_newhome
+            }
+            delete_fleet = this
+        }
+        set_country_type = default
+    }
+    ai_weight = {
+        weight = -1
+    }
+}

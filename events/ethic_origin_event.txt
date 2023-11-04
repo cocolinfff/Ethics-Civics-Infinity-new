@@ -1394,3 +1394,185 @@ country_event = {
         }
     }
 }
+
+# 流浪星球
+namespace = ethic_wander_planet
+country_event = {
+    id = ethic_wander_planet.1
+    title = ethic_wander_planet.1
+    desc = ethic_wander_planet.1.desc
+    picture = GFX_origin_wandering_planet
+    is_triggered_only = yes
+    trigger = {
+        has_origin = origin_wandering_planet
+    }
+    immediate = {
+        capital_star = {
+            save_global_event_target_as = ECIwandering_planethomestar
+        }
+        set_country_type = default_ev
+        create_fleet = {
+            name = wandering_planet
+            effect = {
+                set_location = root.capital_scope
+                set_owner = root
+                create_ship = {
+                    name = wandering_planet
+                    design = NAME_WANDERING_PLANET
+                }
+            }
+            settings = {
+                is_boss = no
+                can_change_leader = no
+                can_disband = no
+                can_change_composition = no
+                uses_naval_capacity = no
+                can_upgrade = no
+            }
+        }
+        last_created_fleet = {
+            every_owned_ship = {
+                set_name = {
+                    key = ECIwanderplanet_home
+                    variable_string = "[root.capital_scope.GetName]"
+                }
+            }
+        }
+        capital_scope = {
+            remove_planet = yes
+        }
+        country_event = {
+            id = ethic_wander_planet.2
+            days = 9000
+        }
+    }
+    option = {
+        name = ethic_wander_planet.1.a
+        custom_tooltip = ethic_wander_planet.1.a_tooltip
+    }
+}
+
+country_event = {
+    id = ethic_wander_planet.2
+    title = ethic_wander_planet.2
+    desc = ethic_wander_planet.2.desc
+    picture = GFX_evt_binary_stars
+    is_triggered_only = yes
+    immediate = {
+        event_target:ECIwandering_planethomestar = {
+            solar_system = {
+                destroy_star_system = yes
+                set_star_class = sc_neutron_star
+                every_system_planet = {
+                    limit = {
+                        is_planet_class = pc_black_hole
+                    }
+                    change_pc = pc_neutron_star
+                }
+                if = {
+                    limit = {
+                        any_fleet_in_system = {
+                            any_owned_ship = {
+                                is_ship_size = wandering_planet
+                            }
+                        }
+                    }
+                    root = {
+                        destroy_country = yes
+                    }
+                }
+            }
+        }
+    }
+    option = {
+        name = ethic_wander_planet.2.a
+    }
+}
+
+ship_event = {
+    id = ethic_wander_planet.3
+    title = ethic_wander_planet.3
+    desc = ethic_wander_planet.3.desc
+    picture = GFX_origin_wandering_planet
+    is_triggered_only = yes
+    trigger = {
+        is_ship_size = wandering_planet
+        fromfrom = {
+            NOT = {
+                has_country_flag = ECIwandering_planet_tanguole
+            }
+            has_origin = origin_wandering_planet
+        }
+        from = {
+            NOT = {
+                is_same_value = event_target:ECIwandering_planethomestar.solar_system
+            }
+        }
+    }
+    immediate = {
+        owner = {
+            set_country_flag = ECIwandering_planet_tanguole
+        }
+    }
+    option = {
+        name = ethic_wander_planet.3.a
+        custom_tooltip = ethic_wander_planet.3.a_tooltip
+        hidden_effect = {
+            root.owner = {
+                set_country_flag = ECIhomewanderplanet_shiptoplanet
+            }
+        }
+    }
+    option = {
+        name = ethic_wander_planet.3.b
+        custom_tooltip = ethic_wander_planet.3.b_tooltip
+    }
+}
+
+country_event = {
+    id = ethic_wander_planet.4
+    title = ethic_wander_planet.4
+    desc = ethic_wander_planet.4.desc
+    picture = GFX_origin_wandering_planet
+    is_triggered_only = yes
+    trigger = {
+        has_origin = origin_wandering_planet
+        fromfrom = { is_ship_size = wandering_planet }
+    }
+    immediate = {
+        set_country_type = default
+        if = {
+            limit = {
+                num_owned_planets > 0
+                NOT = {
+                    any_owned_ship = { is_ship_size = mini_homeless_ship }
+                    any_owned_ship = { is_ship_size = homeless_ship }
+                    any_owned_ship = { is_ship_size = homeless_ship_starbase }
+                    any_owned_ship = { is_ship_size = private_homeless_ship }
+                    any_owned_ship = { is_ship_size = private_homeless_ship_starbase }
+                    any_owned_ship = { is_ship_size = megastructures_homeless_ship }
+                    any_owned_ship = { is_ship_size = ev_fleet_size_ship }
+                }
+            }
+            set_country_type = default
+        }
+        if = {
+            limit = {
+                num_owned_planets = 0
+                NOT = {
+                    any_owned_ship = { is_ship_size = mini_homeless_ship }
+                    any_owned_ship = { is_ship_size = homeless_ship }
+                    any_owned_ship = { is_ship_size = homeless_ship_starbase }
+                    any_owned_ship = { is_ship_size = private_homeless_ship }
+                    any_owned_ship = { is_ship_size = private_homeless_ship_starbase }
+                    any_owned_ship = { is_ship_size = megastructures_homeless_ship }
+                    any_owned_ship = { is_ship_size = ev_fleet_size_ship }
+                }
+            }
+            destroy_country = yes
+        }
+    }
+    option = {
+        name = ethic_wander_planet.4.a
+    }
+}
