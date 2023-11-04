@@ -1,10 +1,26 @@
 namespace=ethic_society
 
-country_event = { # 社会状态更新（国家月检）
+# 社会状态更新（国家月检与触发）
+country_event = {
     id = ethic_society.0
     is_triggered_only = yes
     hide_window = yes
     immediate = {
+
+		# 星球月检事件触发
+		every_owned_planet = {
+			if = {
+				limit = {
+					AND = {
+						is_colony = yes
+						is_under_colonization = no
+					}
+				}
+				planet_event = { id = ethic_society.1 }
+			}
+		}
+
+		# 科研船数量检测
 		export_trigger_value_to_variable = {
 			trigger = count_owned_ship
 			parameters = {
@@ -20,17 +36,6 @@ country_event = { # 社会状态更新（国家月检）
 				}
 			}
 			variable = num_owned_science_ship
-		}
-		every_owned_planet = {
-			if = {
-				limit = {
-					AND = {
-						is_colony = yes
-						is_under_colonization = no
-					}
-				}
-				planet_event = { id = ethic_society.1 }
-			}
 		}
 
 		# 通货膨胀buff
@@ -95,25 +100,53 @@ country_event = { # 社会状态更新（国家月检）
     }
 }
 
-planet_event = { # 社会状态更新（星球月检与触发）
+# 社会状态更新（星球月检与触发）
+planet_event = {
 	id = ethic_society.1
     is_triggered_only = yes
     hide_window = yes
     immediate = {
 
-		set_variable = { which = num_ethic_planetary_ascension_tier value = value:num_ethic_planetary_ascension_tier }
-		set_variable = { which = num_planetary_ascension_effect_mult value = value:num_planetary_ascension_effect_mult }
-		set_variable = { which = ethic_planetary_ascension_tier value = value:ethic_planetary_ascension_tier }
-		
+		# 数据处理地块
 		if = {
 			limit = { NOT = { has_deposit = d_ethic_society } }
 			add_deposit = d_ethic_society
 		}
 
+		# 星球飞升检测
+		set_variable = { which = num_ethic_planetary_ascension_tier value = value:num_ethic_planetary_ascension_tier }
+		set_variable = { which = num_planetary_ascension_effect_mult value = value:num_planetary_ascension_effect_mult }
+		set_variable = { which = ethic_planetary_ascension_tier value = value:ethic_planetary_ascension_tier }
+
+		# 星球人口舒适度使用检测
+		set_variable = { which = society_amenities_usage value = value:society_amenities_usage }
+
+		# 岗位转换检测
+		if = {
+			limit = { owner = { has_valid_civic = civic_feudal_realm } }
+			ethic_commandante_to_knight_commander_variable = yes
+		}
+		if = {
+			limit = { owner = { has_valid_civic = civic_righteous_fury } }
+			ethic_enforcer_to_media_worker_variable = yes
+		}
+		if = {
+			limit = { owner = { has_origin = origin_wizarding_world } }
+			ethic_wizarding_world_legendary_mage_variable = yes
+			ethic_wizarding_world_magician_variable = yes
+		}
+
+		# 星球领袖负面特质检测
+		if = {
+			limit = { owner = { has_valid_civic = civic_Joker } }
+			set_variable = { which = planet_leader_num_negative_traits value = value:planet_leader_num_negative_traits }
+		}
+
     }
 }
 
-country_event = { # 解除动员状态
+# 解除动员状态
+country_event = {
 	id = ethic_society.2
 	is_triggered_only = yes
 	hide_window = yes
@@ -168,6 +201,7 @@ country_event = { # 解除动员状态
 	}
 }
 
+# 私人军事承包商
 planet_event = {
 	id = ethic_society.3
 	title = ethic_society.3.name
@@ -376,5 +410,23 @@ planet_event = {
 				}
 			}
 		}
+	}
+}
+
+planet_event = {
+	id = ethic_society.4
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			is_ai = yes
+			has_origin = origin_wizarding_world
+		}
+	}
+
+	immediate = {
+		add_modifier = { modifier = "ley_rift" days = -1 }
 	}
 }
