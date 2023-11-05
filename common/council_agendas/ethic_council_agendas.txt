@@ -1,27 +1,25 @@
 @base_agenda_cost = 7000
+@base_tradition_agenda_cost = 7000
+@short_agenda_cost = 3500
 
 agenda_unlock_slot = {
     agenda_cost = @base_agenda_cost
-
     potential = {
         NOT = { has_ethic = ethic_gestalt_consciousness }
         NOT = { has_authority = auth_direct_democratic }
         NOT = { has_origin =  origin_galaxy_iron_curtain }
         has_paragon_dlc = yes
-        check_variable_arithmetic = { which = value:country_num_unlockable_council_slots value > 0 }
+        check_variable_arithmetic = {
+            which = value:country_num_unlockable_council_slots
+            value > 0
+        }
     }
-
     allow = {
         always = yes
-    }
-    modifiers = {
-        {
-        }
     }
     effect = {
         unlock_council_slots = 1
     }
-
     ai_weight = {
         base = 9999
     }
@@ -29,27 +27,38 @@ agenda_unlock_slot = {
 
 agenda_reorganize_council = {
     agenda_cost = @base_agenda_cost
-
     potential = {
-        is_gestalt = no
+        NOT = { has_ethic = ethic_gestalt_consciousness }
         NOT = { has_authority = auth_direct_democratic }
         NOT = { has_origin =  origin_galaxy_iron_curtain }
         has_paragon_dlc = yes
         has_unlocked_council_positions >= 1
     }
-
     allow = {
         always = yes
-    }
-    modifiers = {
-        {
-        }
     }
     effect = {
         unlock_council_selection = yes
     }
-
     ai_weight = {
-        base = 5000
+        base = 0
+    }
+}
+
+agenda_unique_research = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        has_tradition = tr_future_technology
+        NOT = { has_ethic = ethic_gestalt_consciousness }
+        has_unused_civic_points > 0
+    }
+    potential = {
+        always = yes
+    }
+    effect = {
+        hidden_effect = {
+            custom_tooltip = agenda_unique_research_tooptip
+            country_event = { id = future_society.200 }
+        }
     }
 }

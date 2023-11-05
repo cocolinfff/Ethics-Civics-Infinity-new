@@ -1130,3 +1130,118 @@ country_event = {
         remove_modifier = sustained_peace_5
     }
 }
+
+# 和平防卫军
+namespace = eci_civic_peace_defense_forces
+country_event = {
+    id = eci_civic_peace_defense_forces.1
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        is_peace_defense_forces_country = yes
+        is_at_war = yes
+        any_war = {
+            any_defender = {
+                is_same_value = prevprev
+            }
+        }
+    }
+
+    immediate = {
+        add_modifier = { modifier = peace_defense_forces_1 days = -1 }
+    }
+}
+country_event = {
+    id = eci_civic_peace_defense_forces.2
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        is_peace_defense_forces_country = yes
+        is_at_war = yes
+        any_war = {
+            any_attacker = {
+                is_same_value = prevprev
+            }
+        }
+    }
+
+    immediate = {
+        add_modifier = { modifier = peace_defense_forces_2 days = -1 }
+    }
+}
+country_event = {
+    id = eci_civic_peace_defense_forces.2
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        is_peace_defense_forces_country = yes
+        is_at_war = no
+    }
+
+    immediate = {
+        remove_modifier = peace_defense_forces_1
+        remove_modifier = peace_defense_forces_2
+    }
+}
+planet_event = {
+    id = eci_civic_peace_defense_forces.4
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        any_ground_combat_defender = {
+            is_same_value = root.owner
+        }
+        owner = {
+            is_peace_defense_forces_country = yes
+        }
+    }
+
+    immediate = {
+        random_list = {
+            33 = {
+                create_army = {
+                    name = "ultraman_plural"
+                    owner = root.owner
+                    type = "ultraman"
+                }
+            }
+            67 = {
+                modifier = {
+                    factor = 0
+                    is_capital = yes
+                }
+            }
+        }
+    }
+}
+country_event = {
+    id = eci_civic_peace_defense_forces.5
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        any_owned_army = { army_type = ultraman }
+    }
+
+    immediate = {
+        every_owned_planet = {
+            limit = { has_ground_combat = no }
+            every_planet_army = {
+                limit = { army_type = ultraman }
+                leader = {
+                    unassign_leader = this
+                }
+                remove_army = yes
+            }
+        }
+    }
+}
