@@ -1,0 +1,261 @@
+############################
+#
+# Spread of communications
+#
+# Written by Martin Anward
+#
+############################
+
+namespace = communications_spread
+
+# Communications - neighbor | Fired by on_five_years_communication_spread_country
+country_event = {
+	id = communications_spread.1
+	title = "communications_spread.1.name"
+	desc = "communications_spread.1.desc"
+	picture = GFX_evt_star_chart
+	show_sound = event_alien_signal
+	is_triggered_only = yes
+
+	trigger = {
+		is_country_type = default
+		NOT = { has_country_flag = starting_event }
+		any_neighbor_country = {
+			is_country_type = default
+			NOT = { is_country = ROOT }
+			has_communications = ROOT
+			any_neighbor_country = {
+				OR = {
+					is_country_type = default
+					is_country_type = fallen_empire
+				}
+				NOT = { is_country = ROOT }
+				has_communications = PREV
+				NOT = { has_communications = ROOT }
+			}
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 2
+			check_modifier_value = {
+				modifier = intel_decryption_add
+				value >= 4
+			}
+		}
+		modifier = {
+			factor = 2
+			years_passed > 40
+		}
+		modifier = {
+			factor = 2
+			years_passed > 70
+		}
+		modifier = {
+			factor = 2
+			years_passed > 100
+		}
+		modifier = {
+			factor = 2
+			years_passed > 120
+		}
+		modifier = {
+			factor = 2
+			years_passed > 40
+			is_ai = yes
+		}
+		modifier = {
+			factor = 2
+			years_passed > 70
+			is_ai = yes
+		}
+		modifier = {
+			factor = 2
+			years_passed > 100
+			is_ai = yes
+		}
+		modifier = {
+			factor = 2
+			years_passed > 120
+			is_ai = yes
+		}
+	}
+
+	immediate = {
+		random_neighbor_country = {
+			limit = {
+				is_country_type = default
+				NOT = { is_country = ROOT }
+				has_communications = ROOT
+				any_neighbor_country = {
+					OR = {
+						is_country_type = default
+						is_country_type = fallen_empire
+					}
+					NOT = { is_country = ROOT }
+					has_communications = PREV
+					NOT = { has_communications = ROOT }
+				}
+			}
+			save_event_target_as = CommSpreader
+			random_neighbor_country = {
+				limit = {
+					OR = {
+						is_country_type = default
+						is_country_type = fallen_empire
+					}
+					NOT = { is_country = ROOT }
+					has_communications = PREV
+					NOT = { has_communications = ROOT }
+				}
+				save_event_target_as = contact_empire
+				establish_communications_no_message = root
+			}
+		}
+	}
+
+	option = {
+		name = "communications_spread.1.a"
+		custom_tooltip = communications_spread.1.tooltip
+		hidden_effect = {
+			country_event = { id = action.1 }
+			event_target:contact_empire = {
+				country_event = { id = communications_spread.2 }
+			}
+		}
+	}
+}
+
+# Communications - any | Fired by on_five_years_communication_spread_country
+country_event = {
+	id = communications_spread.3
+	title = "communications_spread.1.name"
+	desc = "communications_spread.1.desc"
+	picture = GFX_evt_star_chart
+	show_sound = event_alien_signal
+	is_triggered_only = yes
+
+	trigger = {
+		is_country_type = default
+		NOT = { has_country_flag = starting_event }
+		any_relation = {
+			is_country_type = default
+			NOT = { is_country = ROOT }
+			has_communications = ROOT
+			OR = { # stops Scions spreading knowledge across the galaxy quite so much (FE can be anywhere, if you establish comms with the FE then you get them with the Scion, then you soon find out about the whole opposite side of the galaxy)
+				NOT = { has_origin = origin_scion }
+				any_neighbor_country = {
+					has_communications = root
+				}
+			}
+			any_neighbor_country = {
+				OR = {
+					is_country_type = default
+					is_country_type = fallen_empire
+				}
+				NOT = { is_country = ROOT }
+				has_communications = PREV
+				NOT = { has_communications = ROOT }
+			}
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 2
+			years_passed > 40
+		}
+		modifier = {
+			factor = 2
+			years_passed > 70
+		}
+		modifier = {
+			factor = 2
+			years_passed > 100
+		}
+		modifier = {
+			factor = 2
+			years_passed > 120
+		}
+		modifier = {
+			factor = 2
+			check_modifier_value = {
+				modifier = intel_decryption_add
+				value >= 4
+			}
+		}
+		modifier = {
+			factor = 2
+			years_passed > 40
+			is_ai = yes
+		}
+		modifier = {
+			factor = 2
+			years_passed > 70
+			is_ai = yes
+		}
+		modifier = {
+			factor = 2
+			years_passed > 100
+			is_ai = yes
+		}
+		modifier = {
+			factor = 2
+			years_passed > 120
+			is_ai = yes
+		}
+	}
+
+	immediate = {
+		random_relation = {
+			limit = {
+				is_country_type = default
+				NOT = { is_country = ROOT }
+				has_communications = ROOT
+				OR = { # stops Scions spreading knowledge across the galaxy quite so much (FE can be anywhere, if you establish comms with the FE then you get them with the Scion, then you soon find out about the whole opposite side of the galaxy)
+					NOT = { has_origin = origin_scion }
+					any_neighbor_country = {
+						has_communications = root
+					}
+				}
+				any_neighbor_country = {
+					OR = {
+						is_country_type = default
+						is_country_type = fallen_empire
+					}
+					NOT = { is_country = ROOT }
+					has_communications = PREV
+					NOT = { has_communications = ROOT }
+				}
+			}
+			save_event_target_as = CommSpreader
+			random_neighbor_country = {
+				limit = {
+					OR = {
+						is_country_type = default
+						is_country_type = fallen_empire
+					}
+					NOT = { is_country = ROOT }
+					has_communications = PREV
+					NOT = { has_communications = ROOT }
+				}
+				save_event_target_as = contact_empire
+				establish_communications_no_message = root
+			}
+		}
+	}
+
+	option = {
+		name = "communications_spread.1.a"
+		custom_tooltip = communications_spread.1.tooltip
+		hidden_effect = {
+			country_event = { id = action.1 }
+			event_target:contact_empire = {
+				country_event = { id = communications_spread.2 }
+			}
+		}
+	}
+}
