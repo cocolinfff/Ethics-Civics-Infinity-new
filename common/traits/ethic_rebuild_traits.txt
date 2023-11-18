@@ -202,6 +202,17 @@ trait_unnatural = {
 		}
 		species_empire_size_mult = -0.10
 		planet_jobs_produces_mult = 0.1
+	}
+	triggered_planet_growth_habitability_modifier = { #won't show in trait tooltips, use custom_tooltip/custom_tooltip_with_modifiers
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_active_tradition = tr_cybernetics_assimilator_metabolic_reprocessing
+					has_active_tradition = tr_cybernetics_metabolic_reprocessing_hive
+				}
+			}
+		}
 		pop_growth_speed = 1000
 	}
 	triggered_pop_modifier = { #won't show in trait tooltips, use custom_tooltip/custom_tooltip_with_modifiers
@@ -214,6 +225,14 @@ trait_unnatural = {
 		planet_jobs_engineering_research_produces_mult = 0.1
 		planet_jobs_society_research_produces_mult = 0.1
 		planet_jobs_physics_research_produces_mult = 0.1
+	}
+	triggered_planet_growth_habitability_modifier = { #won't show in trait tooltips, use custom_tooltip/custom_tooltip_with_modifiers
+		potential = {
+			exists = owner
+			owner = {
+				has_ascension_perk = ap_synthetic_evolution
+			}
+		}
 		planet_pop_assembly_mult = 1000
 	}
 }
@@ -224,32 +243,85 @@ trait_unnatural = {
 
 leader_trait_expertise_good_trading = {
 	veteran_class_locked_trait = yes
-	councilor_trait = yes
 	inline_script = {
-		script = traits/ethic_leaders_trait_icon
+		script = trait/icon_society
 		CLASS = scientist
 		ICON = "GFX_leader_trait_expertise_good_trading"
 		RARITY = free_or_veteran
-		COUNCIL = yes
+		COUNCIL = triggered
 		TIER = 1
 	}
-	modifier = {
+	councilor_modifier = {
 		category_good_trading_research_speed_mult = 0.15
 		category_good_trading_draw_chance_mult = 0.25
 	}
 	leader_potential_add = {
-		is_specialist_researcher = no
+		is_specialist_researcher_society = no
 		OR = {
 			has_paragon_dlc = no
-			has_trait_tier1or2or3 = { TRAIT = leader_trait_society_focus }
+			has_trait = subclass_scientist_councilor
 		}
 	}
+	inline_script = {
+		script =  traits/technocracy_expertise_effects
+		FIELD = society
+		TIER = 1
+	}
 	leader_class = { scientist }
-	ai_categories = { society }
 	ai_weight = 100
 	selectable_weight = {
 		inline_script = paragon/subclass_free_trait_weight
+		inline_script = paragon/council_weight_mult
 	}
+}
+leader_trait_expertise_good_trading_2 = {
+	replace_traits = { "leader_trait_expertise_good_trading" }
+	veteran_class_locked_trait = yes
+	inline_script = {
+		script = trait/icon_society
+		CLASS = scientist
+		ICON = "GFX_leader_trait_expertise_statecraft"
+		RARITY = free_or_veteran
+		COUNCIL = triggered
+		TIER = 2
+	}
+	councilor_modifier = {
+		category_good_trading_research_speed_mult = 0.2
+		category_good_trading_draw_chance_mult = 0.35
+	}
+	inline_script = {
+		script =  traits/technocracy_expertise_effects
+		FIELD = society
+		TIER = 2
+	}
+	leader_class = { scientist }
+	ai_weight = 100
+}
+leader_trait_expertise_good_trading_3 = {
+	replace_traits = { "leader_trait_expertise_good_trading_2" }
+	veteran_class_locked_trait = yes
+	inline_script = {
+		script = trait/icon_society
+		CLASS = scientist
+		ICON = "GFX_leader_trait_expertise_statecraft"
+		RARITY = veteran
+		COUNCIL = triggered
+		TIER = 3
+	}
+	councilor_modifier = {
+		category_good_trading_research_speed_mult = 0.35
+		category_good_trading_draw_chance_mult = 0.75
+	}
+	inline_script = {
+		script =  traits/technocracy_expertise_effects
+		FIELD = society
+		TIER = 3
+	}
+	leader_potential_add = {
+		has_paragon_dlc = yes
+	}
+	leader_class = { scientist }
+	ai_weight = 100
 }
 
 trait_ruler_immortal = {
@@ -262,7 +334,7 @@ trait_ruler_immortal = {
 		TIER = none
 	}
 	immortal_leaders = yes
-	leader_class = { scientist governor admiral general }
+	leader_class = { official commander scientist }
 	initial = no
 	randomized = no
 }
@@ -277,9 +349,9 @@ leader_trait_eci_legendary_leader = {
 		TIER = none
 	}
 	self_modifier = {
-		leader_age = 100
+		leader_lifespan_add = 100
 	}
-	leader_class = { scientist governor admiral general }
+	leader_class = { official commander scientist }
 	initial = no
 	randomized = no
 }
@@ -302,19 +374,10 @@ leader_trait_eci_king = {
 	triggered_modifier = {
 		potential = {
 			is_ruler = no
-			leader_class = admiral
+			leader_class = commander
 		}
-		ship_fire_rate_mult = 0.1
-		ship_hull_mult = 0.2
-		ship_disengage_chance_mult = -0.5
-	}
-	triggered_modifier = {
-		potential = {
-			is_ruler = no
-			leader_class = general
-		}
+		ship_fire_rate_mult = 0.15
 		army_morale = 0.3
-		army_morale_damage_mult = 0.3
 	}
 	triggered_modifier = {
 		potential = {
@@ -327,7 +390,7 @@ leader_trait_eci_king = {
 	triggered_modifier = {
 		potential = {
 			is_ruler = no
-			leader_class = governor
+			leader_class = official
 		}
 		planet_stability_add = 10
 		pop_government_ethic_attraction = 0.5
@@ -337,7 +400,7 @@ leader_trait_eci_king = {
 		change_background_job = royalty
 	}
 
-	leader_class = { scientist governor admiral general }
+	leader_class = { scientist official commander }
 	initial = no
 	randomized = no
 }
@@ -357,19 +420,10 @@ leader_trait_eci_heir = { #Origin trait - offspring
 	triggered_modifier = {
 		potential = {
 			is_ruler = no
-			leader_class = admiral
+			leader_class = commander
 		}
-		ship_fire_rate_mult = 0.05
-		ship_hull_mult = 0.1
-		ship_disengage_chance_mult = -0.25
-	}
-	triggered_modifier = {
-		potential = {
-			is_ruler = no
-			leader_class = general
-		}
+		ship_fire_rate_mult = 0.1
 		army_morale = 0.15
-		army_morale_damage_mult = 0.15
 	}
 	triggered_modifier = {
 		potential = {
@@ -382,7 +436,7 @@ leader_trait_eci_heir = { #Origin trait - offspring
 	triggered_modifier = {
 		potential = {
 			is_ruler = no
-			leader_class = governor
+			leader_class = official
 		}
 		planet_stability_add = 5
 		pop_government_ethic_attraction = 0.25
@@ -392,7 +446,7 @@ leader_trait_eci_heir = { #Origin trait - offspring
 		change_background_job = royalty
 	}
 
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 
 	initial = no
 	randomized = no
@@ -407,20 +461,13 @@ leader_trait_eci_royalty = { #Origin trait - offspring
 		COUNCIL = no
 		TIER = none
 	}
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	triggered_modifier = {
 		potential = {
 			is_ruler = no
-			leader_class = admiral
+			leader_class = commander
 		}
-		ship_hull_mult = 0.05
-		ship_disengage_chance_mult = -0.1
-	}
-	triggered_modifier = {
-		potential = {
-			is_ruler = no
-			leader_class = general
-		}
+		ship_fire_rate_mult = 0.05
 		army_morale = 0.1
 	}
 	triggered_modifier = {
@@ -433,7 +480,7 @@ leader_trait_eci_royalty = { #Origin trait - offspring
 	triggered_modifier = {
 		potential = {
 			is_ruler = no
-			leader_class = governor
+			leader_class = official
 		}
 		pop_government_ethic_attraction = 0.15
 	}

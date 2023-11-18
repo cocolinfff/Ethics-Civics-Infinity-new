@@ -1,212 +1,34 @@
-admiral = {
-	name = admiral
-	name_plural = admiral_plural
-	description = admiral_description
-	can_lead_navy = yes
-	max_trait_points = 1
-	can_have_traits = yes
-	resources = {
-		category = leader_admirals
-		inline_script = "paragon/leader_base_cost"
-		inline_script = "paragon/leader_base_upkeep"
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						is_valid_labor_aristocracy = yes
-						has_valid_civic = civic_superhuman_economy_corporate
-					}
-				}
-			}
-			energy = 6
-			minerals = 6
-			alloys = 4
-			mult = trigger:has_skill
-		}
-		produces = {
-			trigger = {
-				OR = {
-					is_ruler = yes
-					is_councilor_type = councilor_king
-				}
-				owner = { is_valid_labor_aristocracy = yes }
-			}
-			alloys = 7
-			mult = trigger:has_skill
-		}
-	}
-	default_category = admiral
-	ai_weight = {
-		modifier = {
-			factor = 2
-			or = {
-				is_militarist = yes
-				is_authoritarian = yes
-			}
-		}
-	}
-	leader_background_job_weight = {
-		commandante = 250
-		soldier = 150
-		enforcer = 100
-		telepath = 100
-		conscript = 20
-	}
-}
+@base_leader_cap = 3
 
-general = {
-	name = general
-	name_plural = general_plural
-	description = general_description
-	can_lead_army = yes
-	max_trait_points = 1
-	can_have_traits = yes
-	resources = {
-		category = leader_generals
-		inline_script = "paragon/leader_base_cost"
-		inline_script = "paragon/leader_base_upkeep"
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_superhuman_economy
-						has_valid_civic = civic_superhuman_economy_corporate
-					}
-					is_lithoid = no
-				}
-			}
-			energy = 12
-			food = 6
-			minerals = 6
-			alloys = 4
-			mult = trigger:has_skill
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_superhuman_economy
-						has_valid_civic = civic_superhuman_economy_corporate
-					}
-					is_lithoid = yes
-				}
-			}
-			energy = 12
-			minerals = 12
-			alloys = 4
-			mult = trigger:has_skill
-		}
-		produces = {
-			trigger = {
-				OR = {
-					is_ruler = yes
-					is_councilor_type = councilor_king
-				}
-				owner = { is_valid_labor_aristocracy = yes }
-			}
-			alloys = 7
-			mult = trigger:has_skill
-		}
-	}
-
-	default_category = general
-	leader_background_job_weight = {
-		commandante = 250
-		soldier = 150
-		telepath = 100
-		conscript = 20
-	}
-}
-
-scientist = {
-	name = scientist
-	name_plural = scientist_plural
-	description = scientist_description
-	can_research = yes
-	max_trait_points = 1
-	can_have_traits = yes
-	resources = {
-		category = leader_scientists
-		inline_script = "paragon/leader_base_cost"
-		inline_script = "paragon/leader_base_upkeep"
-		produces = {
-			trigger = {
-				owner = {
-				    is_regular_empire = yes
-					has_ethic = ethic_materialist
-				}
-			}
-			physics_research = 0.5
-			engineering_research = 0.5
-			society_research = 0.5
-			mult = trigger:has_skill
-		}
-		produces = {
-			trigger = {
-				owner = {
-				    is_regular_empire = yes
-					has_ethic = ethic_fanatic_materialist
-				}
-			}
-			physics_research = 1
-			engineering_research = 1
-			society_research = 1
-			mult = trigger:has_skill
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_superhuman_economy
-						has_valid_civic = civic_superhuman_economy_corporate
-					}
-				}
-			}
-			physics_research = 6
-			engineering_research = 6
-			society_research = 6
-			unity = 4
-			mult = trigger:has_skill
-		}
-		produces = {
-			trigger = {
-				OR = {
-					is_ruler = yes
-					is_councilor_type = councilor_king
-				}
-				owner = { is_valid_labor_aristocracy = yes }
-			}
-			consumer_goods = 12
-			mult = trigger:has_skill
-		}
-	}
-	default_category = scientist
-	minimum_ai_target = 3
-
-	ai_weight = {
-		base = 75
-	}
-	leader_background_job_weight = {
-		head_researcher = 250
-		researcher = 150
-		telepath = 100
-		chemist = 100
-		healthcare = 100
-		archaeoengineers = 100
-	}
-}
-
-governor = {
-	name = governor
-	name_plural = governor_plural
-	description = governor_description
+official = {
+	name = official
+	name_plural = official_plural
+	description = official_description
 	can_govern_planet = yes
 	max_trait_points = 1
 	can_have_traits = yes
+	can_be_assigned_to_federation = yes
+	can_be_assigned_to_galactic_community = yes
+	leader_capacity = @base_leader_cap
 	resources = {
-		category = leader_governors
+		category = leader_officials
 		inline_script = "paragon/leader_base_cost"
 		inline_script = "paragon/leader_base_upkeep"
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_tradition = tr_politics_adopt
+				}
+				OR = {
+					is_assigned_to_galcom = yes
+					is_strengthing_imperial_authority = yes
+					is_undermining_imperial_authority = yes
+				}
+			}
+			influence = 0.1
+			mult = trigger:has_skill
+		}
 		produces = {
 			trigger = {
 				is_idle = no
@@ -260,17 +82,18 @@ governor = {
 			mult = trigger:has_skill
 		}
 	}
-	default_category = governor
 
 	ai_weight = {
 		modifier = {
 			factor = 2
-			OR = {
+			or = {
 				is_pacifist = yes
 				is_egalitarian = yes
 			}
 		}
 	}
+
+	replaces_old_class = "governor"
 
 	leader_background_job_weight = {
 		politician = 200
@@ -278,82 +101,169 @@ governor = {
 		bureaucrat = 100
 		manager = 100
 	}
+	icon = 4
 }
 
-#ruler = {
-#	can_rule_empire = yes
-#	max_trait_points = 2
-#	can_have_traits = yes
-#	default_category = ruler
-#	resources = {
-#		category = leader_rulers
-#		produces = {
-#			trigger = {
-#				owner = {
-#					OR = {
-#						has_valid_civic = civic_superhuman_economy
-#						has_valid_civic = civic_superhuman_economy_corporate
-#					}
-#					is_lithoid = yes
-#				}
-#			}
-#			energy = 12
-#			minerals = 12
-#			consumer_goods = 6
-#			alloys = 4
-#			unity = 6
-#			mult = trigger:has_skill
-#		}
-#		produces = {
-#			trigger = {
-#				owner = {
-#					OR = {
-#						has_valid_civic = civic_superhuman_economy
-#						has_valid_civic = civic_superhuman_economy_corporate
-#					}
-#					is_lithoid = no
-#				}
-#			}
-#			energy = 12
-#			minerals = 6
-#			food = 6
-#			consumer_goods = 6
-#			alloys = 4
-#			unity = 6
-#			mult = trigger:has_skill
-#		}
-#	}
-#}
-
-envoy = {
-	name = envoy
-	name_plural = envoy_plural
-	description = envoy_description
-	can_be_envoy = yes
-	default_category = envoy
-	assignment_cooldown = 360
-	can_have_traits = no
+commander = {
+	name = commander
+	name_plural = commander_plural
+	description = commander_description
+	can_lead_navy = yes
+	can_lead_army = yes
+	can_govern_planet = yes
+	max_trait_points = 1
+	can_have_traits = yes
+	leader_capacity = @base_leader_cap
 	resources = {
+		category = leader_commanders
+		inline_script = "paragon/leader_base_cost"
+		inline_script = "paragon/leader_base_upkeep"
 		produces = {
 			trigger = {
-				is_idle = no
-				exists = owner
 				owner = {
-					has_tradition = tr_politics_adopt
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+					is_lithoid = no
 				}
+			}
+			energy = 6
+			food = 6
+			minerals = 7
+			alloys = 4
+			mult = trigger:has_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+					is_lithoid = yes
+				}
+			}
+			energy = 6
+			minerals = 15
+			alloys = 4
+			mult = trigger:has_skill
+		}
+		produces = {
+			trigger = {
 				OR = {
-					has_envoy_task = {
-						task = galactic_community
-					}
-					has_envoy_task = {
-						task = strengthen_imperial_authority
-					}
-					has_envoy_task = {
-						task = undermine_imperial_authority
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = { is_valid_labor_aristocracy = yes }
+			}
+			alloys = 7
+			mult = trigger:has_skill
+		}
+	}
+	ai_weight = {
+		modifier = {
+			factor = 2
+			or = {
+				is_militarist = yes
+				is_authoritarian = yes
+			}
+		}
+	}
+	replaces_old_class = "admiral"
+	replaces_old_class = "general"
+	leader_background_job_weight = {
+		commandante = 250
+		soldier = 150
+		telepath = 100
+		conscript = 20
+	}
+	icon = 1
+}
+
+scientist = {
+	name = scientist
+	name_plural = scientist_plural
+	description = scientist_description
+	can_research_tech = yes
+	can_research_special_projects = yes
+	can_crew_science_ship = yes
+	can_research_anomalies = yes
+	can_survey = yes
+	can_boost_cloaking_detection = yes
+	can_research_archaeology_site = yes
+	can_explore_rifts = yes
+	can_conduct_active_reconnaissance = yes
+	can_govern_planet = yes
+	max_trait_points = 1
+	leader_capacity = @base_leader_cap
+	resources = {
+		category = leader_scientists
+		inline_script = "paragon/leader_base_cost"
+		inline_script = "paragon/leader_base_upkeep"
+		produces = {
+			trigger = {
+				owner = {
+					is_regular_empire = yes
+					has_ethic = ethic_materialist
+				}
+			}
+			physics_research = 0.5
+			engineering_research = 0.5
+			society_research = 0.5
+			mult = trigger:has_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					is_regular_empire = yes
+					has_ethic = ethic_fanatic_materialist
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			mult = trigger:has_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
 					}
 				}
 			}
-			influence = 0.1
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
+			unity = 4
+			mult = trigger:has_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = { is_valid_labor_aristocracy = yes }
+			}
+			consumer_goods = 12
+			mult = trigger:has_skill
 		}
 	}
+
+	ai_weight = {
+		base = 50
+	}
+	minimum_ai_target = 3
+	leader_background_job_weight = {
+		head_researcher = 250
+		researcher = 150
+		telepath = 100
+		chemist = 100
+		healthcare = 100
+		archaeoengineers = 100
+	}
+	icon = 3
 }

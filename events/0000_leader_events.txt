@@ -1,0 +1,179 @@
+############################
+#
+# Leader Events
+#
+############################
+
+namespace = leader
+
+# Fired by on_added_to_leader_pool
+# A leader is added to the leader pool, available for recruitment
+# scope: country, from: leader
+# Add traits from civics
+country_event = {
+	id = leader.100
+	hide_window = yes
+
+	is_triggered_only = yes
+
+
+	trigger = {
+		NOT = { has_country_flag = spawning_renowned_leader }
+	}
+
+	immediate = {
+		# Aristocratic Elite
+		# 20% Chance for a random positive trait and a random negative trait
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_aristocratic_elite
+					has_valid_civic = civic_feudal_realm
+					has_valid_civic = civic_eternal_kingship
+				}
+			}
+			from = {
+				random_list = {
+					80 = {  }
+					20 = {
+						add_trait_no_notify = "random_common"
+						add_trait_no_notify = "random_negative"
+						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
+						change_background_job = noble
+					}
+				}
+			}
+		}
+
+		# Technocracy
+		# Adds a random expertise trait
+		if = {
+			limit = {
+				has_valid_civic = civic_learning_society
+				from = { leader_class = scientist }
+			}
+			from = {
+				add_random_expertise_trait_effect = yes
+			}
+		}
+
+		# Crusader Spirit
+		# Adds the Crusader trait
+		if = {
+			limit = {
+				has_valid_civic = civic_crusader_spirit
+				from = { leader_class = commander }
+			}
+			from = {
+				add_trait_no_notify = leader_trait_crusader
+			}
+		}
+
+		# Letters of Marque
+		# Adds the Corsair trait
+		if = {
+			limit = {
+				has_civic = civic_crusader_spirit_corporate
+				from = { leader_class = commander }
+			}
+			from = {
+				add_trait_no_notify = leader_trait_corsair
+			}
+		}
+	}
+}
+
+# Fired by on_game_start_country
+# scope: country
+# Add traits from civics
+country_event = {
+	id = leader.110
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		# Aristocratic Elite
+		# 20% Chance for a random positive trait and a random negative trait
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_aristocratic_elite
+					has_valid_civic = civic_feudal_realm
+					has_valid_civic = civic_eternal_kingship
+				}
+			}
+			every_owned_leader = {
+				random_list = {
+					80 = {  }
+					20 = {
+						add_trait_no_notify = "random_common"
+						add_trait_no_notify = "random_negative"
+						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
+						change_background_job = noble
+					}
+				}
+			}
+		}
+
+		# Remnants
+		# Adds a Archaeostudies Expertise trait
+		if = {
+			limit = {
+				has_ancrel = yes
+				has_origin = origin_remnants
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = scientist
+					OR = {
+						is_councilor_type = councilor_research
+						is_councilor_type = councilor_gestalt_cognitive
+					}
+				}
+				add_trait_no_notify = leader_trait_expertise_archaeostudies
+			}
+		}
+
+
+		# Technocracy
+		# Adds a random Expertise trait
+		if = {
+			limit = {
+				has_valid_civic = civic_learning_society
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = scientist
+				}
+				add_random_expertise_trait_effect = yes
+			}
+		}
+
+		# Crusader Spirit
+		# Adds the Crusader trait
+		if = {
+			limit = {
+				has_valid_civic = civic_crusader_spirit
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = commander
+				}
+				add_trait_no_notify = leader_trait_crusader
+			}
+		}
+
+		# Letters of Marque
+		# Adds the Corsair trait
+		if = {
+			limit = { has_civic = civic_crusader_spirit_corporate }
+			every_owned_leader = {
+				limit = {
+					leader_class = commander
+				}
+				add_trait_no_notify = leader_trait_corsair
+			}
+		}
+	}
+}

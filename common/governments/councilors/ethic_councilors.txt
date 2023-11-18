@@ -14,7 +14,7 @@
 ################################
 #直接民主
 councilor_ruler_direct_democratic = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
@@ -22,11 +22,15 @@ councilor_ruler_direct_democratic = {
 		diplo_action_acceptance_add = 5
 	}
 	icon = "GFX_icon_councilor_research"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #间接民主
 councilor_ruler_democratic = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
@@ -34,22 +38,30 @@ councilor_ruler_democratic = {
 		edicts_upkeep_mult = -0.025
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #寡头制
 councilor_ruler_oligarchic = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
 		councilor_exp_gain = 0.1
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #专制
 councilor_ruler_dictatorial = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
@@ -57,11 +69,15 @@ councilor_ruler_dictatorial = {
 		council_agenda_finishing_effect_duration_mult = 0.025
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #君主制
 councilor_ruler_imperial = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
@@ -69,35 +85,51 @@ councilor_ruler_imperial = {
 		country_base_influence_produces_add = 0.1
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #蜂巢
 councilor_ruler_hive_mind = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
 		country_unity_produces_mult = 0.02
-		country_leader_cap_add = 1
+		country_official_cap_add = 1
+		country_commander_cap_add = 1
+		country_scientist_cap_add = 1
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #智械
 councilor_ruler_machine_intelligence = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
 		empire_size_pops_mult = -0.03
-		country_leader_cap_add = 1
+		country_official_cap_add = 1
+		country_commander_cap_add = 1
+		country_scientist_cap_add = 1
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #企业政府
 councilor_ruler_corporate = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = { always = no }
 	is_leader_possible = { always = yes }
 	modifier = {
@@ -105,11 +137,15 @@ councilor_ruler_corporate = {
 		trade_value_reduction = -0.02
 	}
 	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #首席科学家
 councilor_research = {
-	leader_class = { scientist governor }
+	leader_class = { scientist }
 
 	possible = {
 		is_gestalt = no
@@ -121,21 +157,23 @@ councilor_research = {
 	}
 
 	is_leader_possible = {
-		OR = {
-			leader_class = scientist
-			leader_class = governor
-		}
+		leader_class = scientist
 	}
 	modifier = {
 		all_technology_research_speed = 0.02
 	}
 	icon = "GFX_icon_councilor_research"
-	required = yes
+	optional = {
+		has_paragon_dlc = yes
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #国防部长
 councilor_defense = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 
 	possible = {
 		is_gestalt = no
@@ -148,8 +186,8 @@ councilor_defense = {
 
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
+			leader_class = commander
 		}
 	}
 	modifier = {
@@ -158,12 +196,48 @@ councilor_defense = {
 		starbases_upkeep_mult = -0.02
 	}
 	icon = "GFX_icon_councilor_defense"
-	required = yes
+	optional = {
+		has_paragon_dlc = yes
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#国务卿
+councilor_state = {
+	leader_class = { official }
+
+	possible = {
+		blocks_minister_of_state = no
+		is_direct_democratic = no
+		NAND = {
+			has_origin =  origin_galaxy_iron_curtain
+			is_socialism = no
+		}
+	}
+
+	is_leader_possible = {
+		leader_class = official
+	}
+	modifier = {
+		envoy_improve_relations_mult = 0.02
+		envoy_harm_relations_mult = 0.02
+		first_contact_speed_mult = 0.02
+		spy_network_daily_value_mult = 0.02
+	}
+	icon = "GFX_icon_councilor_state"
+	optional = {
+		has_paragon_dlc = yes
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #国王-大宪章
 councilor_king = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	possible = {
 		has_valid_civic =  civic_constitutional_monarchy
 	}
@@ -177,7 +251,10 @@ councilor_king = {
 	}
 	icon = "GFX_icon_councilor_ruler"
 	civic = civic_constitutional_monarchy
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #议会长-新民主（效果变更）
@@ -185,44 +262,49 @@ councilor_parliamentary_system = {
 	possible = {
 		has_valid_civic =  civic_parliamentary_system
 	}
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
-			leader_class = admiral
-			leader_class = general
+			leader_class = official
+			leader_class = commander
 		}
 	}
 	civic = civic_parliamentary_system
 	modifier = {
 		faction_approval = 0.015
 	}
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 ################################
 ## 原始文明的寡头
 ################################
 councilor_prime_oligarch_1 = {
-	leader_class = { governor }
+	leader_class = { official }
 	possible = {
 		has_origin =  origin_galaxy_iron_curtain
 		is_socialism = no
 	}
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	modifier = {
 		trade_value_mult = 0.15
 		pop_cat_worker_political_power = -0.1
 	}
 	icon = "GFX_icon_councilor_ruler"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_prime_oligarch_2 = {
-	leader_class = { scientist governor }
+	leader_class = { scientist official }
 
 	possible = {
 		has_origin =  origin_galaxy_iron_curtain
@@ -232,7 +314,7 @@ councilor_prime_oligarch_2 = {
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	modifier = {
@@ -241,7 +323,10 @@ councilor_prime_oligarch_2 = {
 		category_propulsion_research_speed_mult = -0.1
 	}
 	icon = "GFX_icon_councilor_research"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_prime_oligarch_3 = {
@@ -250,9 +335,9 @@ councilor_prime_oligarch_3 = {
 		NOT = { has_valid_civic =  civic_constitutional_monarchy }
 		is_socialism = no
 	}
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	modifier = {
 		pop_cat_ruler_political_power = 0.5
@@ -260,7 +345,10 @@ councilor_prime_oligarch_3 = {
 		pop_cat_slave_happiness = -0.05
 	}
 	icon = "GFX_icon_councilor_ruler"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_prime_oligarch_4 = {
@@ -268,12 +356,11 @@ councilor_prime_oligarch_4 = {
 		has_origin =  origin_galaxy_iron_curtain
 		is_socialism = no
 	}
-	leader_class = { governor general admiral }
+	leader_class = { official commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
-			leader_class = admiral
-			leader_class = general
+			leader_class = official
+			leader_class = commander
 		}
 	}
 	modifier = {
@@ -282,19 +369,21 @@ councilor_prime_oligarch_4 = {
 		planet_crime_mult = 0.1
 	}
 	icon = "GFX_icon_councilor_defense"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_prime_oligarch_5 = {
-	leader_class = { general admiral }
+	leader_class = { commander }
 	possible = {
 		has_origin =  origin_galaxy_iron_curtain
 		is_socialism = no
 	}
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	modifier = {
@@ -303,14 +392,17 @@ councilor_prime_oligarch_5 = {
 		planet_jobs_unity_produces_mult = -0.1
 	}
 	icon = "GFX_icon_councilor_defense"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 ################################
 ## 直接民主的特殊委员会
 ################################
 councilor_direct_democratic_governor = {
-	leader_class = { governor }
+	leader_class = { official }
 	possible = {
 		is_direct_democratic = yes
 		NAND = {
@@ -319,14 +411,17 @@ councilor_direct_democratic_governor = {
 		}
 	}
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	modifier = {
 		pop_citizen_happiness = 0.02
 		trade_value_mult = 0.02
 	}
 	icon = "GFX_icon_councilor_ruler"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_direct_democratic_scientist = {
@@ -346,7 +441,10 @@ councilor_direct_democratic_scientist = {
 		planet_researchers_produces_mult = 0.02
 	}
 	icon = "GFX_icon_councilor_research"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_direct_democratic_admiral = {
@@ -357,20 +455,23 @@ councilor_direct_democratic_admiral = {
 			is_socialism = no
 		}
 	}
-	leader_class = { admiral }
+	leader_class = { commander }
 	is_leader_possible = {
-		leader_class = admiral
+		leader_class = commander
 	}
 	modifier = {
 		ships_upkeep_mult = -0.02
 		planet_colony_development_speed_mult = 0.025
 	}
 	icon = "GFX_icon_councilor_defense"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_direct_democratic_general = {
-	leader_class = { general }
+	leader_class = { commander }
 	possible = {
 		is_direct_democratic = yes
 		NAND = {
@@ -379,18 +480,21 @@ councilor_direct_democratic_general = {
 		}
 	}
 	is_leader_possible = {
-		leader_class = general
+		leader_class = commander
 	}
 	modifier = {
 		armies_upkeep_mult = -0.02
 		planet_crime_add = -5
 	}
 	icon = "GFX_icon_councilor_defense"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_direct_democratic_culture = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official scientist }
 	possible = {
 		is_direct_democratic = yes
 		NAND = {
@@ -399,14 +503,21 @@ councilor_direct_democratic_culture = {
 		}
 	}
 	is_leader_possible = {
-		always = yes
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
 	}
 	modifier = {
 		planet_jobs_unity_produces_mult = 0.02
 		tradition_cost_empire_size_mult = -0.02
 	}
 	icon = "GFX_icon_councilor_ruler"
-	required = yes
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 
@@ -417,7 +528,7 @@ councilor_direct_democratic_culture = {
 ###超主题理念###
 #平台发言人-无政府主义
 #councilor_anarchism = {
-#	leader_class = { governor admiral scientist general }
+#	leader_class = { official commander scientist }
 #	is_leader_possible = {
 #		always = yes
 #	}
@@ -429,67 +540,83 @@ councilor_direct_democratic_culture = {
 
 #拟节点个体-意识之海
 councilor_network_of_the_mind = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = {
-		always = yes
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
 	}
 	civic = civic_network_of_the_mind
 	modifier = {
 		empire_size_mult= -0.02
 		planet_pops_upkeep_mult = -0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #净化专员-种族洁癖
 councilor_fanatic_purifiers = {
-	leader_class = { governor general }
+	leader_class = { official commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_fanatic_purifiers
 	modifier = {
 		pop_category_purge_produces_mult = 0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #外务部长-利他主义
 councilor_altruism = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_altruism
 	modifier = {
 		diplo_action_acceptance_add = 5
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #经济学顾问-三倍利润
 councilor_triple_the_profit = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_triple_the_profit
 	modifier = {
 		trade_value_reduction = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #人民大会首席执行官-第三条路
 #councilor_du_contrat_social = {
-#	leader_class = { governor }
+#	leader_class = { official }
 #	is_leader_possible = {
-#		leader_class = governor
+#		leader_class = official
 #	}
 #	civic = civic_du_contrat_social
 #	modifier = {
@@ -499,21 +626,30 @@ councilor_triple_the_profit = {
 
 #意识索引-永远同在
 councilor_forever_with_us = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = {
-		always = yes
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
 	}
 	civic = civic_forever_with_us
 	modifier = {
-		country_leader_cap_add = 1
+		country_official_cap_add = 1
+		country_commander_cap_add = 1
+		country_scientist_cap_add = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
 #青年教官-伟大军国
 councilor_sparta_spirit = {
-	leader_class = { general }
+	leader_class = { commander }
 	is_leader_possible = {
-		leader_class = general
+		leader_class = commander
 	}
 	civic = civic_sparta_spirit
 	modifier = {
@@ -521,33 +657,46 @@ councilor_sparta_spirit = {
 		armies_upkeep_mult = -0.10
 		planet_army_build_speed_mult = 0.10
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #友谊部书记-先验共产主义
 councilor_transcendental_communism = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_transcendental_communism
 	modifier = {
 		pop_cat_worker_happiness = 0.03
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #智多星-水泊梁山
 councilor_barbaric_despoilers = {
-	leader_class = { governor admiral general scientist }
+	leader_class = { official commander scientist }
 	is_leader_possible = {
-		always = yes
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
 	}
 	civic = civic_barbaric_despoilers
 	modifier = {
 		planet_criminal_produces_mult = 0.1
 		planet_crime_add = 5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -562,16 +711,19 @@ councilor_primitive_worship = {
 		all_technology_research_speed = -0.02
 		ship_weapon_damage = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #时空管理局局长-量子社会学
 councilor_quantum_sociology = {
-	leader_class = { governor scientist admiral }
+	leader_class = { official scientist commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
+			leader_class = official
 			leader_class = scientist
-			leader_class = admiral
+			leader_class = commander
 		}
 	}
 	civic = civic_quantum_sociology
@@ -580,17 +732,19 @@ councilor_quantum_sociology = {
 		ship_jumpdrive_cooldown_mult = -0.05
 		shroud_delve_cooldown = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 
 ###主题理念###
 #卫队统帅-战争领主
 councilor_military_dictatorship = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_military_dictatorship
@@ -603,9 +757,9 @@ councilor_military_dictatorship = {
 
 #宪兵队长-军阀共和国
 councilor_military_junta = {
-	leader_class = { general }
+	leader_class = { commander }
 	is_leader_possible = {
-		leader_class = general
+		leader_class = commander
 	}
 	civic = civic_military_junta
 	modifier = {
@@ -618,17 +772,20 @@ councilor_military_junta = {
 
 #和平仲裁官-和平乌托邦
 councilor_peaceful_republic = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_peaceful_republic
 	modifier = {
 		planet_stability_add = 1
 		pop_happiness = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -643,18 +800,24 @@ councilor_cyber_demos_cratos = {
 		pop_amenities_usage_mult = -0.015
 		category_computing_research_speed_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #神圣庭长-众神议会
 councilor_divine_council = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_divine_council
 	modifier = {
 		edicts_upkeep_mult = -0.03
 		edicts_cost_mult = -0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -670,17 +833,20 @@ councilor_science_directorates = {
 
 #民事部长-执行委员会
 councilor_executive_committee = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_executive_committee
 	modifier = {
 		empire_size_districts_mult = -0.035
 		planet_districts_upkeep_mult = -0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -694,67 +860,82 @@ councilor_cyber_dictatorship = {
 	modifier = {
 		planet_jobs_ruler_produces_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #君王之手-永恒王权
 councilor_eternal_kingship = {
-	leader_class = { general governor }
+	leader_class = { commander official }
 	is_leader_possible = {
 		OR = {
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_eternal_kingship
 	modifier = {
 		country_influence_produces_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #邦联议会议长-主权邦联
 councilor_sovereign_federation = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_sovereign_federation
 	modifier = {
 		empire_size_colonies_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #内阁总理-大共和国
 councilor_constitutional_parliament = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_constitutional_parliament
 	modifier = {
 		council_agenda_progress_speed = 0.03
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #巡回宣教使-圣灵议会
 councilor_spiritual_democracy = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_spiritual_democracy
 	modifier = {
 		planet_pops_consumer_goods_upkeep_mult = -0.015
 		pop_ethic_spiritualist_attraction_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #人民代表-先进社会主义（效果变更）
 councilor_shared_burden = {
-	leader_class = { general governor }
+	leader_class = { commander official }
 	is_leader_possible = {
 		OR = {
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_shared_burden
@@ -762,14 +943,17 @@ councilor_shared_burden = {
 		planet_jobs_worker_produces_mult = 0.02
 		pop_cat_worker_happiness = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #计划委员会主席-革命先锋队
 councilor_socialistic = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
+			leader_class = official
 			leader_class = scientist
 		}
 	}
@@ -778,14 +962,17 @@ councilor_socialistic = {
 		planet_jobs_worker_produces_mult = 0.02
 		planet_building_build_speed_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #总设计师-工人贵族
 councilor_labor_aristocracy = {
-	leader_class = { governor scientist }
+	leader_class = { official scientist }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
+			leader_class = official
 			leader_class = scientist
 		}
 	}
@@ -795,25 +982,31 @@ councilor_labor_aristocracy = {
 		planet_jobs_ruler_produces_mult = 0.01
 		pop_cat_worker_happiness = -0.015
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #真部-全息社会主义
 councilor_ultimate_collective = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_ultimate_collective
 	modifier = {
 		pop_cat_ruler_political_power = 1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #中央银行行长-大康采恩
 councilor_state_monopoly = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_state_monopoly
 	modifier = {
@@ -822,15 +1015,17 @@ councilor_state_monopoly = {
 		planet_buildings_upkeep_mult = 0.01
 		planet_districts_upkeep_mult = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #帝国元帅-光荣与梦想
 councilor_glory_and_dream = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_glory_and_dream
@@ -840,15 +1035,18 @@ councilor_glory_and_dream = {
 		ships_upkeep_mult = 0.01
 		armies_upkeep_mult = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #社会改造导师-民族与阶级
 councilor_nazbol = {
-	leader_class = { scientist admiral }
+	leader_class = { scientist commander }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = admiral
+			leader_class = commander
 		}
 	}
 	civic = civic_nazbol
@@ -856,67 +1054,80 @@ councilor_nazbol = {
 		pop_citizen_happiness = 0.02
 		planet_jobs_unity_produces_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 
 ###次主题理念###
 #部长会议主席-联合政府
 councilor_coalition_government = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_coalition_government
 	modifier = {
 		empire_size_systems_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 councilor_coalition_government_overlord = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_coalition_government_overlord
 	modifier = {
 		empire_size_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #总参谋长-秩序军政
 councilor_stratocracy = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_stratocracy
 	modifier = {
-		admiral_exp_gain = 0.03
-		general_exp_gain = 0.03
+		commander_exp_gain = 0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
 #工会主席-劳工宪法
 councilor_peoples_republic = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_peoples_republic
 	modifier = {
 		pop_cat_worker_happiness = 0.02
 		pop_cat_specialist_happiness = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #监察委员会主任-思想设计师
 councilor_glorious_pioneer = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_glorious_pioneer
 	custom_tooltip = "councilor_glorious_pioneer_custom_modifier_desc"
@@ -924,9 +1135,9 @@ councilor_glorious_pioneer = {
 
 #身份团体代表-正确政治
 councilor_social_democracy = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_social_democracy
 	modifier = {
@@ -934,17 +1145,23 @@ councilor_social_democracy = {
 		pop_cat_criminal_happiness = 0.02
 		pop_cat_purge_happiness = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 
 ###国民文化###
 #机械牧首-受控人仆
 councilor_machine_soul_servant = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = yes }
 	civic = civic_machine_soul_servant
 	modifier = {
 		planet_jobs_robotic_unity_produces_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -958,17 +1175,23 @@ councilor_knowledge_seeker = {
 	modifier = {
 		planet_researchers_unity_produces_add = 0.25
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #繁衍圣徒-生殖崇拜
 councilor_Fertility_worship = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_Fertility_worship
 	modifier = {
 		pop_growth_speed = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -982,66 +1205,80 @@ councilor_The_Druid_Way = {
 	modifier = {
 		pop_environment_tolerance = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #大德鲁伊-和谐卫士
 councilor_keepers_harmony = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_keepers_harmony
 	modifier = {
 		pop_amenities_usage_mult = -0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #修会首领-精神探寻者
 councilor_spiritual_seekers = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_spiritual_seekers
 	modifier = {
 		category_psionics_research_speed_mult = 0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #政治明星-无休之季
 councilor_eternal_jihad = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_eternal_jihad
 	modifier = {
 		pop_amenities_usage_mult = 0.02
 		pop_citizenry_happiness = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #人民教宗-解放神学
 councilor_liberation_theology = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_liberation_theology
 	modifier = {
 		pop_ethic_socialism_attraction_mult = 0.1
 		pop_ethic_spiritualist_attraction_mult = 0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #贵血王公-种姓制度
 councilor_divine_order = {
-	leader_class = { governor admiral general }
+	leader_class = { official commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
-			leader_class = admiral
-			leader_class = general
+			leader_class = official
+			leader_class = commander
 		}
 	}
 	civic = civic_divine_order
@@ -1049,17 +1286,19 @@ councilor_divine_order = {
 		pop_cat_ruler_political_power = 1
 		pop_cat_worker_political_power = -0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #大教育家-苦难回响
 councilor_echoes_of_suffering = {
-	leader_class = { governor scientist admiral general }
+	leader_class = { official scientist commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
+			leader_class = official
 			leader_class = scientist
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_echoes_of_suffering
@@ -1067,37 +1306,46 @@ councilor_echoes_of_suffering = {
 		pop_cat_worker_happiness = -0.05
 		planet_stability_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #未来设计师-后发先至
 councilor_procrastination = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_procrastination
 	modifier = {
 		country_government_civic_points_add = 0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #全国劳动模范-行业标兵
 councilor_industry_pacesetter = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = yes }
 	civic = civic_industry_pacesetter
 	modifier = {
 		planet_jobs_produces_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #大奴隶主-奴役暴君
 councilor_reeducated_labor = {
-	leader_class = { general governor }
+	leader_class = { commander official }
 	is_leader_possible = {
 		OR = {
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_reeducated_labor
@@ -1106,14 +1354,17 @@ councilor_reeducated_labor = {
 
 #荣誉大使-普世主义
 councilor_peacekeepers = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_peacekeepers
 	modifier = {
 		country_trust_cap_add = 5
 		envoy_improve_relations_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1128,55 +1379,65 @@ councilor_exploration = {
 		ship_anomaly_research_speed_mult = 0.05
 		ship_archaeological_site_excavation_speed_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #首席开拓者-星之开拓者
 councilor_star_settlers = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_star_settlers
 	modifier = {
 		planet_colony_development_speed_mult = 0.075
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #星际商会会长-全球主义
 councilor_globalism = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_globalism
 	modifier = {
 		commercial_pact_mult = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #和平基金会大使-调停者
 councilor_xeno_militarist = {
-	leader_class = { admiral general governor }
+	leader_class = { commander official }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_xeno_militarist
 	modifier = {
 		country_power_projection_influence_produces_add = 0.2
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #红军总政委-解放者
 councilor_liberator = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_liberator
@@ -1184,54 +1445,69 @@ councilor_liberator = {
 		country_war_exhaustion_mult = -0.05
 		army_morale = 0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #性处理委员-欲望自由
 councilor_liberty_of_libido = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_liberty_of_libido
 	modifier = {
 		biological_pop_happiness = 0.01
 		lithoid_pop_happiness = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #黑暗组织干部-欲望器械
 councilor_libido_equipment = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = yes }
 	civic = civic_libido_equipment
 	modifier = {
 		planet_pop_assembly_organic_add = 0.2
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #品牌形象代言人-奢侈消费主义
 councilor_consumerism = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_consumerism
 	modifier = {
 		pop_job_trade_mult = 0.1
 		planet_pops_consumer_goods_upkeep_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #劳动监察部长-超节奏生活
 councilor_super_fast_paced_life = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_super_fast_paced_life
 	modifier = {
 		pop_job_trade_mult = 0.1
 		planet_pops_consumer_goods_upkeep_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1245,6 +1521,9 @@ councilor_terraforming = {
 	modifier = {
 		terraform_speed_mult = 0.1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #首席催化师-催化加工（效果变更）
@@ -1257,17 +1536,23 @@ councilor_catalytic_processing = {
 	modifier = {
 		planet_metallurgists_upkeep_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #调和理论家-调和主义
 councilor_conciliatory = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_conciliatory
 	modifier = {
 		planet_stability_add = 1.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1281,15 +1566,17 @@ councilor_ultravisionary_socialism = {
 	modifier = {
 		num_tech_alternatives_add = 1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #武装社团领袖-武斗
 councilor_civil_rights_gun_grant = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_civil_rights_gun_grant
@@ -1297,107 +1584,134 @@ councilor_civil_rights_gun_grant = {
 		army_damage_mult = 0.05
 		planet_crime_mult = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #先锋艺术家-未来派艺术
 councilor_futuristic_art = {
-	leader_class = { scientist governor }
+	leader_class = { scientist official }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_futuristic_art
 	modifier = {
 		planet_researchers_unity_produces_add = 0.25
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #人民艺术家-劳动与文化
 councilor_proletarian_culture = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = yes }
 	civic = civic_proletarian_culture
 	modifier = {
 		country_unity_produces_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #娱乐基金会理事-商业化娱乐
 councilor_commercial_entertainment = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_commercial_entertainment
 	modifier = {
 		pop_job_trade_mult = 0.1
 		pop_job_amenities_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #岁月史官-千夫所指
 councilor_vilified = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_vilified
 	modifier = {
 		country_unity_produces_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #历史发明家-上周古国
 councilor_cultural_thief = {
-	leader_class = { scientist governor }
+	leader_class = { scientist official }
 	is_leader_possible = {
 		OR = {
 			leader_class = scientist
-			leader_class = governor
+			leader_class = official
 		}
 	}
 	civic = civic_cultural_thief
 	modifier = {
 		country_claim_influence_cost_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #首席艺术生-艺术国度
 councilor_art_country = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_art_country
 	modifier = {
 		pop_government_ethic_attraction = 0.075
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #劳工检查长-理想奴隶制
 councilor_ideal_slavery = {
-	leader_class = { general governor }
+	leader_class = { commander official }
 	is_leader_possible = {
 		OR = {
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_ideal_slavery
 	modifier = {
 		pop_cat_slave_happiness = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #宗族长老-血源诅咒
 councilor_curse_of_blood_kin = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { has_level > 3  }
 	civic = civic_curse_of_blood_kin
 	modifier = {
 		pop_cat_ruler_happiness = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1410,7 +1724,10 @@ councilor_zhaowen_dao = {
 	civic = civic_zhaowen_dao
 	modifier = {
 		planet_researchers_produces_mult = 0.33
-		leader_age = -5
+		leader_lifespan_add = -5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1425,27 +1742,33 @@ councilor_environmentalist = {
 	modifier = {
 		job_environmental_pollution_caused_mult = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #移民局长-自由庇护所（效果变更）
 councilor_free_haven = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_free_haven
 	modifier = {
 		planet_immigration_pull_add = 5
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #奴隶监工-贩奴公会（效果变更）
 councilor_slaver_guilds = {
-	leader_class = { general governor }
+	leader_class = { commander official }
 	is_leader_possible = {
 		OR = {
-			leader_class = general
-			leader_class = governor
+			leader_class = commander
+			leader_class = official
 		}
 	}
 	civic = civic_slaver_guilds
@@ -1454,11 +1777,14 @@ councilor_slaver_guilds = {
 
 #全能者-超人经济
 councilor_superhuman_economy = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = yes }
 	civic = civic_superhuman_economy
 	modifier = {
 		species_leader_exp_gain = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1472,6 +1798,9 @@ councilor_biochemical_warrior = {
 	modifier = {
 		ship_orbital_bombardment_pop_damage_mult = 0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #社会工程师-真名实姓
@@ -1484,15 +1813,17 @@ councilor_information_warrior = {
 	modifier = {
 		intel_decryption_add = 1
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #后勤部元帅-耕战一体
 councilor_army_production = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_army_production
@@ -1501,16 +1832,18 @@ councilor_army_production = {
 
 #炊事班指战员-人民军队
 councilor_martial_brotherhood = {
-	leader_class = { admiral general }
+	leader_class = { commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = admiral
-			leader_class = general
+			leader_class = commander
 		}
 	}
 	civic = civic_martial_brotherhood
 	modifier = {
 		army_health = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
 	}
 }
 
@@ -1525,6 +1858,9 @@ councilor_science_knight = {
 		planet_researchers_produces_mult = 0.1
 		pop_cat_worker_happiness = -0.05
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #教育委员会主席-学习型社会
@@ -1537,16 +1873,18 @@ councilor_learning_society = {
 	modifier = {
 		planet_jobs_specialist_produces_mult = 0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #人民企业家-特色社会主义
 councilor_characteristic_socialism = {
-	leader_class = { governor admiral general }
+	leader_class = { official commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
-			leader_class = admiral
-			leader_class = general
+			leader_class = official
+			leader_class = commander
 		}
 	}
 	civic = civic_characteristic_socialism
@@ -1554,16 +1892,18 @@ councilor_characteristic_socialism = {
 		pop_job_trade_mult = 0.15
 		pop_growth_speed = -0.075
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #人民企业家-特色社会主义#
 councilor_characteristic_socialism_pioneer = {
-	leader_class = { governor admiral general }
+	leader_class = { official commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
-			leader_class = admiral
-			leader_class = general
+			leader_class = official
+			leader_class = commander
 		}
 	}
 	civic = civic_characteristic_socialism_pioneer
@@ -1571,64 +1911,79 @@ councilor_characteristic_socialism_pioneer = {
 		pop_job_trade_mult = 0.15
 		pop_growth_speed = -0.075
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #供销社总经理-国有企业
 councilor_state_owned_enterprises = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_state_owned_enterprises
 	modifier = {
 		commercial_pact_mult = 0.01
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #教父-黑社会
 councilor_underworld_society = {
-	leader_class = { governor general }
+	leader_class = { official commander }
 	is_leader_possible = {
 		OR = {
-			leader_class = governor
-			leader_class = general
+			leader_class = official
+			leader_class = commander
 		}
 	}
 	civic = civic_underworld_society
 	conditional_tooltip = councilor_criminal_heritage_custom_modifier_desc
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #三权分立-首席大法官
 councilor_separation_of_powers = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_separation_of_powers
 	modifier = {
 		planet_stability_add = 1.5
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #文化部长-文化审查部门
 councilor_cultural_review_department = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	civic = civic_cultural_review_department
 	modifier = {
 		pop_amenities_usage_mult = -0.02
 		pop_job_amenities_mult = -0.02
 	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 ###特殊理念###
 #帝国守望者-星海霸业
 councilor_galactic_sovereign = {
-	leader_class = { general }
+	leader_class = { commander }
 	is_leader_possible = {
-		leader_class = general
+		leader_class = commander
 	}
 	modifier = {
 		diplo_weight_mult = 0.1
@@ -1636,13 +1991,16 @@ councilor_galactic_sovereign = {
 		country_subject_acceptance_add = 5
 	}
 	civic = civic_galactic_sovereign
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #首席财政官-商贾霸权
 councilor_galactic_sovereign_megacorp = {
-	leader_class = { general }
+	leader_class = { commander }
 	is_leader_possible = {
-		leader_class = general
+		leader_class = commander
 	}
 	modifier = {
 		diplo_weight_mult = 0.1
@@ -1650,13 +2008,16 @@ councilor_galactic_sovereign_megacorp = {
 		planet_branch_offices_cost_mult = -0.1
 	}
 	civic = civic_galactic_sovereign_megacorp
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #星际执行委员-共产星际
 councilor_galactic_sovereign_people = {
-	leader_class = { general }
+	leader_class = { commander }
 	is_leader_possible = {
-		leader_class = general
+		leader_class = commander
 	}
 	modifier = {
 		diplo_weight_mult = 0.1
@@ -1664,11 +2025,14 @@ councilor_galactic_sovereign_people = {
 		country_power_projection_influence_produces_add = 0.5
 	}
 	civic = civic_galactic_sovereign_people
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #家族继承人-家族企业
 councilor_family_business = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = {
 		has_trait = trait_imperial_heir
 	}
@@ -1676,73 +2040,79 @@ councilor_family_business = {
 		councilor_exp_gain = 0.05
 	}
 	civic = civic_family_business
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 #供销社总经理-工人合作社
 councilor_world_cooperative = {
-	leader_class = { governor }
+	leader_class = { official }
 	is_leader_possible = {
-		leader_class = governor
+		leader_class = official
 	}
 	modifier = {
 		commercial_pact_mult = 0.02
 	}
 	civic = civic_world_cooperative
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
 }
 
 
 
 ###已移除国策###
 councilor_ascensionists = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_corporate_anglers = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_corporate_ascensionists = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_corporate_catalytic_processing = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_corporate_crafters = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_corporate_scavengers = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_corporate_relentless_industrialists = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_death_cult_corporate = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
 
 councilor_dystopian_society = {
-	leader_class = { governor admiral scientist general }
+	leader_class = { official commander scientist }
 	is_leader_possible = { always = no }
 	possible = { always = no }
 }
