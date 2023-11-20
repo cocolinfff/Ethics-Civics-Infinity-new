@@ -35,7 +35,7 @@ diplomatic_stance = {
 			is_homicidal = no			# They have their own variants of this
 			NOR = {
 				has_valid_civic = civic_inwards_perfection
-				has_valid_civic = civic_isolationism
+				has_valid_civic = civic_sovereign_guardianship
 			}
 		}
 		policy_flags = {
@@ -143,7 +143,7 @@ diplomatic_stance = {
 			is_unfriendly = no			# Not homicidal OR barbaric despoilers
 			NOR = {
 				has_valid_civic = civic_inwards_perfection
-				has_valid_civic = civic_isolationism
+				has_valid_civic = civic_sovereign_guardianship
 			}
 		}
 		policy_flags = {
@@ -363,7 +363,7 @@ diplomatic_stance = {
 				factor = 100				# Inwards Perfection should almost always go isolationist
 				OR = {
 					has_valid_civic = civic_inwards_perfection
-					has_valid_civic = civic_isolationism
+					has_valid_civic = civic_sovereign_guardianship
 				}
 			}
 			modifier = {
@@ -423,7 +423,7 @@ diplomatic_stance = {
 			}
 			NOR = {
 				has_valid_civic = civic_inwards_perfection
-				has_valid_civic = civic_isolationism
+				has_valid_civic = civic_sovereign_guardianship
 			}
 		}
 		policy_flags = {
@@ -473,7 +473,7 @@ diplomatic_stance = {
 			}
 			NOR = {
 				has_valid_civic = civic_inwards_perfection
-				has_valid_civic = civic_isolationism
+				has_valid_civic = civic_sovereign_guardianship
 			}
 		}
 		valid = {
@@ -604,7 +604,7 @@ diplomatic_stance = {
 			}
 			NOR = {
 				has_valid_civic = civic_inwards_perfection
-				has_valid_civic = civic_isolationism
+				has_valid_civic = civic_sovereign_guardianship
 			}
 		}
 		valid = {
@@ -1021,6 +1021,65 @@ war_philosophy = {
 		is_at_war = no		# Not allowed to change policies in this group while at war
 	}
 	option = {
+		name = "unrestricted_wars_eci"
+		policy_flags = {
+			unrestricted_wars_eci
+		}
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_independent_tribunals
+			}
+		}
+		valid = {
+			is_militarist = yes
+			NOR = {
+				has_civic = "civic_crusader_spirit"
+				has_civic = "civic_liberator"
+			}
+		}
+		modifier = {
+			country_trust_cap_add = -50
+		}
+		AI_weight = {
+			modifier = {
+				factor = 10
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				is_militarist = yes
+			}
+			modifier = {
+				factor = 10
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = purger
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_independent_tribunals"
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+		}
+	}
+	option = {
 		name = "unrestricted_wars"
 		policy_flags = {
 			unrestricted_wars
@@ -1032,12 +1091,14 @@ war_philosophy = {
 		}
 		valid = {
 			NOR = {
-				has_ethic = "ethic_pacifist"
 				has_ethic = "ethic_fanatic_pacifist"
-				has_valid_civic = "civic_inwards_perfection"
+				has_ethic = "ethic_fanatic_militarist"
 				has_civic = "civic_crusader_spirit"
 				has_civic = "civic_liberator"
 			}
+		}
+		modifier = {
+			damage_vs_rival_mult = 0.15
 		}
 		AI_weight = {
 			modifier = {
@@ -1092,9 +1153,12 @@ war_philosophy = {
 		}
 		valid = {
 			NOR = {
-				has_ethic = "ethic_fanatic_pacifist"
 				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_inwards_perfection"
 			}
+		}
+		modifier = {
+			damage_vs_superior_empires_mult = 0.15
 		}
 		on_enabled = {
 			hidden_effect = {
@@ -1144,14 +1208,18 @@ war_philosophy = {
 			no_wars
 		}
 		valid = {
+			is_militarist = no
 			NOR = {
-				has_ethic = "ethic_fanatic_militarist"
 				has_valid_civic = "civic_fanatic_purifiers"
 				has_valid_civic = "civic_hive_devouring_swarm"
 				has_valid_civic = "civic_machine_terminator"
 				has_civic = "civic_crusader_spirit"
 				has_civic = "civic_liberator"
 			}
+		}
+		modifier = {
+			starbase_defensive_war_ship_build_speed_mult = 0.25
+			ship_home_territory_fire_rate_mult = 0.15
 		}
 		AI_weight = {
 			modifier = {
@@ -1178,7 +1246,8 @@ war_doctrine = {
 		policy_flags = {
 		}
 		modifier = {
-			ship_home_territory_fire_rate_mult = 0.15
+			ship_home_territory_fire_rate_mult = 0.2
+			shipclass_starbase_damage_mult = 0.15
 		}
 		AI_weight = {
 			factor = 1
