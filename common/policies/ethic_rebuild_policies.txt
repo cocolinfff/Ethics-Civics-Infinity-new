@@ -1092,6 +1092,229 @@ refugees = {
 	}
 }
 
+#战争哲学
+war_philosophy = {
+	potential = {
+	}
+	allow = {
+		is_at_war = no		# Not allowed to change policies in this group while at war
+	}
+	option = {
+		name = "unrestricted_wars_eci"
+		policy_flags = {
+			unrestricted_wars_eci
+		}
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_independent_tribunals
+			}
+		}
+		valid = {
+			is_militarist = yes
+			NOR = {
+				has_civic = "civic_crusader_spirit"
+				has_civic = "civic_liberator"
+			}
+		}
+		modifier = {
+			country_trust_cap_add = -50
+		}
+		AI_weight = {
+			modifier = {
+				factor = 10
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				is_militarist = yes
+			}
+			modifier = {
+				factor = 10
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = purger
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_independent_tribunals"
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+		}
+	}
+	option = {
+		name = "unrestricted_wars"
+		policy_flags = {
+			unrestricted_wars
+		}
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_last_resort_doctrine
+			}
+		}
+		valid = {
+			NOR = {
+				has_ethic = "ethic_fanatic_pacifist"
+				has_ethic = "ethic_fanatic_militarist"
+				has_civic = "civic_crusader_spirit"
+				has_civic = "civic_liberator"
+			}
+		}
+		modifier = {
+			damage_vs_rival_mult = 0.15
+		}
+		AI_weight = {
+			modifier = {
+				factor = 10
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				NOT = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+			modifier = {
+				factor = 10
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = purger
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_ethic = "ethic_pacifist"
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+		}
+	}
+	option = {
+		name = "liberation_wars"
+		policy_flags = {
+			liberation_wars
+		}
+		potential = {
+			NOT = {
+				has_ethic = ethic_gestalt_consciousness
+			}
+		}
+		valid = {
+			NOR = {
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_inwards_perfection"
+			}
+		}
+		modifier = {
+			damage_vs_superior_empires_mult = 0.15
+		}
+		on_enabled = {
+			hidden_effect = {
+				check_casus_belli_valid = {
+					type = cb_ideology
+				}
+			}
+		}
+		on_disabled = {
+			hidden_effect = {
+				check_casus_belli_valid = {
+					type = cb_ideology
+				}
+			}
+		}
+		AI_weight = {
+			modifier = {
+				factor = 2
+				OR = {
+					has_valid_ai_personality = no
+					is_ai = no
+				}
+				has_ethic = "ethic_pacifist"
+			}
+			modifier = {
+				factor = 2
+				has_valid_ai_personality = yes
+				is_ai = yes
+				OR = {
+					has_ai_personality_behaviour = conqueror
+					has_ai_personality_behaviour = subjugator
+					has_ai_personality_behaviour = liberator
+				}
+			}
+			modifier = {
+				factor = 20
+				OR = {
+					has_valid_civic = civic_shared_burden
+					has_valid_civic = civic_advanced_socialism
+				}
+			}
+		}
+	}
+	option = {
+		name = "no_wars"
+		policy_flags = {
+			no_wars
+		}
+		valid = {
+			is_militarist = no
+			NOR = {
+				has_valid_civic = "civic_fanatic_purifiers"
+				has_valid_civic = "civic_hive_devouring_swarm"
+				has_valid_civic = "civic_machine_terminator"
+				has_civic = "civic_crusader_spirit"
+				has_civic = "civic_liberator"
+			}
+		}
+		modifier = {
+			starbase_defensive_war_ship_build_speed_mult = 0.25
+			ship_home_territory_fire_rate_mult = 0.15
+		}
+		AI_weight = {
+			modifier = {
+				factor = 5
+				has_ethic = "ethic_fanatic_pacifist"
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					has_ethic = "ethic_fanatic_pacifist"
+				}
+			}
+		}
+	}
+}
+
 # 战争学说
 war_doctrine = {
 	potential = {
@@ -1102,7 +1325,8 @@ war_doctrine = {
 		policy_flags = {
 		}
 		modifier = {
-			ship_home_territory_fire_rate_mult = 0.15
+			ship_home_territory_fire_rate_mult = 0.2
+			shipclass_starbase_damage_mult = 0.15
 		}
 		AI_weight = {
 			factor = 1
@@ -1315,7 +1539,7 @@ war_doctrine = {
 		policy_flags = {
 		}
 		modifier = {
-			ship_fire_rate_mult = 0.5
+			ship_fire_rate_mult = 1
 			ship_speed_mult = 0.15
 			ship_disengage_chance_reduction = 1
 			ship_emergency_ftl_min_days_mult = 1
@@ -1340,7 +1564,7 @@ war_doctrine = {
 		policy_flags = {
 		}
 		modifier = {
-			ship_fire_rate_mult = 0.66
+			ship_fire_rate_mult = 1.66
 			ship_speed_mult = 0.66
 			ship_disengage_chance_reduction = 10
 			ship_emergency_ftl_min_days_mult = 1
@@ -1369,8 +1593,8 @@ war_doctrine = {
 			shipsize_destroyer_hull_add = 200
 			country_naval_cap_mult = 1
 			command_limit_add = 80
-			ship_hull_regen_add_perc = 0.05
-			ship_armor_regen_add_perc = 0.05
+			ship_hull_regen_add_perc = 1
+			ship_armor_regen_add_perc = 1
 		}
 		AI_weight = {
 			factor = 100000
@@ -1391,168 +1615,13 @@ war_doctrine = {
 		policy_flags = {
 		}
 		modifier = {
-			ship_weapon_damage = 0.64
-			ship_weapon_range_mult = 0.32
+			ship_weapon_damage = 1.28
+			ship_weapon_range_mult = 0.64
 			ship_accuracy_add = 16
 			ship_tracking_add = 16
 		}
 		AI_weight = {
 			factor = 100000
-		}
-	}
-}
-
-# 战争哲学
-war_philosophy = {
-	potential = {
-	}
-	allow = {
-		is_at_war = no		# Not allowed to change policies in this group while at war
-	}
-	option = {
-		name = "unrestricted_wars"
-		policy_flags = {
-			unrestricted_wars
-		}
-		in_breach_of = {
-			{
-				key = resolution_rulesofwar_last_resort_doctrine
-			}
-		}
-		valid = {
-			NOR = {
-				has_ethic = "ethic_pacifist"
-				has_ethic = "ethic_fanatic_pacifist"
-				has_valid_civic = "civic_inwards_perfection"
-				has_civic = "civic_crusader_spirit"
-				has_civic = "civic_liberator"
-			}
-		}
-		AI_weight = {
-			modifier = {
-				factor = 10
-				OR = {
-					has_valid_ai_personality = no
-					is_ai = no
-				}
-				NOT = {
-					has_ethic = "ethic_pacifist"
-					has_ethic = "ethic_fanatic_pacifist"
-				}
-			}
-			modifier = {
-				factor = 10
-				has_valid_ai_personality = yes
-				is_ai = yes
-				OR = {
-					has_ai_personality_behaviour = conqueror
-					has_ai_personality_behaviour = subjugator
-					has_ai_personality_behaviour = purger
-				}
-			}
-			modifier = {
-				factor = 0.1
-				has_valid_ai_personality = yes
-				is_ai = yes
-				is_galactic_community_member = yes
-				OR = {
-					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
-					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
-				}
-			}
-			modifier = {
-				factor = 0
-				OR = {
-					has_ethic = "ethic_pacifist"
-					has_ethic = "ethic_fanatic_pacifist"
-				}
-			}
-		}
-	}
-	option = {
-		name = "liberation_wars"
-		policy_flags = {
-			liberation_wars
-		}
-		potential = {
-			NOT = {
-				has_ethic = ethic_gestalt_consciousness
-			}
-		}
-		valid = {
-			NOR = {
-				has_ethic = "ethic_fanatic_pacifist"
-				has_valid_civic = "civic_fanatic_purifiers"
-			}
-		}
-		on_enabled = {
-			hidden_effect = {
-				check_casus_belli_valid = {
-					type = cb_ideology
-				}
-			}
-		}
-		on_disabled = {
-			hidden_effect = {
-				check_casus_belli_valid = {
-					type = cb_ideology
-				}
-			}
-		}
-		AI_weight = {
-			modifier = {
-				factor = 2
-				OR = {
-					has_valid_ai_personality = no
-					is_ai = no
-				}
-				has_ethic = "ethic_pacifist"
-			}
-			modifier = {
-				factor = 2
-				has_valid_ai_personality = yes
-				is_ai = yes
-				OR = {
-					has_ai_personality_behaviour = conqueror
-					has_ai_personality_behaviour = subjugator
-					has_ai_personality_behaviour = liberator
-				}
-			}
-			modifier = {
-				factor = 20
-				OR = {
-					has_valid_civic = civic_shared_burden
-					has_valid_civic = civic_advanced_socialism
-				}
-			}
-		}
-	}
-	option = {
-		name = "no_wars"
-		policy_flags = {
-			no_wars
-		}
-		valid = {
-			NOR = {
-				has_ethic = "ethic_fanatic_militarist"
-				has_valid_civic = "civic_fanatic_purifiers"
-				has_valid_civic = "civic_hive_devouring_swarm"
-				has_valid_civic = "civic_machine_terminator"
-				has_civic = "civic_crusader_spirit"
-				has_civic = "civic_liberator"
-			}
-		}
-		AI_weight = {
-			modifier = {
-				factor = 5
-				has_ethic = "ethic_fanatic_pacifist"
-			}
-			modifier = {
-				factor = 0
-				NOT = {
-					has_ethic = "ethic_fanatic_pacifist"
-				}
-			}
 		}
 	}
 }
