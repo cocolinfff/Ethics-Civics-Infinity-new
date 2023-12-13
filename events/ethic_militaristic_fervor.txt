@@ -170,58 +170,28 @@ planet_event = {
 	}
 }
 
-first_contact_event = {
+country_event = {
 	id = ethic_militaristic_fervor.5
 	hide_window = yes
 	is_triggered_only = yes
 
 	trigger = {
-		OR = {
-			owner = {
-				has_ethic = ethic_fanatic_militarist
-				OR = {
-					has_valid_civic = civic_sparta_spirit
-					has_valid_civic = civic_glory_and_dream
-					has_valid_civic = civic_nazbol
-					has_valid_civic = civic_military_dictatorship
-				}
-				NOT = { has_country_flag = first_strike }
-			}
-			from = {
-				has_ethic = ethic_fanatic_militarist
-				OR = {
-					has_valid_civic = civic_sparta_spirit
-					has_valid_civic = civic_glory_and_dream
-					has_valid_civic = civic_nazbol
-					has_valid_civic = civic_military_dictatorship
-				}
-				NOT = { has_country_flag = first_strike }
-			}
-		}
+		has_ethic = ethic_fanatic_militarist
+		NOT = { has_country_flag = first_strike }
+		is_country_type = default
 		from = { is_country_type = default }
-		owner = { is_country_type = default }
 	}
 
 	immediate = {
 		if = {
 			limit = {
-				owner = {
-					has_ethic = ethic_fanatic_militarist
-					OR = {
-						has_valid_civic = civic_sparta_spirit
-						has_valid_civic = civic_glory_and_dream
-						has_valid_civic = civic_nazbol
-						has_valid_civic = civic_military_dictatorship
-					}
-					NOT = { has_country_flag = first_strike }
-				}
+				has_ethic = ethic_fanatic_militarist
+				NOT = { has_country_flag = first_strike }
 			}
-			owner = {
-				country_event = {
-					id = ethic_militaristic_fervor.6
-					days = 14
-					scopes = { from = from }
-				}
+			country_event = {
+				id = ethic_militaristic_fervor.6
+				days = 14
+				scopes = { from = from }
 			}
 		}
 	}
@@ -245,12 +215,6 @@ country_event = { # Finishing First Contact
 		}
 		From = { is_country_type = default }
 		has_ethic = ethic_fanatic_militarist
-		OR = {
-			has_valid_civic = civic_sparta_spirit
-			has_valid_civic = civic_glory_and_dream
-			has_valid_civic = civic_nazbol
-			has_valid_civic = civic_military_dictatorship
-		}
 		capital_scope = {
 			closest_system = {
 				limit = {
@@ -395,9 +359,9 @@ country_event = {
 				flag = random
 				effect = {
 					save_event_target_as = rebel_country
-					establish_contact = { who = event_target:from_country location = root }
-					establish_communications_no_message = event_target:from_country
-					event_target:from_country = {
+					establish_contact = { who = root location = root }
+					establish_communications_no_message = root
+					root = {
 						every_owned_planet = {
 							limit = { is_capital = no }
 							random_list = {
@@ -468,33 +432,34 @@ country_event = {
 					}
 					event_target:rebel_country = {
 						copy_techs_from = {
-							target = event_target:from_country
+							target = root
 						}
-						add_basic_resources_effect = { VALUE = 3000 }
-						add_manufactured_resources_effect = { VALUE = 1500 }
-						create_fleet_from_naval_cap = 0.2
-						random_owned_planet = {
-							last_created_fleet = {
-								set_location = prev
-							}
-						}
-						reroll_random = yes
-						create_fleet_from_naval_cap = 0.3
-						random_owned_planet = {
-							last_created_fleet = {
-								set_location = prev
-							}
-						}
-						reroll_random = yes
+						add_basic_resources_effect = { VALUE = 30000 }
+						add_manufactured_resources_effect = { VALUE = 15000 }
+						add_advanced_resources_effect = { VALUE = 1000 }
 						create_fleet_from_naval_cap = 0.4
-						random_owned_planet = {
+						random_system_within_border = {
 							last_created_fleet = {
 								set_location = prev
 							}
 						}
 						reroll_random = yes
 						create_fleet_from_naval_cap = 0.6
-						random_owned_planet = {
+						random_system_within_border = {
+							last_created_fleet = {
+								set_location = prev
+							}
+						}
+						reroll_random = yes
+						create_fleet_from_naval_cap = 0.8
+						random_system_within_border = {
+							last_created_fleet = {
+								set_location = prev
+							}
+						}
+						reroll_random = yes
+						create_fleet_from_naval_cap = 1.2
+						random_system_within_border = {
 							last_created_fleet = {
 								set_location = prev
 							}
@@ -504,14 +469,16 @@ country_event = {
 								set_location = event_target:rebel_country_capital
 							}
 						}
-						set_player = event_target:from_country
 						declare_war = {
-							target = event_target:from_country
+							target = root
 							name = {
-								key = NAME_WAR_OF_REVOLT
-								variable_string = "Root.Target.GetName"
+								key = NAME_Imperial_War
 							}
 							attacker_war_goal = "wg_imperial_war"
+						}
+						start_situation = {
+							type = situation_militaristic_fervor
+							target = this
 						}
 					}
 				}
@@ -566,14 +533,15 @@ country_event = {
 				flag = random
 				effect = {
 					save_event_target_as = rebel_country_1
-					establish_contact = { who = event_target:from_country location = root }
-					establish_communications_no_message = event_target:from_country
-					event_target:rebel_country = {
+					establish_contact = { who = root location = root }
+					establish_communications_no_message = root
+					event_target:rebel_country_1 = {
 						copy_techs_from = {
-							target = event_target:from_country
+							target = root
 						}
-						add_basic_resources_effect = { VALUE = 3000 }
-						add_manufactured_resources_effect = { VALUE = 1500 }
+						add_basic_resources_effect = { VALUE = 30000 }
+						add_manufactured_resources_effect = { VALUE = 15000 }
+						add_advanced_resources_effect = { VALUE = 1000 }
 						create_leader = {
 							species = event_target:rebel_country_1.owner_main_species
 							leader_age_min = 18
@@ -634,14 +602,6 @@ country_event = {
 								}
 							}
 						}
-						declare_war = {
-							target = event_target:from_country
-							name = {
-								key = NAME_Imperial_War
-								variable_string = "Root.Target.GetName"
-							}
-							attacker_war_goal = "wg_imperial_war"
-						}
 					}
 				}
 			}
@@ -663,14 +623,15 @@ country_event = {
 				flag = random
 				effect = {
 					save_event_target_as = rebel_country_2
-					establish_contact = { who = event_target:from_country location = root }
-					establish_communications_no_message = event_target:from_country
+					establish_contact = { who = root location = root }
+					establish_communications_no_message = root
 					event_target:rebel_country_2 = {
 						copy_techs_from = {
-							target = event_target:from_country
+							target = root
 						}
-						add_basic_resources_effect = { VALUE = 3000 }
-						add_manufactured_resources_effect = { VALUE = 1500 }
+						add_basic_resources_effect = { VALUE = 30000 }
+						add_manufactured_resources_effect = { VALUE = 15000 }
+						add_advanced_resources_effect = { VALUE = 1000 }
 						create_leader = {
 							species = event_target:rebel_country_2.owner_main_species
 							leader_age_min = 18
@@ -731,22 +692,6 @@ country_event = {
 								}
 							}
 						}
-						declare_war = {
-							target = event_target:from_country
-							name = {
-								key = NAME_Imperial_War
-								variable_string = "Root.Target.GetName"
-							}
-							attacker_war_goal = "wg_imperial_war"
-						}
-						declare_war = {
-							target = event_target:rebel_country_1
-							name = {
-								key = NAME_Imperial_War
-								variable_string = "Root.Target.GetName"
-							}
-							attacker_war_goal = "wg_imperial_war"
-						}
 					}
 				}
 			}
@@ -768,14 +713,15 @@ country_event = {
 				flag = random
 				effect = {
 					save_event_target_as = rebel_country_3
-					establish_contact = { who = event_target:from_country location = root }
-					establish_communications_no_message = event_target:from_country
+					establish_contact = { who = root location = root }
+					establish_communications_no_message = root
 					event_target:rebel_country_3 = {
 						copy_techs_from = {
-							target = event_target:from_country
+							target = root
 						}
-						add_basic_resources_effect = { VALUE = 3000 }
-						add_manufactured_resources_effect = { VALUE = 1500 }
+						add_basic_resources_effect = { VALUE = 30000 }
+						add_manufactured_resources_effect = { VALUE = 15000 }
+						add_advanced_resources_effect = { VALUE = 1000 }
 						create_leader = {
 							species = event_target:rebel_country_3.owner_main_species
 							leader_age_min = 18
@@ -836,35 +782,11 @@ country_event = {
 								}
 							}
 						}
-						declare_war = {
-							target = event_target:from_country
-							name = {
-								key = NAME_Imperial_War
-								variable_string = "Root.Target.GetName"
-							}
-							attacker_war_goal = "wg_imperial_war"
-						}
-						declare_war = {
-							target = event_target:rebel_country_1
-							name = {
-								key = NAME_Imperial_War
-								variable_string = "Root.Target.GetName"
-							}
-							attacker_war_goal = "wg_imperial_war"
-						}
-						declare_war = {
-							target = event_target:rebel_country_2
-							name = {
-								key = NAME_Imperial_War
-								variable_string = "Root.Target.GetName"
-							}
-							attacker_war_goal = "wg_imperial_war"
-						}
 					}
 				}
 			}
 		}
-		event_target:from_country = {
+		root = {
 			every_owned_planet = {
 				limit = { is_capital = no }
 				random_list = {
@@ -942,90 +864,144 @@ country_event = {
 			}
 		}
 		event_target:rebel_country_1 = {
-			create_fleet_from_naval_cap = 0.2
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = prev
-				}
-			}
-			reroll_random = yes
-			create_fleet_from_naval_cap = 0.3
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = prev
-				}
-			}
-			reroll_random = yes
 			create_fleet_from_naval_cap = 0.4
-			random_owned_planet = {
+			random_system_within_border = {
 				last_created_fleet = {
 					set_location = prev
 				}
 			}
 			reroll_random = yes
 			create_fleet_from_naval_cap = 0.6
-			random_owned_planet = {
+			random_system_within_border = {
 				last_created_fleet = {
 					set_location = prev
 				}
+			}
+			reroll_random = yes
+			create_fleet_from_naval_cap = 0.8
+			random_system_within_border = {
+				last_created_fleet = {
+					set_location = prev
+				}
+			}
+			reroll_random = yes
+			create_fleet_from_naval_cap = 1.2
+			random_system_within_border = {
+				last_created_fleet = {
+					set_location = prev
+				}
+			}
+			declare_war = {
+				target = root
+				name = {
+					key = NAME_Imperial_War
+				}
+				attacker_war_goal = "wg_imperial_war"
+			}
+			start_situation = {
+				type = situation_militaristic_fervor
+				target = this
 			}
 		}
 		event_target:rebel_country_2 = {
-			create_fleet_from_naval_cap = 0.2
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = prev
-				}
-			}
-			reroll_random = yes
-			create_fleet_from_naval_cap = 0.3
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = prev
-				}
-			}
-			reroll_random = yes
 			create_fleet_from_naval_cap = 0.4
-			random_owned_planet = {
+			random_system_within_border = {
 				last_created_fleet = {
 					set_location = prev
 				}
 			}
 			reroll_random = yes
 			create_fleet_from_naval_cap = 0.6
-			random_owned_planet = {
+			random_system_within_border = {
 				last_created_fleet = {
 					set_location = prev
 				}
+			}
+			reroll_random = yes
+			create_fleet_from_naval_cap = 0.8
+			random_system_within_border = {
+				last_created_fleet = {
+					set_location = prev
+				}
+			}
+			reroll_random = yes
+			create_fleet_from_naval_cap = 1.2
+			random_system_within_border = {
+				last_created_fleet = {
+					set_location = prev
+				}
+			}
+			declare_war = {
+				target = root
+				name = {
+					key = NAME_Imperial_War
+				}
+				attacker_war_goal = "wg_imperial_war"
+			}
+			declare_war = {
+				target = event_target:rebel_country_1
+				name = {
+					key = NAME_Imperial_War
+				}
+				attacker_war_goal = "wg_imperial_war"
+			}
+			start_situation = {
+				type = situation_militaristic_fervor
+				target = this
 			}
 		}
 		event_target:rebel_country_3 = {
-			create_fleet_from_naval_cap = 0.2
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = prev
-				}
-			}
-			reroll_random = yes
-			create_fleet_from_naval_cap = 0.3
-			random_owned_planet = {
-				last_created_fleet = {
-					set_location = prev
-				}
-			}
-			reroll_random = yes
 			create_fleet_from_naval_cap = 0.4
-			random_owned_planet = {
+			random_system_within_border = {
 				last_created_fleet = {
 					set_location = prev
 				}
 			}
 			reroll_random = yes
 			create_fleet_from_naval_cap = 0.6
-			random_owned_planet = {
+			random_system_within_border = {
 				last_created_fleet = {
 					set_location = prev
 				}
+			}
+			reroll_random = yes
+			create_fleet_from_naval_cap = 0.8
+			random_system_within_border = {
+				last_created_fleet = {
+					set_location = prev
+				}
+			}
+			reroll_random = yes
+			create_fleet_from_naval_cap = 1.2
+			random_system_within_border = {
+				last_created_fleet = {
+					set_location = prev
+				}
+			}
+			declare_war = {
+				target = root
+				name = {
+					key = NAME_Imperial_War
+				}
+				attacker_war_goal = "wg_imperial_war"
+			}
+			declare_war = {
+				target = event_target:rebel_country_1
+				name = {
+					key = NAME_Imperial_War
+				}
+				attacker_war_goal = "wg_imperial_war"
+			}
+			declare_war = {
+				target = event_target:rebel_country_2
+				name = {
+					key = NAME_Imperial_War
+				}
+				attacker_war_goal = "wg_imperial_war"
+			}
+			start_situation = {
+				type = situation_militaristic_fervor
+				target = this
 			}
 		}
 	}
