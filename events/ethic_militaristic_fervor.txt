@@ -177,7 +177,7 @@ country_event = {
 
 	trigger = {
 		has_ethic = ethic_fanatic_militarist
-		NOT = { has_country_flag = first_strike }
+		is_at_war = no
 		is_country_type = default
 		from = { is_country_type = default }
 	}
@@ -186,7 +186,6 @@ country_event = {
 		if = {
 			limit = {
 				has_ethic = ethic_fanatic_militarist
-				NOT = { has_country_flag = first_strike }
 			}
 			country_event = {
 				id = ethic_militaristic_fervor.6
@@ -210,9 +209,6 @@ country_event = { # Finishing First Contact
 	is_triggered_only = yes
 
 	trigger = {
-		NOT = {
-			has_country_flag = first_strike
-		}
 		From = { is_country_type = default }
 		has_ethic = ethic_fanatic_militarist
 		capital_scope = {
@@ -233,7 +229,6 @@ country_event = { # Finishing First Contact
 
 	immediate = {
 		set_country_flag = encountered_alien_life
-		set_country_flag = first_strike
 		set_country_flag = finished_sapient_first_contact
 		capital_scope = {
 			closest_system = {
@@ -306,7 +301,19 @@ country_event = { # Finishing First Contact
 			is_pacifist = no
 		}
 		name = ethic_militaristic_fervor.6.c
-		custom_tooltip = ethic_militaristic_fervor.6.c.tt
+		if = {
+			limit = {
+				NOT = {
+					any_situation = {
+						is_situation_type = situation_militaristic_fervor
+					}
+				}
+			}
+			custom_tooltip = ethic_militaristic_fervor.6.c.tt
+		}
+		else = {
+			custom_tooltip = ethic_militaristic_fervor.6.c.tt.2
+		}
 		hidden_effect = {
 			event_target:target_system = {
 				starbase.fleet = { destroy_fleet = this }
@@ -330,11 +337,21 @@ country_event = { # Finishing First Contact
 					set_cloaking_active = yes
 				}
 			}
-			start_situation = {
-				type = situation_militaristic_fervor
-				target = root
+			if = {
+				limit = {
+					NOT = {
+						any_situation = {
+							is_situation_type = situation_militaristic_fervor
+						}
+					}
+				}
+				custom_tooltip = ethic_militaristic_fervor.6.c.tt
+				start_situation = {
+					type = situation_militaristic_fervor
+					target = root
+				}
+				set_ai_personality = warmonger
 			}
-			set_ai_personality = warmonger
 			from = {
 				add_opinion_modifier = {
 					who = root
@@ -1029,5 +1046,49 @@ country_event = {
 	option = {
 		name = ethic_militaristic_fervor.9.a
 		custom_tooltip = ethic_militaristic_fervor.9.tooltip
+	}
+}
+
+#AI军国主义狂热，若舰队实力足够且和平，每年宣战最弱的邻居
+country_event = {
+	id = ethic_militaristic_fervor.12
+	is_triggered_only = yes
+	hide_window = yes
+	trigger = {
+		any_situation = {
+			is_situation_type = situation_militaristic_fervor
+		}
+		is_at_war = no
+		used_naval_capacity_percent >= 0.8
+		any_neighbor_country = {
+			NOT = {
+				has_truce = root
+			}
+		}
+	}
+	immediate = {
+		ordered_neighbor_country = {
+			order_by = trigger:fleet_power
+			position = 0
+			inverse = yes
+			random_list = {
+				1 = {
+					root = {
+						declare_war = {
+							target = prev
+							attacker_war_goal = wg_subjugation
+						}
+					}
+				}
+				1 = {
+					root = {
+						declare_war = {
+							target = prev
+							attacker_war_goal = wg_unrestricted_wars_eci
+						}
+					}
+				}
+			}
+		}
 	}
 }
