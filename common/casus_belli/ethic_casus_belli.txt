@@ -1,5 +1,5 @@
 cb_despoliation = {
-	show_in_diplomacy = no
+	show_in_diplomacy = yes
 	show_notification = no
 	potential = {
 		is_country_type = default
@@ -19,7 +19,7 @@ cb_despoliation = {
 }
 
 cb_containment_human = {
-	show_in_diplomacy = no
+	show_in_diplomacy = yes
 	show_notification = no
 	potential = {
 		is_country_type = default
@@ -41,29 +41,8 @@ cb_containment_human = {
 	}
 }
 
-cb_purification = {
-	show_in_diplomacy = no
-	show_notification = no
-	potential = {
-		OR = {
-			is_berserk_fallen_machine_empire = yes
-			has_valid_civic = civic_fanatic_purifiers
-			has_valid_civic = civic_machine_terminator
-			has_valid_civic = civic_ideological_police
-		}
-	}
-	is_valid = {
-		has_total_war_cb = yes
-		NOT = { is_overlord_to = FROM }
-		OR = {
-			is_subject = no
-			overlord = { NOT = { is_same_value = from } }
-		}
-	}
-}
-
 cb_invasion_of_indigenous_peoples = {
-	show_in_diplomacy = no
+	show_in_diplomacy = yes
 	show_notification = no
 	potential = {
 		NOT = { is_country_type = eci_primitive }
@@ -76,18 +55,20 @@ cb_invasion_of_indigenous_peoples = {
 }
 
 cb_unrestricted_wars_eci = {
+	show_in_diplomacy = yes
 	show_notification = no
 	potential = {
 		has_policy_flag = unrestricted_wars_eci
 	}
 	is_valid = {
-		has_total_war_cb = yes
-		from = { NOT = { is_country_type = fallen_empire } }
-		NOT = { is_overlord_to = FROM }
-		NOT = { is_in_federation_with = FROM }
-		OR = {
-			is_subject = no
-			overlord = { NOT = { is_same_value = from } }
+		NOT = { is_in_federation_with = from }
+		NOT = { from = { is_overlord_to = root } }
+		NOT = { root = { is_overlord_to = from } }
+		if = {
+			limit = {
+				exists = from.overlord
+			}
+			NOT = { from.overlord = { is_same_value = root.overlord } }
 		}
 	}
 }
