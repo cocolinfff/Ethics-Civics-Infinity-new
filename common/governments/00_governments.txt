@@ -751,7 +751,7 @@ gov_peoples_commissariat = {
 		OR = {
 			AND = {
 				has_ethic = ethic_fanatic_socialism
-				NOT = { has_ethic = ethic_authoritarian }
+				is_authoritarian = no
 			}
 			has_valid_civic = civic_peoples_republic
 			is_valid_socialistic = yes
@@ -761,7 +761,10 @@ gov_peoples_commissariat = {
 		base = 650
 		modifier = {
 			factor = 20
-			has_valid_civic = civic_peoples_republic
+			OR = {
+				has_valid_civic = civic_peoples_republic
+				is_valid_socialistic = yes
+			}
 		}
 		modifier = {
 			factor = 10
@@ -784,10 +787,21 @@ gov_workers_cooperative = {
 	ruler_title_female = RT_UNION
 	should_force_rename = yes
 	possible = {
-		has_valid_civic = civic_world_cooperative
+		OR = {
+			has_valid_civic = civic_state_owned_enterprises
+			has_valid_civic = civic_world_cooperative
+		}
 	}
 	weight = {
-		base = 9999999
+		base = 650
+		modifier = {
+			factor = 10
+			has_valid_civic = civic_state_owned_enterprises
+		}
+		modifier = {
+			factor = 99999
+			has_valid_civic = civic_world_cooperative
+		}
 	}
 }
 
@@ -801,17 +815,23 @@ gov_bur_collectivism = {
 		OR = {
 			AND = {
 				has_ethic = ethic_fanatic_socialism
-				has_ethic = ethic_authoritarian
+				is_authoritarian = yes
 			}
 			has_valid_civic = civic_glorious_pioneer
-			has_valid_civic = civic_characteristic_socialism
+			is_characteristic_socialism = yes
+			is_labor_aristocracy = yes
 		}
 	}
 	weight = {
 		base = 650
 		modifier = {
 			factor = 20
-			has_ethic = ethic_authoritarian
+			OR = {
+				has_ethic = ethic_authoritarian
+				has_valid_civic = civic_glorious_pioneer
+				is_characteristic_socialism = yes
+				is_labor_aristocracy = yes
+			}
 		}
 		modifier = {
 			factor = 10
@@ -836,23 +856,57 @@ gov_dictatorship_of_the_people = {
 	ruler_title_female = RT_LABOUR
 	should_force_rename = yes
 	possible = {
+		has_authority = auth_dictatorial
 		OR = {
-			has_authority = auth_dictatorial
 			AND = {
-				has_authority = auth_imperial
-				is_valid_labor_aristocracy = yes
+				has_ethic = ethic_fanatic_socialism
+				is_authoritarian = no
 			}
-		}
-		OR = {
-			has_ethic = ethic_fanatic_socialism
-			has_valid_civic = civic_peoples_republic
 			is_valid_socialistic = yes
-			has_valid_civic = civic_glorious_pioneer
+			has_valid_civic = civic_peoples_republic
 			
 		}
+	}
+	weight = {
+		base = 650
+		modifier = {
+			factor = 10
+			OR = {
+				has_valid_civic = civic_peoples_republic
+				is_valid_socialistic = yes
+			}
+		}
+		modifier = {
+			factor = 5
+			is_valid_socialistic = yes
+		}
+		modifier = {
+			factor = 0.1
+			NOT = { has_ethic = ethic_fanatic_socialism }
+		}
+	}
+}
+
+#家长制独裁（独裁制、君主制）
+gov_parental_dictatorship = {
+	ruler_title = RT_GENSEK
+	ruler_title_female = RT_GENSEK
+	ruler_title = RT_LABOUR
+	ruler_title_female = RT_LABOUR
+	should_force_rename = yes
+	possible = {
 		OR = {
-			NOT = { has_ethic = ethic_fanatic_authoritarian }
+			has_authority = auth_dictatorial
+			has_authority = auth_imperial
+		}
+		OR = {
+			AND = {
+				has_ethic = ethic_fanatic_socialism
+				is_authoritarian = no
+			}
 			is_valid_labor_aristocracy = yes
+			has_valid_civic = civic_glorious_pioneer
+
 		}
 	}
 	weight = {
