@@ -1396,167 +1396,171 @@ country_event = {
 # 流浪星球
 namespace = ethic_wander_planet
 country_event = {
+    id = ethic_wander_planet.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_origin = origin_wandering_planet
+        NOT = { has_global_flag = FBCIV_enable }
+    }
+    immediate = {
+        set_country_type = default_ev
+        if = {
+            limit = {
+                has_food_upkeep = yes
+                is_catalytic_empire = no
+            }
+            create_fleet = {
+                name = wandering_planet
+                effect = {
+                    set_location = root.capital_scope
+                    set_owner = root
+                    create_ship = {
+                        name = wandering_planet
+                        design = NAME_WANDERING_PLANET
+                    }
+                }
+                settings = {
+                    is_boss = no
+                    can_change_leader = no
+                    can_disband = no
+                    can_change_composition = no
+                    uses_naval_capacity = no
+                    can_upgrade = no
+                }
+            }
+            last_created_fleet = {
+                every_owned_ship = {
+                    set_name = {
+                        key = ECIwanderplanet_home
+                        variable_string = "[root.capital_scope.GetName]"
+                    }
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_food_upkeep = no
+                is_catalytic_empire = no
+            }
+            create_fleet = {
+                name = wandering_planet
+                effect = {
+                    set_location = root.capital_scope
+                    set_owner = root
+                    create_ship = {
+                        name = wandering_planet
+                        design = NAME_WANDERING_PLANET_NOT_FOOD
+                    }
+                }
+                settings = {
+                    is_boss = no
+                    can_change_leader = no
+                    can_disband = no
+                    can_change_composition = no
+                    uses_naval_capacity = no
+                    can_upgrade = no
+                }
+            }
+            last_created_fleet = {
+                every_owned_ship = {
+                    set_name = {
+                        key = ECIwanderplanet_home
+                        variable_string = "[root.capital_scope.GetName]"
+                    }
+                }
+            }
+        }
+        if = {
+            limit = { is_catalytic_empire = yes }
+            create_fleet = {
+                name = wandering_planet
+                effect = {
+                    set_location = root.capital_scope
+                    set_owner = root
+                    create_ship = {
+                        name = wandering_planet
+                        design = NAME_WANDERING_PLANET_IS_CATALYTIC_EMPIRE
+                    }
+                }
+                settings = {
+                    is_boss = no
+                    can_change_leader = no
+                    can_disband = no
+                    can_change_composition = no
+                    uses_naval_capacity = no
+                    can_upgrade = no
+                }
+            }
+            last_created_fleet = {
+                every_owned_ship = {
+                    set_name = {
+                        key = ECIwanderplanet_home
+                        variable_string = "[root.capital_scope.GetName]"
+                    }
+                }
+            }
+        }
+        create_fleet = {
+            effect = {
+                set_owner = root
+                create_ship = {
+                    name = random
+                    random_existing_design = explorer_vessel
+                }
+                set_fleet_stance = passive
+                set_location = root.capital_scope
+                owner = {
+                    create_leader = {
+                        class = scientist
+                        sub_type = survey
+                        name = random
+                        species = owner_main_species
+                    }
+                }
+                last_created_leader = {
+                    add_trait = trait_ruler_home_in_the_sky
+                }
+                set_leader = last_created_leader
+            }
+        }
+        create_fleet = {
+            effect = {
+                set_owner = root
+                create_ship = {
+                    name = random
+                    random_existing_design = engineer_vessel
+                }
+                set_fleet_stance = evasive
+                set_location = root.capital_scope
+            }
+        }
+        capital_scope = {
+            remove_planet = yes
+            solar_system = {
+                every_fleet_in_system = {
+                    limit = {
+                        OR = {
+                            is_normal_starbase = yes
+                            is_ship_size = starbase_starport
+                        }
+                    }
+                    delete_fleet = this
+                }
+            }
+        }
+        country_event = { id = ethic_wander_planet.1 }
+    }
+}
+country_event = {
     id = ethic_wander_planet.1
     title = ethic_wander_planet.1
     desc = ethic_wander_planet.1.desc
     picture = GFX_origin_wandering_planet
     is_triggered_only = yes
-    trigger = {
-        has_origin = origin_wandering_planet
-    }
     immediate = {
         capital_star = {
             save_global_event_target_as = ECIwandering_planethomestar
-        }
-        if = {
-            limit = {
-                NOT = { has_global_flag = FBCIV_enable }
-            }
-            set_country_type = default_ev
-            if = {
-                limit = {
-                    has_food_upkeep = yes
-                    is_catalytic_empire = no
-                }
-                create_fleet = {
-                    name = wandering_planet
-                    effect = {
-                        set_location = root.capital_scope
-                        set_owner = root
-                        create_ship = {
-                            name = wandering_planet
-                            design = NAME_WANDERING_PLANET
-                        }
-                    }
-                    settings = {
-                        is_boss = no
-                        can_change_leader = no
-                        can_disband = no
-                        can_change_composition = no
-                        uses_naval_capacity = no
-                        can_upgrade = no
-                    }
-                }
-                last_created_fleet = {
-                    every_owned_ship = {
-                        set_name = {
-                            key = ECIwanderplanet_home
-                            variable_string = "[root.capital_scope.GetName]"
-                        }
-                    }
-                }
-            }
-            if = {
-                limit = {
-                    has_food_upkeep = no
-                    is_catalytic_empire = no
-                }
-                create_fleet = {
-                    name = wandering_planet
-                    effect = {
-                        set_location = root.capital_scope
-                        set_owner = root
-                        create_ship = {
-                            name = wandering_planet
-                            design = NAME_WANDERING_PLANET_NOT_FOOD
-                        }
-                    }
-                    settings = {
-                        is_boss = no
-                        can_change_leader = no
-                        can_disband = no
-                        can_change_composition = no
-                        uses_naval_capacity = no
-                        can_upgrade = no
-                    }
-                }
-                last_created_fleet = {
-                    every_owned_ship = {
-                        set_name = {
-                            key = ECIwanderplanet_home
-                            variable_string = "[root.capital_scope.GetName]"
-                        }
-                    }
-                }
-            }
-            if = {
-                limit = { is_catalytic_empire = yes }
-                create_fleet = {
-                    name = wandering_planet
-                    effect = {
-                        set_location = root.capital_scope
-                        set_owner = root
-                        create_ship = {
-                            name = wandering_planet
-                            design = NAME_WANDERING_PLANET_IS_CATALYTIC_EMPIRE
-                        }
-                    }
-                    settings = {
-                        is_boss = no
-                        can_change_leader = no
-                        can_disband = no
-                        can_change_composition = no
-                        uses_naval_capacity = no
-                        can_upgrade = no
-                    }
-                }
-                last_created_fleet = {
-                    every_owned_ship = {
-                        set_name = {
-                            key = ECIwanderplanet_home
-                            variable_string = "[root.capital_scope.GetName]"
-                        }
-                    }
-                }
-            }
-            create_fleet = {
-                effect = {
-                    set_owner = root
-                    create_ship = {
-                        name = random
-                        random_existing_design = explorer_vessel
-                    }
-                    set_fleet_stance = passive
-                    set_location = root.capital_scope
-                    owner = {
-                        create_leader = {
-                            class = scientist
-                            sub_type = survey
-                            name = random
-                            species = owner_main_species
-                        }
-                    }
-                    last_created_leader = {
-                        add_trait = trait_ruler_home_in_the_sky
-                    }
-                    set_leader = last_created_leader
-                }
-            }
-            create_fleet = {
-                effect = {
-                    set_owner = root
-                    create_ship = {
-                        name = random
-                        random_existing_design = engineer_vessel
-                    }
-                    set_fleet_stance = evasive
-                    set_location = root.capital_scope
-                }
-            }
-            capital_scope = {
-                remove_planet = yes
-                solar_system = {
-                    every_fleet_in_system = {
-                        limit = {
-                            OR = {
-                                is_normal_starbase = yes
-                                is_ship_size = starbase_starport
-                            }
-                        }
-                        delete_fleet = this
-                    }
-                }
-            }
         }
         country_event = {
             id = ethic_wander_planet.2

@@ -1382,3 +1382,100 @@ country_event = {
         }
     }
 }
+
+# 论坛水友
+namespace = eci_civic_forum_friends
+event = {
+    id = eci_civic_forum_friends.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    immediate = {
+        every_country = {
+            limit = {
+                any_country = {
+                    OR = {
+                        has_civic = civic_forum_friends
+                        has_civic = civic_forum_friends_corporate
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    is_ai = no
+                    OR = {
+                        has_civic = civic_forum_friends
+                        has_civic = civic_forum_friends_corporate
+                    }
+                }
+                save_event_target_as = civic_forum_friends_player
+                set_country_flag = civic_forum_friends_locked
+            }
+            if = {
+                limit = {
+                    is_default_empire = yes
+                    is_xenophobe = no
+                    NOR = {
+                        has_civic = civic_forum_friends
+                        has_civic = civic_forum_friends_corporate
+                    }
+                    NOR = {
+                        is_gestalt = yes
+                        has_authority = auth_corporate
+                        has_civic = civic_galactic_sovereign_megacorp
+                        has_civic = civic_family_business
+                        has_civic = civic_world_cooperative
+                    }
+                }
+                force_add_civic = civic_forum_friends
+                set_country_flag = civic_forum_friends_locked
+                join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
+            }
+            if = {
+                limit = {
+                    is_default_empire = yes
+                    is_xenophobe = no
+                    NOR = {
+                        has_civic = civic_forum_friends
+                        has_civic = civic_forum_friends_corporate
+                    }
+                }
+                random_list = {
+                    10 = {
+                        force_add_civic = civic_forum_friends
+                        set_country_flag = civic_forum_friends_locked
+                        join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
+                        modifier = {
+                            factor = 0
+                            OR = {
+                                is_gestalt = yes
+                                has_authority = auth_corporate
+                                has_civic = civic_galactic_sovereign_megacorp
+                                has_civic = civic_family_business
+                                has_civic = civic_world_cooperative
+                            }
+                        }
+                    }
+                    10 = {
+                        force_add_civic = civic_forum_friends_corporate
+                        set_country_flag = civic_forum_friends_locked
+                        join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
+                        modifier = {
+                            factor = 0
+                            OR = {
+                                is_gestalt = yes
+                                NOR = {
+                                    has_authority = auth_corporate
+                                    has_civic = civic_galactic_sovereign_megacorp
+                                    has_civic = civic_family_business
+                                    has_civic = civic_world_cooperative
+                                }
+                            }
+                        }
+                    }
+                    60 = {}
+                }
+            }
+        }
+    }
+}
