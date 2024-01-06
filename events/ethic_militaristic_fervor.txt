@@ -163,6 +163,11 @@ country_event = {
 
 	trigger = {
 		has_ethic = ethic_fanatic_militarist
+		OR = {
+			is_xenophobe = yes
+			is_spiritualist = yes
+			is_authoritarian = yes
+		}
 		is_at_war = no
 		is_country_type = default
 		from = { is_country_type = default }
@@ -197,6 +202,11 @@ country_event = { # Finishing First Contact
 	trigger = {
 		From = { is_country_type = default }
 		has_ethic = ethic_fanatic_militarist
+		OR = {
+			is_xenophobe = yes
+			is_spiritualist = yes
+			is_authoritarian = yes
+		}
 		capital_scope = {
 			closest_system = {
 				limit = {
@@ -242,7 +252,7 @@ country_event = { # Finishing First Contact
 			}
 		}
 		ai_chance = {
-			base = 1
+			base = 6
 			modifier = {
 				multiply = 0
 				has_civic = civic_fanatic_purifiers
@@ -250,6 +260,14 @@ country_event = { # Finishing First Contact
 			modifier = {
 				multiply = 0
 				has_civic = civic_sparta_spirit
+			}
+			modifier = {
+				divide = 3
+				OR = {
+					has_ethic = ethic_fanatic_xenophobe
+					has_ethic = ethic_fanatic_spiritualist
+					has_ethic = ethic_fanatic_authoritarian
+				}
 			}
 		}
 	}
@@ -271,7 +289,7 @@ country_event = { # Finishing First Contact
 			}
 		}
 		ai_chance = {
-			base = 1
+			base = 3
 			modifier = {
 				multiply = 0
 				has_civic = civic_fanatic_purifiers
@@ -279,6 +297,14 @@ country_event = { # Finishing First Contact
 			modifier = {
 				multiply = 0
 				has_civic = civic_sparta_spirit
+			}
+			modifier = {
+				divide = 1.5
+				OR = {
+					has_ethic = ethic_fanatic_xenophobe
+					has_ethic = ethic_fanatic_spiritualist
+					has_ethic = ethic_fanatic_authoritarian
+				}
 			}
 		}
 	}
@@ -350,6 +376,68 @@ country_event = { # Finishing First Contact
 		}
 		ai_chance = {
 			base = 1
+			modifier = {
+				multiply = 0
+				OR = {
+					AND = {
+						from = {
+							is_egalitarian = yes
+						}
+						is_egalitarian = yes
+					}
+					AND = {
+						from = {
+							is_socialism = yes
+						}
+						is_egalitarian = yes
+					}
+					AND = {
+						from = {
+							is_egalitarian = yes
+						}
+						is_egalitarian = yes
+					}
+				}
+				NOR = {
+					is_xenophobe = yes
+					AND = {
+						from = {
+							is_socialism = yes
+						}
+						is_capitalism = yes
+					}
+					AND = {
+						from = {
+							is_materialist = yes
+						}
+						is_spiritualist = yes
+					}
+					AND = {
+						from = {
+							is_egalitarian = yes
+						}
+						is_authoritarian = yes
+					}
+					AND = {
+						from = {
+							is_capitalism = yes
+						}
+						is_socialism = yes
+					}
+					AND = {
+						from = {
+							is_spiritualist = yes
+						}
+						is_materialist = yes
+					}
+					AND = {
+						from = {
+							is_authoritarian = yes
+						}
+						is_egalitarian = yes
+					}
+				}
+			}
 		}
 	}
 }
@@ -1061,12 +1149,97 @@ country_event = {
 				NOT = {
 					has_truce = root
 				}
+				OR = {
+					NOR = {
+						AND = {
+							root = {
+								is_egalitarian = yes
+							}
+							is_egalitarian = yes
+						}
+						AND = {
+							root = {
+								is_socialism = yes
+							}
+							is_egalitarian = yes
+						}
+						AND = {
+							root = {
+								is_egalitarian = yes
+							}
+							is_egalitarian = yes
+						}
+					}
+					OR = {
+						root = {
+							is_xenophobe = yes
+						}
+						AND = {
+							root = {
+								is_socialism = yes
+							}
+							is_capitalism = yes
+						}
+						AND = {
+							root = {
+								is_materialist = yes
+							}
+							is_spiritualist = yes
+						}
+						AND = {
+							root = {
+								is_egalitarian = yes
+							}
+							is_authoritarian = yes
+						}
+						AND = {
+							root = {
+								is_capitalism = yes
+							}
+							is_socialism = yes
+						}
+						AND = {
+							root = {
+								is_spiritualist = yes
+							}
+							is_materialist = yes
+						}
+						AND = {
+							root = {
+								is_authoritarian = yes
+							}
+							is_egalitarian = yes
+						}
+					}
+				}
 			}
 			order_by = trigger:fleet_power
 			position = 0
 			inverse = yes
 			random_list = {
 				1 = {
+					modifier = {
+						add = 1
+						root = {
+							OR = {
+								has_ethic = ethic_capitalism
+								has_ethic = ethic_xenophile
+							}
+							NOR = {
+								has_ethic = ethic_fanatic_capitalism
+								has_ethic = ethic_fanatic_xenophile
+							}
+						}
+					}
+					modifier = {
+						add = 2
+						root = {
+							OR = {
+								has_ethic = ethic_fanatic_capitalism
+								has_ethic = ethic_fanatic_xenophile
+							}
+						}
+					}
 					modifier = {
 						factor = 0
 						NOT = {
@@ -1084,10 +1257,58 @@ country_event = {
 					}
 				}
 				1 = {
+					modifier = {
+						add = 1
+						root = {
+							has_ethic = ethic_xenophobe
+							NOT = {
+								has_ethic = ethic_fanatic_xenophobe
+							}
+						}
+					}
+					modifier = {
+						add = 2
+						root = {
+							has_ethic = ethic_fanatic_xenophobe
+						}
+					}
 					root = {
 						declare_war = {
 							target = prev
 							attacker_war_goal = wg_unrestricted_wars_eci
+						}
+					}
+				}
+				0 = {
+					modifier = {
+						add = 1
+						root = {
+							OR = {
+								has_ethic = ethic_socialism
+								has_ethic = ethic_materialist
+								has_ethic = ethic_spiritualist
+							}
+							NOR = {
+								has_ethic = ethic_fanatic_socialism
+								has_ethic = ethic_fanatic_materialist
+								has_ethic = ethic_fanatic_spiritualist
+							}
+						}
+					}
+					modifier = {
+						add = 2
+						root = {
+							OR = {
+								has_ethic = ethic_fanatic_socialism
+								has_ethic = ethic_fanatic_materialist
+								has_ethic = ethic_fanatic_spiritualist
+							}
+						}
+					}
+					root = {
+						declare_war = {
+							target = prev
+							attacker_war_goal = wg_force_ideology
 						}
 					}
 				}
