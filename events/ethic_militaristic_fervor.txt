@@ -163,14 +163,12 @@ country_event = {
 
 	trigger = {
 		has_ethic = ethic_fanatic_militarist
-		OR = {
-			is_xenophobe = yes
-			is_spiritualist = yes
-			is_authoritarian = yes
-		}
 		is_at_war = no
 		is_country_type = default
 		from = { is_country_type = default }
+		NOT = {
+			has_country_flag = fervor_event
+		}
 	}
 
 	immediate = {
@@ -184,6 +182,7 @@ country_event = {
 				scopes = { from = from }
 			}
 		}
+		set_country_flag = fervor_event
 	}
 }
 
@@ -207,7 +206,7 @@ country_event = { # Finishing First Contact
 			is_spiritualist = yes
 			is_authoritarian = yes
 		}
-		capital_scope = {
+		any_system_within_border = {
 			closest_system = {
 				limit = {
 					exists = space_owner
@@ -218,7 +217,7 @@ country_event = { # Finishing First Contact
 						NOT = { is_capital = yes }
 					}
 				}
-				max_steps = 20
+				max_steps = 3
 			}
 		}
 	}
@@ -262,11 +261,11 @@ country_event = { # Finishing First Contact
 				has_civic = civic_sparta_spirit
 			}
 			modifier = {
-				divide = 3
+				divide = 6
 				OR = {
-					has_ethic = ethic_fanatic_xenophobe
-					has_ethic = ethic_fanatic_spiritualist
-					has_ethic = ethic_fanatic_authoritarian
+					is_xenophobe = yes
+					is_spiritualist = yes
+					is_authoritarian = yes
 				}
 			}
 		}
@@ -299,7 +298,7 @@ country_event = { # Finishing First Contact
 				has_civic = civic_sparta_spirit
 			}
 			modifier = {
-				divide = 1.5
+				divide = 3
 				OR = {
 					has_ethic = ethic_fanatic_xenophobe
 					has_ethic = ethic_fanatic_spiritualist
@@ -1123,6 +1122,228 @@ country_event = {
 	}
 }
 
+# 法西斯政变-战败
+country_event = {
+	id = ethic_militaristic_fervor.10
+	title = ethic_militaristic_fervor.10.name
+	desc = {
+		text = ethic_militaristic_fervor.10.dem
+		trigger = {
+			has_election_type = democratic
+		}
+	}
+	desc = {
+		text = ethic_militaristic_fervor.10.dir
+		trigger = {
+			has_election_type = oligarchic
+		}
+	}
+	desc = {
+		text = ethic_militaristic_fervor.10.imp
+		trigger = {
+			has_election_type = none
+		}
+	}
+
+	picture = GFX_evt_open_revolt
+	show_sound = event_open_revolt
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = {
+			any_situation = {
+				is_situation_type = situation_militaristic_fervor
+			}
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				is_socialism = yes
+			}
+			set_country_flag = nazbol
+		}
+		FromFrom = {
+			save_event_target_as = lost_war
+		}
+	}
+
+	option = {
+		allow = {
+			has_country_resource = {
+				type = unity
+				amount > 1000
+			}
+		}
+		name = ethic_militaristic_fervor.10.a
+		add_resource = {
+			unity = -1000
+		}
+		ai_chance = {
+			base = 6
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_militarist
+			}
+			modifier = {
+				subtract = 2
+				has_ethic = ethic_fanatic_militarist
+			}
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_authoritarian
+			}
+			modifier = {
+				subtract = 2
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_xenophobe
+			}
+			modifier = {
+				subtract = 2
+				has_ethic = ethic_fanatic_xenophobe
+			}
+		}
+	}
+
+	option = {
+		name = ethic_militaristic_fervor.10.b
+		shift_ethic = ethic_fanatic_militarist
+		if = {
+			limit = {
+				NOT = {
+					has_election_type = none
+				}
+			}
+			create_leader = {
+				skill = random
+				class = commander
+			}
+			assign_leader = last_created_leader
+			last_created_leader = {
+				random_list = {
+					1 = {
+						change_background_ethic = ethic_authoritarian
+					}
+					1 = {
+						change_background_ethic = ethic_xenophobe
+					}
+					1 = {
+						change_background_ethic = ethic_militarist
+					}
+				}
+			}
+		}
+		set_government_cooldown = no
+		ai_chance = {
+			base = 3
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_fanatic_militarist
+			}
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_fanatic_authoritarian
+			}
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_fanatic_xenophobe
+			}
+		}
+		start_situation = {
+			type = situation_militaristic_fervor
+			target = root
+		}
+	}
+
+	option = {
+		name = ethic_militaristic_fervor.10.c
+		clear_ethos = yes
+		country_add_ethic = ethic_authoritarian
+		country_add_ethic = ethic_xenophobe
+		country_add_ethic = ethic_militarist
+		if = {
+			limit = {
+				OR = {
+					has_authority = auth_direct_democratic
+					has_authority = auth_democratic
+					has_authority = auth_oligarchic
+				}
+			}
+			change_government = {
+				authority = auth_dictatorial
+			}
+			create_leader = {
+				skill = random
+				class = commander
+			}
+			assign_leader = last_created_leader
+			last_created_leader = {
+				random_list = {
+					1 = {
+						change_background_ethic = ethic_authoritarian
+					}
+					1 = {
+						change_background_ethic = ethic_xenophobe
+					}
+					1 = {
+						change_background_ethic = ethic_militarist
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_authority = auth_dictatorial
+			}
+			create_leader = {
+				skill = random
+				class = commander
+			}
+			assign_leader = last_created_leader
+			last_created_leader = {
+				random_list = {
+					1 = {
+						change_background_ethic = ethic_authoritarian
+					}
+					1 = {
+						change_background_ethic = ethic_xenophobe
+					}
+					1 = {
+						change_background_ethic = ethic_militarist
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = nazbol
+			}
+			country_add_ethic = ethic_fanatic_socialism
+			force_add_civic = civic_nazbol
+		}
+		else = {
+			country_add_ethic = ethic_fanatic_capitalism
+			force_add_civic = civic_glory_and_dream
+		}
+		set_government_cooldown = no
+		start_situation = {
+			type = situation_militaristic_fervor
+			target = root
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	after = {
+		remove_country_flag = nazbol
+	}
+}
+
 #AI军国主义狂热，若舰队实力足够且和平，每年宣战最弱的邻居
 country_event = {
 	id = ethic_militaristic_fervor.12
@@ -1131,21 +1352,131 @@ country_event = {
 	trigger = {
 		any_situation = {
 			is_situation_type = situation_militaristic_fervor
+			NOR = {
+				current_stage = militaristic_fervor_1
+				current_stage = militaristic_fervor_2
+			}
 		}
 		is_at_war = no
 		is_ai = yes
 		used_naval_capacity_percent >= 0.8
 		any_neighbor_country = {
-			is_country_type = default
+			OR = {
+				is_country_type = default
+				is_country_type = fallen_empire
+				is_country_type = awakened_fallen_empire
+			}
 			NOT = {
 				has_truce = root
+			}
+			OR = {
+				NOR = {
+					AND = {
+						root = {
+							is_egalitarian = yes
+						}
+						is_egalitarian = yes
+					}
+					AND = {
+						root = {
+							is_socialism = yes
+						}
+						is_egalitarian = yes
+					}
+					AND = {
+						root = {
+							is_xenophile = yes
+						}
+						is_xenophile = yes
+					}
+				}
+				OR = {
+					root = {
+						is_xenophobe = yes
+					}
+					AND = {
+						root = {
+							is_socialism = yes
+						}
+						is_capitalism = yes
+					}
+					AND = {
+						root = {
+							is_materialist = yes
+						}
+						is_spiritualist = yes
+					}
+					AND = {
+						root = {
+							is_egalitarian = yes
+						}
+						is_authoritarian = yes
+					}
+					AND = {
+						root = {
+							is_capitalism = yes
+						}
+						is_socialism = yes
+					}
+					AND = {
+						root = {
+							is_spiritualist = yes
+						}
+						is_materialist = yes
+					}
+					AND = {
+						root = {
+							is_authoritarian = yes
+						}
+						is_egalitarian = yes
+					}
+				}
+			}
+			OR = {
+				relative_power = {
+					who = root
+					category = fleet
+					value <= equivalent
+				}
+				AND = {
+					relative_power = {
+						who = root
+						category = fleet
+						value <= superior
+					}
+					root = {
+						any_situation = {
+							is_situation_type = situation_militaristic_fervor
+							current_stage = militaristic_fervor_7
+							current_stage = militaristic_fervor_8
+						}
+					}
+				}
+				AND = {
+					relative_power = {
+						who = root
+						category = fleet
+						value <= overwhelming
+					}
+					root = {
+						any_situation = {
+							is_situation_type = situation_militaristic_fervor
+							current_stage = militaristic_fervor_9
+							current_stage = militaristic_fervor_10
+						}
+					}
+				}
 			}
 		}
 	}
 	immediate = {
 		ordered_neighbor_country = {
 			limit = {
-				is_country_type = default
+				OR = {
+					is_country_type = default
+					is_country_type = fallen_empire
+					is_country_type = awakened_fallen_empire
+				}
 				NOT = {
 					has_truce = root
 				}
@@ -1209,6 +1540,41 @@ country_event = {
 								is_authoritarian = yes
 							}
 							is_egalitarian = yes
+						}
+					}
+				}
+				OR = {
+					relative_power = {
+						who = root
+						category = fleet
+						value <= equivalent
+					}
+					AND = {
+						relative_power = {
+							who = root
+							category = fleet
+							value <= superior
+						}
+						root = {
+							any_situation = {
+								is_situation_type = situation_militaristic_fervor
+								current_stage = militaristic_fervor_7
+								current_stage = militaristic_fervor_8
+							}
+						}
+					}
+					AND = {
+						relative_power = {
+							who = root
+							category = fleet
+							value <= overwhelming
+						}
+						root = {
+							any_situation = {
+								is_situation_type = situation_militaristic_fervor
+								current_stage = militaristic_fervor_9
+								current_stage = militaristic_fervor_10
+							}
 						}
 					}
 				}
