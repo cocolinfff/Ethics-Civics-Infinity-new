@@ -194,3 +194,149 @@ country_event = {
 		}
 	}
 }
+
+# New heir appointed
+leader_event = {
+	id = leader.200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		exists = owner
+	}
+
+	immediate = {
+		add_age = 16
+
+		####################
+		# CLASS RANDOMISER #
+		####################
+
+		# Set skill level to 1
+		set_skill = 1
+		# Add generic level modifiers
+		add_skill_without_trait_selection = owner.modifier:leader_initial_skill
+
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						# Commander
+						has_valid_civic = civic_crusader_spirit_corporate
+						has_tradition = tr_supremacy_war_games
+						has_valid_civic = civic_distinguished_admiralty
+						has_valid_civic = civic_crusader_spirit
+						# Official
+						has_valid_civic = civic_aristocratic_elite
+						has_tradition = tr_domination_colonial_viceroys
+						# Scientist
+						has_valid_civic = civic_technocracy
+						has_tradition = tr_discovery_science_division
+						# Current Ruler's Class
+						has_valid_civic = civic_philosopher_king
+					}
+				}
+			}
+
+			# All classes have a base weight of 10.
+			# Civics that boost only one class add 40.
+			# Civics that boost two classes add 20 to each class.
+			# Traditions that boost a class add 20.
+
+			random_list = {
+				# Commander
+				0 = {
+					modifier = {
+						add = value:heir_class_weight_commander
+					}
+					change_leader_class = commander
+					add_skill_without_trait_selection = owner.modifier:commander_initial_skill
+				}
+				# Official
+				0 = {
+					modifier = {
+						add = value:heir_class_weight_official
+					}
+					change_leader_class = official
+					add_skill_without_trait_selection = owner.modifier:official_initial_skill
+				}
+				# Scientist
+				0 = {
+					modifier = {
+						add = value:heir_class_weight_scientist
+					}
+					change_leader_class = scientist
+					add_skill_without_trait_selection = owner.modifier:scientist_initial_skill
+				}
+			}
+		}
+
+		##########
+		# TRAITS #
+		##########
+
+		# Initial Traits, set after determining class.
+		add_trait_no_notify = trait_imperial_heir
+		add_trait_no_notify = "random_common"
+
+		# Chance for a negative trait.
+		random_list = {
+			95 = { }
+			5 = {
+				add_trait_no_notify = "random_common"
+				add_trait_no_notify = "random_negative"
+				# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Checked now made in paragon_2.2200.
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_philosopher_king }
+				}
+			}
+		}
+
+		# Under One Rule
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						has_origin = origin_legendary_leader_imperial
+						ruler = { has_trait = leader_trait_legendary_offspring }
+					}
+				}
+			}
+			add_trait_no_notify = leader_trait_legendary_offspring
+		}
+
+		# Technocracy
+		if = {
+			limit = {
+				owner = {
+					has_valid_civic = civic_technocracy
+				}
+				leader_class = scientist
+			}
+			add_random_expertise_trait_effect = yes
+		}
+
+		# Crusader Spirit
+		if = {
+			limit = {
+				owner = {
+					has_valid_civic = civic_crusader_spirit
+				}
+				leader_class = commander
+			}
+			add_trait_no_notify = leader_trait_crusader
+		}
+
+		# Letters of Marque
+		if = {
+			limit = {
+				owner = {
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+				leader_class = commander
+			}
+			add_trait_no_notify = leader_trait_corsair
+		}
+	}
+}
