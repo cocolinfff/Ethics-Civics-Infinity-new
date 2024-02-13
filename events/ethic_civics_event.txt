@@ -524,6 +524,11 @@ country_event = {
     is_triggered_only = yes
     desc = ethic_civic_yearly.4.desc
     title = ethic_civic_yearly.4.title
+    trigger = {
+        NOT = {
+            has_country_flag = vanguard_no_window
+        }
+    }
     option = {
         name = ethic_civic_yearly.4.a
     }
@@ -945,9 +950,9 @@ country_event = {
 }
 
 # 军阀共和国
-namespace = eci_civic_military_junta
+namespace = eci_civic_citizen_service
 country_event = {
-    id = eci_civic_military_junta.1
+    id = eci_civic_citizen_service.1
     hide_window = yes
 
     is_triggered_only = yes
@@ -966,7 +971,7 @@ country_event = {
     }
 }
 country_event = {
-    id = eci_civic_military_junta.2
+    id = eci_civic_citizen_service.2
     hide_window = yes
 
     is_triggered_only = yes
@@ -1269,30 +1274,35 @@ country_event = {
         add_random_research_option = {
             add_progress = 1
             ignore_prereqs = no
+            ignore_rare = no
             area = engineering
             tier = 1
             fail_effects = {
                 add_random_research_option = {
                     add_progress = 1
                     ignore_prereqs = no
+                    ignore_rare = no
                     area = engineering
                     tier = 2
                     fail_effects = {
                         add_random_research_option = {
                             add_progress = 1
                             ignore_prereqs = no
+                            ignore_rare = no
                             area = engineering
                             tier = 3
                             fail_effects = {
                                 add_random_research_option = {
                                     add_progress = 1
                                     ignore_prereqs = no
+                                    ignore_rare = no
                                     area = engineering
                                     tier = 4
                                     fail_effects = {
                                         add_random_research_option = {
                                             add_progress = 1
                                             ignore_prereqs = no
+                                            ignore_rare = no
                                             area = engineering
                                             tier = 5
                                         }
@@ -1351,24 +1361,28 @@ country_event = {
                 add_random_research_option = {
                     add_progress = 1
                     ignore_prereqs = no
+                    ignore_rare = no
                     area = society
                     tier = 2
                     fail_effects = {
                         add_random_research_option = {
                             add_progress = 1
                             ignore_prereqs = no
+                            ignore_rare = no
                             area = society
                             tier = 3
                             fail_effects = {
                                 add_random_research_option = {
                                     add_progress = 1
                                     ignore_prereqs = no
+                                    ignore_rare = no
                                     area = society
                                     tier = 4
                                     fail_effects = {
                                         add_random_research_option = {
                                             add_progress = 1
                                             ignore_prereqs = no
+                                            ignore_rare = no
                                             area = society
                                             tier = 5
                                         }
@@ -1391,6 +1405,21 @@ event = {
     is_triggered_only = yes
 
     immediate = {
+        random_country = {
+            limit = {
+                OR = {
+                    is_ai = no
+                    has_country_flag = enion
+                }
+                OR = {
+                    has_civic = civic_forum_friends
+                    has_civic = civic_forum_friends_corporate
+                }
+            }
+            save_event_target_as = civic_forum_friends_player
+            set_country_flag = civic_forum_friends_locked
+        }
+
         every_country = {
             limit = {
                 any_country = {
@@ -1402,80 +1431,187 @@ event = {
             }
             if = {
                 limit = {
+                    OR = {
+                        has_civic = civic_forum_friends
+                        has_civic = civic_forum_friends_corporate
+                    }
+                }
+                set_country_flag = civic_forum_friends_locked
+                set_country_flag = first_contact_event
+                set_country_flag = Story2
+                give_technology = {
+                    message = no
+                    tech = tech_federal_state
+                }
+                join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
+            }
+            if = {
+                limit = {
                     is_ai = no
                     OR = {
                         has_civic = civic_forum_friends
                         has_civic = civic_forum_friends_corporate
                     }
                 }
-                save_event_target_as = civic_forum_friends_player
-                set_country_flag = civic_forum_friends_locked
+                federation = {
+                    set_federation_leader = root
+                    set_name = NAME_forum_friends
+                    add_federation_experience = 600
+                    add_cohesion = 100
+                }
+                country_event = { id = origin.57 days = 2 }
             }
-            if = {
-                limit = {
-                    is_default_empire = yes
-                    is_xenophobe = no
-                    NOR = {
-                        has_civic = civic_forum_friends
-                        has_civic = civic_forum_friends_corporate
-                    }
-                    NOR = {
-                        is_gestalt = yes
-                        has_authority = auth_corporate
-                        has_civic = civic_galactic_sovereign_megacorp
-                        has_civic = civic_family_business
-                        has_civic = civic_world_cooperative
+        }
+    }
+}
+
+# 星星之火
+namespace = eci_civic_firing_torch
+country_event = {
+    id = eci_civic_firing_torch.1
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_firing_torch
+    }
+    immediate = {
+        save_global_event_target_as = firing_torch_old_country
+        if = {
+            limit = {
+                NOT = {
+                    any_country = {
+                        has_country_flag = fusheng_empire_firing_torch
                     }
                 }
-                force_add_civic = civic_forum_friends
-                set_country_flag = civic_forum_friends_locked
-                join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
             }
-            if = {
-                limit = {
-                    is_default_empire = yes
-                    is_xenophobe = no
-                    NOR = {
-                        has_civic = civic_forum_friends
-                        has_civic = civic_forum_friends_corporate
+            create_country = {
+                type = default
+                name_list = random
+                species = root.owner_main_species
+                effect = {
+                    #复活后弹窗
+                    country_event = {
+                        id = eci_civic_firing_torch.2
+                        days = 30
                     }
-                }
-                random_list = {
-                    10 = {
-                        force_add_civic = civic_forum_friends
-                        set_country_flag = civic_forum_friends_locked
-                        join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
-                        modifier = {
-                            factor = 0
-                            OR = {
-                                is_gestalt = yes
-                                has_authority = auth_corporate
-                                has_civic = civic_galactic_sovereign_megacorp
-                                has_civic = civic_family_business
-                                has_civic = civic_world_cooperative
+                    add_resource = {
+                        minerals = 3000
+                        food = 3000
+                        energy = 3000
+                        alloys = 1000
+                        consumer_goods = 1000
+                        unity = 5000
+                        influence = 1000
+                        volatile_motes = 500
+                        exotic_gases = 500
+                        rare_crystals = 500
+                    }
+                    set_name = NAME_red_dawn
+                    set_timed_country_flag = {
+                        flag = fusheng_empire_firing_torch
+                        days = 30
+                    }
+                    copy_ethos_and_authority = root
+                    copy_techs_from = {
+                        target = root
+                    }
+                    save_global_event_target_as = firing_torch_new_country
+                    if = {
+                        limit = {
+                            any_country = {
+                                is_ai = yes
+                                num_owned_planets > 0
+                                any_owned_pop = { is_enslaved = yes }
+                            }
+                        }
+                        random_country = {
+                            limit = {
+                                is_ai = yes
+                                num_owned_planets > 0
+                                any_owned_pop = { is_enslaved = yes }
+                            }
+                            random_owned_planet = {
+                                starbase = {
+                                    set_owner = event_target:firing_torch_new_country
+                                }
+                                set_owner = event_target:firing_torch_new_country
+                                every_owned_pop = {
+                                    modify_species = {
+                                        species = event_target:firing_torch_new_country.owner_main_species
+                                    }
+                                }
+                                remove_all_buildings = yes
+                                remove_all_districts = yes
+                                add_building = building_system_capital
                             }
                         }
                     }
-                    10 = {
-                        force_add_civic = civic_forum_friends_corporate
-                        set_country_flag = civic_forum_friends_locked
-                        join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
-                        modifier = {
-                            factor = 0
-                            OR = {
-                                is_gestalt = yes
-                                NOR = {
-                                    has_authority = auth_corporate
-                                    has_civic = civic_galactic_sovereign_megacorp
-                                    has_civic = civic_family_business
-                                    has_civic = civic_world_cooperative
+                    else = {
+                        random_system = {
+                            create_starbase = {
+                                size = enclave_mercenary_station
+                                owner = event_target:firing_torch_new_country
+                            }
+                            random_system_planet = {
+                                limit = {
+                                    is_star = no
+                                }
+                                change_pc = pc_gaia
+                                set_planet_size = 30
+                                create_colony = {
+                                    owner = event_target:firing_torch_new_country
+                                    species = event_target:firing_torch_new_country.owner_main_species
                                 }
                             }
                         }
                     }
-                    60 = {}
+                    event_target:firing_torch_new_country = {
+                        set_player = root
+                    }
                 }
             }
         }
+    }
+}
+country_event = {
+    id = eci_civic_firing_torch.2
+    title = eci_civic_firing_torch.2.name
+    desc = eci_civic_firing_torch.2.desc
+    picture = GFX_evt_victorious_army
+    is_triggered_only = yes
+    immediate = {
+        create_fleet = {
+            effect = {
+                set_owner = root
+                set_location = root.capital_scope
+                while = {
+                    count = 20
+                    create_ship = {
+                        name = HUMAN4_FLEET_RevolutionaryFleet
+                        random_existing_design = corvette
+                    }
+                }
+                owner = {
+                    create_leader = {
+                        class = commander
+                        name = random
+                        species = owner_main_species
+                    }
+                }
+                last_created_leader = {
+                    if = {
+                        limit = {
+                            has_skill > 1
+                            num_traits = 0
+                        }
+                        add_trait_no_notify = random_common
+                    }
+                }
+                set_leader = last_created_leader
+            }
+        }
+    }
+    option = {
+        name = eci_civic_firing_torch.2.a
     }
 }
