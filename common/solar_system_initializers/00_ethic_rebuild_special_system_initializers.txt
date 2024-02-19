@@ -125,9 +125,9 @@ com_sol_system = {
                 name = "NAME_Joint_Solar_System"
                 authority = auth_direct_democratic
                 civics = {
-                    civic = civic_shared_burden
+                    civic = civic_worker_coop
                     civic = civic_political_pluralism
-                    civic = civic_coalition_government
+                    civic = civic_learning_society
                 }
                 species = event_target:human_species
                 name_list = "HUMAN4"
@@ -558,7 +558,7 @@ lost_colony_sol_system = {
                         authority = auth_oligarchic
                         civics = {
                             civic = civic_globalism
-                            civic = civic_merchant_guilds
+                            civic = civic_characteristic_socialism
                             civic = civic_coalition_government
                         }
                         species = event_target:human_species
@@ -617,7 +617,7 @@ lost_colony_sol_system = {
                         civics = {
                             civic = civic_shared_burden
                             civic = civic_political_pluralism
-                            civic = civic_coalition_government
+                            civic = civic_warpdrive_start
                         }
                         species = event_target:human_species
                         name_list = "HUMAN1"
@@ -644,7 +644,7 @@ lost_colony_sol_system = {
                             }
                         }
                         type = default
-                        origin = "civic_warpdrive_start"
+                        origin = "origin_default"
                         effect = {
                             set_country_flag = human_1
                             save_event_target_as = npc_UNoE
@@ -1033,17 +1033,19 @@ ai_sol_system = {
                 adjective = "PRESCRIPTED_adjective_humans1"
                 authority = auth_oligarchic
                 civics = {
-                    civic = civic_merchant_guilds
-                    civic = civic_coalition_government
-                    civic = civic_characteristic_socialism
+                    civic = "civic_coalition_government"
+                    civic = "civic_distributism"
+                    civic = "civic_welfare_state"
                 }
                 species = event_target:human_species
                 name_list = "HUMAN1"
                 ship_prefix = "UNS"
                 ethos = {
-                    ethic = "ethic_fanatic_xenophile"
-                    ethic = "ethic_pacifist"
-                    ethic = "ethic_fanatic_capitalism"
+
+                    ethic="ethic_egalitarian"
+                    ethic="ethic_fanatic_xenophile"
+                    ethic="ethic_spiritualist"
+                    ethic="ethic_socialism"
                 }
                 flag = {
                     icon = {
@@ -1419,15 +1421,16 @@ pre_ftl_init_sol = {
                         authority = auth_oligarchic
                         day_zero_contact = no
                         civics = {
-                            civic = civic_globalism
-                            civic = civic_merchant_guilds
-                            civic = civic_coalition_government
+                            civic = "civic_coalition_government"
+                            civic = "civic_distributism"
+                            civic = "civic_welfare_state"
                         }
                         species = last_created_species
                         ethos = {
-                            ethic = "ethic_fanatic_xenophile"
-                            ethic = "ethic_pacifist"
-                            ethic = "ethic_fanatic_capitalism"
+                            ethic="ethic_egalitarian"
+                            ethic="ethic_fanatic_xenophile"
+                            ethic="ethic_spiritualist"
+                            ethic="ethic_socialism"
                         }
                         origin = origin_default_pre_ftl
                         flag = {
@@ -1743,7 +1746,7 @@ pre_ftl_init_sol = {
                         civics = {
                             civic = civic_socialistic
                             civic = civic_political_pluralism
-                            civic = civic_coalition_government
+                            civic = civic_idealistic_foundation
                         }
                         species = last_created_species
                         ethos = {
@@ -2456,7 +2459,7 @@ une_deneb_system = {
                             authority = "auth_dictatorial"
                             civics = {
                                 civic = civic_merchant_guilds
-                                civic = civic_citizen_service
+                                civic = civic_memorialist
                                 civic = civic_parliamentary_system
                             }
                             species = event_target:human_species
@@ -3097,7 +3100,7 @@ megacorp_caravaneer_init = {
                         }
                     }
                     create_leader = {
-                        class = governor
+                        class = official
                         species = this
                         name = random
                         skill = 5
@@ -3482,7 +3485,7 @@ megacorp_caravaneer_init = {
                         }
                     }
                     create_leader = { #This leader has to exist to 'hold' the robot species
-                        class = governor
+                        class = official
                         species = event_target:racket_robot_species
                         event_leader = yes # prevents this leader from leading factions and winning
                         name = random
@@ -3696,7 +3699,7 @@ the_chosen_home_initializer = {
                     set_country_flag = chosen_empire
                     give_starting_resources_effect = yes
                     create_leader = {
-                        class = governor
+                        class = official
                         species = event_target:chosen_species
                     }
                     while = {
@@ -4073,5 +4076,285 @@ slavers_neighbor_t1_first_colony = {
     neighbor_system = {
         hyperlane_jumps = { min = 1 max = @jumps }
         initializer = "neighbor_t2"
+    }
+}
+
+# BUG解决工具人
+eci_bug_home_system = {
+    class = "rl_starting_stars"
+    asteroid_belt = {
+        type = rocky_asteroid_belt
+        radius = 50
+    }
+
+    flags = { empire_home_system bug_system }
+
+    usage = misc_system_init
+
+    usage_odds = {
+        base = 999
+    }
+
+    max_instances = 1
+
+    init_effect = {
+        generate_home_system_resources = yes
+    }
+
+    planet = {
+        count = 1
+        class = star
+        orbit_distance = 0
+        orbit_angle = 1
+        size = { min = 20 max = 30 }
+        has_ring = no
+    }
+
+    change_orbit = 50
+
+    planet = {
+        count = { min = 1 max = 3 }
+        class = pc_asteroid
+        orbit_distance = 0
+        orbit_angle = { min = 40 max = 100 }
+    }
+
+    planet = {
+        count = { min = 0 max = 2 }
+        orbit_distance = 20
+        class = random_non_colonizable
+        orbit_angle = { min = 90 max = 270 }
+
+        change_orbit = @base_moon_distance
+
+        moon = {
+            count = { min = 0 max = 1 }
+            class = random_non_colonizable
+            orbit_angle = { min = 90 max = 270 }
+            orbit_distance = 5
+        }
+    }
+
+    planet = {
+        count = 1
+        orbit_distance = 20
+        home_planet = yes
+        class = pc_relic
+        orbit_angle = { min = 90 max = 270 }
+        size = 25
+        deposit_blockers = none
+        modifiers = none
+        flags = { MSI_homeworld }
+
+        init_effect = {
+            prevent_anomaly = yes
+            create_species = {
+                name = random
+                class = random_non_machine
+                portrait = random
+                traits = random
+                homeworld = this
+            }
+            create_country = {
+                name = "NAME_ECI_BUG"
+                authority = auth_dictatorial
+                species = last_created_species
+                civics = {
+                    civic = "civic_technocracy"
+                    civic = "civic_zhaowen_dao"
+                    civic = "civic_moth_chasing_flames"
+                }
+                ethos = {
+                    ethic="ethic_authoritarian"
+                    ethic="ethic_fanatic_materialist"
+                    ethic="ethic_xenophobe"
+                    ethic="ethic_capitalism"
+                }
+                origin = "origin_true_yuht"
+
+                effect = {
+                    save_global_event_target_as = eci_bug_gongjuren
+
+                    # Fleets
+                    create_fleet = {
+                        effect = {
+                            set_owner = event_target:eci_bug_gongjuren
+                            create_ship = {
+                                name = random
+                                random_existing_design = constructor
+                            }
+                            set_location = event_target:eci_bug_gongjuren.capital_star
+                        }
+                    }
+
+                    create_fleet = {
+                        effect = {
+                            set_owner = event_target:eci_bug_gongjuren
+                            create_ship = {
+                                name = random
+                                random_existing_design = science
+                            }
+                            set_location = event_target:eci_bug_gongjuren.capital_star
+                            save_event_target_as = new_science_ship_target
+                        }
+                    }
+                    create_leader = {
+                        name = random
+                        species = event_target:eci_bug_gongjuren.species
+                        class = scientist
+                        skill = 1
+                    }
+                    event_target:new_science_ship_target = {
+                        assign_leader = last_created_leader
+                    }
+
+                    # Resources
+                    add_basic_resources_effect = { VALUE = 1000 }
+                    add_manufactured_resources_effect = { VALUE = 500 }
+                    add_advanced_resources_effect = { VALUE = 25 }
+
+                    # Policies
+                    set_policy = {
+                        policy = research_ethics
+                        option = research_without_bottom_line
+                        cooldown = yes
+                    }
+                }
+            }
+            set_owner = event_target:eci_bug_gongjuren
+            set_controller = event_target:eci_bug_gongjuren
+            set_capital = yes
+
+            while = {
+                count = 90
+                create_pop = {
+                    species = owner_main_species
+                    ethos = random
+                }
+            }
+            planet_event = { id = ethic_true_yuht_start.0 }
+
+            add_deposit = d_ethic_space_industry_cluster
+
+            if = {
+                limit = { owner = { is_machine_empire = yes } }
+                while = {
+                    count = 10
+                    add_district_and_planet_size_if_needed_effect = {
+                        district = district_nexus
+                    }
+                }
+                while = {
+                    count = 10
+                    add_district_and_planet_size_if_needed_effect = {
+                        district = district_industrial
+                    }
+                }
+            }
+            if = {
+                limit = { owner = { is_hive_empire = yes } }
+                while = {
+                    count = 10
+                    add_district_and_planet_size_if_needed_effect = {
+                        district = district_hive
+                    }
+                }
+                while = {
+                    count = 10
+                    add_district_and_planet_size_if_needed_effect = {
+                        district = district_industrial
+                    }
+                }
+            }
+            if = {
+                limit = { owner = { is_gestalt = no } }
+                while = {
+                    count = 10
+                    add_district_and_planet_size_if_needed_effect = {
+                        district = district_city
+                    }
+                }
+                while = {
+                    count = 10
+                    add_district_and_planet_size_if_needed_effect = {
+                        district = district_industrial
+                    }
+                }
+            }
+        }
+
+        change_orbit = @base_moon_distance
+
+        moon = {
+            count = { min = 0 max = 1 }
+            class = random_non_colonizable
+            orbit_angle = { min = 90 max = 270 }
+            orbit_distance = 5
+        }
+    }
+
+    planet = {
+        count = { min = 2 max = 4 }
+        orbit_distance = 20
+        class = random_non_colonizable
+        orbit_angle = { min = 90 max = 270 }
+
+        change_orbit = @base_moon_distance
+
+        moon = {
+            count = { min = 0 max = 1 }
+            class = random_non_colonizable
+            orbit_angle = { min = 90 max = 270 }
+            orbit_distance = 5
+        }
+    }
+
+    planet = {
+        count = { min = 1 max = 2 }
+        orbit_distance = 20
+        class = pc_gas_giant
+        orbit_angle = { min = 90 max = 270 }
+
+        change_orbit = @base_moon_distance
+
+        moon = {
+            count = { min = 0 max = 3 }
+            class = random_non_colonizable
+            orbit_angle = { min = 90 max = 270 }
+            orbit_distance = 5
+        }
+    }
+
+    init_effect = {
+        solar_system = {
+            create_starbase = {
+                size = starbase_starfortress
+                module = shipyard
+                building = crew_quarters
+                owner = event_target:eci_bug_gongjuren
+                effect = {
+                    set_starbase_module = {
+                        slot = 1
+                        module = shipyard
+                    }
+                    set_starbase_module = {
+                        slot = 2
+                        module = shipyard
+                    }
+                    set_starbase_module = {
+                        slot = 3
+                        module = shipyard
+                    }
+                    set_starbase_module = {
+                        slot = 4
+                        module = shipyard
+                    }
+                    set_starbase_module = {
+                        slot = 5
+                        module = shipyard
+                    }
+                }
+            }
+        }
     }
 }

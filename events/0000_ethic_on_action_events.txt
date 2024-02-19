@@ -2725,7 +2725,6 @@ event = {
 					owner = {
 						OR = {
 							is_country_type = default
-							is_country_type = uo_une_member_active
 							is_country_type = fallen_empire
 							is_country_type = awakened_fallen_empire
 						}
@@ -2741,6 +2740,7 @@ event = {
 										is_at_war_with = prevprevprev.owner
 									}
 								}
+								is_cloaked = no
 							}
 							any_fleet_in_system = {
 								exists = controller
@@ -2751,15 +2751,22 @@ event = {
 										is_at_war_with = prevprevprev.owner
 									}
 								}
+								is_cloaked = no
 							}
 							any_system_colony = {
 								exists = owner
 								NOT = { is_same_value = prevprev }
 								owner = {
 									NOT = { is_same_value = prevprevprev.owner }
+									NOR = {
+										has_origin = origin_galaxy_iron_curtain
+										AND = {
+											has_origin = origin_taking_care_of_god
+											NOT = { has_country_flag = taking_care_of_god_end }
+										}
+									}
 									OR = {
 										is_country_type = default
-										is_country_type = uo_une_member_active
 										is_country_type = fallen_empire
 										is_country_type = awakened_fallen_empire
 									}
@@ -2777,7 +2784,6 @@ event = {
 					owner = {
 						OR = {
 							is_country_type = default
-							is_country_type = uo_une_member_active
 							is_country_type = fallen_empire
 							is_country_type = awakened_fallen_empire
 						}
@@ -2793,6 +2799,7 @@ event = {
 										is_at_war_with = prevprevprev.owner
 									}
 								}
+								is_cloaked = no
 							}
 							any_fleet_in_system = {
 								exists = controller
@@ -2803,6 +2810,7 @@ event = {
 										is_at_war_with = prevprevprev.owner
 									}
 								}
+								is_cloaked = no
 							}
 							any_system_colony = {
 								exists = owner
@@ -2810,7 +2818,6 @@ event = {
 									NOT = { is_same_value = prevprevprev.owner }
 									OR = {
 										is_country_type = default
-										is_country_type = uo_une_member_active
 										is_country_type = fallen_empire
 										is_country_type = awakened_fallen_empire
 									}
@@ -2819,7 +2826,17 @@ event = {
 						}
 					}
 				}
-				planet_event = { id = action.91 }
+				# Fruitful Origin - the outpost is being created for the first time
+				if = {
+					limit = {
+						has_planet_flag = seed_pods_colonization
+					}
+					planet_event = { id = origin.7400 }
+				}
+				# else, fire the normal "Outpost Rebuilt!" event
+				else = {
+					planet_event = { id = action.91 }
+				}
 			}
 		}
 	}
@@ -2894,5 +2911,25 @@ country_event = {
 			}
 			force_remove_civic = civic_galactic_sovereign_people
 		}
+	}
+}
+
+# Recalculate divided patronage on government reform if you have Feudal Society or Franchising.
+country_event = {
+	id = action.445
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_civic = civic_feudal_realm
+			has_civic = civic_franchising
+			is_coalition_government = yes
+		}
+	}
+
+	immediate = {
+		refresh_subject_count_loyalty_penalty = yes
 	}
 }

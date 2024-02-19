@@ -60,7 +60,16 @@ can_fill_ruler_job = {
     }
     else_if = {
         custom_tooltip =  POP_EDUCATED_LOW
-        hidden_trigger = { NOT = { has_modifier = pop_slave_educated } }
+        limit = {
+            has_global_flag = eci_educated
+        }
+        hidden_trigger = {
+            NOR = {
+                has_modifier = pop_educated
+                has_modifier = pop_uneducated
+                has_modifier = pop_slave_educated
+            }
+        }
     }
     else_if = {
         custom_tooltip = RULER_JOB_TRIGGER
@@ -103,10 +112,12 @@ can_fill_ruler_job = {
     }
 }
 
-#劳工阶级的工作判定
+#专家阶级的工作判定
 #this/root = pop
-#checked if job's possible_precalc = can_fill_worker_job
-can_fill_worker_job = {
+#checked if job's possible_precalc = can_fill_specialist_job
+can_fill_specialist_job = {
+    can_fill_specialist_job_trigger = yes
+    # Defined in 01_scripted_triggers_jobs.txt
     if = {
         limit = {
             has_global_flag = eci_educated
@@ -123,7 +134,25 @@ can_fill_worker_job = {
             has_modifier = pop_highly_educated
         }
     }
-    else = {
+    if = {
+        custom_tooltip =  POP_EDUCATED_LOW
+        limit = {
+            has_global_flag = eci_educated
+        }
+        hidden_trigger = {
+            NOR = {
+                has_modifier = pop_uneducated
+                has_modifier = pop_slave_educated
+            }
+        }
+    }
+}
+
+#劳工阶级的工作判定
+#this/root = pop
+#checked if job's possible_precalc = can_fill_worker_job
+can_fill_worker_job = {
+    if = {
         custom_tooltip = WORKER_JOB_TRIGGER
         hidden_trigger = {
             NOT = { has_ethic = ethic_gestalt_consciousness }
@@ -146,6 +175,22 @@ can_fill_worker_job = {
                 }
                 divinity_right_to_work_job_check_trigger_worker = yes
             }
+        }
+    }
+    else_if = {
+        limit = {
+            has_global_flag = eci_educated
+            exists = owner
+            owner = {
+                OR = {
+                    has_valid_civic = civic_moth_chasing_flames
+                    has_valid_civic = civic_ruthless_competition
+                }
+            }
+        }
+        custom_tooltip = {
+            text = POP_EDUCATED_LOW
+            has_modifier = pop_highly_educated
         }
     }
 }
