@@ -49,7 +49,7 @@ entrepreneurs = {
 			root = {
 				exists = leader
 				leader = {
-					leader_class = ruler
+					is_ruler = yes
 				}
 			}
 		}
@@ -119,7 +119,7 @@ entrepreneurs = {
 		base = 100
 		modifier = {
 			factor = 0
-			leader_class = ruler
+			is_ruler = yes
 			owner = {
 				is_imperial = yes
 			}
@@ -578,12 +578,16 @@ entrepreneurs = {
 			remove_modifier = suppressed_egalitarian
 		}
 	}
+
 	actions = {
 		embrace_faction = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
-			cost = { unity = 5000 }
-			
+
+			cost = {
+				unity = 5000
+			}
+
 			potential = {
 				exists = owner
 				owner = {
@@ -593,44 +597,29 @@ entrepreneurs = {
 					}
 				}
 			}
+
 			valid = {
 				custom_tooltip = {
 					fail_text = EMBRACE_FACTION_COOLDOWN
 					parameter:empire = {
-						NOT = {
-							has_modifier = embraced_faction_timer
-						}
+						NOT = { has_modifier = embraced_faction_timer }
 					}
 				}
 				support > 0.15
 				parameter:empire = {
-					NOT = {
-						is_egalitarian = yes
-					}
+					NOT = { has_ethic = "ethic_fanatic_egalitarian" }
 				}
 			}
+
 			effect = {
-				add_modifier = {
-					modifier = embraced_faction
-					days = 3600
-				}
+				add_modifier = { modifier = embraced_faction days = 3600 }
 				parameter:empire = {
 					shift_ethic = ethic_egalitarian
 					hidden_effect = {
-						add_modifier = {
-							modifier = embraced_faction_timer
-							days = 3600
-						}
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
-							limit = {
-								NOT = {
-									is_same_value = root
-								}
-							}
-							add_modifier = {
-								modifier = embraced_another_faction
-								days = 3600
-							}
+							limit = { NOT = { is_same_value = root } }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
 						}
 					}
 				}
@@ -642,29 +631,36 @@ entrepreneurs = {
 								is_ai = no
 								is_country_type = default
 								has_communications = prev
+								has_intel_level = {
+									who = prev
+									category = government
+									level >= 1
+								}
 							}
-							country_event = {
-								id = factions.2000
-							}
+							country_event = { id = factions.2000 }
 						}
 					}
 				}
 			}
+
 			ai_weight = {
 				base = 1
 				modifier = {
 					factor = 0
-					support < 0.25
+					support < 0.50
+					owner = {
+						has_ethic = ethic_egalitarian
+					}
 				}
 				modifier = {
 					factor = 0
-					support < 0.45
-					NOT = {
-						owner = {
-							exists = ruler
-							ruler = {
-								leader_of_faction = entrepreneurs
-							}
+					owner = { has_valid_civic = civic_fanatic_purifiers }
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
 						}
 					}
 				}
@@ -673,58 +669,94 @@ entrepreneurs = {
 		promote_faction = {
 			title = "PROMOTE_FACTION"
 			description = "PROMOTE_FACTION_DESC"
+
 			potential = {
-				NOR = {
-					has_pop_faction_flag = promote_faction
-					has_pop_faction_flag = suppress_faction
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_egalitarian
+						has_modifier = promoted_egalitarian
+					}
 				}
 			}
+
 			effect = {
-				set_pop_faction_flag = promote_faction
+				parameter:empire = {
+					add_modifier = { modifier = promoted_egalitarian days = -1 }
+				}
 			}
-			ai_weight = { base = 0 }
+
+			ai_weight = {
+				base = 0
+			}
 		}
 		cancel_promote_faction = {
 			title = "CANCEL_PROMOTE_FACTION"
 			description = "CANCEL_PROMOTE_FACTION_DESC"
+
 			potential = {
-				has_pop_faction_flag = promote_faction
+				exists = owner
+				parameter:empire = {
+					has_modifier = promoted_egalitarian
+				}
 			}
+
 			effect = {
-				remove_pop_faction_flag = promote_faction
+				parameter:empire = {
+					remove_modifier = promoted_egalitarian
+				}
 			}
-			ai_weight = { base = 0 }
+
+			ai_weight = {
+				base = 0
+			}
 		}
 		suppress_faction = {
 			title = "SUPPRESS_FACTION"
 			description = "SUPPRESS_FACTION_DESC"
+
 			potential = {
-				NOR = {
-					has_pop_faction_flag = promote_faction
-					has_pop_faction_flag = suppress_faction
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_egalitarian
+						has_modifier = promoted_egalitarian
+					}
 				}
 			}
+
 			effect = {
-				set_pop_faction_flag = suppress_faction
-				owner = {
-					set_country_flag = suppress_entrepreneurs
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_egalitarian days = -1 }
 				}
 			}
-			ai_weight = { base = 0 }
+
+			ai_weight = {
+				base = 0
+			}
 		}
 		cancel_suppress_faction = {
 			title = "CANCEL_SUPPRESS_FACTION"
 			description = "CANCEL_SUPPRESS_FACTION_DESC"
+
 			potential = {
-				has_pop_faction_flag = suppress_faction
-			}
-			effect = {
-				remove_pop_faction_flag = suppress_faction
-				owner = {
-					remove_country_flag = suppress_entrepreneurs
+				exists = owner
+				parameter:empire = {
+					has_modifier = suppressed_egalitarian
 				}
 			}
-			ai_weight = { base = 0 }
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_egalitarian
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
 		}
 	}
 }
