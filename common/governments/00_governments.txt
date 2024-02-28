@@ -295,10 +295,7 @@ gov_ecclesia = {
 	should_force_rename = yes
 	possible = {
 		has_authority = auth_direct_democratic
-		OR = {
-			has_ethic = ethic_fanatic_militarist
-			has_valid_civic = civic_citizen_service
-		}
+		has_ethic = ethic_fanatic_militarist
 	}
 	weight = {
 		base = 500
@@ -307,8 +304,8 @@ gov_ecclesia = {
 			has_valid_civic = civic_warrior_culture
 		}
 		modifier = {
-			factor = 5
-			has_valid_civic = civic_citizen_service
+			factor = 100
+			has_valid_civic = civic_sparta_spirit
 		}
 		modifier = {
 			factor = 0.1
@@ -335,8 +332,8 @@ gov_military_commissariat = {
 			has_valid_civic = civic_citizen_service
 		}
 		modifier = {
-			factor = 5
-			has_valid_civic = civic_citizen_service
+			factor = 2
+			has_valid_civic = civic_nationalistic_zeal
 		}
 		modifier = {
 			factor = 0.1
@@ -350,11 +347,18 @@ gov_military_junta = {
 	ruler_title = RT_WARLORD
 	ruler_title_female = RT_WARLORD
 	possible = {
-		has_authority = auth_oligarchic
 		OR = {
-			has_ethic = ethic_fanatic_militarist
-			has_valid_civic = civic_citizen_service
-			has_valid_civic = civic_military_dictatorship
+			AND = {
+				has_authority = auth_oligarchic
+				OR = {
+					has_ethic = ethic_fanatic_militarist
+					has_valid_civic = civic_citizen_service
+				}
+			}
+			AND = {
+				has_authority = auth_dictatorial
+				has_valid_civic = civic_military_dictatorship
+			}
 		}
 	}
 	weight = {
@@ -362,10 +366,6 @@ gov_military_junta = {
 		modifier = {
 			factor = 10
 			has_valid_civic = civic_citizen_service
-		}
-		modifier = {
-			factor = 10
-			is_valid_military_junta = yes
 		}
 		modifier = {
 			factor = 2
@@ -660,21 +660,14 @@ gov_peoples_commune = {
 		has_authority = auth_direct_democratic
 		OR = {
 			has_ethic = ethic_fanatic_socialism
-			has_valid_civic = civic_socialistic
+			has_valid_civic = civic_worker_coop
 		}
 	}
 	weight = {
 		base = 650
 		modifier = {
 			factor = 100
-			has_valid_civic = civic_anarchism
-		}
-		modifier = {
-			factor = 100
-			OR = {
-				has_valid_civic = civic_socialistic
-				has_valid_civic = civic_advanced_socialism
-			}
+			has_valid_civic = civic_worker_coop
 		}
 		modifier = {
 			factor = 0.1
@@ -685,8 +678,8 @@ gov_peoples_commune = {
 
 #民主集中制（间接民主）
 gov_collective_democracy = {
-	ruler_title = RT_PEOPLES_REPRESENTATIVE
-	ruler_title_female = RT_PEOPLES_REPRESENTATIVE
+	ruler_title = RT_KZF
+	ruler_title_female = RT_KZF
 	possible = {
 		has_authority = auth_democratic
 		OR = {
@@ -939,14 +932,14 @@ gov_plutocratic_oligarchy = {
 ###############
 #贵族元老院（寡头制）
 gov_noble_aristocracy = {
-	ruler_title = RT_THANE
-	ruler_title_female = RT_THANE
+	ruler_title = RT_PRINCEPS_SENATUS
+	ruler_title_female = RT_PRINCEPS_SENATUS
 	possible = {
+		has_authority = auth_oligarchic
 		OR = {
 			has_valid_civic = civic_feudal_realm
 			has_valid_civic = civic_aristocratic_elite
 		}
-		has_authority = auth_oligarchic
 	}
 	weight = {
 		base = 100000
@@ -955,8 +948,8 @@ gov_noble_aristocracy = {
 
 #选举君主制（独裁制）
 gov_elective_monarchy = {
-	ruler_title = RT_KEEPER
-	ruler_title_female = RT_KEEPER
+	ruler_title = RT_GRAND_DUKE
+	ruler_title_female = RT_GRAND_DUKE
 	should_force_rename = yes
 	possible = {
 		has_authority = auth_dictatorial
@@ -1175,7 +1168,7 @@ gov_leviathan_state = {
 }
 
 ###############
-# 联合政府
+# 主权邦联
 ###############
 #命运共同体（直接民主）
 gov_community_of_common_destiny = {
@@ -1183,7 +1176,10 @@ gov_community_of_common_destiny = {
 	ruler_title_female = RT_FIRST_SPEAKER
 	possible = {
 		has_authority = auth_direct_democratic
-		is_valid_coalition_government = yes
+		OR = {
+			has_valid_civic = civic_coalition_government
+			has_valid_civic = civic_coalition_government_overlord
+		}
 	}
 	weight = {
 		base = 999999
@@ -1192,11 +1188,14 @@ gov_community_of_common_destiny = {
 
 #苏维埃联盟（社会主义）
 gov_soviet_union = {
-	ruler_title = RT_LABOUR
-	ruler_title_female = RT_LABOUR
+	ruler_title = RT_FIRST_SECRETARY
+	ruler_title_female = RT_FIRST_SECRETARY
 	possible = {
 		NOT = { has_authority = auth_imperial }
-		is_valid_coalition_government = yes
+		OR = {
+			has_valid_civic = civic_coalition_government
+			has_valid_civic = civic_coalition_government_overlord
+		}
 		has_ethic = ethic_fanatic_socialism
 	}
 	weight = {
@@ -1215,7 +1214,10 @@ gov_commonwealth_of_states = {
 			has_authority = auth_direct_democratic
 			has_authority = auth_imperial
 		}
-		is_valid_coalition_government = yes
+		OR = {
+			has_valid_civic = civic_coalition_government
+			has_valid_civic = civic_coalition_government_overlord
+		}
 		NOT = { has_ethic = ethic_fanatic_socialism }
 	}
 	weight = {
@@ -1235,8 +1237,11 @@ gov_united_empire = {
 	use_regnal_names = yes
 	dynastic_last_names = yes
 	possible = {
-		has_authority = auth_dictatorial
-		has_valid_civic = civic_military_dictatorship
+		has_authority = auth_imperial
+		OR = {
+			has_valid_civic = civic_military_dictatorship
+			has_valid_civic = civic_coalition_government_overlord
+		}
 	}
 	weight = {
 		base = 999999
