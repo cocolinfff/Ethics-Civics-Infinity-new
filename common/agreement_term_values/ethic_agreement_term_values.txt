@@ -52,25 +52,21 @@ specialist_bulwark = {
 	term = specialist_type
 	triggered_loyalty_change = {
 		trigger = {
-			target = {
-				OR = {
-					has_ethic = ethic_militarist
-					has_ethic = ethic_fanatic_militarist
-				}
-			}
+			target = { is_militarist = yes }
 		}
 		loyalty_change = 5
+		ai_acceptance = {
+			subject = 25
+		}
 	}
 	triggered_loyalty_change = {
 		trigger = {
-			target = {
-				OR = {
-					has_ethic = ethic_pacifist
-					has_ethic = ethic_fanatic_pacifist
-				}
-			}
+			target = { is_pacifist = yes }
 		}
 		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
 	}
 	activate_effect = {
 		convert_to_specialist = specialist_bulwark
@@ -111,12 +107,18 @@ specialist_scholarium = {
 			target = { is_materialist = yes }
 		}
 		loyalty_change = 5
+		ai_acceptance = {
+			subject = 25
+		}
 	}
 	triggered_loyalty_change = {
 		trigger = {
 			target = { is_spiritualist = yes }
 		}
 		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
 	}
 	activate_effect = {
 		convert_to_specialist = specialist_scholarium
@@ -133,12 +135,18 @@ specialist_prospectorium = {
 			target = { is_pacifist = yes }
 		}
 		loyalty_change = 5
+		ai_acceptance = {
+			subject = 25
+		}
 	}
 	triggered_loyalty_change = {
 		trigger = {
 			target = { is_militarist = yes }
 		}
 		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
 	}
 	activate_effect = {
 		convert_to_specialist = specialist_prospectorium
@@ -173,6 +181,8 @@ specialist_prospectorium = {
 @subsidy_minimum = -0.75
 @subsidy_maximum = 0.75
 
+@set_factor_0 = 0.15
+@set_factor_0_neg = -0.15
 @set_factor_1 = 0.30
 @set_factor_1_neg = -0.30
 @set_factor_2 = 0.45
@@ -200,6 +210,7 @@ resource_subsidies_basic = {
 				agreement_preset = preset_prospectorium
 				agreement_preset = preset_tributary
 				agreement_preset = preset_subsidiary
+				agreement_preset = preset_relic_satrapy
 			}
 		}
 
@@ -261,7 +272,7 @@ resource_subsidies_advanced = {
 		base = @subsidy_minimum
 
 		modifier = {
-			set = @set_factor_1
+			set = @set_factor_0
 			agreement_preset = preset_prospectorium
 		}
 
@@ -270,6 +281,7 @@ resource_subsidies_advanced = {
 			OR = {
 				agreement_preset = preset_subsidiary
 				agreement_preset = preset_tributary
+				agreement_preset = preset_relic_satrapy
 			}
 		}
 
@@ -298,6 +310,7 @@ resource_subsidies_advanced = {
 			OR = {
 				agreement_preset = preset_vassal
 				agreement_preset = preset_scholarium
+				agreement_preset = preset_relic_satrapy
 			}
 		}
 	}
@@ -323,6 +336,7 @@ resource_subsidies_research = {
 			OR = {
 				agreement_preset = preset_subsidiary
 				agreement_preset = preset_tributary
+				agreement_preset = preset_relic_satrapy
 			}
 		}
 
@@ -345,7 +359,10 @@ resource_subsidies_research = {
 
 		modifier = {
 			set = 0.0
-			agreement_preset = preset_protectorate
+			OR = {
+				agreement_preset = preset_protectorate
+				agreement_preset = preset_relic_satrapy
+			}
 		}
 
 		modifier = {
@@ -396,6 +413,7 @@ resource_subsidies_strategic = {
 				agreement_preset = preset_subsidiary
 				agreement_preset = preset_tributary
 				agreement_preset = preset_prospectorium
+				agreement_preset = preset_relic_satrapy
 			}
 		}
 
@@ -425,6 +443,11 @@ resource_subsidies_strategic = {
 		modifier = {
 			set = 0.0
 			agreement_preset = preset_protectorate
+		}
+
+		modifier = {
+			set = @set_factor_1
+			agreement_preset = preset_relic_satrapy
 		}
 
 		modifier = {
@@ -464,6 +487,12 @@ joins_overlord_wars_none = {
 				agreement_preset = preset_subsidiary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
@@ -497,12 +526,28 @@ joins_overlord_wars_defensive = {
 				agreement_preset = preset_tributary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 joins_overlord_wars_offensive = {
 	term = joins_overlord_wars
 	loyalty_change = -20
+	ai_acceptance = {
+		overlord = 120
+		subject = -100
+	}
 	triggered_loyalty_change = {
 		trigger = {
 			target = {
@@ -513,6 +558,9 @@ joins_overlord_wars_offensive = {
 			}
 		}
 		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
 	}
 	activate_effect = {
 		set_rule_join_overlord_wars = offensive
@@ -530,12 +578,22 @@ joins_overlord_wars_offensive = {
 				agreement_preset = preset_tributary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 joins_overlord_wars_all = {
 	term = joins_overlord_wars
 	loyalty_change = -30
+	ai_acceptance = {
+		overlord = 180
+		subject = -150
+	}
 	triggered_loyalty_change = {
 		trigger = {
 			target = {
@@ -546,6 +604,9 @@ joins_overlord_wars_all = {
 			}
 		}
 		loyalty_change = -30
+		ai_acceptance = {
+			subject = -150
+		}
 	}
 	activate_effect = {
 		set_rule_join_overlord_wars = all
@@ -563,12 +624,23 @@ joins_overlord_wars_all = {
 				agreement_preset = preset_tributary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
 	}
 }
 
 
 joins_subject_wars_none = {
 	term = joins_subject_wars
+	loyalty_change = -10
+	ai_acceptance = {
+		overlord = 60
+		subject = -50
+	}
 	activate_effect = {
 		set_rule_join_subject_wars = none
 	}
@@ -604,10 +676,7 @@ joins_subject_wars_none = {
 		custom_tooltip = {
 			fail_text = not_allowed_for_coalition_government
 			owner = {
-				NOR = {
-					has_valid_civic = civic_coalition_government
-					is_coalition_government = yes
-				}
+				is_coalition_government = no
 			}
 		}
 		custom_tooltip = {
@@ -616,12 +685,22 @@ joins_subject_wars_none = {
 				agreement_preset = preset_subsidiary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 joins_subject_wars_defensive = {
 	term = joins_subject_wars
 	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
 	activate_effect = {
 		set_rule_join_subject_wars = defensive
 	}
@@ -631,11 +710,29 @@ joins_subject_wars_defensive = {
 	target_modifier = {
 		monthly_loyalty = 0.5
 	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
 }
 
 joins_subject_wars_offensive = {
 	term = joins_subject_wars
 	loyalty_change = 10
+	ai_acceptance = {
+		overlord = -60
+		subject = 50
+	}
 	activate_effect = {
 		set_rule_join_subject_wars = offensive
 	}
@@ -672,12 +769,22 @@ joins_subject_wars_offensive = {
 			fail_text = not_allowed_for_red_satellite
 			NOT = { owner = { has_origin = origin_red_satellite_overlord } }
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 joins_subject_wars_all = {
 	term = joins_subject_wars
 	loyalty_change = 15
+	ai_acceptance = {
+		overlord = -90
+		subject = 75
+	}
 	activate_effect = {
 		set_rule_join_subject_wars = all
 	}
@@ -699,6 +806,12 @@ joins_subject_wars_all = {
 			NOT = { owner = { has_ai_personality = imperial_origin_overlord_ai } }
 		}
 		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
 			fail_text = not_allowed_for_red_satellite
 			NOT = { owner = { has_origin = origin_red_satellite_overlord } }
 		}
@@ -708,6 +821,10 @@ joins_subject_wars_all = {
 subject_can_be_integrated = {
 	term = subject_integration
 	loyalty_change = -50
+	ai_acceptance = {
+		overlord = 300
+		subject = -250
+	}
 	activate_effect = {
 		set_rule_can_subject_be_integrated = yes
 	}
@@ -756,6 +873,10 @@ subject_can_be_integrated = {
 subject_can_not_be_integrated = {
 	term = subject_integration
 	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
 	activate_effect = {
 		set_rule_can_subject_be_integrated = no
 	}
@@ -767,6 +888,10 @@ subject_can_not_be_integrated = {
 subject_can_not_do_diplomacy = {
 	term = subject_diplomacy
 	loyalty_change = -15
+	ai_acceptance = {
+		overlord = 90
+		subject = -75
+	}
 	activate_effect = {
 		set_rule_can_subject_vote = no
 		set_rule_can_subject_do_diplomacy = no
@@ -806,6 +931,12 @@ subject_can_not_do_diplomacy = {
 			}
 		}
 		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
 			fail_text = not_allowed_for_galcom_resolution
 			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_intergalacticdirective_a_voice_for_all }
 		}
@@ -815,6 +946,10 @@ subject_can_not_do_diplomacy = {
 subject_can_do_diplomacy_but_not_vote = {
 	term = subject_diplomacy
 	loyalty_change = 0
+	ai_acceptance = {
+		overlord = 30
+		subject = -25
+	}
 	activate_effect = {
 		set_rule_can_subject_vote = no
 		set_rule_can_subject_do_diplomacy = yes
@@ -899,6 +1034,12 @@ subject_can_do_diplomacy_but_not_vote = {
 				}
 				NOT = { target = { has_civic = civic_machine_terminator } }
 			}
+			custom_tooltip = {
+				fail_text = not_allowed_for_luminarium
+				NOT = {
+					agreement_preset = preset_luminarium
+				}
+			}
 		}
 	}
 }
@@ -906,6 +1047,10 @@ subject_can_do_diplomacy_but_not_vote = {
 subject_can_do_diplomacy = {
 	term = subject_diplomacy
 	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
 	activate_effect = {
 		set_rule_can_subject_vote = yes
 		set_rule_can_subject_do_diplomacy = yes
@@ -924,6 +1069,10 @@ subject_can_do_diplomacy = {
 subject_cannot_expand = {
 	term = subject_expand
 	loyalty_change = -15
+	ai_acceptance = {
+		overlord = 90
+		subject = -75
+	}
 	activate_effect = {
 		set_rule_can_subject_expand = cannot_expand
 	}
@@ -962,6 +1111,12 @@ subject_cannot_expand = {
 			}
 		}
 		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
 			fail_text = not_allowed_for_feudal_society
 			NOT = {
 				owner = { has_civic = civic_feudal_realm }
@@ -984,6 +1139,10 @@ subject_cannot_expand = {
 
 subject_can_expand_with_tithe = {
 	loyalty_change = -5
+	ai_acceptance = {
+		overlord = 30
+		subject = -25
+	}
 	term = subject_expand
 	activate_effect = {
 		set_rule_can_subject_expand = can_expand_with_tithe
@@ -995,12 +1154,26 @@ subject_can_expand_with_tithe = {
 				agreement_preset = preset_tributary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_intergalacticdirective_a_voice_for_all }
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 subject_can_expand = {
 	term = subject_expand
 	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
 	activate_effect = {
 		set_rule_can_subject_expand = can_expand
 	}
@@ -1020,6 +1193,12 @@ subject_can_expand = {
 				}
 				NOT = { owner = { has_ai_personality = imperial_origin_overlord_ai } }
 			}
+			custom_tooltip = {
+				fail_text = not_allowed_for_luminarium
+				NOT = {
+					agreement_preset = preset_luminarium
+				}
+			}
 		}
 	}
 }
@@ -1034,6 +1213,10 @@ subject_holdings_limit_0 = {
 subject_holdings_limit_1 = {
 	term = subject_holdings_limit
 	loyalty_change = -5
+	ai_acceptance = {
+		overlord = 30
+		subject = -25
+	}
 	target_modifier = {
 		monthly_loyalty = -0.4
 		planet_max_subject_holding_buildings_add = 1
@@ -1045,12 +1228,22 @@ subject_holdings_limit_1 = {
 				agreement_preset = preset_tributary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 subject_holdings_limit_2 = {
 	term = subject_holdings_limit
 	loyalty_change = -15
+	ai_acceptance = {
+		overlord = 90
+		subject = -75
+	}
 	target_modifier = {
 		monthly_loyalty = -1
 		planet_max_subject_holding_buildings_add = 2
@@ -1062,6 +1255,12 @@ subject_holdings_limit_2 = {
 				agreement_preset = preset_tributary
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 	potential = {
 		has_overlord_dlc = yes
@@ -1071,6 +1270,10 @@ subject_holdings_limit_2 = {
 subject_holdings_limit_3 = {
 	term = subject_holdings_limit
 	loyalty_change = -30
+	ai_acceptance = {
+		overlord = 180
+		subject = -150
+	}
 	target_modifier = {
 		monthly_loyalty = -2
 		planet_max_subject_holding_buildings_add = 3
@@ -1089,6 +1292,12 @@ subject_holdings_limit_3 = {
 				NOT = { is_active_resolution = resolution_bureaucraticsurveillance_personal_oversight }
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 	potential = {
 		has_overlord_dlc = yes
@@ -1098,6 +1307,10 @@ subject_holdings_limit_3 = {
 subject_holdings_limit_4 = {
 	term = subject_holdings_limit
 	loyalty_change = -50
+	ai_acceptance = {
+		overlord = 300
+		subject = -250
+	}
 	target_modifier = {
 		monthly_loyalty = -4
 		planet_max_subject_holding_buildings_add = 4
@@ -1116,6 +1329,12 @@ subject_holdings_limit_4 = {
 				NOT = { is_active_resolution = resolution_bureaucraticsurveillance_borderless_authority }
 			}
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 	potential = {
 		has_overlord_dlc = yes
@@ -1124,7 +1343,11 @@ subject_holdings_limit_4 = {
 
 subject_does_not_get_sensors = {
 	term = subject_sensors
-	loyalty_change = 0
+	loyalty_change = -5
+	ai_acceptance = {
+		overlord = 10
+		subject = -5
+	}
 	activate_effect = {
 		set_rule_subject_has_sensors = no
 	}
@@ -1139,17 +1362,27 @@ subject_does_not_get_sensors = {
 			fail_text = not_allowed_for_galcom_resolution
 			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_bureaucraticsurveillance_borderless_authority }
 		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
 	}
 }
 
 subject_gets_sensors = {
 	term = subject_sensors
-	loyalty_change = 5
+	loyalty_change = 0
+	ai_acceptance = {
+		overlord = -10
+		subject = 5
+	}
 	activate_effect = {
 		set_rule_subject_has_sensors = yes
 	}
 	target_modifier = {
-		monthly_loyalty = 0.5
+		monthly_loyalty = 0.25
 	}
 	possible = {
 		custom_tooltip = {
@@ -1174,6 +1407,12 @@ subject_gets_sensors = {
 
 subject_is_not_protectorate = {
 	term = protectorate
+
+	potential = {
+		NOT = {
+			agreement_preset = preset_protectorate
+		}
+	}
 }
 
 subject_is_protectorate = {
@@ -1186,6 +1425,10 @@ subject_is_protectorate = {
 	}
 	target_modifier = {
 		subject_tech_cost_mult = -0.80
+	}
+
+	potential = {
+		agreement_preset = preset_protectorate
 	}
 
 	extra_term_text_subject = protectorate_extra_subject
@@ -1207,6 +1450,9 @@ subject_is_xenophobe = {
 			}
 		}
 		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
 	}
 }
 
@@ -1225,6 +1471,9 @@ subject_is_fanatic_xenophobe = {
 			}
 		}
 		loyalty_change = -40
+		ai_acceptance = {
+			subject = -200
+		}
 	}
 }
 
@@ -1238,6 +1487,9 @@ subject_is_pompous = {
 			}
 		}
 		loyalty_change = -25
+		ai_acceptance = {
+			subject = -125
+		}
 	}
 }
 
@@ -1259,10 +1511,18 @@ no_access = {
 naval_cap_unmodified = {
 	term = naval_capacity
 	possible = {
-		NOT = {
+		NOR = {
 			agreement_preset = preset_satrapy
+			agreement_preset = preset_relic_satrapy
+			agreement_preset = preset_luminarium
 		}
 	}
+
+	target_modifier = {
+		diplo_weight_mult = -0.5
+	}
+
+	extra_term_text_subject = loyalty_effects_subject
 }
 
 naval_cap_satrapy = {
