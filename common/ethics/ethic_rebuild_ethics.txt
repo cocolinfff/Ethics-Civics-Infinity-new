@@ -60,23 +60,19 @@ ethic_socialism = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_SOCIALISM_POS
 		trigger = {
-			OR = {
-				has_ethic = ethic_socialism
-				has_ethic = ethic_fanatic_socialism
-			}
+			is_socialism = yes
 		}
 	}
 
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
-			NOR = {
-				has_ethic = ethic_socialism
-				has_ethic = ethic_fanatic_socialism
+			NOT = {
+				is_socialism = yes
 			}
 			OR = {
-				has_faction = socialists 
-				has_faction = pioneer 
+				has_faction = socialists
+				has_faction = pioneer
 			}
 		}
 	}
@@ -86,56 +82,6 @@ ethic_socialism = {
 		trigger = {
 			exists = ruler
 			ruler = { has_trait = "trait_ruler_fertility_preacher" }
-		}
-	}
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_SLOW_LEARN_POS
-		trigger = {
-			any_owned_planet = {
-				any_owned_pop = {
-					has_trait = "trait_slow_learners"
-				}
-			}
-		}
-	}
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_SOCIOLOGIST_POS
-		trigger = {
-			any_owned_planet = {
-				any_owned_pop = {
-					has_trait = "trait_natural_sociologists"
-				}
-			}
-		}
-	}
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_COMMUNAL_POS
-		trigger = {
-			any_owned_planet = {
-				any_owned_pop = {
-					has_trait = "trait_communal"
-				}
-			}
-		}
-	}
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_WASTEFUL_NEG
-		trigger = {
-			any_owned_planet = {
-				any_owned_pop = {
-					has_trait = "trait_thrifty"
-				}
-			}
-		}
-	}
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_SOLITARY_NEG
-		trigger = {
-			any_owned_planet = {
-				any_owned_pop = {
-					has_trait = "trait_solitary"
-				}
-			}
 		}
 	}
 
@@ -148,12 +94,103 @@ ethic_socialism = {
 						has_living_standard = { type = living_standard_utopian }
 						has_living_standard = { type = living_standard_good }
 						has_living_standard = { type = living_standard_shared_burden }
+						has_living_standard = { type = living_standard_worker_ownership }
 					}
 				}
 			}
 		}
 	}
 
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_COMMUNIST_FED_POS
+		trigger = {
+			has_federation = yes
+			federation = {
+				has_federation_type = TT_communist_federation
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SLOW_LEARN_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_slow_learners"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SOCIOLOGIST_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_natural_sociologists"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_COMMUNAL_POS
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_communal"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_WASTEFUL_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_wasteful"
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_SOLITARY_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					has_trait = "trait_solitary"
+				}
+			}
+		}
+	}
+
+	# Check for any leader on the Council with Faction's Ethic.
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
+		trigger = {
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_socialism
+				}
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_GOVERNOR_POS
+		trigger = {
+			any_owned_planet = {
+				exists = leader
+				leader = { has_ethic = ethic_socialism }
+			}
+		}
+	}
 
 	country_attraction = {
 		base = 1
@@ -161,20 +198,14 @@ ethic_socialism = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				has_ethic = ethic_socialism
-				has_ethic = ethic_fanatic_socialism
+				is_socialism = yes
 				AND = {
 					is_country_type = primitive
+					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
-						observation_outpost = {
-							has_mission = native_indoctrination
-						}
 						observation_outpost_owner = {
-							OR = {
-								has_ethic = ethic_fanatic_socialism
-								has_ethic = ethic_socialism
-							}
+							is_socialism = yes
 						}
 					}
 				}
@@ -184,54 +215,66 @@ ethic_socialism = {
 		modifier = {
 			factor = 10
 			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
-				observation_outpost = {
-					has_mission = native_indoctrination
-				}
 				observation_outpost_owner = { has_ethic = ethic_fanatic_socialism }
 			}
 		}
+
 		modifier = {
 			factor = 5
 			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
-				observation_outpost = {
-					has_mission = native_indoctrination
-				}
 				observation_outpost_owner = { has_ethic = ethic_socialism }
 			}
 		}
-		modifier = {
-			factor = 3
-			has_ethic = ethic_fanatic_socialism
-		}
+
 		modifier = {
 			factor = 2
-			has_ethic = ethic_socialism
-		}
-		modifier = {
-			factor = 1.5
-			exists = ruler
-			ruler = {
-				OR = {
-					leader_of_faction = socialists 
-					leader_of_faction = pioneer 
-				}
+			is_country_type = default
+			is_socialism = no
+			OR = {
+				has_faction = socialists
+				has_faction = pioneer
 			}
 		}
+
 		modifier = {
 			factor = 1.5
 			is_country_type = default
 			exists = ruler
-			ruler = { or = { has_trait = trait_ruler_fertility_preacher } }
+			ruler = { has_trait = trait_ruler_fertility_preacher }
+		}
+
+		modifier = {
+			factor = 2
+			has_ethic = ethic_socialism
+		}
+
+		modifier = {
+			factor = 3
+			has_ethic = ethic_fanatic_socialism
+		}
+
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|socialism|
 		}
 	}
 
 	# from = planet
 	pop_attraction = {
 		base = 1
+
+		inline_script = {
+			script = "ethics/governor_pop_attraction"
+			ETHIC = socialism
+			ETHIC_OPPOSED = capitalism
+		}
+
 		modifier = {
 			factor = 0
 			has_trait = trait_hive_mind
@@ -241,14 +284,17 @@ ethic_socialism = {
 			factor = 1.5
 			has_trait = "trait_natural_sociologists"
 		}
+
 		modifier = {
 			factor = 2
 			has_trait = "trait_communal"
 		}
+
 		modifier = {
 			factor = 0.5
 			has_trait = "trait_thrifty"
 		}
+
 		modifier = {
 			factor = 0.5
 			has_trait = "trait_solitary"
@@ -256,65 +302,23 @@ ethic_socialism = {
 
 		modifier = {
 			factor = 1.5
-			has_trait = "trait_slow_learners"
+			has_trait = "trait_quick_learners"
 		}
 
-		modifier = { # 阶级吸引力，人口总是倾向于变成自己阶级对应的思潮
-			factor = @factionattractionradical
-			OR = {
-				# 工人
-				is_pop_category = worker
-				# 先锋队
-				has_job = core_party_members
-				has_job = grassroot_cadre
-			}
-		}
-		modifier = { # 派系吸引力，人口倾向于和派系思潮同步
-			factor = @factionattractionmoderate
-			OR = {
-				# Radical
-				member_of_faction = socialists 
-				# Moderate
-				member_of_faction = poineer 
-				member_of_faction = proletarians 
-			}
+		modifier = {
+			factor = 1.5
+			has_trait = "trait_slow_learners"
 		}
 
 		modifier = {
 			factor = 1.25
 			OR = {
-			    has_living_standard = { type = living_standard_shared_burden }
+				has_living_standard = { type = living_standard_shared_burden }
 				has_living_standard = { type = living_standard_utopian }
 				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_worker_ownership }
 			}
 		}
-
-		modifier = {
-			factor = @factionattractionfade
-			happiness > 85
-		}
-		modifier = {
-			factor = @factionattractionfade
-			happiness > 65
-		}
-		modifier = {
-			factor = @factionattractionfade
-			happiness > 45
-		}
-		modifier = {
-			factor = @factionattractionmoderate
-			happiness < 25
-		}
-		modifier = {
-			factor = @factionattractionradical
-			happiness < 15
-		}
-		modifier = {
-			factor = @factionattractionmoderate
-			happiness < 45
-			is_pop_category = worker
-		}
-
 	}
 }
 
@@ -385,32 +389,19 @@ ethic_capitalism = {
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_CAPITALISM_POS
 		trigger = {
-			OR = {
-				has_ethic = ethic_capitalism
-				has_ethic = ethic_fanatic_capitalism
-			}
-		}
-	}
-
-	pop_attraction_tag = {
-		desc = POP_ATTRACTION_RULER_FACTION_POS
-		trigger = {
-			exists = ruler
-			ruler = {
-				OR = {
-					leader_of_faction = industrialist 
-					leader_of_faction = bankers 
-				}
-			}
+			is_capitalism = yes
 		}
 	}
 
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
+			NOT = {
+				is_capitalism = yes
+			}
 			OR = {
-				has_faction = industrialist 
-				has_faction = bankers 
+				has_faction = bankers
+				has_faction = industrialist
 			}
 		}
 	}
@@ -422,6 +413,7 @@ ethic_capitalism = {
 			ruler = { has_trait = "trait_ruler_investor" }
 		}
 	}
+
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_TALENTED_POS
 		trigger = {
@@ -432,6 +424,7 @@ ethic_capitalism = {
 			}
 		}
 	}
+
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_QUICK_LEARN_POS
 		trigger = {
@@ -442,6 +435,32 @@ ethic_capitalism = {
 			}
 		}
 	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_TRADE_FED_POS
+		trigger = {
+			has_federation = yes
+			federation = {
+				has_federation_type = trade_federation
+			}
+		}
+	}
+
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_CONSUMER_GOODS_NEG
+		trigger = {
+			any_owned_planet = {
+				any_owned_pop = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+	}
+
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_THRIFTY_POS
 		trigger = {
@@ -452,6 +471,7 @@ ethic_capitalism = {
 			}
 		}
 	}
+
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_CHARISMA_POS
 		trigger = {
@@ -462,6 +482,7 @@ ethic_capitalism = {
 			}
 		}
 	}
+
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_WASTEFUL_POS
 		trigger = {
@@ -472,6 +493,7 @@ ethic_capitalism = {
 			}
 		}
 	}
+
 	pop_attraction_tag = {
 		desc = POP_ATTRACTION_SOLITARY_POS
 		trigger = {
@@ -482,17 +504,32 @@ ethic_capitalism = {
 			}
 		}
 	}
+
+	# Check for any leader on the Council with Faction's Ethic.
 	pop_attraction_tag = {
-		desc = POP_ATTRACTION_CONSERVATIONAL_NEG
+		desc = POP_ATTRACTION_REPRESENTED_ON_COUNCIL
 		trigger = {
-			any_owned_planet = {
-				any_owned_pop = {
-					has_trait = "trait_conservational"
+			owner = {
+				any_owned_leader = {
+					OR = {
+						is_ruler = yes
+						is_councilor = yes
+					}
+					has_ethic = ethic_capitalism
 				}
 			}
 		}
 	}
 
+	pop_attraction_tag = {
+		desc = POP_ATTRACTION_GOVERNOR_POS
+		trigger = {
+			any_owned_planet = {
+				exists = leader
+				leader = { has_ethic = ethic_capitalism }
+			}
+		}
+	}
 
 	country_attraction = {
 		base = 1
@@ -500,20 +537,14 @@ ethic_capitalism = {
 			factor = 0
 			NOR = {
 				is_country_type = default
-				has_ethic = ethic_capitalism
-				has_ethic = ethic_fanatic_capitalism
+				is_capitalism = yes
 				AND = {
 					is_country_type = primitive
+					has_country_flag = preftl_societal_enlightenment_pact
 					capital_scope = {
 						has_observation_outpost = yes
-						observation_outpost = {
-							has_mission = native_indoctrination
-						}
 						observation_outpost_owner = {
-							OR = {
-								has_ethic = ethic_fanatic_capitalism
-								has_ethic = ethic_capitalism
-							}
+							is_capitalism = yes
 						}
 					}
 				}
@@ -523,55 +554,66 @@ ethic_capitalism = {
 		modifier = {
 			factor = 10
 			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
-				observation_outpost = {
-					has_mission = native_indoctrination
-				}
 				observation_outpost_owner = { has_ethic = ethic_fanatic_capitalism }
 			}
 		}
+
 		modifier = {
 			factor = 5
 			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
 			capital_scope = {
 				has_observation_outpost = yes
-				observation_outpost = {
-					has_mission = native_indoctrination
-				}
 				observation_outpost_owner = { has_ethic = ethic_capitalism }
 			}
 		}
+
 		modifier = {
-			factor = 1.5
-			exists = ruler
-			ruler = {
-				OR = {
-					leader_of_faction = industrialist 
-					leader_of_faction = bankers 
-				}
+			factor = 2
+			is_country_type = default
+			is_capitalism = no
+			OR = {
+				has_faction = bankers
+				has_faction = industrialist
 			}
 		}
+
 		modifier = {
 			factor = 1.5
 			is_country_type = default
 			exists = ruler
 			ruler = { or = { has_trait = trait_ruler_investor } }
 		}
+
 		modifier = {
 			factor = 2
 			has_ethic = ethic_capitalism
 		}
+
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_capitalism
 		}
 
+		# Check for any leader on the Council with Faction's Ethic.
+		modifier = {
+			factor = value:count_councilors_with_ethic|ETHIC|capitalism|
+		}
 	}
 
 	# from = planet
 	pop_attraction = {
 		base = 1
+
+		inline_script = {
+			script = "ethics/governor_pop_attraction"
+			ETHIC = capitalism
+			ETHIC_OPPOSED = socialism
+		}
+
 		modifier = {
 			factor = 0
 			has_trait = trait_hive_mind
@@ -581,81 +623,44 @@ ethic_capitalism = {
 			factor = 1.7
 			has_trait = "trait_thrifty"
 		}
+
 		modifier = {
 			factor = 1.2
 			has_trait = "trait_charismatic"
 		}
+
 		modifier = {
 			factor = 1.3
 			has_trait = "trait_solitary"
 		}
+
 		modifier = {
 			factor = 0.75
 			has_trait = "trait_conservational"
 		}
+
 		modifier = {
 			factor = 1.2
 			has_trait = "trait_wasteful"
 		}
+
 		modifier = {
 			factor = 1.5
 			has_trait = "trait_talented"
 		}
+
 		modifier = {
 			factor = 1.25
-			has_trait = "trait_quick_learners"
-		}
-
-		modifier = { # 阶级吸引力，人口总是倾向于变成自己阶级对应的思潮
-			factor = @factionattractionradical
-			OR = {
-				# 商人
-				has_job = mogul
-				has_job = merchant
-				has_job = manager
-				has_job = trader
-				# 工程师
-				has_job = chemist
-				has_job = translucer
-				has_job = gas_refiner
-				has_job = roboticist
-			}
-		}
-		modifier = { # 派系吸引力，人口倾向于和派系思潮同步
-			factor = @factionattractionmoderate
-			OR = {
-				# Radical
-				member_of_faction = bankers 
-				# Moderate
-				member_of_faction = industrialist 
-				member_of_faction = prosperity 
-			}
+			has_trait = trait_quick_learners
 		}
 
 		modifier = {
-			factor = @factionattractionfade
-			happiness > 85
-		}
-		modifier = {
-			factor = @factionattractionfade
-			happiness > 65
-		}
-		modifier = {
-			factor = @factionattractionfade
-			happiness > 45
-		}
-		modifier = {
-			factor = @factionattractionmoderate
-			happiness < 25
-		}
-		modifier = {
-			factor = @factionattractionradical
-			happiness < 15
-		}
-		modifier = {
-			factor = @factionattractionmoderate
-			happiness < 45
-			is_pop_category = specialist
+			factor = 0.5
+			OR = {
+				has_living_standard = { type = living_standard_utopian }
+				has_living_standard = { type = living_standard_good }
+				has_living_standard = { type = living_standard_shared_burden }
+			}
 		}
 	}
 }

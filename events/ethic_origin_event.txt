@@ -349,30 +349,35 @@ event = {
                     add_random_research_option = {
                         add_progress = 0.6
                         ignore_prereqs = yes
+                        ignore_rare = no
                         area = engineering
                         tier = 1
                         fail_effects = {
                             add_random_research_option = {
                                 add_progress = 0.6
                                 ignore_prereqs = yes
+                                ignore_rare = no
                                 area = engineering
                                 tier = 2
                                 fail_effects = {
                                     add_random_research_option = {
                                         add_progress = 0.6
                                         ignore_prereqs = yes
+                                        ignore_rare = no
                                         area = engineering
                                         tier = 3
                                         fail_effects = {
                                             add_random_research_option = {
                                                 add_progress = 0.6
                                                 ignore_prereqs = yes
+                                                ignore_rare = no
                                                 area = engineering
                                                 tier = 4
                                                 fail_effects = {
                                                     add_random_research_option = {
                                                         add_progress = 0.6
                                                         ignore_prereqs = yes
+                                                        ignore_rare = no
                                                         area = engineering
                                                         tier = 5
                                                     }
@@ -387,30 +392,35 @@ event = {
                     add_random_research_option = {
                         add_progress = 0.6
                         ignore_prereqs = yes
+                        ignore_rare = no
                         area = physics
                         tier = 1
                         fail_effects = {
                             add_random_research_option = {
                                 add_progress = 0.6
                                 ignore_prereqs = yes
+                                ignore_rare = no
                                 area = physics
                                 tier = 2
                                 fail_effects = {
                                     add_random_research_option = {
                                         add_progress = 0.6
                                         ignore_prereqs = yes
+                                        ignore_rare = no
                                         area = physics
                                         tier = 3
                                         fail_effects = {
                                             add_random_research_option = {
                                                 add_progress = 0.6
                                                 ignore_prereqs = yes
+                                                ignore_rare = no
                                                 area = physics
                                                 tier = 4
                                                 fail_effects = {
                                                     add_random_research_option = {
                                                         add_progress = 0.6
                                                         ignore_prereqs = yes
+                                                        ignore_rare = no
                                                         area = physics
                                                         tier = 5
                                                     }
@@ -425,30 +435,35 @@ event = {
                     add_random_research_option = {
                         add_progress = 0.6
                         ignore_prereqs = yes
+                        ignore_rare = no
                         area = society
                         tier = 1
                         fail_effects = {
                             add_random_research_option = {
                                 add_progress = 0.6
                                 ignore_prereqs = yes
+                                ignore_rare = no
                                 area = society
                                 tier = 2
                                 fail_effects = {
                                     add_random_research_option = {
                                         add_progress = 0.6
                                         ignore_prereqs = yes
+                                        ignore_rare = no
                                         area = society
                                         tier = 3
                                         fail_effects = {
                                             add_random_research_option = {
                                                 add_progress = 0.6
                                                 ignore_prereqs = yes
+                                                ignore_rare = no
                                                 area = society
                                                 tier = 4
                                                 fail_effects = {
                                                     add_random_research_option = {
                                                         add_progress = 0.6
                                                         ignore_prereqs = yes
+                                                        ignore_rare = no
                                                         area = society
                                                         tier = 5
                                                     }
@@ -507,11 +522,6 @@ country_event = {
     }
 
     immediate = {
-        set_country_type = eci_primitive
-        remove_pre_ftl_flags = yes
-        set_pre_ftl_age = atomic_age
-        set_country_flag = atomic_age
-        set_country_flag = recently_advanced
         capital_scope = {
             remove_all_buildings = yes
             add_building = building_primitive_capital
@@ -522,17 +532,59 @@ country_event = {
             add_building = building_luxury_residence
             add_deposit = d_decrepit_dwellings
             add_deposit = d_failing_infrastructure
-            add_deposit = d_ethic_primitive_trade
-            solar_system = {
-                starbase = { fleet = { delete_fleet = this } }
+
+            # 在这里创建一个新国家
+            create_country = {
+                name = root
+                name_list = root
+                ship_prefix = root
+                type = default #default
+                auto_delete = no
+                authority = root
+                civics = root
+                ethos = root
+                flag = root
+                species = root
+                origin = root
+                day_zero_contact = no
+
+                effect = {
+                    set_graphical_culture = root
+                    add_modifier = { modifier = patent_protection years = 99 }
+                    add_modifier = { modifier = energy_revolution years = 99 }
+                    add_modifier = { modifier = agriculturala_monopoly years = 99 }
+                    add_modifier = { modifier = mineral_finance years = 99 }
+                    add_modifier = { modifier = consumer_oligarch years = 99 }
+                    add_modifier = { modifier = steel_tycoon years = 99 }
+                }
             }
         }
-        add_modifier = { modifier = patent_protection years = 99 }
-        add_modifier = { modifier = energy_revolution years = 99 }
-        add_modifier = { modifier = agriculturala_monopoly years = 99 }
-        add_modifier = { modifier = mineral_finance years = 99 }
-        add_modifier = { modifier = consumer_oligarch years = 99 }
-        add_modifier = { modifier = steel_tycoon years = 99 }
+        last_created_country = {
+            # 继承变量，标签和通讯
+            copy_flags_and_variables_from = root
+            every_country = {
+                limit = {
+                    has_communications = root
+                }
+                establish_communications = prev
+            }
+
+            # 继承领袖
+            root.leader = {
+                set_owner = prev
+            }
+            set_leader = root.leader
+
+            # 重新分配资源
+            add_resource = { energy = 300	}
+            add_resource = { minerals = 300	}
+            add_resource = { alloys = 300 }
+            add_resource = { consumer_goods = 300 }
+            give_starting_resources_effect = yes
+
+            # 重设玩家
+            set_player = root
+        }
     }
 }
 country_event = {
@@ -665,54 +717,108 @@ country_event = {
     is_triggered_only = yes
     trigger = { has_origin = origin_taking_care_of_god }
     immediate = {
-        set_country_type = eci_primitive
-        start_situation = { type = taking_care_of_god }
         capital_scope = {
-            add_deposit = d_ethic_primitive_trade
-            solar_system = {
-                starbase = { fleet = { delete_fleet = this } }
+            # 在这里创建一个新国家
+            create_country = {
+                name = root
+                name_list = root
+                ship_prefix = root
+                type = default #default
+                auto_delete = no
+                authority = root
+                civics = root
+                ethos = root
+                flag = root
+                species = root
+                origin = root
+                day_zero_contact = no
+
+                effect = {
+                    set_graphical_culture = root
+                    start_situation = { type = taking_care_of_god }
+                }
             }
         }
-        if = {
-            limit = { is_ai = no }
-            give_physics_research_option_tier_5_effect = yes
-            give_engineering_research_option_tier_5_effect = yes
-            give_society_research_option_tier_5_effect = yes
-        }
-        else_if = {
-            limit = { is_ai = yes }
-            add_modifier = { modifier = red_dawn_database_boot days = -1 }
-            while = {
-                count = 15
-                add_random_research_option = {
-                    add_progress = 0.6
-                    ignore_prereqs = yes
-                    area = engineering
-                    tier = 1
-                    fail_effects = {
-                        add_random_research_option = {
-                            add_progress = 0.6
-                            ignore_prereqs = yes
-                            area = engineering
-                            tier = 2
-                            fail_effects = {
-                                add_random_research_option = {
-                                    add_progress = 0.6
-                                    ignore_prereqs = yes
-                                    area = engineering
-                                    tier = 3
-                                    fail_effects = {
-                                        add_random_research_option = {
-                                            add_progress = 0.6
-                                            ignore_prereqs = yes
-                                            area = engineering
-                                            tier = 4
-                                            fail_effects = {
-                                                add_random_research_option = {
-                                                    add_progress = 0.6
-                                                    ignore_prereqs = yes
-                                                    area = engineering
-                                                    tier = 5
+        last_created_country = {
+            # 继承变量，标签和通讯
+            copy_flags_and_variables_from = root
+            every_country = {
+                limit = {
+                    has_communications = root
+                }
+                establish_communications = prev
+            }
+
+            # 继承领袖
+            root.leader = {
+                set_owner = prev
+            }
+            set_leader = root.leader
+
+            # 重新分配资源
+            add_resource = { energy = 300	}
+            add_resource = { minerals = 300	}
+            add_resource = { alloys = 300 }
+            add_resource = { consumer_goods = 300 }
+            give_starting_resources_effect = yes
+
+            # 摧毁旧国家
+            prev = {
+                if = {
+                    # 重设玩家
+                    limit = { is_ai = no }
+                    set_player = last_created_country
+                }
+                destroy_country = yes
+            }
+
+            # 科技选项
+            if = {
+                limit = { is_ai = no }
+                give_physics_research_option_tier_5_effect = yes
+                give_engineering_research_option_tier_5_effect = yes
+                give_society_research_option_tier_5_effect = yes
+            }
+            else_if = {
+                limit = { is_ai = yes }
+                add_modifier = { modifier = red_dawn_database_boot days = -1 }
+                while = {
+                    count = 15
+                    add_random_research_option = {
+                        add_progress = 0.6
+                        ignore_prereqs = yes
+                        ignore_rare = no
+                        area = engineering
+                        tier = 1
+                        fail_effects = {
+                            add_random_research_option = {
+                                add_progress = 0.6
+                                ignore_prereqs = yes
+                                ignore_rare = no
+                                area = engineering
+                                tier = 2
+                                fail_effects = {
+                                    add_random_research_option = {
+                                        add_progress = 0.6
+                                        ignore_prereqs = yes
+                                        ignore_rare = no
+                                        area = engineering
+                                        tier = 3
+                                        fail_effects = {
+                                            add_random_research_option = {
+                                                add_progress = 0.6
+                                                ignore_prereqs = yes
+                                                ignore_rare = no
+                                                area = engineering
+                                                tier = 4
+                                                fail_effects = {
+                                                    add_random_research_option = {
+                                                        add_progress = 0.6
+                                                        ignore_prereqs = yes
+                                                        ignore_rare = no
+                                                        area = engineering
+                                                        tier = 5
+                                                    }
                                                 }
                                             }
                                         }
@@ -721,36 +827,41 @@ country_event = {
                             }
                         }
                     }
-                }
-                add_random_research_option = {
-                    add_progress = 0.6
-                    ignore_prereqs = yes
-                    area = physics
-                    tier = 1
-                    fail_effects = {
-                        add_random_research_option = {
-                            add_progress = 0.6
-                            ignore_prereqs = yes
-                            area = physics
-                            tier = 2
-                            fail_effects = {
-                                add_random_research_option = {
-                                    add_progress = 0.6
-                                    ignore_prereqs = yes
-                                    area = physics
-                                    tier = 3
-                                    fail_effects = {
-                                        add_random_research_option = {
-                                            add_progress = 0.6
-                                            ignore_prereqs = yes
-                                            area = physics
-                                            tier = 4
-                                            fail_effects = {
-                                                add_random_research_option = {
-                                                    add_progress = 0.6
-                                                    ignore_prereqs = yes
-                                                    area = physics
-                                                    tier = 5
+                    add_random_research_option = {
+                        add_progress = 0.6
+                        ignore_prereqs = yes
+                        ignore_rare = no
+                        area = physics
+                        tier = 1
+                        fail_effects = {
+                            add_random_research_option = {
+                                add_progress = 0.6
+                                ignore_prereqs = yes
+                                ignore_rare = no
+                                area = physics
+                                tier = 2
+                                fail_effects = {
+                                    add_random_research_option = {
+                                        add_progress = 0.6
+                                        ignore_prereqs = yes
+                                        ignore_rare = no
+                                        area = physics
+                                        tier = 3
+                                        fail_effects = {
+                                            add_random_research_option = {
+                                                add_progress = 0.6
+                                                ignore_prereqs = yes
+                                                ignore_rare = no
+                                                area = physics
+                                                tier = 4
+                                                fail_effects = {
+                                                    add_random_research_option = {
+                                                        add_progress = 0.6
+                                                        ignore_prereqs = yes
+                                                        ignore_rare = no
+                                                        area = physics
+                                                        tier = 5
+                                                    }
                                                 }
                                             }
                                         }
@@ -759,36 +870,41 @@ country_event = {
                             }
                         }
                     }
-                }
-                add_random_research_option = {
-                    add_progress = 0.6
-                    ignore_prereqs = yes
-                    area = society
-                    tier = 1
-                    fail_effects = {
-                        add_random_research_option = {
-                            add_progress = 0.6
-                            ignore_prereqs = yes
-                            area = society
-                            tier = 2
-                            fail_effects = {
-                                add_random_research_option = {
-                                    add_progress = 0.6
-                                    ignore_prereqs = yes
-                                    area = society
-                                    tier = 3
-                                    fail_effects = {
-                                        add_random_research_option = {
-                                            add_progress = 0.6
-                                            ignore_prereqs = yes
-                                            area = society
-                                            tier = 4
-                                            fail_effects = {
-                                                add_random_research_option = {
-                                                    add_progress = 0.6
-                                                    ignore_prereqs = yes
-                                                    area = society
-                                                    tier = 5
+                    add_random_research_option = {
+                        add_progress = 0.6
+                        ignore_prereqs = yes
+                        ignore_rare = no
+                        area = society
+                        tier = 1
+                        fail_effects = {
+                            add_random_research_option = {
+                                add_progress = 0.6
+                                ignore_prereqs = yes
+                                ignore_rare = no
+                                area = society
+                                tier = 2
+                                fail_effects = {
+                                    add_random_research_option = {
+                                        add_progress = 0.6
+                                        ignore_prereqs = yes
+                                        ignore_rare = no
+                                        area = society
+                                        tier = 3
+                                        fail_effects = {
+                                            add_random_research_option = {
+                                                add_progress = 0.6
+                                                ignore_prereqs = yes
+                                                ignore_rare = no
+                                                area = society
+                                                tier = 4
+                                                fail_effects = {
+                                                    add_random_research_option = {
+                                                        add_progress = 0.6
+                                                        ignore_prereqs = yes
+                                                        ignore_rare = no
+                                                        area = society
+                                                        tier = 5
+                                                    }
                                                 }
                                             }
                                         }
@@ -993,6 +1109,7 @@ country_event = {
 
     immediate = {
         owner = {
+            set_country_flag = taking_care_of_god_end
             give_technology = { message = no tech = tech_warp_drive_1 message = no }
             give_technology = { message = no tech = tech_shields_1 message = no }
             every_owned_planet = {

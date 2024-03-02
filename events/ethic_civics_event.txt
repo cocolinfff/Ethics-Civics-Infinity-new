@@ -764,57 +764,305 @@ country_event = {
     }
 }
 
-# 血肉零件
-namespace = ethic_corpus_event
+# 战争领主
+namespace = ethic_military_dictatorship
 country_event = {
-    id = ethic_corpus_event.1
+    id = ethic_military_dictatorship.1
     hide_window = yes
     is_triggered_only = yes
 
     trigger = {
-        has_civic = civic_corpus
+        has_valid_civic = civic_military_dictatorship
+        subjects > 0
     }
 
     immediate = {
-        every_owned_planet = {
+        set_variable = { which = military_dictatorship_num_subjects value = trigger:subjects }
+        subtract_variable = { which = military_dictatorship_num_subjects value = 1 }
+        every_subject = {
+            add_modifier = {
+                modifier = military_dictatorship_subjects_effect
+                multiplier = PREV.military_dictatorship_num_subjects
+            }
+        }
+        clear_variable = military_dictatorship_num_subjects
+    }
+}
+
+namespace = ethic_spiritual_democracy
+country_event = {
+    id = ethic_spiritual_democracy.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_spiritual_democracy
+    }
+
+    immediate = {
+        every_owned_leader = {
+            limit = { is_councilor = yes }
+            add_trait_no_notify = random_common
+        }
+    }
+}
+
+namespace = ethic_philosopher_king
+country_event = {
+    id = ethic_philosopher_king.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_philosopher_king
+    }
+
+    immediate = {
+        every_owned_leader = {
+            limit = { is_ruler = yes }
             if = {
                 limit = {
-                    num_assigned_jobs = {
-                        job = reemployment_HR_supervisor
-                        value >= 1
+                    leader_class = official
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_spymaster }
+                    10 = { add_trait_no_notify = leader_trait_totalitarian }
+                    10 = { add_trait_no_notify = leader_trait_educator }
+                    10 = { add_trait_no_notify = leader_trait_master_bureaucrat }
+                    10 = { add_trait_no_notify = leader_trait_urbanist }
+                    10 = { add_trait_no_notify = leader_trait_efficient }
+                    10 = { add_trait_no_notify = leader_trait_arbiter }
+                    10 = { add_trait_no_notify = leader_trait_utopian_idealist }
+                    10 = { add_trait_no_notify = leader_trait_mediator }
+                    10 = { add_trait_no_notify = leader_trait_shroud_preacher }
+                    10 = { add_trait_no_notify = leader_trait_master_diplomat }
+                    10 = { add_trait_no_notify = leader_trait_supreme_organizer }
+                    10 = { add_trait_no_notify = leader_trait_galvanizer }
+                }
+            }
+            if = {
+                limit = {
+                    leader_class = scientist
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_educator }
+                    10 = { add_trait_no_notify = leader_trait_master_bureaucrat }
+                    10 = { add_trait_no_notify = leader_trait_surveyor }
+                    10 = { add_trait_no_notify = leader_trait_midas_touch }
+                    10 = { add_trait_no_notify = leader_trait_collective_wisdom }
+                    10 = { add_trait_no_notify = leader_trait_knowledge_for_the_masses }
+                    10 = { add_trait_no_notify = leader_trait_robotist }
+                    10 = { add_trait_no_notify = leader_trait_great_researcher }
+                    10 = { add_trait_no_notify = leader_trait_xeno_cataloger }
+                    10 = { add_trait_no_notify = leader_trait_frontier_adventurer }
+                    10 = { add_trait_no_notify = leader_trait_brilliant_shipwright }
+                    10 = { add_trait_no_notify = leader_trait_truth_seeker }
+                }
+            }
+            if = {
+                limit = {
+                    leader_class = commander
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_master_gunner }
+                    10 = { add_trait_no_notify = leader_trait_military_overseer }
+                    10 = { add_trait_no_notify = leader_trait_armorer }
+                    10 = { add_trait_no_notify = leader_trait_destiny_engineer }
+                    10 = { add_trait_no_notify = leader_trait_guerilla_tactics }
+                    10 = { add_trait_no_notify = leader_trait_survivalist }
+                    10 = { add_trait_no_notify = leader_trait_maven_of_war }
+                    10 = { add_trait_no_notify = leader_trait_peacekeeper }
+                    10 = { add_trait_no_notify = leader_trait_taskmaster }
+                    10 = { add_trait_no_notify = leader_trait_fortress_cracker }
+                    10 = { add_trait_no_notify = leader_trait_chainbreaker }
+                    10 = { add_trait_no_notify = leader_trait_honored_warmaster }
+                    10 = { add_trait_no_notify = leader_trait_academia_recruiter }
+                    10 = { add_trait_no_notify = leader_trait_supreme_warrior }
+                    10 = { add_trait_no_notify = leader_trait_bellicose }
+                    10 = { add_trait_no_notify = leader_trait_educator }
+                    10 = { add_trait_no_notify = leader_trait_master_bureaucrat }
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_engineered_evolution }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_genetic_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_the_flesh_is_weak }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_cybernetic_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_synthetic_evolution }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_synth_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_mind_over_matter }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_psionic_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOR = {
+                        has_trait = leader_trait_legendary_leader
+                        has_trait = leader_trait_legendary_offspring
                     }
                 }
-                while = {
-                    count = 1
-                    random_owned_pop = {
-                        limit = {
-                            OR = {
-                                is_pop_category = specialist
-                                is_pop_category = worker
-                                is_pop_category = slave
-                            }
-                            NOT = { has_job = reemployment_HR_supervisor }
-                            is_robotic_species = no
-                            NOR = {
-                                has_trait = trait_nerve_stapled
-                                has_trait = trait_zombie
-                            }
-                        }
-                        modify_species = {
-                            species = this
-                            add_trait = trait_flesh_components
-                            add_traits_at_start_of_list = yes
-                        }
-                        if = {
-                            limit = {
-                                has_trait = trait_syncretic_proles
-                            }
-                            modify_species = {
-                                species = this
-                                remove_trait = trait_syncretic_proles
-                            }
-                        }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_legendary_offspring }
+                    90 = {}
+                }
+            }
+        }
+    }
+}
+country_event = {
+    id = ethic_philosopher_king.2
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_philosopher_king
+        FROM = { is_ruler = yes }
+    }
+
+    immediate = {
+        from = {
+            if = {
+                limit = {
+                    leader_class = official
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_spymaster }
+                    10 = { add_trait_no_notify = leader_trait_totalitarian }
+                    10 = { add_trait_no_notify = leader_trait_educator }
+                    10 = { add_trait_no_notify = leader_trait_master_bureaucrat }
+                    10 = { add_trait_no_notify = leader_trait_urbanist }
+                    10 = { add_trait_no_notify = leader_trait_efficient }
+                    10 = { add_trait_no_notify = leader_trait_arbiter }
+                    10 = { add_trait_no_notify = leader_trait_utopian_idealist }
+                    10 = { add_trait_no_notify = leader_trait_mediator }
+                    10 = { add_trait_no_notify = leader_trait_shroud_preacher }
+                    10 = { add_trait_no_notify = leader_trait_master_diplomat }
+                    10 = { add_trait_no_notify = leader_trait_supreme_organizer }
+                    10 = { add_trait_no_notify = leader_trait_galvanizer }
+                }
+            }
+            if = {
+                limit = {
+                    leader_class = scientist
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_educator }
+                    10 = { add_trait_no_notify = leader_trait_master_bureaucrat }
+                    10 = { add_trait_no_notify = leader_trait_surveyor }
+                    10 = { add_trait_no_notify = leader_trait_midas_touch }
+                    10 = { add_trait_no_notify = leader_trait_collective_wisdom }
+                    10 = { add_trait_no_notify = leader_trait_knowledge_for_the_masses }
+                    10 = { add_trait_no_notify = leader_trait_robotist }
+                    10 = { add_trait_no_notify = leader_trait_great_researcher }
+                    10 = { add_trait_no_notify = leader_trait_xeno_cataloger }
+                    10 = { add_trait_no_notify = leader_trait_frontier_adventurer }
+                    10 = { add_trait_no_notify = leader_trait_brilliant_shipwright }
+                    10 = { add_trait_no_notify = leader_trait_truth_seeker }
+                }
+            }
+            if = {
+                limit = {
+                    leader_class = commander
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_master_gunner }
+                    10 = { add_trait_no_notify = leader_trait_military_overseer }
+                    10 = { add_trait_no_notify = leader_trait_armorer }
+                    10 = { add_trait_no_notify = leader_trait_destiny_engineer }
+                    10 = { add_trait_no_notify = leader_trait_guerilla_tactics }
+                    10 = { add_trait_no_notify = leader_trait_survivalist }
+                    10 = { add_trait_no_notify = leader_trait_maven_of_war }
+                    10 = { add_trait_no_notify = leader_trait_peacekeeper }
+                    10 = { add_trait_no_notify = leader_trait_taskmaster }
+                    10 = { add_trait_no_notify = leader_trait_fortress_cracker }
+                    10 = { add_trait_no_notify = leader_trait_chainbreaker }
+                    10 = { add_trait_no_notify = leader_trait_honored_warmaster }
+                    10 = { add_trait_no_notify = leader_trait_academia_recruiter }
+                    10 = { add_trait_no_notify = leader_trait_supreme_warrior }
+                    10 = { add_trait_no_notify = leader_trait_bellicose }
+                    10 = { add_trait_no_notify = leader_trait_educator }
+                    10 = { add_trait_no_notify = leader_trait_master_bureaucrat }
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_engineered_evolution }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_genetic_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_the_flesh_is_weak }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_cybernetic_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_synthetic_evolution }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_synth_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_trait = leader_trait_legendary_leader }
+                    owner = { has_ascension_perk = ap_mind_over_matter }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_the_psionic_luminary }
+                    90 = {}
+                }
+            }
+            if = {
+                limit = {
+                    NOR = {
+                        has_trait = leader_trait_legendary_leader
+                        has_trait = leader_trait_legendary_offspring
                     }
+                }
+                random_list = {
+                    10 = { add_trait_no_notify = leader_trait_legendary_offspring }
+                    90 = {}
                 }
             }
         }
@@ -994,7 +1242,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        is_valid_peaceful_republic = yes
+        has_valid_civic = civic_peaceful_republic
         NOR = {
             has_modifier = sustained_peace_1
             has_modifier = sustained_peace_2
@@ -1015,7 +1263,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        is_valid_peaceful_republic = yes
+        has_valid_civic = civic_peaceful_republic
     }
 
     immediate = {
@@ -1030,7 +1278,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        is_valid_peaceful_republic = yes
+        has_valid_civic = civic_peaceful_republic
     }
 
     immediate = {
@@ -1046,7 +1294,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        is_valid_peaceful_republic = yes
+        has_valid_civic = civic_peaceful_republic
     }
 
     immediate = {
@@ -1062,7 +1310,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        is_valid_peaceful_republic = yes
+        has_valid_civic = civic_peaceful_republic
     }
 
     immediate = {
@@ -1078,7 +1326,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        is_valid_peaceful_republic = yes
+        has_valid_civic = civic_peaceful_republic
     }
 
     immediate = {
@@ -1117,7 +1365,7 @@ country_event = {
     is_triggered_only = yes
 
     trigger = {
-        NOT = { is_valid_peaceful_republic = yes }
+        NOT = { has_valid_civic = civic_peaceful_republic }
         OR = {
             has_modifier = sustained_peace_1
             has_modifier = sustained_peace_2
@@ -1168,8 +1416,8 @@ country_event = {
         is_peace_defense_forces_country = yes
         is_at_war = yes
         any_war = {
-            any_attacker = {
-                is_same_value = this
+            any_defender = {
+                NOT = { is_same_value = this }
             }
         }
     }
@@ -1217,11 +1465,22 @@ planet_event = {
                     owner = root.owner
                     type = "ultraman"
                 }
+                modifier = {
+                    add = 67
+                    is_capital = yes
+                }
             }
             67 = {
                 modifier = {
                     factor = 0
                     is_capital = yes
+                    planet.owner = {
+                        NOT = { has_origin = origin_ultraman }
+                    }
+                }
+                modifier = {
+                    add = 34
+                    planet.owner = { has_origin = origin_ultraman }
                 }
             }
         }
@@ -1305,6 +1564,51 @@ country_event = {
                                             ignore_rare = no
                                             area = engineering
                                             tier = 5
+                                            fail_effects = {
+                                                add_random_research_option = {
+                                                    add_progress = 1
+                                                    ignore_prereqs = no
+                                                    ignore_rare = no
+                                                    area = engineering
+                                                    tier = 6
+                                                    fail_effects = {
+                                                        add_random_research_option = {
+                                                            add_progress = 1
+                                                            ignore_prereqs = no
+                                                            ignore_rare = no
+                                                            area = engineering
+                                                            tier = 7
+                                                            fail_effects = {
+                                                                add_random_research_option = {
+                                                                    add_progress = 1
+                                                                    ignore_prereqs = no
+                                                                    ignore_rare = no
+                                                                    area = engineering
+                                                                    tier = 8
+                                                                    fail_effects = {
+                                                                        add_random_research_option = {
+                                                                            add_progress = 1
+                                                                            ignore_prereqs = no
+                                                                            ignore_rare = no
+                                                                            area = engineering
+                                                                            tier = 9
+                                                                            fail_effects = {
+                                                                                add_random_research_option = {
+                                                                                    add_progress = 1
+                                                                                    ignore_prereqs = no
+                                                                                    ignore_rare = no
+                                                                                    area = engineering
+                                                                                    tier = 10
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1343,6 +1647,51 @@ country_event = {
                                             ignore_prereqs = no
                                             area = physics
                                             tier = 5
+                                            fail_effects = {
+                                                add_random_research_option = {
+                                                    add_progress = 1
+                                                    ignore_prereqs = no
+                                                    ignore_rare = no
+                                                    area = physics
+                                                    tier = 6
+                                                    fail_effects = {
+                                                        add_random_research_option = {
+                                                            add_progress = 1
+                                                            ignore_prereqs = no
+                                                            ignore_rare = no
+                                                            area = physics
+                                                            tier = 7
+                                                            fail_effects = {
+                                                                add_random_research_option = {
+                                                                    add_progress = 1
+                                                                    ignore_prereqs = no
+                                                                    ignore_rare = no
+                                                                    area = physics
+                                                                    tier = 8
+                                                                    fail_effects = {
+                                                                        add_random_research_option = {
+                                                                            add_progress = 1
+                                                                            ignore_prereqs = no
+                                                                            ignore_rare = no
+                                                                            area = physics
+                                                                            tier = 9
+                                                                            fail_effects = {
+                                                                                add_random_research_option = {
+                                                                                    add_progress = 1
+                                                                                    ignore_prereqs = no
+                                                                                    ignore_rare = no
+                                                                                    area = physics
+                                                                                    tier = 10
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1385,6 +1734,51 @@ country_event = {
                                             ignore_rare = no
                                             area = society
                                             tier = 5
+                                            fail_effects = {
+                                                add_random_research_option = {
+                                                    add_progress = 1
+                                                    ignore_prereqs = no
+                                                    ignore_rare = no
+                                                    area = society
+                                                    tier = 6
+                                                    fail_effects = {
+                                                        add_random_research_option = {
+                                                            add_progress = 1
+                                                            ignore_prereqs = no
+                                                            ignore_rare = no
+                                                            area = society
+                                                            tier = 7
+                                                            fail_effects = {
+                                                                add_random_research_option = {
+                                                                    add_progress = 1
+                                                                    ignore_prereqs = no
+                                                                    ignore_rare = no
+                                                                    area = society
+                                                                    tier = 8
+                                                                    fail_effects = {
+                                                                        add_random_research_option = {
+                                                                            add_progress = 1
+                                                                            ignore_prereqs = no
+                                                                            ignore_rare = no
+                                                                            area = society
+                                                                            tier = 9
+                                                                            fail_effects = {
+                                                                                add_random_research_option = {
+                                                                                    add_progress = 1
+                                                                                    ignore_prereqs = no
+                                                                                    ignore_rare = no
+                                                                                    area = society
+                                                                                    tier = 10
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1521,14 +1915,24 @@ country_event = {
                             any_country = {
                                 is_ai = yes
                                 num_owned_planets > 0
-                                any_owned_pop = { is_enslaved = yes }
+                                any_owned_pop = {
+                                    OR = {
+                                        is_pop_category = slave
+                                        is_enslaved = yes
+                                    }
+                                }
                             }
                         }
                         random_country = {
                             limit = {
                                 is_ai = yes
                                 num_owned_planets > 0
-                                any_owned_pop = { is_enslaved = yes }
+                                any_owned_pop = {
+                                    OR = {
+                                        is_pop_category = slave
+                                        is_enslaved = yes
+                                    }
+                                }
                             }
                             random_owned_planet = {
                                 starbase = {
@@ -1566,7 +1970,12 @@ country_event = {
                         }
                     }
                     event_target:firing_torch_new_country = {
-                        set_player = root
+                        if = {
+                            limit = {
+                                root = { is_ai = no }
+                            }
+                            set_player = root
+                        }
                     }
                 }
             }

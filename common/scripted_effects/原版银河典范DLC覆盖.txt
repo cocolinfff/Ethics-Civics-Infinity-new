@@ -1,4 +1,282 @@
 
+
+paragon_origin_reformists_negotiations_effect = {
+	optimize_memory
+	ruler = { #Remove Delusion Trait If It Is Low
+		if = {
+			limit = {
+				has_trait = leader_trait_legendary_delusional
+				check_variable = {
+					which = paragon_origin_delusion_tier
+					value <= 5
+				}
+			}
+			remove_trait = leader_trait_legendary_delusional
+		}
+	}
+	if = {
+		limit = { #Did reformist finished their situation?
+			has_country_flag = reformists_situation_finished
+		}
+		if = {
+			limit = {
+				NOR = { #Was player a bad ruler?
+					has_country_flag = took_reformists_side
+					ruler = {
+						check_variable = {
+							which = paragon_origin_delusion_tier
+							value < 4
+						}
+					}
+				}
+			}
+			hidden_effect = { #Ruler was bad - force them to revert Imperial
+				set_origin = origin_legendary_leader_dictatorial
+			}
+			change_government = {
+				authority = auth_dictatorial
+				remove_invalid_civics = yes
+			}
+			switch = { #Ruler was bad, so throw some more pains for him
+				trigger = has_ethic
+				ethic_materialist = { shift_ethic = ethic_spiritualist }
+				ethic_xenophile = { shift_ethic = ethic_xenophobe }
+				ethic_militarist = { shift_ethic = ethic_pacifist }
+				ethic_xenophobe = { shift_ethic = ethic_xenophile }
+				ethic_pacifist = { shift_ethic = ethic_militarist }
+				ethic_spiritualist = { shift_ethic = ethic_materialist }
+				ethic_socialism = { shift_ethic = ethic_socialism }
+				ethic_capitalism = { shift_ethic = ethic_capitalism }
+			}
+			if = {
+				limit = {
+					NOT = { has_civic = civic_shadow_council }
+				}
+				if = { #Down with the aristocracy and their oppression
+					limit = {
+						has_civic = civic_aristocratic_elite
+					}
+					force_remove_civic = civic_aristocratic_elite
+					force_add_civic = civic_shadow_council
+				}
+				if = { #Eat the rich
+					limit = {
+						has_civic = civic_merchant_guilds
+					}
+					force_remove_civic = civic_merchant_guilds
+					force_add_civic = civic_shadow_council
+				}
+			}
+		}
+		else = { #Was player a good ruler?
+			if = {
+				limit = { #Some carrot to be a good guy, using situation approach
+					has_country_flag = took_reformists_side
+					ruler = {
+						check_variable = {
+							which = paragon_origin_delusion_tier
+							value < 4
+						}
+					}
+				}
+				paragon_origin_gain_modifier = yes
+			}
+			if = {
+				limit = {
+					NOT = { has_civic = civic_efficient_bureaucracy }
+				}
+				if = { #Down with the aristocracy and their oppression
+					limit = {
+						has_civic = civic_aristocratic_elite
+					}
+					force_remove_civic = civic_aristocratic_elite
+					force_add_civic = civic_efficient_bureaucracy
+				}
+				if = { #Eat the rich
+					limit = {
+						has_civic = civic_merchant_guilds
+					}
+					force_remove_civic = civic_merchant_guilds
+					force_add_civic = civic_efficient_bureaucracy
+				}
+			}
+		}
+		if = { #People wants some more say in ruling the country
+			limit = { has_modifier = paragon_origin_forgotten_deal }
+			hidden_effect = { remove_modifier = paragon_origin_forgotten_deal }
+			add_modifier = {
+				modifier = paragon_origin_reformists_deal
+				days = -1
+			}
+		}
+		else = { #People wants some more say in ruling the country
+			add_modifier = {
+				modifier = paragon_origin_forgotten_deal
+				days = -1
+			}
+		}
+		if = { #People don't want to be slaves anymore
+			limit = {
+				has_civic = civic_slaver_guilds
+			}
+			force_remove_civic = civic_slaver_guilds
+			if = {
+				limit = {
+					NOT = { has_civic = civic_philosopher_king }
+				}
+				force_add_civic = civic_philosopher_king
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_mining_guilds }
+				}
+				force_add_civic = civic_mining_guilds
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_efficient_bureaucracy }
+				}
+				force_add_civic = civic_efficient_bureaucracy
+			}
+		}
+		if = { #People want some amenities
+			limit = {
+				has_civic = civic_dystopian_society
+			}
+			force_remove_civic = civic_dystopian_society
+			if = {
+				limit = {
+					NOT = { has_civic = civic_efficient_bureaucracy }
+				}
+				force_add_civic = civic_efficient_bureaucracy
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_mining_guilds }
+				}
+				force_add_civic = civic_mining_guilds
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_philosopher_king }
+				}
+				force_add_civic = civic_philosopher_king
+			}
+		}
+		if = { #People want better living standards
+			limit = {
+				owner_main_species = {
+					OR = {
+						has_living_standard = { type = living_standard_academic_privilege country = root }
+						has_living_standard = { type = living_standard_stratified country = root }
+						has_living_standard = { type = living_standard_subsistence country = root }
+					}
+				}
+			}
+			owner_main_species = {
+				set_living_standard = {
+					type = living_standard_good
+					country = root.owner
+				}
+			}
+		}
+		if = { #If player imprisoned people, they deserve freedom!
+			limit = { has_country_flag = forgotten_imprisoned }
+			add_modifier = {
+				modifier = paragon_origin_prisoners
+				days = 3600
+			}
+		}
+		set_government_cooldown = default
+	}
+	else = { #Lower reformists expectation if they did not finish their situation
+		if = { #People wants some more say in ruling the country, but not too much
+			limit = { has_modifier = paragon_origin_forgotten_deal }
+			hidden_effect = { remove_modifier = paragon_origin_forgotten_deal }
+			add_modifier = {
+				modifier = paragon_origin_reformists_deal
+				days = -1
+				multiplier = 0.5
+			}
+		}
+		else = { #People wants some more say in ruling the country
+			add_modifier = {
+				modifier = paragon_origin_forgotten_deal
+				days = -1
+				multiplier = 0.5
+			}
+		}
+		if = { #People want better living standards
+			limit = {
+				owner_main_species = {
+					OR = {
+						has_living_standard = { type = living_standard_academic_privilege country = root }
+						has_living_standard = { type = living_standard_stratified country = root }
+						has_living_standard = { type = living_standard_subsistence country = root }
+					}
+				}
+			}
+			owner_main_species = {
+				set_living_standard = {
+					type = living_standard_good
+					country = root.owner
+				}
+			}
+		}
+		if = { #People don't want to be slaves anymore
+			limit = {
+				has_civic = civic_slaver_guilds
+			}
+			force_remove_civic = civic_slaver_guilds
+			if = {
+				limit = {
+					NOT = { has_civic = civic_philosopher_king }
+				}
+				force_add_civic = civic_philosopher_king
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_mining_guilds }
+				}
+				force_add_civic = civic_mining_guilds
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_efficient_bureaucracy }
+				}
+				force_add_civic = civic_efficient_bureaucracy
+			}
+		}
+		if = { #People want some amenities
+			limit = {
+				has_civic = civic_dystopian_society
+			}
+			force_remove_civic = civic_dystopian_society
+			if = {
+				limit = {
+					NOT = { has_civic = civic_efficient_bureaucracy }
+				}
+				force_add_civic = civic_efficient_bureaucracy
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_mining_guilds }
+				}
+				force_add_civic = civic_mining_guilds
+			}
+			else_if = {
+				limit = {
+					NOT = { has_civic = civic_philosopher_king }
+				}
+				force_add_civic = civic_philosopher_king
+			}
+		}
+		hidden_effect = {
+			set_government_cooldown = default
+		}
+	}
+}
+
 paragon_origin_civil_war = {
 	if = {
 		limit = {
