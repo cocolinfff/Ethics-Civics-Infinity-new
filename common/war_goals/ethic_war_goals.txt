@@ -659,3 +659,102 @@ wg_capture_the_market = {
 		weight = 100
 	}
 }
+
+wg_independence = {
+	casus_belli = cb_subject
+
+	hide_if_no_cb = yes
+	set_defender_wargoal = wg_imperial_war
+
+	potential = {
+		always = yes
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = cannot_use_against_emperor
+			OR = {
+				from = { is_galactic_emperor = no }
+				is_galactic_community_member = no
+			}
+		}
+		custom_tooltip = {
+			fail_text = pax_galactica_active
+			NAND = {
+				is_active_resolution = resolution_emperor_pax_galactica
+				is_galactic_community_member = yes
+				from = { is_galactic_community_member = yes }
+			}
+		}
+	}
+
+	allowed_peace_offers = {
+		status_quo
+		surrender
+		demand_surrender
+	}
+
+	on_status_quo = {
+		custom_tooltip = wg_independence_status_quo
+		hidden_effect = {
+			fromfrom = {
+				every_war_participant = {
+					limit = {
+						fromfrom = {
+							is_war_participant = {
+								who = prev
+								side = Root
+							}
+						}
+						has_overlord = Root.from
+					}
+					set_subject_of = {
+						who = none
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		custom_tooltip = wg_independence_accept
+		hidden_effect = {
+			fromfrom = {
+				every_war_participant = {
+					limit = {
+						fromfrom = {
+							is_war_participant = {
+								who = prev
+								side = Root
+							}
+						}
+						has_overlord = Root.from
+					}
+					set_subject_of = {
+						who = none
+					}
+					every_system_within_border = {
+						limit = {
+							Root.from = { has_claim = prev }
+						}
+						remove_claims = { who = Root.from }
+					}
+				}
+			}
+		}
+	}
+
+	on_wargoal_set = {
+		every_system_within_border = {
+			limit = {
+				NOT = { from = { has_claim = prev } }
+			}
+			add_claims = { who = from }
+		}
+	}
+
+	ai_weight = {
+		weight = 100
+	}
+
+	should_ignore_federations = yes
+}
