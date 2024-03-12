@@ -788,6 +788,114 @@ country_event = {
         clear_variable = military_dictatorship_num_subjects
     }
 }
+country_event = {
+    id = ethic_military_dictatorship.2
+    title = "ethic_military_dictatorship.2.title"
+    desc = {
+        trigger = {
+            NOT = { country_has_situation = { SITUATION = building_super_battleships } }
+        }
+        text = "ethic_military_dictatorship.2.desc"
+    }
+    desc = {
+        trigger = {
+            country_has_situation = { SITUATION = building_super_battleships }
+        }
+        text = "ethic_military_dictatorship.2.beta.desc"
+    }
+    picture = GFX_evt_arguing_senate
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_military_dictatorship
+    }
+
+    option = {
+        name = "ethic_military_dictatorship.2.a"
+        trigger = {
+            NOT = { country_has_situation = { SITUATION = building_super_battleships } }
+        }
+        hidden_effect = {
+            custom_tooltip = ethic_military_dictatorship.2.a_effects
+            start_situation = {
+                type = building_super_battleships
+            }
+        }
+    }
+
+    option = {
+        name = "ethic_military_dictatorship.2.a.beta"
+        trigger = {
+            country_has_situation = { SITUATION = building_super_battleships }
+        }
+        add_monthly_resource_mult = {
+            resource = unity
+            value = -6
+        }
+        add_monthly_resource_mult = {
+            resource = influence
+            value = -2
+        }
+    }
+
+    option = {
+        name = "ethic_military_dictatorship.2.b"
+        hidden_effect = {
+            custom_tooltip = ethic_military_dictatorship.2.b_effects
+            add_modifier = { modifier = military_dictatorship_modifier days = -1 }
+            if = {
+                limit = {
+                    country_has_situation = { SITUATION = building_super_battleships }
+                }
+                random_situation = {
+                    limit = {
+                        is_situation_type = building_super_battleships
+                    }
+                    destroy_situation = this
+                }
+                create_fleet = {
+                    name = random
+                    effect = {
+                        set_owner = root
+                        set_name = {
+                            key = NAME_Royal_Fleet
+                            variable_string = "[Root.GetRulerName]"
+                        }
+                        create_ship = {
+                            name = random
+                            random_existing_design = juggernaut
+                        }
+                        set_location = root.capital_scope.star
+                    }
+                }
+                last_created_fleet = {
+                    every_owned_ship = {
+                        set_name = {
+                            key = NAME_Royal_Ship
+                            variable_string = "[Root.GetRulerTitle]"
+                            variable_string = "[Root.GetRulerName]"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+country_event = {
+    id = ethic_military_dictatorship.3
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_military_dictatorship
+    }
+
+    immediate = {
+        start_situation = {
+            type = building_super_battleships
+        }
+    }
+}
 
 # 圣灵议会
 namespace = ethic_spiritual_democracy
@@ -1060,6 +1168,32 @@ country_event = {
                 }
             }
         }
+    }
+}
+
+# 国教崇拜
+namespace = ethic_imperial_cult
+country_event = {
+    id = ethic_imperial_cult.0
+    title = "ethic_imperial_cult.0.name"
+    desc = "ethic_imperial_cult.0.desc"
+    picture = GFX_evt_news_room
+    show_sound = event_life_support_fail
+    is_triggered_only = yes
+
+    trigger = {
+        exists = from
+        from = {
+            is_ruler = yes
+        }
+        this = { has_valid_civic = civic_imperial_cult }
+    }
+
+    option = {
+        name = ethic_imperial_cult.0.a
+        custom_tooltip = ethic_imperial_cult.a_effects
+        add_modifier = { modifier = imperial_cult_modifier days = -1 }
+        add_modifier = { modifier = imperial_cult_modifier_2 days = 360 }
     }
 }
 
