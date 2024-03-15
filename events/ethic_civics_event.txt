@@ -2074,6 +2074,7 @@ country_event = {
                         days = 30
                     }
                     copy_ethos_and_authority = root
+                    force_add_civic = civic_firing_torch
                     copy_techs_from = {
                         target = root
                     }
@@ -2161,6 +2162,7 @@ country_event = {
                                     limit = {
                                         is_mobile = yes
                                     }
+                                    set_owner = event_target:firing_torch_new_country
                                     set_location = event_target:revolution_planet
                                 }
                             }
@@ -2171,46 +2173,9 @@ country_event = {
                                         happiness < 1
                                     }
                                 }
-                                every_owned_pop = {
-                                    random_list = {
-                                        0 = {
-                                            add = trigger:happiness
-                                            modifier = {
-                                                factor = 0
-
-                                            }
-                                        }
-                                        1 = {
-                                            subtract = trigger:happiness
-                                            add_modifier = {
-                                                modifier = modifier_mobilization_pop_2
-                                            }
-                                            if = {
-                                                limit = {
-                                                    OR = {
-                                                        has_trait = trait_latent_psionic
-                                                        has_trait = trait_psionic
-                                                    }
-                                                }
-                                                planet = {
-                                                    create_army = {
-                                                        type = psionic_militia_army
-                                                        species = prev.species
-                                                        owner = event_target:firing_torch_new_country
-                                                    }
-                                                }
-                                            }
-                                            else = {
-                                                planet = {
-                                                    create_army = {
-                                                        type = militia_army
-                                                        species = prev.species
-                                                        owner = event_target:firing_torch_new_country
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                planet_event = {
+                                    id = eci_civic_firing_torch.3
+                                    days = 30
                                 }
                             }
                         }
@@ -2357,6 +2322,7 @@ country_event = {
         }
     }
 }
+
 country_event = {
     id = eci_civic_firing_torch.2
     title = eci_civic_firing_torch.2.name
@@ -2367,5 +2333,56 @@ country_event = {
     }
     option = {
         name = eci_civic_firing_torch.2.a
+        custom_tooltip = eci_civic_firing_torch.2.tooltip
     }
 }
+
+planet_event = {
+    id = eci_civic_firing_torch.3
+    hide_window = yes
+    is_triggered_only = yes
+    immediate = {
+        every_owned_pop = {
+            random_list = {
+                0 = {
+                    add = trigger:happiness
+                    modifier = {
+                        factor = 0
+
+                    }
+                }
+                1 = {
+                    subtract = trigger:happiness
+                    add_modifier = {
+                        modifier = modifier_mobilization_pop_2
+                    }
+                    if = {
+                        limit = {
+                            OR = {
+                                has_trait = trait_latent_psionic
+                                has_trait = trait_psionic
+                            }
+                        }
+                        planet = {
+                            create_army = {
+                                type = psionic_militia_army
+                                species = prev.species
+                                owner = event_target:firing_torch_new_country
+                            }
+                        }
+                    }
+                    else = {
+                        planet = {
+                            create_army = {
+                                type = militia_army
+                                species = prev.species
+                                owner = event_target:firing_torch_new_country
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
