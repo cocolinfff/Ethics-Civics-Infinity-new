@@ -1,3 +1,191 @@
+namespace = ethic_militarist
+# 先发制人
+country_event = {
+	id = ethic_militarist.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_policy_flag = first_contact_attack_allowed
+		OR = {
+			has_ethic = ethic_fanatic_militarist
+			is_homicidal = yes
+			has_ascension_perk = ap_become_the_crisis
+		}
+		is_at_war = no
+		is_country_type = default
+		from = { is_country_type = default }
+		NOT = {
+			has_country_flag = fervor_event
+		}
+		if = {
+			limit = {
+				has_valid_civic = civic_fanatic_purifiers
+			}
+			from = {
+				owner_main_species = {
+					NOT = {
+						is_same_value = root.owner_main_species
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_valid_civic = civic_machine_terminator
+			}
+			from = {
+				is_machine_empire = no
+				is_synthetic_empire = no
+			}
+		}
+	}
+
+	immediate = {
+		country_event = {
+			id = ethic_militarist.2
+			days = 3
+			scopes = { from = from }
+		}
+	}
+}
+
+country_event = { # Finishing First Contact
+	id = ethic_militarist.2
+	title = ethic_militarist.2.name
+
+	desc = {
+		trigger = {
+			is_homicidal = no
+		}
+		text = ethic_militarist.2.desc
+	}
+
+	desc = {
+		trigger = {
+			has_valid_civic = civic_fanatic_purifiers
+		}
+		text = ethic_militarist.2.desc.pur
+	}
+
+	desc = {
+		trigger = {
+			has_valid_civic = civic_hive_devouring_swarm
+		}
+		text = ethic_militarist.2.desc.hive
+	}
+
+	desc = {
+		trigger = {
+			has_valid_civic = civic_machine_terminator
+		}
+		text = ethic_militarist.2.desc.machine
+	}
+
+	location = event_target:target_system
+
+	picture = GFX_evt_machine_space_battle
+	show_sound = event_space_battle
+
+	is_triggered_only = yes
+
+	trigger = {
+		From = { is_country_type = default }
+		any_system_within_border = {
+			closest_system = {
+				limit = {
+					exists = space_owner
+					space_owner = {
+						is_same_value = from
+					}
+					any_system_planet = {
+						NOT = { is_capital = yes }
+					}
+				}
+				max_steps = 3
+			}
+		}
+	}
+
+	immediate = {
+		set_country_flag = encountered_alien_life
+		set_country_flag = finished_sapient_first_contact
+		capital_scope = {
+			closest_system = {
+				limit = {
+					exists = space_owner
+					space_owner = {
+						is_same_value = from
+					}
+					any_system_planet = {
+						NOT = { is_capital = yes }
+					}
+				}
+				max_steps = 20
+				save_event_target_as = target_system
+			}
+		}
+	}
+
+	option = { #Stop them and Apologize
+		name = ethic_militarist.2.a
+		declare_war = {
+			target = from
+			attacker_war_goal = wg_fotd_really_bad_contact
+		}
+		from = {
+			country_event = {
+				id = ethic_militarist.3
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = { #Explosion happens, reprimand Seperatists
+		name = ethic_militarist.2.b
+		ai_chance = {
+			base = 3
+			modifier = {
+				multiply = 0
+				is_homicidal = yes
+			}
+			modifier = {
+				add = 1
+				has_ethic = ethic_xenophile
+			}
+			modifier = {
+				add = 2
+				has_ethic = ethic_fanatic_xenophile
+			}
+			modifier = {
+				subtract = 1
+				has_ethic = ethic_xenophobe
+			}
+			modifier = {
+				subtract = 2
+				has_ethic = ethic_fanatic_xenophobe
+			}
+		}
+	}
+}
+
+country_event = { # Finishing First Contact
+	id = ethic_militarist.3
+	title = ethic_militarist.3.name
+	desc = ethic_militarist.3.desc
+
+	picture = GFX_evt_machine_space_battle
+	show_sound = event_space_battle
+
+	option = { #Stop them and Apologize
+		name = ethic_militarist.3.a
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
 namespace = ethic_militaristic_fervor
 
 # 摧毁敌舰
