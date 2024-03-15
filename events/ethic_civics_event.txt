@@ -2057,18 +2057,18 @@ country_event = {
                         days = 30
                     }
                     add_resource = {
-                        minerals = 3000
-                        food = 3000
-                        energy = 3000
-                        alloys = 1000
-                        consumer_goods = 1000
-                        unity = 5000
+                        minerals = 30000
+                        food = 30000
+                        energy = 30000
+                        alloys = 10000
+                        consumer_goods = 10000
+                        unity = 50000
                         influence = 1000
-                        volatile_motes = 500
-                        exotic_gases = 500
-                        rare_crystals = 500
+                        volatile_motes = 1000
+                        exotic_gases = 1000
+                        rare_crystals = 1000
                     }
-                    set_name = NAME_red_dawn
+                    set_name = root
                     set_timed_country_flag = {
                         flag = fusheng_empire_firing_torch
                         days = 30
@@ -2082,11 +2082,12 @@ country_event = {
                         limit = {
                             any_country = {
                                 is_ai = yes
+                                is_socialism = no
                                 num_owned_planets > 0
                                 any_owned_pop = {
                                     OR = {
-                                        is_pop_category = slave
                                         is_enslaved = yes
+                                        has_ethic = ethic_socialism
                                     }
                                 }
                             }
@@ -2094,12 +2095,20 @@ country_event = {
                         random_country = {
                             limit = {
                                 is_ai = yes
+                                is_gestalt = no
+                                is_socialism = no
                                 num_owned_planets > 0
                                 any_owned_pop = {
                                     OR = {
-                                        is_pop_category = slave
                                         is_enslaved = yes
+                                        has_ethic = ethic_socialism
                                     }
+                                }
+                            }
+                            event_target:firing_torch_new_country = {
+                                declare_war = {
+                                    target = prev
+                                    attacker_war_goal = wg_galactic_revolution
                                 }
                             }
                             random_owned_planet = {
@@ -2107,32 +2116,230 @@ country_event = {
                                     set_owner = event_target:firing_torch_new_country
                                 }
                                 set_owner = event_target:firing_torch_new_country
-                                every_owned_pop = {
-                                    modify_species = {
+                                while = {
+                                    count = 8
+                                    create_pop = {
                                         species = event_target:firing_torch_new_country.owner_main_species
+                                        ethos = { ethic = ethic_socialism }
                                     }
                                 }
-                                remove_all_buildings = yes
-                                remove_all_districts = yes
-                                add_building = building_system_capital
+                                save_event_target_as = revolution_planet
+                                every_owned_pop = {
+                                    if = {
+                                        limit = {
+                                            OR = {
+                                                has_trait = trait_latent_psionic
+                                                has_trait = trait_psionic
+                                            }
+                                        }
+                                        planet = {
+                                            create_army = {
+                                                type = psionic_militia_army
+                                                species = prev.species
+                                                owner = event_target:firing_torch_new_country
+                                            }
+                                        }
+                                    }
+                                    else = {
+                                        planet = {
+                                            create_army = {
+                                                type = militia_army
+                                                species = prev.species
+                                                owner = event_target:firing_torch_new_country
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            create_fleet_from_naval_cap = 1.5
+                            last_created_fleet = {
+                                set_owner = event_target:firing_torch_new_country
+                                set_location = event_target:revolution_planet
+                            }
+                            event_target:firing_torch_old_country = {
+                                every_controlled_fleet = {
+                                    limit = {
+                                        is_mobile = yes
+                                    }
+                                    set_location = event_target:revolution_planet
+                                }
+                            }
+                            every_owned_planet = {
+                                limit = {
+                                    any_owned_pop = {
+                                        pop_has_happiness = yes
+                                        happiness < 1
+                                    }
+                                }
+                                every_owned_pop = {
+                                    random_list = {
+                                        0 = {
+                                            add = trigger:happiness
+                                            modifier = {
+                                                factor = 0
+
+                                            }
+                                        }
+                                        1 = {
+                                            subtract = trigger:happiness
+                                            add_modifier = {
+                                                modifier = modifier_mobilization_pop_2
+                                            }
+                                            if = {
+                                                limit = {
+                                                    OR = {
+                                                        has_trait = trait_latent_psionic
+                                                        has_trait = trait_psionic
+                                                    }
+                                                }
+                                                planet = {
+                                                    create_army = {
+                                                        type = psionic_militia_army
+                                                        species = prev.species
+                                                        owner = event_target:firing_torch_new_country
+                                                    }
+                                                }
+                                            }
+                                            else = {
+                                                planet = {
+                                                    create_army = {
+                                                        type = militia_army
+                                                        species = prev.species
+                                                        owner = event_target:firing_torch_new_country
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else_if = {
+                        limit = {
+                            any_system = {
+                                any_system_planet = {
+                                    has_owner = no
+                                    is_colonizable = yes
+                                }
+                            }
+                        }
+                        random_system = {
+                            limit = {
+                                any_system_planet = {
+                                    has_owner = no
+                                    is_colonizable = yes
+                                }
+                            }
+                            create_starbase = {
+                                size = starbase_citadel
+                                owner = event_target:firing_torch_new_country
+                                module = shipyard
+                                module = shipyard
+                                module = shipyard
+                                module = anchorage
+                                module = anchorage
+                                module = anchorage
+                                building = titan_yards
+                                building = colossus_yards
+                                building = fleet_academy
+                                building = naval_logistics_office
+                            }
+                            random_system_planet = {
+                                limit = {
+                                    has_owner = no
+                                    is_colonizable = yes
+                                    is_a_planet_megastructure = no
+                                }
+                                create_colony = {
+                                    owner = event_target:firing_torch_new_country
+                                    species = event_target:firing_torch_new_country.owner_main_species
+                                    ethos = { ethic = ethic_socialism }
+                                }
+                                change_pc = pc_gaia
+                                add_district = district_city
+                                add_district = district_city
+                                add_district = district_farming
+                                add_district = district_mining
+                                add_district = district_generator
+                                add_building = building_capital
+                                add_building = building_research_lab_1
+                                add_building = building_foundry_1
+                                add_building = building_factory_1
+                                while = {
+                                    limit = {
+                                        num_pops < 8
+                                        free_housing > 0
+                                    }
+                                    create_pop = {
+                                        species = event_target:firing_torch_new_country.owner_main_species
+                                        ethos = { ethic = ethic_socialism }
+                                    }
+                                }
                             }
                         }
                     }
                     else = {
                         random_system = {
+                            limit = {
+                                any_system_planet = {
+                                    has_owner = no
+                                    is_star = no
+                                    is_asteroid = no
+                                    NOT = {
+                                        is_planet_class = pc_gas_giant
+                                    }
+                                    is_a_planet_megastructure = no
+                                }
+                            }
                             create_starbase = {
-                                size = enclave_mercenary_station
+                                size = starbase_citadel
                                 owner = event_target:firing_torch_new_country
+                                module = shipyard
+                                module = shipyard
+                                module = shipyard
+                                module = shipyard
+                                module = shipyard
+                                module = shipyard
+                                building = titan_yards
+                                building = colossus_yards
+                                building = fleet_academy
+                                building = crew_quarters
                             }
                             random_system_planet = {
                                 limit = {
+                                    has_owner = no
                                     is_star = no
+                                    is_asteroid = no
+                                    NOT = {
+                                        is_planet_class = pc_gas_giant
+                                    }
+                                    is_a_planet_megastructure = no
                                 }
                                 change_pc = pc_gaia
-                                set_planet_size = 30
                                 create_colony = {
                                     owner = event_target:firing_torch_new_country
                                     species = event_target:firing_torch_new_country.owner_main_species
+                                    ethos = { ethic = ethic_socialism }
+                                }
+                                add_district = district_city
+                                add_district = district_city
+                                add_district = district_farming
+                                add_district = district_mining
+                                add_district = district_generator
+                                add_building = building_capital
+                                add_building = building_research_lab_1
+                                add_building = building_foundry_1
+                                add_building = building_factory_1
+                                while = {
+                                    limit = {
+                                        num_pops < 8
+                                        free_housing > 0
+                                    }
+                                    create_pop = {
+                                        species = event_target:firing_torch_new_country.owner_main_species
+                                        ethos = { ethic = ethic_socialism }
+                                    }
                                 }
                             }
                         }
@@ -2157,36 +2364,6 @@ country_event = {
     picture = GFX_evt_victorious_army
     is_triggered_only = yes
     immediate = {
-        create_fleet = {
-            effect = {
-                set_owner = root
-                set_location = root.capital_scope
-                while = {
-                    count = 20
-                    create_ship = {
-                        name = HUMAN4_FLEET_RevolutionaryFleet
-                        random_existing_design = corvette
-                    }
-                }
-                owner = {
-                    create_leader = {
-                        class = commander
-                        name = random
-                        species = owner_main_species
-                    }
-                }
-                last_created_leader = {
-                    if = {
-                        limit = {
-                            has_skill > 1
-                            num_traits = 0
-                        }
-                        add_trait_no_notify = random_common
-                    }
-                }
-                set_leader = last_created_leader
-            }
-        }
     }
     option = {
         name = eci_civic_firing_torch.2.a
