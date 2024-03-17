@@ -195,7 +195,7 @@ is_servitor_empire = { # 机仆类帝国，顺便兼容失控女仆
 }
 
 #直接民主
-is_direct_democratic = {
+is_direct_democracy = {
 	OR = {
 		has_authority = auth_direct_democratic
 		AND = {
@@ -228,11 +228,96 @@ is_democratic = {
 	}
 }
 
-#民主国家
-is_democratic_country = {
+#寡头政治
+is_oligarchic = {
 	OR = {
-		is_direct_democratic = yes
-		is_democratic = yes
+		has_authority = auth_oligarchic
+		AND = {
+			exists = owner
+			owner = {
+				has_authority = auth_oligarchic
+			}
+		}
+		AND = {
+			is_scope_type = country
+			has_authority = auth_oligarchic
+		}
+	}
+}
+
+#选举专制
+is_dictatorial = {
+	OR = {
+		has_authority = auth_dictatorial
+		AND = {
+			exists = owner
+			owner = {
+				has_authority = auth_dictatorial
+			}
+		}
+		AND = {
+			is_scope_type = country
+			has_authority = auth_dictatorial
+		}
+	}
+}
+
+#世袭专制
+is_imperial = {
+	OR = {
+		has_authority = auth_imperial
+		# MCA
+		has_authority = auth_corporate_imperial
+		has_authority = auth_corporate_fiefdom
+		# Expanded pops
+		has_authority = auth_private
+
+		has_authority = auth_tec_patrocorporate
+		# Bug Branch
+		has_authority = auth_bugged_corporate_imperial
+		AND = {
+			exists = owner
+			owner = {
+				OR = {
+					has_authority = auth_imperial
+					# MCA
+					has_authority = auth_corporate_imperial
+					has_authority = auth_corporate_fiefdom
+					# Expanded pops
+					has_authority = auth_private
+
+					has_authority = auth_tec_patrocorporate
+					# Bug Branch
+					has_authority = auth_bugged_corporate_imperial
+				}
+			}
+		}
+		AND = {
+			is_scope_type = country
+			OR = {
+				has_authority = auth_imperial
+				# MCA
+				has_authority = auth_corporate_imperial
+				has_authority = auth_corporate_fiefdom
+				# Expanded pops
+				has_authority = auth_private
+
+				has_authority = auth_tec_patrocorporate
+				# Bug Branch
+				has_authority = auth_bugged_corporate_imperial
+			}
+		}
+	}
+}
+
+#民主国家（兼容其他MOD政体）
+is_democratic_country = {
+	is_regular_empire = yes
+	NOR = {
+		is_oligarchic = yes
+		is_dictatorial = yes
+		is_imperial = yes
+		is_megacorp = yes
 	}
 }
 
@@ -300,30 +385,6 @@ pre_ftl_modern_era = {
 		has_pre_ftl_age = early_space_age
 		has_origin = origin_galaxy_iron_curtain
 	}
-}
-
-is_imperial = {
-	optimize_memory
-	OR = {
-		has_authority = auth_imperial
-		# MCA
-		has_authority = auth_corporate_imperial
-		has_authority = auth_corporate_fiefdom
-		# Expanded pops
-		has_authority = auth_private
-
-		has_authority = auth_tec_patrocorporate
-		# Bug Branch
-		has_authority = auth_bugged_corporate_imperial
-	}
-}
-
-is_dictatorial = {
-	has_authority = auth_dictatorial
-}
-
-is_direct_democracy = {
-	has_authority = auth_direct_democratic
 }
 
 is_indirect_democracy = {
