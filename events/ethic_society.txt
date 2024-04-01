@@ -23,69 +23,54 @@ country_event = {
 		# 贸易额检测
 		eci_primitive_trade = yes
 
-		# 科研船数量检测
-		export_trigger_value_to_variable = {
-			trigger = count_owned_ship
-			parameters = {
+		# 通货膨胀buff
+		if = {
+			limit = { is_ai = no }
+			set_variable = { which = society_trade_value_target_country value = value:society_trade_value_reduction }
+			if = {
 				limit = {
-					OR = {
-						is_ship_size = science
-						is_ship_size = explorer_vessel
-						is_ship_size = alien_racing_ship
-						is_ship_size = ghost_ship
-						is_ship_size = enigmatic_cache
-						is_ship_size = azaryn_dome
-					}
+					owner = { is_market_type = yes }
+					check_variable = { which = society_trade_value_target_country value > 0 }
+				}
+				remove_modifier = trade_value_reduction_modifier_2
+				add_modifier = {
+					modifier = trade_value_reduction_modifier
+					multiplier = society_trade_value_target_country
+					clear_on_owner_change = yes
 				}
 			}
-			variable = num_owned_science_ship
-		}
-
-		# 通货膨胀buff
-		set_variable = { which = society_trade_value_target_country value = value:society_trade_value_reduction }
-		if = {
-			limit = {
-				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_target_country value > 0 }
+			if = {
+				limit = {
+					owner = { is_market_type = yes }
+					check_variable = { which = society_trade_value_target_country value > -1 }
+					check_variable = { which = society_trade_value_target_country value < 0 }
+				}
+				remove_modifier = trade_value_reduction_modifier
+				add_modifier = {
+					modifier = trade_value_reduction_modifier_2
+					multiplier = society_trade_value_target_country
+					clear_on_owner_change = yes
+				}
 			}
-			remove_modifier = trade_value_reduction_modifier_2
-			add_modifier = {
-				modifier = trade_value_reduction_modifier
-				multiplier = society_trade_value_target_country
-				clear_on_owner_change = yes
+			if = {
+				limit = {
+					owner = { is_market_type = yes }
+					check_variable = { which = society_trade_value_target_country value <= -1 }
+				}
+				remove_modifier = trade_value_reduction_modifier
+				add_modifier = {
+					modifier = trade_value_reduction_modifier_2
+					multiplier = -1
+					clear_on_owner_change = yes
+				}
 			}
-		}
-		if = {
-			limit = {
-				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_target_country value > -1 }
-				check_variable = { which = society_trade_value_target_country value < 0 }
+			if = {
+				limit = {
+					owner = { is_market_type = no }
+				}
+				remove_modifier = trade_value_reduction_modifier
+				remove_modifier = trade_value_reduction_modifier_2
 			}
-			remove_modifier = trade_value_reduction_modifier
-			add_modifier = {
-				modifier = trade_value_reduction_modifier_2
-				multiplier = society_trade_value_target_country
-				clear_on_owner_change = yes
-			}
-		}
-		if = {
-			limit = {
-				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_target_country value <= -1 }
-			}
-			remove_modifier = trade_value_reduction_modifier
-			add_modifier = {
-				modifier = trade_value_reduction_modifier_2
-				multiplier = -1
-				clear_on_owner_change = yes
-			}
-		}
-		if = {
-			limit = {
-				owner = { is_market_type = no }
-			}
-			remove_modifier = trade_value_reduction_modifier
-			remove_modifier = trade_value_reduction_modifier_2
 		}
     }
 }
