@@ -1602,20 +1602,34 @@ building_bio_reactor = {
 
 	potential = {
 		exists = owner
-		owner = {
-			OR = {
-				is_machine_empire = yes
-				is_mechanical_empire = yes
-				is_lithoid_empire = yes
-				is_primitive_society = yes
-			}
-			OR = {
-				owner = { is_ai = no }
-				owner = { country_uses_food = no }
-				owner = { is_primitive_society = yes }
+		NOR = {
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			has_modifier = crucible_colony
+		}
+
+		OR = {
+			owner = {
+				is_ai = no
 			}
 		}
-		NOT = { has_planet_flag = planetary_station }
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_ai = yes
+				country_uses_food = no
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			has_modifier = crucible_colony
+			AND = {
+				owner = {
+					is_ai = yes
+				}
+			}
+		}
 	}
 
 	resources = {
@@ -1625,36 +1639,183 @@ building_bio_reactor = {
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				owner = { NOT = { has_deficit = food } }
+				owner = {
+					NOR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
 			}
-			energy = 20
+			energy = 30
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					NOR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			food = 16
+		}
+
+		# 有科技
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			energy = 30
+			multiplier = modifier:planet_jobs_produces_mult
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					OR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			food = 16
+			multiplier = modifier:planet_jobs_upkeep_mult
 		}
 		produces = {
 			trigger = {
-				exists = owner
-				owner = {
-					is_primitive_society = yes
-					NOT = { has_deficit = food }
-				}
+				planet = { has_building = building_energy_grid }
+			}
+			energy = 5
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_energy_nexus }
 			}
 			energy = 10
 		}
-		upkeep = {
-			food = 25
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_primitive_society = yes
-				}
-			}
-			food = 15
-		}
+	}
+	upgrades = {
+		building_bio_reactor_2
 	}
 
 	prerequisites = {
 		"tech_bio_reactor"
+	}
+}
+
+
+#先进生物反应堆
+building_bio_reactor_2 = {
+	base_buildtime = 240
+	can_build = no
+	category = resource
+
+	potential = {
+		exists = owner
+		NOR = {
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			has_modifier = crucible_colony
+		}
+
+		OR = {
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_ai = yes
+				country_uses_food = no
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			has_modifier = crucible_colony
+			AND = {
+				owner = {
+					is_ai = yes
+				}
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = 200
+		}
+		produces = {
+			trigger = {
+				owner = {
+					NOR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			energy = 30
+			exotic_gases = 1.5
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					NOR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			food = 16
+		}
+
+		# 有科技
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			energy = 30
+			exotic_gases = 1.5
+			multiplier = modifier:planet_jobs_produces_mult
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					OR = {
+						has_technology = tech_tech_adv_auto_buildings_2
+						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+					}
+				}
+			}
+			food = 16
+			multiplier = modifier:planet_jobs_upkeep_mult
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_energy_grid }
+			}
+			energy = 5
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_energy_nexus }
+			}
+			energy = 10
+		}
+	}
+
+	prerequisites = {
+		"tech_bio_reactor_2"
 	}
 }
