@@ -1,17 +1,22 @@
 @base_cost = 300
 @city_cost = 500
 #发电区划
-district_generator = {
+district_generator_pdpatch = {
+	icon = district_generator
 	expansion_planner = yes
 	base_buildtime = 240
 	min_for_deposits_on_planet = 3
 	max_for_deposits_on_planet = 15
 	show_on_uncolonized = {
 		uses_district_set = standard
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
 	}
 	potential = {
 		uses_district_set = standard
-		NOT = { has_global_flag = planetarydiversity }
+		has_global_flag = planetarydiversity
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
 		NAND = {
 			exists = owner
 			owner = {
@@ -30,7 +35,8 @@ district_generator = {
 	}
 	destroy_trigger = {
 		OR = {
-			has_global_flag = planetarydiversity
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 			AND = {
 				exists = owner
 				owner = {
@@ -46,7 +52,6 @@ district_generator = {
 	conversion_ratio = 1
 	convert_to = {
 		district_generator_uncapped
-		district_generator_pdpatch
 	}
 	resources = {
 		category = planet_districts
@@ -406,7 +411,8 @@ district_generator = {
 }
 
 #采矿区划
-district_mining = {
+district_mining_pdpatch = {
+	icon = district_mining
 	expansion_planner = yes
 	base_buildtime = 240
 	min_for_deposits_on_planet = 1
@@ -419,9 +425,12 @@ district_mining = {
 				is_subterranean_empire = yes
 			}
 		}
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
 	}
 	potential = {
 		uses_district_set = standard
+		has_global_flag = planetarydiversity
 		exists = owner
 		owner = {
 			is_primitive_society = no
@@ -434,7 +443,8 @@ district_mining = {
 				}
 			}
 		}
-		NOT = { has_global_flag = planetarydiversity }
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
 	}
 	allow = {
 		NOT = {
@@ -442,7 +452,6 @@ district_mining = {
 		}
 	}
 	destroy_trigger = {
-		has_global_flag = planetarydiversity
 		exists = owner
 		owner = {
 			is_primitive_society = yes
@@ -459,7 +468,6 @@ district_mining = {
 	conversion_ratio = 1
 	convert_to = {
 		district_mining_uncapped
-		district_mining_pdpatch
 	}
 	resources = {
 		category = planet_districts
@@ -820,18 +828,26 @@ district_mining = {
 }
 
 #农业区划
-district_farming = {
+district_farming_pdpatch = {
+	icon = district_farming
 	expansion_planner = yes
 	base_buildtime = 240
 	min_for_deposits_on_planet = 3
 	max_for_deposits_on_planet = 15
 	show_on_uncolonized = {
 		uses_district_set = standard
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
+		NOR = {
+			is_planet_class = pc_technoorganic
+			has_deposit = d_technocanal
+			has_deposit = d_technocanal_blocker
+		}
 	}
 	potential = {
 		uses_district_set = standard
+		has_global_flag = planetarydiversity
 		exists = owner
-		owner = { is_primitive_society = no }
 		OR = {
 			owner = {
 				NOR = {
@@ -841,9 +857,29 @@ district_farming = {
 			}
 			NOR = {
 				is_planet_class = pc_ocean
+				is_pd_aquatics = yes
+				is_planet_class = pc_reef
+				is_planet_class = pc_pd_archipelago
+				is_planet_class = pc_desertislands
+				is_planet_class = pc_subarctic
+				is_planet_class = pc_storm
+				is_planet_class = pc_pd_iceberg
 			}
 		}
-		NOT = { has_global_flag = planetarydiversity }
+		owner = {
+			is_primitive_society = no
+		}
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
+		NOT = {
+			is_planet_class = pc_technoorganic
+		}
+		NOT = {
+			has_deposit = d_technocanal
+		}
+		NOT = {
+			has_deposit = d_technocanal_blocker
+		}
 	}
 	allow = {
 		NOT = {
@@ -851,7 +887,6 @@ district_farming = {
 		}
 	}
 	destroy_trigger = {
-		has_global_flag = planetarydiversity
 		exists = owner
 		NOR = {
 			owner = {
@@ -862,18 +897,29 @@ district_farming = {
 			}
 			NOR = {
 				is_planet_class = pc_ocean
+				is_pd_aquatics = yes
+				is_planet_class = pc_reef
+				is_planet_class = pc_pd_archipelago
+				is_planet_class = pc_desertislands
+				is_planet_class = pc_subarctic
+				is_planet_class = pc_storm
+				is_planet_class = pc_pd_iceberg
 			}
 		}
 		OR = {
 			owner = {
 				is_primitive_society = no
 			}
+			is_pd_wasteland = no
+			is_pd_planetary_megaproject = no
+			is_planet_class = pc_technoorganic
+			has_deposit = d_technocanal
+			has_deposit = d_technocanal_blocker
 		}
 	}
 	conversion_ratio = 1
 	convert_to = {
 		district_farming_uncapped
-		district_farming_pdpatch
 	}
 	resources = {
 		category = planet_districts
@@ -1307,12 +1353,13 @@ district_farming = {
 }
 
 
-district_generator_uncapped = {
+district_generator_uncapped_pdpatch = {
 	base_buildtime = 240
 	icon = district_generator
 	is_capped_by_modifier = no
 	show_on_uncolonized = {
 		OR = {
+			uses_district_set = pdnecroplanet
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			AND = {
@@ -1325,12 +1372,16 @@ district_generator_uncapped = {
 				}
 				uses_district_set = shattered_ring_world
 			}
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 		}
 	}
 	potential = {
+		has_global_flag = planetarydiversity
 		OR = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
+			uses_district_set = pdnecroplanet
 			AND = {
 				exists = owner
 				owner = {
@@ -1353,7 +1404,8 @@ district_generator_uncapped = {
 				}
 				uses_district_set = standard
 			}
-			NOT = { has_global_flag = planetarydiversity }
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 		}
 	}
 	allow = {
@@ -1362,10 +1414,10 @@ district_generator_uncapped = {
 		}
 	}
 	destroy_trigger = {
-		has_global_flag = planetarydiversity
 		NOR = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
+			uses_district_set = pdnecroplanet
 			AND = {
 				exists = owner
 				owner = {
@@ -1388,6 +1440,8 @@ district_generator_uncapped = {
 				}
 				uses_district_set = standard
 			}
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 		}
 	}
 	conversion_ratio = 1
@@ -1395,7 +1449,6 @@ district_generator_uncapped = {
 		district_generator
 		district_rw_generator
 		district_srw_commercial
-		district_generator_uncapped_pdpatch
 	}
 	resources = {
 		category = planet_districts
@@ -1763,7 +1816,7 @@ district_generator_uncapped = {
 	}
 }
 
-district_mining_uncapped = {
+district_mining_uncapped_pdpatch = {
 	base_buildtime = 240
 	icon = district_mining
 	is_capped_by_modifier = no
@@ -1785,6 +1838,7 @@ district_mining_uncapped = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
 			AND = {
 				exists = from
 				from = {
@@ -1792,13 +1846,17 @@ district_mining_uncapped = {
 				}
 				uses_district_set = standard
 			}
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 		}
 	}
 	potential = {
+		has_global_flag = planetarydiversity
 		OR = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
 			AND = {
 				exists = owner
 				owner = {
@@ -1810,7 +1868,8 @@ district_mining_uncapped = {
 				}
 				uses_district_set = standard
 			}
-			NOT = { has_global_flag = planetarydiversity }
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 		}
 	}
 	allow = {
@@ -1819,11 +1878,11 @@ district_mining_uncapped = {
 		}
 	}
 	destroy_trigger = {
-		has_global_flag = planetarydiversity
 		NOR = {
 			uses_district_set = hive_world
 			uses_district_set = machine_world
 			uses_district_set = shattered_ring_world
+			uses_district_set = pdnecroplanet
 			AND = {
 				exists = owner
 				owner = {
@@ -1835,12 +1894,13 @@ district_mining_uncapped = {
 				}
 				uses_district_set = standard
 			}
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
 		}
 	}
 	conversion_ratio = 1
 	convert_to = {
 		district_mining
-		district_mining_uncapped_pdpatch
 	}
 	resources = {
 		category = planet_districts
@@ -2492,7 +2552,7 @@ district_mining_uncapped = {
 	}
 }
 
-district_farming_uncapped = {
+district_farming_uncapped_pdpatch = {
 	base_buildtime = 240
 	icon = district_farming
 	is_capped_by_modifier = no
@@ -2509,10 +2569,17 @@ district_farming_uncapped = {
 			uses_district_set = hive_world
 			uses_district_set = shattered_ring_world
 			uses_district_set = pdnecroplanet
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
+			is_planet_class = pc_technoorganic
+			has_deposit = d_technocanal
+			has_deposit = d_technocanal_blocker
 		}
 	}
 	potential = {
+		has_global_flag = planetarydiversity
 		OR = {
+			uses_district_set = pdnecroplanet
 			uses_district_set = hive_world
 			uses_district_set = shattered_ring_world
 			AND = {
@@ -2523,10 +2590,21 @@ district_farming_uncapped = {
 				planet = {
 					OR = {
 						is_planet_class = pc_ocean
+						is_pd_aquatics = yes
+						is_planet_class = pc_reef
+						is_planet_class = pc_pd_archipelago
+						is_planet_class = pc_desertislands
+						is_planet_class = pc_subarctic
+						is_planet_class = pc_storm
+						is_planet_class = pc_pd_iceberg
 					}
 				}
 			}
-			NOT = { has_global_flag = planetarydiversity }
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
+			is_planet_class = pc_technoorganic
+			has_deposit = d_technocanal
+			has_deposit = d_technocanal_blocker
 			AND = {
 				exists = owner
 				owner = {
@@ -2540,13 +2618,15 @@ district_farming_uncapped = {
 		}
 	}
 	allow = {
+		is_pd_wasteland = no
+		is_pd_planetary_megaproject = no
 		NOT = {
 			has_modifier = resort_colony
 		}
 	}
 	destroy_trigger = {
-		has_global_flag = planetarydiversity
 		NOR = {
+			uses_district_set = pdnecroplanet
 			uses_district_set = hive_world
 			uses_district_set = shattered_ring_world
 			AND = {
@@ -2563,9 +2643,21 @@ district_farming_uncapped = {
 				planet = {
 					OR = {
 						is_planet_class = pc_ocean
+						is_pd_aquatics = yes
+						is_planet_class = pc_reef
+						is_planet_class = pc_pd_archipelago
+						is_planet_class = pc_desertislands
+						is_planet_class = pc_subarctic
+						is_planet_class = pc_storm
+						is_planet_class = pc_pd_iceberg
 					}
 				}
 			}
+			is_pd_wasteland = yes
+			is_pd_planetary_megaproject = yes
+			is_planet_class = pc_technoorganic
+			has_deposit = d_technocanal
+			has_deposit = d_technocanal_blocker
 			AND = {
 				exists = owner
 				owner = {
@@ -2579,7 +2671,6 @@ district_farming_uncapped = {
 	convert_to = {
 		district_farming
 		district_rw_farming
-		district_farming_uncapped_pdpatch
 	}
 	resources = {
 		category = planet_districts
