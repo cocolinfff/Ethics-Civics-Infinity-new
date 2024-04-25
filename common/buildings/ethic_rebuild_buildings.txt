@@ -1358,7 +1358,10 @@ building_mage_tower_1 = {
 			has_planet_flag = planetary_station
 			NAND = {
 				exists = owner
-				owner = { has_origin =  origin_wizarding_world }
+				OR = {
+					owner = { has_origin = origin_wizarding_world }
+					owner = { has_civic = civic_dark_consortium }
+				}
 			}
 		}
 	}
@@ -1370,7 +1373,10 @@ building_mage_tower_1 = {
 			has_modifier = crucible_colony
 			NAND = {
 				exists = owner
-				owner = { has_origin =  origin_wizarding_world }
+				OR = {
+					owner = { has_origin = origin_wizarding_world }
+					owner = { has_civic = civic_dark_consortium }
+				}
 			}
 		}
 	}
@@ -1389,31 +1395,22 @@ building_mage_tower_1 = {
 		}
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = planet
-			planet = { has_modifier = ley_rift }
-		}
-		modifier = {
-			job_magician_add = 1
-		}
-	}
-
 	planet_modifier = {
+		job_magician_add = 1
 		job_magical_apprentice_add = 2
 	}
 
 	triggered_desc = {
 		trigger = {
+			exists = owner
+			owner = { has_origin = origin_wizarding_world }
+			exists = planet
 			planet = { NOT = { has_modifier = ley_rift } }
 		}
 		text = has_ley_rift
 	}
 
 	triggered_desc = {
-		trigger = {
-			planet = { has_modifier = ley_rift }
-		}
 		text = job_magician_effect_desc
 	}
 
@@ -1444,11 +1441,6 @@ building_mage_tower_2 = {
 
 	allow = {
 		has_upgraded_capital = yes
-		hidden_trigger = {
-			custom_tooltip = has_ley_rift
-			exists = planet
-			planet = { has_modifier = ley_rift }
-		}
 	}
 
 	destroy_trigger = {
@@ -1458,7 +1450,10 @@ building_mage_tower_2 = {
 			has_modifier = crucible_colony
 			NAND = {
 				exists = owner
-				owner = { has_origin =  origin_wizarding_world }
+				OR = {
+					owner = { has_origin = origin_wizarding_world }
+					owner = { has_civic = civic_dark_consortium }
+				}
 			}
 		}
 	}
@@ -1482,6 +1477,16 @@ building_mage_tower_2 = {
 	planet_modifier = {
 		job_magician_add = 2
 		job_magical_apprentice_add = 4
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_origin = origin_wizarding_world }
+			exists = planet
+			planet = { NOT = { has_modifier = ley_rift } }
+		}
+		text = has_ley_rift
 	}
 
 	triggered_desc = {
@@ -1515,11 +1520,6 @@ building_mage_tower_3 = {
 
 	allow = {
 		has_major_upgraded_capital = yes
-		hidden_trigger = {
-			custom_tooltip = has_ley_rift
-			exists = planet
-			planet = { has_modifier = ley_rift }
-		}
 	}
 
 	destroy_trigger = {
@@ -1529,7 +1529,10 @@ building_mage_tower_3 = {
 			has_modifier = crucible_colony
 			NAND = {
 				exists = owner
-				owner = { has_origin =  origin_wizarding_world }
+				OR = {
+					owner = { has_origin = origin_wizarding_world }
+					owner = { has_civic = civic_dark_consortium }
+				}
 			}
 		}
 	}
@@ -1538,13 +1541,55 @@ building_mage_tower_3 = {
 		building_research_lab_3
 	}
 
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_valid_civic = civic_anarchism
+					is_community_society = yes
+				}
+			}
+		}
 		job_legendary_mage_add = 1
 		job_magician_add = 3
-		job_magical_apprentice_add = 3
+		job_magical_apprentice_add = 6
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_anarchism
+					is_community_society = yes
+				}
+			}
+		}
+		job_magician_add = 5
+		job_magical_apprentice_add = 10
 	}
 
 	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_origin = origin_wizarding_world }
+			exists = planet
+			planet = { NOT = { has_modifier = ley_rift } }
+		}
+		text = has_ley_rift
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_anarchism
+					is_community_society = yes
+				}
+			}
+		}
 		text = job_legendary_mage_effect_desc
 	}
 
@@ -1637,7 +1682,10 @@ building_school_of_magic = {
 		exists = owner
 		owner = {
 			is_regular_empire = yes
-			has_origin =  origin_wizarding_world
+			OR = {
+				has_origin = origin_wizarding_world
+				has_civic = civic_dark_consortium
+			}
 		}
 	}
 	destroy_trigger = {
@@ -1648,7 +1696,10 @@ building_school_of_magic = {
 			owner = {
 				is_gestalt = no
 				is_regular_empire = no
-				NOT = { has_origin =  origin_wizarding_world }
+				NOR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
 			}
 		}
 	}
@@ -1658,11 +1709,6 @@ building_school_of_magic = {
 	}
 	allow = {
 		has_major_upgraded_capital = yes
-		hidden_trigger = {
-			custom_tooltip = has_ley_rift
-			exists = planet
-			planet = { has_modifier = ley_rift }
-		}
 	}
 	resources = {
 		category = planet_buildings
@@ -1697,20 +1743,8 @@ building_school_of_magic = {
 	planet_modifier = {
 		planet_researchers_produces_mult = 0.15
 		job_legendary_mage_add = 1
-		job_magical_apprentice_add = 5
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_ultravisionary_socialism
-				}
-			}
-		}
-		modifier = {
-			pop_citizen_happiness = 0.05
-		}
+		job_magician_add = 4
+		job_magical_apprentice_add = 10
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -1724,7 +1758,7 @@ building_school_of_magic = {
 		}
 		modifier = {
 			job_legendary_mage_add = -1
-			job_magician_add = 3
+			job_magician_add = 6
 		}
 	}
 	triggered_planet_modifier = {
@@ -1745,8 +1779,17 @@ building_school_of_magic = {
 	triggered_desc = {
 		trigger = {
 			exists = owner
+			owner = { has_origin = origin_wizarding_world }
+			exists = planet
+			planet = { NOT = { has_modifier = ley_rift } }
+		}
+		text = has_ley_rift
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
 			owner = {
-				NOR = {
+				OR = {
 					has_valid_civic = civic_anarchism
 					is_community_society = yes
 				}
