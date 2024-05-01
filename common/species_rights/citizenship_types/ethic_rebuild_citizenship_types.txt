@@ -520,6 +520,15 @@ citizenship_purge = {
 				from = { has_authority = auth_hive_mind }
 				is_robotic_species = yes
 			}
+			AND = {
+				from = { has_valid_civic = civic_blood_and_flesh_worship }
+				OR = {
+					has_trait = trait_mechanical
+					has_trait = trait_cybernetic
+					has_trait = trait_latent_psionic
+					has_trait = trait_psionic
+				}
+			}
 		}
 	}
 
@@ -540,7 +549,10 @@ citizenship_purge = {
 			}
 			custom_tooltip = {
 				fail_text = same_species_disallowed
-				NOT = { is_same_species = from }
+				OR = {
+					NOT = { is_same_species = from }
+					from = { has_valid_civic = civic_blood_and_flesh_worship }
+				}
 			}
 			custom_tooltip = {
 				fail_text = "presapients_not_purged_citizenship"
@@ -566,6 +578,7 @@ citizenship_purge = {
 					fail_text = PURGING_NOT_ALLOWED
 					from = {
 						OR = {
+							has_valid_civic = civic_blood_and_flesh_worship
 							has_policy_flag = purge_displacement_only
 							allows_purge = yes
 						}
@@ -578,13 +591,27 @@ citizenship_purge = {
 					limit = {
 						from = { has_valid_civic = civic_citizen_service }
 					}
-					NOT = { has_military_service_type = { type = military_service_full country = from } }
+					OR = {
+						NOT = { has_military_service_type = { type = military_service_full country = from } }
+						from = { has_valid_civic = civic_blood_and_flesh_worship }
+					}
+
 				}
 			}
 		}
 	}
 	ai_will_do = {
 		factor = 20
+		modifier = {
+			factor = 9999
+			from = { has_valid_civic = civic_blood_and_flesh_worship }
+			OR = {
+				has_trait = trait_mechanical
+				has_trait = trait_cybernetic
+				has_trait = trait_latent_psionic
+				has_trait = trait_psionic
+			}
+		}
 		modifier = {
 			factor = 0
 			has_trait = trait_machine_unit
