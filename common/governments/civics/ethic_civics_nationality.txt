@@ -974,6 +974,8 @@ civic_diplomatic_corps = {
 		envoys_add = 2
 		diplo_weight_mult = 0.2
 		country_trust_growth = 0.3
+		country_trust_cap_add = 40
+		envoy_improve_relations_mult = 0.75
 	}
 	random_weight = {
 		base = 10
@@ -2887,6 +2889,7 @@ civic_functional_architecture = {
 	modifier = {
 		planet_structures_cost_mult = -0.15
 		planet_structures_upkeep_mult = -0.15
+		planet_building_build_speed_mult = 0.15
 		planet_max_buildings_add = 1
 		starbase_upgrade_cost_mult = -0.1
 		planet_amenities_mult = -0.15
@@ -3001,6 +3004,9 @@ civic_shadow_council = {
 		country_election_cost_mult = -0.75
 		planet_jobs_ruler_produces_mult = 0.1
 		pop_cat_ruler_political_power = 1
+		councilor_skill_add = 1
+		intel_encryption_add = 1
+		spy_network_daily_value_mult = 0.1
 	}
 }
 
@@ -3821,5 +3827,204 @@ civic_coalition_government_overlord = {
 		country_naval_capacity_contribution_from_subjects_mult = 0.15
 		empire_size_penalty_mult = 0.2
 		pop_factions_produces_mult = -0.15
+	}
+}
+
+#自然设计
+civic_natural_design = {
+	modification = no
+	playable = { has_machine_age_dlc = yes }
+	ai_playable = { has_machine_age_dlc = yes }
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	potential = {
+		species_archetype = { NOT = { value = MACHINE } }
+		ethics = {
+			NOT = { value = ethic_gestalt_consciousness }
+		}
+		authority = {
+			NOT = { value = auth_corporate }
+		}
+	}
+	possible = {
+		origin = {
+			NOR = {
+				value = origin_overtuned
+				value = origin_shroudwalker_apprentice
+				value = origin_cybernetic_creed
+				value = origin_synthetic_fertility
+			}
+		}
+	}
+	modifier = {
+		BIOLOGICAL_species_trait_picks_add = 2
+		BIOLOGICAL_species_trait_points_add = 2
+		planet_researchers_society_research_produces_add = 0.5
+	}
+	description = civic_tooltip_natural_design_effects
+	negative_description = civic_tooltip_natural_design_negative_effects
+}
+
+#创世向导
+civic_guided_sapience = {
+	modification = yes
+	playable = { has_machine_age_dlc = yes }
+	ai_playable = { has_machine_age_dlc = yes }
+	random_weight = {
+		base = @civic_rare_random_weight
+	}
+	potential = {
+		authority = {
+			NOT = { value = auth_corporate }
+		}
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+	possible = {
+		origin = {
+			NOR = {
+				value = origin_life_seeded
+				value = origin_syncretic_evolution
+			}
+		}
+		ethics = {
+			NOR = {
+				text = civic_tooltip_not_xenophobe
+				value = ethic_xenophobe
+				value = ethic_fanatic_xenophobe
+			}
+		}
+		civics = {
+			NOR = {
+				text = civic_tooltip_not_eager_explorers
+				value = civic_eager_explorers
+				value = civic_privatized_exploration
+				value = civic_hive_stargazers
+				value = civic_machine_exploration_protocol
+			}
+		}
+	}
+
+	modifier = {
+		terraforming_cost_mult = -0.25
+		terraform_speed_mult = 0.25
+	}
+	description = civic_tooltip_guided_sapience_effects
+	negative_description = civic_tooltip_guided_sapience_negative_effects
+}
+
+#润滑储罐
+civic_toxic_baths_individual_machine = {
+	playable = { has_toxoids = yes }
+	ai_playable = { has_toxoids = yes }
+	description = "civic_tooltip_machine_toxic_baths_effects"
+	potential = {
+		species_archetype = {
+			value = MACHINE
+		}
+		authority = { NOT = { value = auth_corporate } }
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+	}
+	possible = {
+		origin = { NOT = { value = origin_life_seeded } }
+		civics = {
+			NOT = {
+				value = civic_corporate_toxic_baths_individual_machine
+			}
+		}
+	}
+	random_weight = {
+		base = @civic_uncommon_random_weight
+	}
+	ai_weight = {
+		base = @ai_civic_uncommon_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+			OR = {
+				has_ai_personality = decadent_hierarchy
+			}
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+			OR = {
+				has_ai_personality = democratic_crusaders
+				has_ai_personality = honorbound_warriors
+				has_ai_personality = evangelising_zealots
+			}
+		}
+	}
+}
+
+#快速复制者
+civic_individual_machine_replication = {
+	potential = {
+		species_archetype = {
+			value = MACHINE
+		}
+		authority = { NOT = { value = auth_corporate } }
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+	}
+	modifier = {
+		planet_pop_assembly_mult = 0.25
+	}
+}
+#静态研究分析
+civic_individual_machine_predictive_analysis = {
+	potential = {
+		species_archetype = {
+			value = MACHINE
+		}
+		authority = { NOT = { value = auth_corporate } }
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+	}
+	modifier = {
+		num_tech_alternatives_add = 2
+		intel_decryption_add = 1
+		councilor_research_exp_gain = 0.25
+	}
+}
+#战争机械
+civic_individual_machine_warbots = {
+	potential = {
+		species_archetype = {
+			value = MACHINE
+		}
+		authority = { NOT = { value = auth_corporate } }
+		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+	}
+	possible = {
+		civics = {
+			NOT = {
+				value = civic_machine_obsessional_directive
+			}
+		}
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+		modifier = {
+			factor = @ai_civic_personality_match_factor
+		}
+		modifier = {
+			factor = @ai_civic_personality_mismatch_factor
+		}
+	}
+	#	description = civic_tooltip_machine_warbots_effects
+	modifier = {
+		army_damage_mult = 0.25
+		armies_upkeep_mult = -0.25
+		commander_initial_skill = 2
 	}
 }
