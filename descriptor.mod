@@ -3,5 +3,5 @@ tags={
 	"Overhaul"
 }
 name="Ethics and Civics : Infinity"
-supported_version="3.11.*"
+supported_version="3.12.*"
 remote_file_id="2280945168"
