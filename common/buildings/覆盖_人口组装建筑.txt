@@ -622,7 +622,6 @@ building_toxic_bath_machine = {
 #############
 # 医院
 #############
-
 #医学研究所
 building_clinic = {
 	base_buildtime = @b1_time
@@ -916,34 +915,10 @@ building_clinic_synthetic = {
 	category = pop_assembly
 	icon = building_clinic
 	potential = {
-		owner = {
-			is_regular_empire = yes
-		}
-		owner = { has_country_flag = synthetic_empire }
-		NOR = {
-			has_modifier = slave_colony
-			has_planet_flag = planetary_station
-		}
+		always = no
 	}
 	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				NOR = {
-					is_regular_empire = yes
-					AND = {
-						has_origin = origin_fear_of_the_dark
-						is_country_type = primitive
-					}
-				}
-			}
-			owner = { NOT = { has_country_flag = synthetic_empire } }
-			has_modifier = slave_colony
-			AND = {
-				buildings_stop_pop = yes
-				owner = { is_ai = yes }
-			}
-		}
+		always = yes
 	}
 	planet_modifier = {
 		job_healthcare_synthetic_add = 2
@@ -978,9 +953,6 @@ building_clinic_synthetic = {
 			}
 			energy = 0.5
 		}
-	}
-	prerequisites = {
-		"tech_medical_system"
 	}
 	upgrades = {
 		"building_hospital_synthetic"
@@ -1043,35 +1015,10 @@ building_hospital_synthetic = {
 		has_upgraded_capital = yes
 	}
 	potential = {
-		has_building = building_clinic
-		owner = {
-			OR = {
-				is_regular_empire = yes
-				AND = {
-					has_origin = origin_fear_of_the_dark
-					is_country_type = primitive
-				}
-			}
-		}
-		NOT = {
-			has_modifier = slave_colony
-		}
+		always = no
 	}
 	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				is_regular_empire = no
-			}
-			owner = { NOT = { has_country_flag = synthetic_empire } }
-			has_modifier = slave_colony
-			AND = {
-				buildings_stop_pop = yes
-				owner = {
-					is_ai = yes
-				}
-			}
-		}
+		always = yes
 	}
 	planet_modifier = {
 		job_healthcare_synthetic_add = 4
@@ -1112,9 +1059,6 @@ building_hospital_synthetic = {
 	prerequisites = {
 		"tech_frontier_health"
 	}
-	upgrades = {
-		"building_medical_center_synthetic"
-	}
 	show_tech_unlock_if = {
 		is_regular_empire = yes
 	}
@@ -1130,24 +1074,13 @@ building_medical_center_synthetic = {
 	category = pop_assembly
 	icon = building_medical_center
 	potential = {
-		has_building = building_hospital
+		always = no
+	}
+	destroy_trigger = {
+		always = yes
 	}
 	allow = {
 		has_major_upgraded_capital = yes
-	}
-	destroy_trigger = {
-		exists = owner
-		OR = {
-			owner = {
-				is_regular_empire = no
-			}
-			owner = { NOT = { has_country_flag = synthetic_empire } }
-			has_modifier = slave_colony
-			AND = {
-				buildings_stop_pop = yes
-				owner = { is_ai = yes }
-			}
-		}
 	}
 	planet_modifier = {
 		job_healthcare_synthetic_add = 6
@@ -1185,10 +1118,321 @@ building_medical_center_synthetic = {
 			energy = 2
 		}
 	}
-	prerequisites = {
-		"tech_frontier_hospital"
-	}
 	triggered_desc = {
 		text = job_healthcare_synthetic_effect_desc
 	}
+}
+
+#############
+# 堕落建筑
+#############
+#分子焕活所
+building_fe_clinic_1 = {
+	base_buildtime = @b2_time
+	base_cap_amount = 1
+	can_build = yes
+	can_demolish = yes
+
+	category = amenity
+
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				is_regular_empire = yes
+				is_hive_empire = yes
+			}
+			OR = {
+				is_fallen_empire = yes
+				has_technology = tech_fe_clinic_1
+			}
+		}
+		NOT = {
+			has_modifier = slave_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			is_machine_empire = yes
+			is_fallen_empire = no
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			alloys = @b3_minerals
+			exotic_gases = @fe_sr_cost
+		}
+		upkeep = {
+			exotic_gases = 2
+			alloys = @b2_alloy_upkeep
+			energy = 15
+		}
+	}
+
+	country_modifier = {
+		leader_lifespan_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = no
+			}
+		}
+		modifier = {
+			job_spawning_drone_add = 2
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_regular_empire = no
+			}
+		}
+		text = job_spawning_drone_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		modifier = {
+			job_healthcare_add = 4
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_technology = tech_gene_tailoring
+			}
+			any_owned_pop = {
+				has_auto_modding_trait = yes
+			}
+		}
+		modifier = {
+			auto_mod_monthly_add = 4
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_overtuned
+			}
+			any_owned_pop = {
+				has_auto_modding_trait = yes
+			}
+		}
+		modifier = {
+			auto_mod_monthly_add = 4
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		text = job_healthcare_effect_desc
+	}
+
+	upgrades = {
+		building_fe_clinic_2
+	}
+
+	show_in_tech = tech_fe_clinic_1
+}
+
+#机器人生产节点
+building_fe_assembly_1 = {
+	base_buildtime = @b2_time
+	base_cap_amount = 1
+	can_build = yes
+	can_demolish = yes
+
+	category = pop_assembly
+
+	potential = {
+		exists = owner
+		OR = {
+			AND = {
+				OR = {
+					owner = { is_ai = no }
+					NOT = { exists = assembling_species }
+					assembling_species = { is_robotic_species = yes }
+				}
+				owner = {
+					is_regular_empire = yes
+					NOT = { has_policy_flag = robots_outlawed }
+					OR = {
+						NOT = { has_ascension_perk = ap_engineered_evolution }
+						is_materialist = yes
+					}
+				}
+			}
+			owner = {
+				is_machine_empire = yes
+			}
+		}
+
+		owner = {
+			OR = {
+				is_fallen_empire = yes
+				has_technology = tech_fe_assembly_1
+			}
+		}
+
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			is_fallen_empire = no
+			OR = {
+				is_regular_empire = no
+				has_policy_flag = robots_outlawed
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		cost = {
+			alloys = @b3_minerals
+			sr_living_metal = @fe_sr_cost
+		}
+		upkeep = {
+			sr_living_metal = 1.5
+			alloys = @b3_alloy_upkeep
+			energy = 50
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_origin = origin_mechanists
+					is_individual_machine = yes
+					has_country_flag = synthetic_empire
+				}
+			}
+			any_owned_pop = {
+				has_auto_modding_trait = yes
+			}
+		}
+		modifier = {
+			auto_mod_monthly_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = synth_unscheduled_updates
+			}
+		}
+		modifier = {
+			planet_pop_assembly_mult = 0.1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = synth_safe_updates
+			}
+		}
+		modifier = {
+			planet_pop_assembly_mult = -0.1
+			planet_stability_add = 5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_machine_empire = no
+			}
+		}
+		modifier = {
+			job_roboticist_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_machine_empire = yes
+			}
+			any_owned_pop = {
+				has_auto_modding_trait = yes
+			}
+		}
+		modifier = {
+			auto_mod_monthly_add = 2
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_machine_empire = no
+			}
+		}
+		text = job_roboticist_effect_desc
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_machine_empire = yes
+			}
+		}
+		modifier = {
+			job_replicator_add = 2
+		}
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_machine_empire = yes
+			}
+		}
+		text = job_replicator_effect_desc
+	}
+
+	upgrades = {
+		building_fe_assembly_2
+	}
+
+	show_in_tech = tech_fe_assembly_1
 }
