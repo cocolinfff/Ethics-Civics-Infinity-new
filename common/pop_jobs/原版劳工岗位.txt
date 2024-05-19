@@ -21,13 +21,17 @@ colonist = {
 		category = planet_jobs
 		produces = {
 			trigger = {
-				is_lithoid = no
+				has_food_upkeep = yes
 			}
-			food = 2
+			food = 1
 		}
 		produces = {
 			trigger = {
-				is_lithoid = yes
+				OR = {
+					has_mineral_upkeep = yes
+					has_energy_upkeep = yes
+				}
+
 			}
 			minerals = 1
 		}
@@ -45,7 +49,8 @@ colonist = {
 		pop_defense_armies_add = 1
 	}
 	planet_modifier = {
-		pop_growth_speed = 0.025
+		pop_growth_speed = 0.1
+		planet_building_build_speed_mult = 0.1
 	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
@@ -87,6 +92,8 @@ colonist = {
 			has_slavery_type = { type = slavery_indentured }
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_amenities"
 }
 
 #职员
@@ -109,11 +116,7 @@ clerk = {
 		produces = {
 			trigger = {
 				owner = {
-					OR = {
-						has_valid_civic = civic_shared_burden
-						has_valid_civic = civic_advanced_socialism
-						has_valid_civic = civic_transcendental_communism
-					}
+					has_valid_civic = civic_shared_burden
 				}
 			}
 			society_research = 0.25
@@ -301,6 +304,48 @@ clerk = {
 
 	triggered_planet_modifier = {
 		potential = {
+			exists = owner
+			owner = {
+				is_synth_corporate = no
+			}
+		}
+		trade_value_mult = 0.01
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_production
+			}
+		}
+		planet_jobs_alloys_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_stability
+			}
+		}
+		planet_jobs_unity_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = computation_core_research
+			}
+		}
+		planet_jobs_physics_research_produces_mult = 0.005
+		planet_jobs_society_research_produces_mult = 0.005
+		planet_jobs_engineering_research_produces_mult = 0.005
+	}
+
+	triggered_planet_modifier = {
+		potential = {
 			planet = {
 				NOT = { has_planet_flag = has_franchise_headquarters }
 			}
@@ -315,7 +360,7 @@ clerk = {
 				has_planet_flag = has_franchise_headquarters
 			}
 		}
-		trade_value_add = 3
+		trade_value_add = 2
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 
@@ -413,20 +458,55 @@ clerk = {
 		}
 		planet_stability_add = 1
 	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				exists = orbital_defence
+				orbital_defence = {
+					exists = starbase
+					starbase = {
+						has_starbase_building = ring_trade_hub
+					}
+				}
+			}
+		}
+		planet_amenities_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
 			owner = { has_tradition = tr_mercantile_trickle_up_economics }
 		}
 		pop_lifestyle_trade_mult = 0.01
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		country_edict_fund_add = 1
+	}
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_tradition = tr_mercantile_trickle_up_economics }
+			owner = { has_active_tradition = tr_virtuality_5 }
 		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+
+		modifier = {
+			planet_virtual_jobs_produces_mult = 0.01
+		}
 	}
 	overlord_resources = {
 		category = planet_corporate_franchising_meddling
@@ -438,6 +518,22 @@ clerk = {
 			}
 			unity = 0.25
 		}
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = paragon_origin_strengthened_government_ii }
+		}
+		pop_political_power = 0.25
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_modifier = paragon_origin_strengthened_government_iii }
+		}
+		pop_political_power = 0.50
 	}
 	weight = {
 		weight = @clerk_job_weight
@@ -580,24 +676,6 @@ technician = {
 			country_admin_cap_add = 0.5
 		}
 	}
-	# #污染
-	# triggered_planet_modifier = {
-	# 	potential = {
-	# 		owner = {
-	# 			OR = {
-	# 				NOT = {
-	# 					is_no_planet_country = yes
-	# 				}
-	# 				has_origin = origin_ev_both_choosen
-	# 				has_valid_civic = civic_ev_planet_and_fleet
-	# 				has_ascension_perk = ev_land_planets
-	# 			}
-	# 		}
-	# 	}
-	# 	pop_environment_tolerance = -0.005
-	# 	mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
-	# }
-	#太阳能发电为啥会减宜居？
 	overlord_resources = {
 		category = planet_requisitioned_energy
 		produces = {
@@ -663,7 +741,13 @@ technician = {
 				}
 			}
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
+
+	inline_script = "jobs/automodding_priority_energy"
 }
 
 #矿工
@@ -877,7 +961,13 @@ miner = {
 				}
 			}
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
+
+	inline_script = "jobs/automodding_priority_minerals"
 }
 
 #水晶矿工
@@ -1002,6 +1092,10 @@ crystal_miner = {
 		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
 		}
 	}
 }
@@ -1129,6 +1223,10 @@ gas_extractor = {
 			factor = 0.1
 			can_take_servant_job = yes
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
 }
 
@@ -1255,6 +1353,16 @@ mote_harvester = {
 			factor = 0.1
 			can_take_servant_job = yes
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
+	}
+
+	auto_trait_prio = {
+		trait_industrious
+		trait_very_strong
+		trait_strong
 	}
 }
 
@@ -1506,7 +1614,13 @@ farmer = {
 				}
 			}
 		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_labor
+		}
 	}
+
+	inline_script = "jobs/automodding_priority_food"
 }
 
 #冶金工人（原冶金师） -> worker
@@ -1682,6 +1796,10 @@ foundry = {
 		modifier = {
 			factor = 5
 			has_job = foundry
+		}
+		modifier = {
+			factor = 5
+			has_trait = trait_cyborg_creed_of_construction
 		}
 	}
 }
@@ -2176,6 +2294,8 @@ mortal_initiate = {
 			}
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_unity"
 }
 
 #环世界开采者
@@ -2322,6 +2442,8 @@ scrap_miner = {
 			}
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_minerals"
 }
 
 #钓鱼佬
@@ -2484,6 +2606,8 @@ angler = {
 			can_take_servant_job = yes
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_food"
 }
 
 #扈从
@@ -2558,6 +2682,8 @@ squire = {
 			}
 		}
 	}
+
+	inline_script = "jobs/automodding_priority_amenities"
 }
 
 #NGA技工
@@ -2673,7 +2799,10 @@ puddle_technician = {
 
 	weight = {
 		weight = @worker_job_weight
-		mult = value:job_weights_modifier|JOB|farmer|RESOURCE|food|
+		modifier = { # 可控的动态权重
+			mult = value:job_weights_modifier|JOB|farmer|RESOURCE|food|
+			owner = { has_edict = dynamic_weight }
+		}
 		modifier = {
 			factor = 1.1
 			owner = { has_valid_civic = civic_agrarian_idyll }
@@ -2859,7 +2988,10 @@ puddle_technician_drone = {
 
 	weight = {
 		weight = @worker_job_weight
-		mult = value:job_weights_modifier|JOB|farmer|RESOURCE|food|
+		modifier = { # 可控的动态权重
+			mult = value:job_weights_modifier|JOB|farmer|RESOURCE|food|
+			owner = { has_edict = dynamic_weight }
+		}
 		modifier = {
 			factor = 1.1
 			owner = { has_valid_civic = civic_agrarian_idyll }
@@ -2982,9 +3114,12 @@ broken_shackles_scavenger = {
 
 	weight = {
 		weight = @worker_job_weight
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-		mult = value:job_weights_research_modifier|JOB|broken_shackles_scavenger|
-		mult = value:job_weights_modifier|JOB|broken_shackles_scavenger|RESOURCE|alloys|
+		modifier = { # 可控的动态权重
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			mult = value:job_weights_research_modifier|JOB|broken_shackles_scavenger|
+			mult = value:job_weights_modifier|JOB|broken_shackles_scavenger|RESOURCE|alloys|
+			owner = { has_edict = dynamic_weight }
+		}
 		modifier = {
 			factor = 5
 			has_job = broken_shackles_scavenger
