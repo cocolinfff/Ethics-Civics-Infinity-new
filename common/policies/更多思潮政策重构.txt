@@ -2660,6 +2660,7 @@ artificial_intelligence_policy = {
 			has_valid_civic = civic_machine_soul_servant
 			can_set_ai_policy = yes
 			has_country_flag = synthetic_empire
+			is_individual_machine = yes
 		}
 	}
 	option = {
@@ -2674,7 +2675,7 @@ artificial_intelligence_policy = {
 				}
 				has_valid_civic = civic_mechanical_church
 				has_valid_civic = civic_machine_soul_servant
-				has_country_flag = synthetic_empire
+				is_individual_machine = yes
 			}
 		}
 		policy_flags = {
@@ -2726,6 +2727,7 @@ artificial_intelligence_policy = {
 	option = {
 		name = "ai_servitude"
 		valid = {
+			NOT = {	has_origin = origin_synthetic_fertility }
 			custom_tooltip = {
 				fail_text = is_a_synthetic_empire_fail
 				NOT = {
@@ -2735,6 +2737,7 @@ artificial_intelligence_policy = {
 			NOT = {
 				has_valid_civic = civic_machine_soul_servant
 			}
+			is_individual_machine = no
 		}
 		policy_flags = {
 			ai_servitude
@@ -2787,12 +2790,12 @@ artificial_intelligence_policy = {
 					fail_text = is_a_synthetic_empire
 					has_country_flag = synthetic_empire
 				}
-				has_ascension_perk = ap_magic_puppet
 				has_valid_civic = civic_knowledge_seeker
 				NOR = {
 					has_ethic = "ethic_spiritualist"
 					has_ethic = "ethic_fanatic_spiritualist"
 				}
+				is_individual_machine = yes
 			}
 			NOT = {
 				has_policy_flag = robots_outlawed
@@ -2923,8 +2926,9 @@ artificial_intelligence_policy = {
 # 机器人劳工
 robot_pop_policy = {
 	potential = {
-		NOT = {
+		NOR = {
 			has_ethic = ethic_gestalt_consciousness
+			is_individual_machine = yes
 		}
 	}
 	option = {
@@ -2935,10 +2939,10 @@ robot_pop_policy = {
 				has_ethic = "ethic_fanatic_materialist"
 				has_valid_civic = civic_mechanical_church
 				has_valid_civic = civic_machine_soul_servant
+				has_origin = origin_synthetic_fertility
 			}
-			NOT = {
-				has_policy_flag = ai_full_rights
-			}
+			NOT = { has_policy_flag = ai_full_rights }
+			is_individual_machine = no
 		}
 		policy_flags = {
 			robots_outlawed
@@ -2981,8 +2985,21 @@ robot_pop_policy = {
 		policy_flags = {
 			robots_allowed
 		}
+
+		on_enabled = {
+			hidden_effect = {
+				country_event = {
+					id = action.56 # Failsafe if you don't have a robot species to assemble.
+				}
+			}
+		}
+
 		AI_weight = {
 			factor = 2
+			modifier = {
+				factor = 0
+				has_ethic = "ethic_fanatic_spiritualist"
+			}
 		}
 	}
 }
