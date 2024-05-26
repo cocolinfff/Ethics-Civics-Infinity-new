@@ -94,6 +94,7 @@ foundry_specialist = {
 					has_valid_civic = civic_catalytic_processing
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -254,6 +255,7 @@ artisan_specialist = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -596,6 +598,7 @@ grassroot_cadre = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1523,6 +1526,13 @@ democratic_politician = {
 	}
 	country_modifier = {
 		country_admin_cap_add = 10
+	}
+	triggered_country_modifier = {
+		potential = {
+			always = yes
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_administrators_admin_cap_produces_add|
 	}
 	weight = {
 		weight = @specialist_job_weight
@@ -2539,6 +2549,7 @@ primitive_foundry = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.005
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -2713,6 +2724,7 @@ primitive_artisan = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.005
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -2819,12 +2831,39 @@ magician = {
 		category = planet_researchers
 		produces = {
 			trigger = {
+				exists = planet
+				planet = { NOT = { has_modifier = ley_rift } }
 				exists = owner
 				owner = {
-					NOR = {
-						has_valid_civic = civic_cyber_dictatorship
-						has_valid_civic = civic_cyber_dictatorship
-					}
+					has_origin = origin_wizarding_world
+					NOT = { has_valid_civic = civic_cyber_dictatorship }
+				}
+			}
+			physics_research = 6
+			engineering_research = 6
+			society_research = 6
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				planet = { NOT = { has_modifier = ley_rift } }
+				exists = owner
+				owner = {
+					has_origin = origin_wizarding_world
+					has_valid_civic = civic_cyber_dictatorship
+				}
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+			mult = value:knight_commander_unity_output_modifier
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_dark_consortium
+					NOT = { has_valid_civic = civic_cyber_dictatorship }
 				}
 			}
 			physics_research = 6
@@ -2835,10 +2874,8 @@ magician = {
 			trigger = {
 				exists = owner
 				owner = {
-					OR = {
-						has_valid_civic = civic_cyber_dictatorship
-						has_valid_civic = civic_cyber_dictatorship
-					}
+					has_civic = civic_dark_consortium
+					has_valid_civic = civic_cyber_dictatorship
 				}
 			}
 			physics_research = 3
@@ -2888,7 +2925,24 @@ magician = {
 			alloys = 1
 		}
 		upkeep = {
+			trigger = {
+				exists = planet
+				planet = { NOT = { has_modifier = ley_rift } }
+				exists = owner
+				owner = {
+					has_origin = origin_wizarding_world
+				}
+			}
 			astral_threads = 0.5
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_dark_consortium
+				}
+			}
+			sr_dark_matter = 0.5
 		}
 	}
 	triggered_pop_modifier = {

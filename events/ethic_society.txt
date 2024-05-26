@@ -23,69 +23,59 @@ country_event = {
 		# 贸易额检测
 		eci_primitive_trade = yes
 
-		# 科研船数量检测
-		export_trigger_value_to_variable = {
-			trigger = count_owned_ship
-			parameters = {
-				limit = {
-					OR = {
-						is_ship_size = science
-						is_ship_size = explorer_vessel
-						is_ship_size = alien_racing_ship
-						is_ship_size = ghost_ship
-						is_ship_size = enigmatic_cache
-						is_ship_size = azaryn_dome
-					}
+		# 通货膨胀buff
+		if = {
+			limit = {
+				OR = {
+					is_ai = no
+					has_valid_civic = civic_triple_the_profit
 				}
 			}
-			variable = num_owned_science_ship
-		}
-
-		# 通货膨胀buff
-		set_variable = { which = society_trade_value_target_country value = value:society_trade_value_reduction }
-		if = {
-			limit = {
-				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_target_country value > 0 }
+			set_variable = { which = society_trade_value_target_country value = value:society_trade_value_reduction }
+			if = {
+				limit = {
+					owner = { is_market_type = yes }
+					check_variable = { which = society_trade_value_target_country value > 0 }
+				}
+				remove_modifier = trade_value_reduction_modifier_2
+				add_modifier = {
+					modifier = trade_value_reduction_modifier
+					multiplier = society_trade_value_target_country
+					clear_on_owner_change = yes
+				}
 			}
-			remove_modifier = trade_value_reduction_modifier_2
-			add_modifier = {
-				modifier = trade_value_reduction_modifier
-				multiplier = society_trade_value_target_country
-				clear_on_owner_change = yes
+			if = {
+				limit = {
+					owner = { is_market_type = yes }
+					check_variable = { which = society_trade_value_target_country value > -1 }
+					check_variable = { which = society_trade_value_target_country value < 0 }
+				}
+				remove_modifier = trade_value_reduction_modifier
+				add_modifier = {
+					modifier = trade_value_reduction_modifier_2
+					multiplier = society_trade_value_target_country
+					clear_on_owner_change = yes
+				}
 			}
-		}
-		if = {
-			limit = {
-				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_target_country value > -1 }
-				check_variable = { which = society_trade_value_target_country value < 0 }
+			if = {
+				limit = {
+					owner = { is_market_type = yes }
+					check_variable = { which = society_trade_value_target_country value <= -1 }
+				}
+				remove_modifier = trade_value_reduction_modifier
+				add_modifier = {
+					modifier = trade_value_reduction_modifier_2
+					multiplier = -1
+					clear_on_owner_change = yes
+				}
 			}
-			remove_modifier = trade_value_reduction_modifier
-			add_modifier = {
-				modifier = trade_value_reduction_modifier_2
-				multiplier = society_trade_value_target_country
-				clear_on_owner_change = yes
+			if = {
+				limit = {
+					owner = { is_market_type = no }
+				}
+				remove_modifier = trade_value_reduction_modifier
+				remove_modifier = trade_value_reduction_modifier_2
 			}
-		}
-		if = {
-			limit = {
-				owner = { is_market_type = yes }
-				check_variable = { which = society_trade_value_target_country value <= -1 }
-			}
-			remove_modifier = trade_value_reduction_modifier
-			add_modifier = {
-				modifier = trade_value_reduction_modifier_2
-				multiplier = -1
-				clear_on_owner_change = yes
-			}
-		}
-		if = {
-			limit = {
-				owner = { is_market_type = no }
-			}
-			remove_modifier = trade_value_reduction_modifier
-			remove_modifier = trade_value_reduction_modifier_2
 		}
     }
 }
@@ -129,7 +119,14 @@ planet_event = {
 			ethic_enforcer_to_media_worker_variable = yes
 		}
 		if = {
-			limit = { owner = { has_origin = origin_wizarding_world } }
+			limit = {
+				owner = {
+					OR = {
+						has_origin = origin_wizarding_world
+						has_civic = civic_dark_consortium
+					}
+				}
+			}
 			ethic_wizarding_world_legendary_mage_variable = yes
 			ethic_wizarding_world_magician_variable = yes
 		}
@@ -143,6 +140,31 @@ planet_event = {
 				}
 			}
 			ethic_manager_to_steward_variable = yes
+		}
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						AND = {
+							is_market_type = yes
+							has_policy_flag = mixed_ownership
+						}
+						has_policy_flag = private_ownership
+						has_policy_flag = family_ownership
+					}
+				}
+				planet = { free_building_slots >= 1 }
+				OR = {
+					owner = { is_ai = no }
+					planet = { num_unemployed > 0 }
+				}
+			}
+			random_list = {
+				59 = {}
+				1 = {
+					add_building = building_private_commercial_megaplex
+				}
+			}
 		}
 
 		# 星球领袖负面特质检测

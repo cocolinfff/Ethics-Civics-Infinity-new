@@ -724,7 +724,16 @@ decision_acquisition_of_private_enterprises = {
 	}
 
 	potential = {
-		owner = { is_economic_stance_planned = no }
+		owner = {
+			OR = {
+				AND = {
+					is_market_type = yes
+					has_policy_flag = mixed_ownership
+				}
+				has_policy_flag = private_ownership
+				has_policy_flag = family_ownership
+			}
+		}
 		num_buildings = {
 			type = building_private_commercial_megaplex
 			value >= 1
@@ -804,42 +813,7 @@ decision_acquisition_of_private_enterprises = {
 	}
 
 	ai_weight = {
-		weight = 1
-		modifier = {
-			factor = 2
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value > 1
-			}
-		}
-		modifier = {
-			factor = 4
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value > 3
-			}
-		}
-		modifier = {
-			factor = 6
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value > 5
-			}
-		}
-		modifier = {
-			factor = 8
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value > 7
-			}
-		}
-		modifier = {
-			factor = 10
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value > 9
-			}
-		}
+		weight = 0
 	}
 }
 
@@ -857,7 +831,17 @@ decision_close_illegal_office = {
 	}
 
 	potential = {
-		owner = { is_economic_stance_planned = yes }
+		owner = {
+			OR = {
+				is_economic_stance_planned = yes
+				AND = {
+					is_market_type = yes
+					has_policy_flag = mixed_ownership
+				}
+				has_policy_flag = private_ownership
+				has_policy_flag = family_ownership
+			}
+		}
 		OR = {
 			num_buildings = {
 				type = building_private_commercial_megaplex
@@ -873,27 +857,17 @@ decision_close_illegal_office = {
 	}
 
 	allow = {
-		OR = {
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value >= 1
-			}
-			AND = {
-				has_branch_office = yes
-				branch_office_owner = {
-					NOR = {
-						is_same_value = root.owner
-						is_country_type = rebel_allience
-					}
-				}
+		has_branch_office = yes
+		branch_office_owner = {
+			NOR = {
+				is_same_value = root.owner
+				is_country_type = rebel_allience
 			}
 		}
 	}
 
 	effect = {
-		remove_building = building_private_commercial_megaplex
 		hidden_effect = {
-			remove_building_private_commercial_megaplex = yes
 			custom_tooltip = decision_close_illegal_office_effects
 			if = {
 				limit = {
@@ -911,27 +885,7 @@ decision_close_illegal_office = {
 	}
 
 	ai_weight = {
-		weight = 1
-		modifier = {
-			add = 99999
-			planet = {
-				branch_office_owner = {
-					NOT = { is_same_value = root.owner }
-					OR = {
-						has_civic = civic_criminal_heritage
-						has_civic = civic_underworld_society
-					}
-				}
-			}
-		}
-		modifier = {
-			add = 99999
-			owner = { is_economic_stance_planned = yes }
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value >= 1
-			}
-		}
+		weight = 0
 	}
 }
 
@@ -1661,3 +1615,78 @@ decision_recruiting_local_mercenaries = {
 	}
 }
 
+#启用有机转化
+decision_bio_reactor = {
+	owned_planets_only = yes
+	sound = event_administrative_work
+
+	resources = {
+		category = decisions
+	}
+
+	potential = {
+		AND = {
+				has_building = building_bio_reactor
+			NOT = { has_modifier = planet_bio_reactor }
+			NOT = { has_modifier = planet_bio_reactor_2 }
+			NOT = { has_building = building_bio_reactor_2 }
+		}
+	}
+
+	effect = {
+			add_modifier = { modifier = "planet_bio_reactor" days = -1 }
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+#启用高级有机转化
+decision_bio_reactor_2 = {
+	owned_planets_only = yes
+	sound = event_administrative_work
+
+	resources = {
+		category = decisions
+	}
+
+	potential = {
+		AND = {
+				has_building = building_bio_reactor_2
+			NOT = { has_modifier = planet_bio_reactor }
+			NOT = { has_modifier = planet_bio_reactor_2 }
+		}
+	}
+
+	effect = {
+		add_modifier = { modifier = "planet_bio_reactor_2" days = -1 }
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+#关闭有机转化
+decision_end_bio_reactor = {
+	owned_planets_only = yes
+	sound = event_administrative_work
+
+	resources = {
+		category = decisions
+	}
+
+	potential = {
+			has_modifier = planet_bio_reactor
+	}
+
+	effect = {
+		hidden_effect = {
+			remove_modifier = planet_bio_reactor
+			remove_modifier = planet_bio_reactor_2
+		}
+	}
+
+	ai_weight = {
+		weight = 1
+	}
+}

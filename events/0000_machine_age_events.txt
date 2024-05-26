@@ -1,0 +1,642 @@
+namespace = synth
+
+# Fired by: tr_synthetics_finish or event
+country_event = {
+    id = synth.500
+    hide_window = yes
+    is_triggered_only = yes
+
+    immediate = {
+        set_variable = {
+            which = "synth_physical_society"
+            value = 0
+        }
+        set_variable = {
+            which = "synth_virtual_society"
+            value = 0
+        }
+        switch = {
+            trigger = has_authority
+            auth_direct_democratic = {
+                hidden_effect = {
+                    country_event = { id = synth.505 }
+                }
+            }
+            auth_democratic = {
+                hidden_effect = {
+                    country_event = { id = synth.505 }
+                }
+            }
+            auth_oligarchic = {
+                hidden_effect = {
+                    country_event = { id = synth.510 }
+                }
+            }
+            auth_dictatorial = {
+                hidden_effect = {
+                    country_event = { id = synth.515 }
+                }
+            }
+            auth_imperial = {
+                hidden_effect = {
+                    country_event = { id = synth.520 }
+                }
+            }
+            auth_corporate = {
+                hidden_effect = {
+                    country_event = { id = synth.525 }
+                }
+            }
+        }
+    }
+}
+
+# Ending
+# Fired by: event
+country_event = {
+    id = synth.1500
+    hide_window = yes
+    is_triggered_only = yes
+
+    immediate = {
+        switch = {
+            trigger = has_authority
+            auth_direct_democratic = {
+                hidden_effect = {
+                    country_event = { id = synth.15005 }
+                }
+            }
+            auth_democratic = {
+                hidden_effect = {
+                    country_event = { id = synth.1505 }
+                }
+            }
+            auth_oligarchic = {
+                hidden_effect = {
+                    country_event = { id = synth.1510 }
+                }
+            }
+            auth_dictatorial = {
+                hidden_effect = {
+                    country_event = { id = synth.1515 }
+                }
+            }
+            auth_dictatorial = {
+                hidden_effect = {
+                    country_event = { id = synth.1515 }
+                }
+            }
+            auth_imperial = {
+                hidden_effect = {
+                    country_event = { id = synth.1520 }
+                }
+            }
+            auth_corporate = {
+                hidden_effect = {
+                    country_event = { id = synth.1525 }
+                }
+            }
+        }
+    }
+}
+
+# Democratic Final Event
+# Fired by: event
+country_event = {
+    id = synth.15005
+    title = "synth.1505.name"
+    desc = {
+        trigger = {
+            check_variable = {
+                which = "synth_physical_society"
+                value > synth_virtual_society
+            }
+        }
+        text = synth.1505.desc.physical
+    }
+    desc = {
+        trigger = {
+            check_variable = {
+                which = "synth_physical_society"
+                value < synth_virtual_society
+            }
+        }
+        text = synth.1505.desc.virtual
+    }
+    desc = {
+        trigger = {
+            check_variable = {
+                which = "synth_physical_society"
+                value = synth_virtual_society
+            }
+        }
+        text = synth.1505.desc.neutral
+    }
+    picture = GFX_evt_virtual_world
+    show_sound = event_cityscape
+    location = from
+    event_chain = synthshock_chain
+    is_triggered_only = yes
+
+    option = {
+        trigger = {
+            check_variable = {
+                which = "synth_physical_society"
+                value >= synth_virtual_society
+            }
+        }
+        name = synth.1505.a
+        end_event_chain = synthshock_chain
+        custom_tooltip = synth.15005.a.tt
+        set_country_flag = synth_physical
+        hidden_effect = {
+            advanced_authority_refresh = yes
+        }
+        ai_chance = {
+            factor = 1
+        }
+    }
+    option = {
+        trigger = {
+            check_variable = {
+                which = "synth_physical_society"
+                value <= synth_virtual_society
+            }
+        }
+        name = synth.1505.b
+        end_event_chain = synthshock_chain
+        custom_tooltip = synth.15005.b.tt
+        set_country_flag = synth_virtual
+        hidden_effect = {
+            owner = {
+                modify_species = {
+                    species = owner_main_species
+                    add_trait = trait_robot_digital_1
+                }
+                change_dominant_species = {
+                    species = last_created_species
+                    change_all = yes
+                }
+                refresh_portraits = character
+            }
+            advanced_authority_refresh = yes
+            country_event = { id = cybernetics.5046 }
+        }
+        ai_chance = {
+            factor = 1
+        }
+    }
+    option = {
+        name = synth.1505.c
+        end_event_chain = synthshock_chain
+        custom_tooltip = synth.15005.c.tt
+        trigger = { is_ai = no }
+    }
+}
+
+
+
+namespace = machine_age
+
+#The Creeds Final Form
+situation_event = {
+    id = machine_age.1090
+    title = "machine_age.1090.name"
+    desc = {
+        trigger = {
+            owner = {
+                has_country_flag = cybernetic_creed_construction
+            }
+        }
+        text = machine_age.1090.construction
+    }
+    desc = {
+        trigger = {
+            owner = {
+                has_country_flag = cybernetic_creed_war
+            }
+        }
+        text = machine_age.1090.war
+    }
+    desc = {
+        trigger = {
+            owner = {
+                has_country_flag = cybernetic_creed_research
+            }
+        }
+        text = machine_age.1090.research
+    }
+    desc = {
+        trigger = {
+            owner = {
+                has_country_flag = cybernetic_creed_labor
+            }
+        }
+        text = machine_age.1090.labor
+    }
+    picture = GFX_evt_cybernetic_creed
+    show_sound = event_mystic_reveal
+    event_chain = cybernetic_creed_chain
+
+    is_triggered_only = yes
+
+    immediate = {
+        owner = {
+            set_country_flag = cybercreed_final_form
+            set_country_flag = cybernetics_traditions_unlocked
+            every_owned_pop = {
+                limit = {
+                    has_trait = trait_cybernetic
+                    has_ethic = ethic_spiritualist
+                    OR = {
+                        has_citizenship_type = { type = citizenship_full }
+                        has_citizenship_type = { type = citizenship_limited }
+                    }
+                }
+                owner = {
+                    switch = {
+                        trigger = has_country_flag
+                        cybernetic_creed_construction = {
+                            prev = {
+                                inline_script = traits/cybernetic_creed_construction_traits
+                            }
+                        }
+                        cybernetic_creed_war = {
+                            prev = {
+                                inline_script = traits/cybernetic_creed_war_traits
+                            }
+                        }
+                        cybernetic_creed_research = {
+                            prev = {
+                                inline_script = traits/cybernetic_creed_research_traits
+                            }
+                        }
+                        cybernetic_creed_labor = {
+                            prev = {
+                                inline_script = traits/cybernetic_creed_labor_traits
+                            }
+                        }
+                        cybernetic_creed_general = {
+                            prev = {
+                                modify_species = {
+                                    species = this
+                                    add_trait = trait_cyborg_ritualistic_implants
+                                    add_traits_at_start_of_list = yes
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #Democratic
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_direct_democratic
+            }
+        }
+        name = "machine_age.1090.a"
+        custom_tooltip = "machine_age.1090.z.tooltip"
+    }
+
+    #Democratic
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_democratic
+            }
+        }
+        name = "machine_age.1090.a"
+        custom_tooltip = "machine_age.1090.a.tooltip"
+    }
+
+    #Oligarchic
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_oligarchic
+            }
+        }
+        name = "machine_age.1090.a"
+        custom_tooltip = "machine_age.1090.b.tooltip"
+    }
+
+    #Dictatorial
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_dictatorial
+            }
+        }
+        name = "machine_age.1090.a"
+        custom_tooltip = "machine_age.1090.c.tooltip"
+    }
+
+    #Imperial
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_imperial
+            }
+        }
+        name = "machine_age.1090.a"
+        custom_tooltip = "machine_age.1090.d.tooltip"
+    }
+
+    #Corperate
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_corporate
+            }
+        }
+        name = "machine_age.1090.a"
+        custom_tooltip = "machine_age.1090.e.tooltip"
+    }
+
+    after = {
+        owner = {
+            end_event_chain = cybernetic_creed_chain
+            set_country_flag = cyber_creed_finished_situation
+        }
+        hidden_effect = {
+            destroy_situation = this
+        }
+    }
+}
+
+#No Creeds, No Need
+situation_event = {
+    id = machine_age.1100
+    title = "machine_age.1100.name"
+    desc = "machine_age.1100.desc"
+    picture = GFX_evt_cybernetic_creed
+    show_sound = event_mystic_reveal
+    event_chain = cybernetic_creed_chain
+
+    is_triggered_only = yes
+
+    immediate = {
+        owner = {
+            set_country_flag = cybernetics_traditions_unlocked
+        }
+    }
+
+    #Democratic
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_direct_democratic
+            }
+        }
+        name = "machine_age.1100.a"
+        custom_tooltip = "machine_age.1100.z.tooltip"
+    }
+
+    #Democratic
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_democratic
+            }
+        }
+        name = "machine_age.1100.a"
+        custom_tooltip = "machine_age.1100.a.tooltip"
+    }
+
+    #Oligarchic
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_oligarchic
+            }
+        }
+        name = "machine_age.1100.a"
+        custom_tooltip = "machine_age.1100.b.tooltip"
+    }
+
+    #Dictatorial
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_dictatorial
+            }
+        }
+        name = "machine_age.1100.a"
+        custom_tooltip = "machine_age.1100.c.tooltip"
+    }
+
+    #Imperial
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_imperial
+            }
+        }
+        name = "machine_age.1100.a"
+        custom_tooltip = "machine_age.1100.d.tooltip"
+    }
+
+    #Corporate
+    option = {
+        trigger = {
+            owner = {
+                has_authority = auth_corporate
+            }
+        }
+        name = "machine_age.1100.a"
+        custom_tooltip = "machine_age.1100.e.tooltip"
+    }
+
+    after = {
+        owner = {
+            add_modifier = {
+                modifier = cyber_creed_no_creed_robot_points_modifier
+                days = -1
+            }
+            end_event_chain = cybernetic_creed_chain
+        }
+        hidden_effect = {
+            destroy_situation = this
+            owner = {
+                set_country_flag = can_genemod_cyborg_ritualistic_pops
+                set_country_flag = cyber_creed_finished_situation
+            }
+        }
+    }
+}
+
+
+
+namespace = cyber
+country_event = {
+    id = cyber.1500
+    hide_window = yes
+    is_triggered_only = yes
+
+    immediate = {
+        switch = {
+            trigger = has_authority
+            auth_direct_democratic = {
+                hidden_effect = { country_event = { id = cyber.1505 }
+                }
+            }
+            auth_democratic = {
+                hidden_effect = { country_event = { id = cyber.1505 }
+                }
+            }
+            auth_oligarchic = {
+                hidden_effect = { country_event = { id = cyber.1510 }
+                }
+            }
+            auth_dictatorial = {
+                hidden_effect = { country_event = { id = cyber.1515 }
+                }
+            }
+            auth_imperial = {
+                hidden_effect = { country_event = { id = cyber.1520 } }
+            }
+            auth_corporate = {
+                hidden_effect = { country_event = { id = cyber.1525 } }
+            }
+        }
+    }
+}
+
+# Democratic Final Event
+# Fired by: event
+country_event = {
+    id = cyber.1505
+    title = "cyber.1505.name"
+    desc = {
+        trigger = {
+            check_variable = {
+                which = "cyber_individualist_society"
+                value > cyber_collectivist_society
+            }
+        }
+        text = cyber.1505.desc.individualist
+    }
+    desc = {
+        trigger = {
+            check_variable = {
+                which = "cyber_individualist_society"
+                value < cyber_collectivist_society
+            }
+        }
+        text = cyber.1505.desc.collectivist
+    }
+    desc = {
+        trigger = {
+            check_variable = {
+                which = "cyber_individualist_society"
+                value = cyber_collectivist_society
+            }
+        }
+        text = cyber.1505.desc.neutral
+    }
+    picture = GFX_evt_cyberization_1
+    show_sound = event_cityscape
+    location = from
+    event_chain = futureshock_chain
+    is_triggered_only = yes
+
+    option = {
+        trigger = {
+            has_authority = auth_democratic
+            check_variable = {
+                which = "cyber_individualist_society"
+                value >= cyber_collectivist_society
+            }
+        }
+        name = cyber.1505.a
+        end_event_chain = futureshock_chain
+        custom_tooltip = cyber.1505.a.tt
+        set_country_flag = cyber_individualist
+        hidden_effect = {
+            advanced_authority_refresh = yes
+        }
+        ai_chance = {
+            factor = 1
+        }
+    }
+    option = {
+        trigger = {
+            has_authority = auth_democratic
+            check_variable = {
+                which = "cyber_individualist_society"
+                value <= cyber_collectivist_society
+            }
+        }
+        name = cyber.1505.b
+        end_event_chain = futureshock_chain
+        custom_tooltip = cyber.1505.b.tt
+        set_country_flag = cyber_collectivist
+        hidden_effect = {
+            advanced_authority_refresh = yes
+        }
+        ai_chance = {
+            factor = 1
+        }
+    }
+    option = {
+        name = cyber.1505.c
+        end_event_chain = futureshock_chain
+        custom_tooltip = cyber.1505.c.tt
+        trigger = {
+            is_ai = no
+            has_authority = auth_democratic
+        }
+    }
+
+    option = {
+        trigger = {
+            has_authority = auth_direct_democratic
+            check_variable = {
+                which = "cyber_individualist_society"
+                value >= cyber_collectivist_society
+            }
+        }
+        name = cyber.1505.a
+        end_event_chain = futureshock_chain
+        custom_tooltip = cyber.15005.a.tt
+        set_country_flag = cyber_individualist
+        hidden_effect = {
+            advanced_authority_refresh = yes
+        }
+        ai_chance = {
+            factor = 1
+        }
+    }
+    option = {
+        trigger = {
+            has_authority = auth_direct_democratic
+            check_variable = {
+                which = "cyber_individualist_society"
+                value <= cyber_collectivist_society
+            }
+        }
+        name = cyber.1505.b
+        end_event_chain = futureshock_chain
+        custom_tooltip = cyber.15005.b.tt
+        set_country_flag = cyber_collectivist
+        hidden_effect = {
+            advanced_authority_refresh = yes
+        }
+        ai_chance = {
+            factor = 1
+        }
+    }
+    option = {
+        name = cyber.1505.c
+        end_event_chain = futureshock_chain
+        custom_tooltip = cyber.15005.c.tt
+        trigger = {
+            is_ai = no
+            has_authority = auth_direct_democratic
+        }
+    }
+}

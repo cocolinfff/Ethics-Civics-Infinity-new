@@ -5,7 +5,13 @@ event = {
 	hide_window = yes
 	is_triggered_only = yes
 	immediate = {
-		set_global_flag = ethic_notice_20231031
+		#set_global_flag = ethic_notice_20240406
+		every_country = {
+			limit = {
+				is_ai = no
+			}
+			country_event = { id = ethic_notice.4 }
+		}
 
 		every_country = {
 			limit = { is_ai = no }
@@ -44,28 +50,30 @@ country_event = {
 				set_global_flag = eci_star
 			}
 			if = {
-				limit = { rec_circle_able = no }
-				random_situation = {
+				limit = { has_valid_civic = civic_constitutional_monarchy }
+				if = {
 					limit = {
-						is_situation_type = situation_economic_circle
+						any_owned_leader = {
+							NOT = { has_trait = leader_trait_eci_king }
+						}
 					}
-					destroy_situation = this
+					random_owned_leader = {
+						limit = { is_councilor = no }
+						add_trait = leader_trait_eci_king
+					}
+				}
+				if = {
+					limit = {
+						any_owned_leader = {
+							NOT = { has_trait = leader_trait_eci_heir }
+						}
+					}
+					random_owned_leader = {
+						limit = { is_councilor = no }
+						add_trait = leader_trait_eci_heir
+					}
 				}
 			}
-			if = {
-				limit = {
-					NOT = { has_global_flag = eci_educated }
-				}
-				country_event = { id = education_mod.11 days = 9 }
-			}
-		}
-	}
-
-	option = {
-		name = "ethic_notice.1.economic"
-		custom_tooltip = ethic_notice.1.economic.tooltip
-		hidden_effect = {
-			country_event = { id = ethic_economic.10 }
 		}
 	}
 
@@ -92,49 +100,6 @@ country_event = {
 		custom_tooltip = ethic_notice.1.auto_base_notice.tooltip
 		hidden_effect = {
 			country_event = { id = ethic_notice.1 }
-		}
-	}
-
-	option = {
-		trigger = { NOT = { has_global_flag = eci_star } }
-		name = "ethic_notice.1.educated"
-		custom_tooltip = ethic_notice.1.educated.tooltip
-		hidden_effect = {
-			if = {
-				limit = { NOT = { has_global_flag = eci_educated } }
-				set_global_flag = eci_educated
-				country_event = { id = ethic_notice.1 }
-			}
-			else_if = {
-				limit = { has_global_flag = eci_educated }
-				remove_global_flag = eci_educated
-				country_event = { id = ethic_notice.1 }
-			}
-		}
-	}
-	option = {
-		trigger = { has_global_flag = eci_star }
-		name = "ethic_notice.1.educated"
-		custom_tooltip = ethic_notice.1.educated_notice.tooltip
-		hidden_effect = {
-			country_event = { id = ethic_notice.1 }
-		}
-	}
-
-	option = {
-		name = "ethic_notice.1.family"
-		custom_tooltip = ethic_notice.1.family.tooltip
-		hidden_effect = {
-			if = {
-				limit = { NOT = { has_global_flag = eci_family_yes } }
-				set_global_flag = eci_family_yes
-				country_event = { id = ethic_notice.1 }
-			}
-			else_if = {
-				limit = { has_global_flag = eci_family_yes }
-				remove_global_flag = eci_family_yes
-				country_event = { id = ethic_notice.1 }
-			}
 		}
 	}
 
@@ -167,7 +132,7 @@ event = {
 	is_triggered_only = yes
 	trigger = {
 		has_global_flag = eci_star
-		NOT = { has_global_flag = ethic_notice_20231117 }
+		NOT = { has_global_flag = ethic_notice_20240406 }
 	}
 	immediate = {
 		every_country = {
@@ -195,7 +160,10 @@ country_event = {
 	picture = GFX_evt_ECI
 	is_triggered_only = yes
 	immediate = {
-		set_global_flag = ethic_notice_20231117
+		if = {
+			limit = { NOT = { has_global_flag = ethic_notice_20240406 } }
+			set_global_flag = ethic_notice_20240406
+		}
 	}
 	option = {
 		name = ethic_notice.4.a

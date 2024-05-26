@@ -172,6 +172,7 @@ labour_hero = {
 				}
 				planet = {
 					is_industrial_produces_planet = yes
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			consumer_goods = 3
@@ -187,6 +188,7 @@ labour_hero = {
 				}
 				planet = {
 					has_factory_designation = yes
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			consumer_goods = 3
@@ -202,6 +204,7 @@ labour_hero = {
 				}
 				planet = {
 					has_foundry_designation = yes
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			alloys = 1.5
@@ -217,6 +220,7 @@ labour_hero = {
 				}
 				planet = {
 					is_industrial_produces_planet = yes
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			minerals = 6
@@ -234,6 +238,7 @@ labour_hero = {
 						has_generator_designation = yes
 						is_basic_industry_types_planet = no
 					}
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			energy = 6
@@ -252,6 +257,7 @@ labour_hero = {
 						has_mining_designation = yes
 						is_basic_industry_types_planet = no
 					}
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			minerals = 4
@@ -270,6 +276,7 @@ labour_hero = {
 						has_farming_designation = yes
 						is_basic_industry_types_planet = no
 					}
+					NOT = { is_planet_class = pc_cosmogenesis_world }
 				}
 			}
 			food = 6
@@ -289,11 +296,22 @@ labour_hero = {
 			}
 			unity = 2
 		}
+		produces = {
+			trigger = {
+				planet = { is_planet_class = pc_cosmogenesis_world }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
 
 		#其他产出
 		produces = {
 			trigger = {
 				owner = { has_valid_civic = civic_nazbol }
+				planet = {
+					NOT = { is_planet_class = pc_cosmogenesis_world }
+				}
 			}
 			minerals = 6
 			alloys = 3
@@ -325,14 +343,6 @@ labour_hero = {
 			engineering_research = 2
 			society_research = 2
 		}
-		produces = {
-			trigger = {
-				owner = { has_valid_civic = civic_ultravisionary_socialism }
-			}
-			physics_research = 3
-			engineering_research = 3
-			society_research = 3
-		}
 		upkeep = {
 			trigger = {
 				owner = {
@@ -344,6 +354,55 @@ labour_hero = {
 				}
 			}
 			consumer_goods = 1
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			physics_research = 1
+			multiplier = modifier:planet_researchers_physics_research_produces_add
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			engineering_research = 1
+			multiplier = modifier:planet_researchers_engineering_research_produces_add
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			society_research = 1
+			multiplier = modifier:planet_researchers_society_research_produces_add
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			consumer_goods = 1
+			multiplier = modifier:planet_researchers_consumer_goods_upkeep_add
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			engineering_research = 1
+			multiplier = modifier:planet_researchers_engineering_research_produces_mult
+		}
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			society_research = 1
+			multiplier = modifier:planet_researchers_society_research_produces_mult
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_valid_civic = civic_ultravisionary_socialism }
+			}
+			consumer_goods = 1
+			multiplier = modifier:planet_researchers_consumer_goods_upkeep_add
 		}
 		produces = {
 			trigger = {
@@ -366,7 +425,11 @@ labour_hero = {
 	#污染
 	triggered_planet_modifier = {
 		potential = {
-			planet = { is_pollute_types_planet = yes }
+			planet = {
+				is_pollute_types_planet = yes
+				is_artificial = no
+				NOT = { is_planet_class = pc_cosmogenesis_world }
+			}
 			owner = {
 				OR = {
 					NOT = { is_no_planet_country = yes }
@@ -901,6 +964,7 @@ re_acolyte_artisan = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1198,27 +1262,6 @@ re_acolyte_mine = {
 				planet = { has_modifier = "ley_rift" }
 			}
 			astral_threads = 0.1
-		}
-
-		produces = {
-			trigger = {
-				owner = {
-					has_valid_civic = civic_anglers_lithoid
-				}
-				planet = { is_wet = yes }
-			}
-			minerals = 1
-			consumer_goods = 1
-		}
-		produces = {
-			trigger = {
-				owner = {
-					has_valid_civic = civic_anglers_lithoid
-					has_technology = tech_mine_rare_crystals
-				}
-				planet = { is_wet = yes }
-			}
-			rare_crystals = 0.25
 		}
 		# 科学社会主义
 		produces = {
@@ -1672,7 +1715,24 @@ magical_apprentice = {
 			physics_research = 1.5
 			engineering_research = 1.5
 			society_research = 1.5
-			sr_dark_matter = 0.25
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_technology = tech_mine_dark_matter
+				}
+			}
+			sr_dark_matter = 0.1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_technology = tech_astral_harvesting
+				}
+			}
+			astral_threads = 0.1
 		}
 		produces = {
 			trigger = {
@@ -1721,8 +1781,24 @@ magical_apprentice = {
 		}
 	}
 	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_wizarding_world
+			}
+		}
 		planet_farmers_astral_threads_produces_add = 0.1
 		planet_miners_astral_threads_produces_add = 0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_civic = civic_dark_consortium
+			}
+		}
+		planet_farmers_sr_dark_matter_produces_add = 0.1
+		planet_miners_sr_dark_matter_produces_add = 0.1
 	}
 
 	triggered_country_modifier = { # 共产主义社会
@@ -2083,10 +2159,12 @@ conscript_uncapped = {
 		produces = {
 			trigger = {
 				is_lithoid = no
+				exists = owner
 				owner = {
-					exists = owner
 					is_army_production_country = yes
-					NOT = { has_country_flag = synthetic_empire }
+					NOT = {
+						has_country_flag = synthetic_empire
+					}
 				}
 			}
 			food = 2
@@ -2095,10 +2173,12 @@ conscript_uncapped = {
 		produces = {
 			trigger = {
 				is_lithoid = yes
+				exists = owner
 				owner = {
-					exists = owner
 					is_army_production_country = yes
-					NOT = { has_country_flag = synthetic_empire }
+					NOT = {
+						has_country_flag = synthetic_empire
+					}
 				}
 			}
 			minerals = 2
@@ -2966,6 +3046,7 @@ resocialization_workers = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|

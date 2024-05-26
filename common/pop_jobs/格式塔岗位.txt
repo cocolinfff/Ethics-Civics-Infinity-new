@@ -226,18 +226,6 @@ cyber_drone = {
 			is_crisis_purged_ruler_check = yes
 		}
 	}
-	possible_precalc = can_fill_drone_job
-	possible = { can_think = yes }
-
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_cyborg_pop = yes
-			can_assemble_hive_pop = yes
-		}
-		modifier = {
-			planet_pop_assembly_organic_add = 1.5
-		}
-	}
 }
 
 #复制者
@@ -261,29 +249,7 @@ replicator = {
 		upkeep = {
 			alloys = 1
 		}
-		# 失控女仆兼容
-		upkeep = {
-			trigger = { has_global_flag = flag_rogue_maid_mod_activated }
-			alloys = 1
-			mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
-		}
-		upkeep = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				planet = { assembling_species = { has_trait = trait_machine_maid } }
-			}
-			consumer_goods = 1
-			mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
-		}
-		upkeep = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				planet = { assembling_species = { has_trait = trait_machine_maid } }
-				owner = { country_uses_consumer_goods = no }
-			}
-			consumer_goods = -1
-			minerals = 2.5
-		}
+		inline_script = { script = rogue_maid/jobs_resources_ECI_comp/replicator } #Rogue Maid
 	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
@@ -299,13 +265,7 @@ replicator = {
 		potential = { planet = { has_building = building_machine_assembly_complex } }
 		planet_pop_assembly_add = 2
 	}
-	
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = { has_global_flag = flag_rogue_maid_mod_activated }
-		planet_pop_assembly_add = 1
-		mult = value:scripted_modifier_mult_zero_base|MODIFIER|pop_job_no_production_effects_mult|
-	}
+
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
@@ -319,6 +279,8 @@ replicator = {
 		}
 	}
 
+	inline_script = { script = rogue_maid/jobs_ECI_comp/replicator } #Rogue Maid
+
 	weight = {
 		weight = @spawner_drone_job_weight
 		mult = 10
@@ -326,11 +288,6 @@ replicator = {
 		modifier = {
 			factor = 0.01
 			is_crisis_purged_ruler_check = yes
-		}
-		modifier = { # 失控女仆兼容
-			factor = 2
-			has_global_flag = flag_rogue_maid_mod_activated
-			is_maid_in_love = yes
 		}
 	}
 }
@@ -461,19 +418,27 @@ coordinator = {
 	country_modifier = {
 		country_admin_cap_add = 15
 	}
-	
-	triggered_planet_modifier = { # 失控女仆兼容
+	triggered_country_modifier = {
 		potential = {
-			exists = owner
-			owner = {
-				has_edict = an_supply_coordination_network
+			always = yes
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_administrators_admin_cap_produces_add|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				exists = owner
+				owner = {
+					has_tradition = tr_modularity_4
+				}
 			}
 		}
-		modifier = {
-			planet_buildings_upkeep_mult = -0.05
-			planet_districts_upkeep_mult = -0.05
-		}
+		planet_jobs_worker_produces_mult = 0.02
 	}
+
+	inline_script = { script = rogue_maid/jobs_ECI_comp/coordinator } #Rogue Maid
 	
 	weight = {
 		weight = @synapse_drone_job_weight
@@ -533,6 +498,8 @@ evaluator = {
 		planet_amenities_no_happiness_add = 3
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
+
+	inline_script = { script = rogue_maid/jobs_ECI_comp/evaluator } #Rogue Maid
 
 	weight = {
 		weight = @synapse_drone_job_weight
@@ -602,6 +569,13 @@ synapse_drone = {
 	country_modifier = {
 		country_admin_cap_add = 5
 	}
+	triggered_country_modifier = {
+		potential = {
+			always = yes
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_administrators_admin_cap_produces_add|
+	}
 
 	triggered_planet_modifier = {
 		potential = {
@@ -624,20 +598,8 @@ synapse_drone = {
 		planet_amenities_no_happiness_add = 1
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			exists = owner
-			owner = {
-				has_edict = an_interactive_synaptic_clusters
-			}
-		}
-		modifier = {
-			planet_buildings_upkeep_mult = -0.05
-			planet_districts_upkeep_mult = -0.05
-		}
-	}
+
+	inline_script = { script = rogue_maid/jobs_ECI_comp/synapse_drone } #Rogue Maid
 
 	weight = {
 		weight = @synapse_drone_job_weight
@@ -918,6 +880,7 @@ artisan_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1003,6 +966,7 @@ fabricator = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1115,6 +1079,7 @@ alloy_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1215,6 +1180,7 @@ catalytic_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1293,6 +1259,7 @@ chemist_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1366,6 +1333,7 @@ translucer_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1439,6 +1407,7 @@ gas_refiner_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1702,6 +1671,7 @@ mining_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.005
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1715,17 +1685,6 @@ mining_drone = {
 				}
 			}
 			minerals = @requisitorium_minerals_overlord
-		}
-	}
-
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_working_machine
-		}
-		modifier = {
-			planet_crime_no_happiness_add = -1
 		}
 	}
 
@@ -1756,6 +1715,8 @@ mining_drone = {
 				}
 			}
 		}
+
+		inline_script = { script = rogue_maid/jobs_weights/menial_drones } #Rogue Maid
 	}
 }
 
@@ -1852,17 +1813,6 @@ agri_drone = {
 		}
 	}
 
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_working_machine
-		}
-		modifier = {
-			planet_crime_no_happiness_add = -1
-		}
-	}
-
 	weight = {
 		weight = @simple_drone_job_weight
 		modifier = {
@@ -1909,6 +1859,8 @@ agri_drone = {
 				}
 			}
 		}
+
+		inline_script = { script = rogue_maid/jobs_weights/menial_drones } #Rogue Maid
 	}
 }
 
@@ -1963,16 +1915,6 @@ technician_drone = {
 		}
 	}
 
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_working_machine
-		}
-		modifier = {
-			planet_crime_no_happiness_add = -1
-		}
-	}
 	#污染
 	triggered_planet_modifier = {
 		potential = {
@@ -1986,6 +1928,7 @@ technician_drone = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.005
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -2017,6 +1960,8 @@ technician_drone = {
 			owner = { has_valid_civic = civic_machine_assimilator }
 			has_trait = trait_cybernetic
 		}
+
+		inline_script = { script = rogue_maid/jobs_weights/menial_drones } #Rogue Maid
 	}
 }
 
@@ -2084,27 +2029,27 @@ maintenance_drone = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
-	# 失控女仆兼容
 	triggered_planet_modifier = {
 		potential = {
-			owner = {
-				has_valid_civic = civic_machine_paradise_lost
-				NOT = { has_global_flag = flag_rogue_maid_mod_activated }
-			}
+			owner = { has_valid_civic = civic_machine_paradise_lost }
 		}
 		modifier = {
 			pop_happiness = 0.01
 		}
 	}
+
 	triggered_planet_modifier = {
 		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_working_machine
+			exists = owner
+			owner = { has_active_tradition = tr_virtuality_5 }
 		}
+
 		modifier = {
-			planet_crime_no_happiness_add = -1
+			planet_virtual_jobs_produces_mult = 0.01
 		}
 	}
+
+	inline_script = { script = rogue_maid/jobs_ECI_comp/maintenance_drone } #Rogue Maid
 	
 	weight = {
 		weight = @maintenance_drone_job
@@ -2187,6 +2132,8 @@ maintenance_drone = {
 				}
 			}
 		}
+
+		inline_script = { script = rogue_maid/jobs_weights/maintenance_drone_ECI } #Rogue Maid
 	}
 }
 
@@ -2512,17 +2459,6 @@ scrap_miner_drone = {
 			minerals = 0.5
 		}
 	}
-
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_working_machine
-		}
-		modifier = {
-			planet_crime_no_happiness_add = -1
-		}
-	}
 	
 	weight = {
 		weight = @simple_drone_job_weight
@@ -2551,6 +2487,8 @@ scrap_miner_drone = {
 				}
 			}
 		}
+
+		inline_script = { script = rogue_maid/jobs_weights/menial_drones } #Rogue Maid
 	}
 }
 
@@ -2626,7 +2564,8 @@ bath_attendant_machine = {
 		pop_amenities_usage_mult = 0.01
 		mult = planet.value:toxic_attendant_growth
 	}
-	
+
+	inline_script = { script = rogue_maid/jobs_ECI_comp/bath_attendant_machine } #Rogue Maid
 
 	resources = {
 		category = planet_bath_attendants_machine
@@ -2709,6 +2648,151 @@ ranger_drone = {
 		modifier = {
 			factor = 1.5
 			has_job = ranger
+		}
+	}
+}
+
+#考古工程工蜂
+archaeo_drone = {
+	category = complex_drone
+	condition_string = DRONE_JOB_TRIGGER
+	building_icon = building_archaeostudies_faculty
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_drone_job
+
+	possible = { can_think = yes }
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			physics_research = 2
+			engineering_research = 2
+			society_research = 5
+		}
+		produces = {
+			trigger = { planet = { is_planet_class = pc_relic } }
+			minor_artifacts = 0.3
+		}
+		upkeep = {
+			minerals = 6
+		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			minerals = 3
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+	}
+
+	triggered_country_modifier = {
+		modifier = {
+			country_naval_cap_add = 1
+		}
+		mult = planet.modifier:job_researcher_naval_cap_add
+	}
+
+	weight = {
+		weight = @complex_drone_job_weight
+		mult = value:job_weights_research_modifier|JOB|archaeo_drone|
+	}
+}
+
+#考古工程单元
+archaeo_unit = {
+	category = complex_drone
+	condition_string = DRONE_JOB_TRIGGER
+	building_icon = building_archaeostudies_faculty
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_drone_job
+
+	possible = { can_think = yes }
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			physics_research = 2
+			engineering_research = 2
+			society_research = 5
+		}
+		produces = {
+			trigger = { planet = { is_planet_class = pc_relic } }
+			minor_artifacts = 0.3
+		}
+		upkeep = {
+			energy = 4
+		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			energy = 2
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+	}
+
+	triggered_country_modifier = {
+		modifier = {
+			country_naval_cap_add = 1
+		}
+		mult = planet.modifier:job_researcher_naval_cap_add
+	}
+
+	weight = {
+		weight = @complex_drone_job_weight
+		mult = value:job_weights_research_modifier|JOB|archaeo_unit|
+		modifier = {
+			factor = 0.9
+			exists = owner
+			years_passed < 1
+			owner = { has_valid_civic = civic_machine_assimilator }
+			has_trait = trait_cybernetic
 		}
 	}
 }

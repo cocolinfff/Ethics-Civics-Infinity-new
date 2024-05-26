@@ -91,9 +91,6 @@ merchant = {
 	planet_modifier = {
 		planet_jobs_produces_mult = 0.02
 	}
-	country_modifier = {
-		trade_value_reduction = -0.01
-	}
 	triggered_pop_modifier = {
 		potential = {
 			exists = owner
@@ -148,6 +145,18 @@ merchant = {
 		potential = { always = yes }
 		planet_amenities_add = 3
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_augmentation_bazaars
+			}
+		}
+		trade_value_mult = 0.005
+		pop_growth_speed = 0.01
+		mult = value:num_cyborg_traits_species
 	}
 
 	triggered_planet_modifier = {
@@ -662,6 +671,164 @@ high_priest = {
 	}
 }
 
+#科技显圣师
+technophant = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_citadel_of_faith
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		OR = {
+			has_cybernetic_creed_trait = yes
+			has_trait = trait_cybernetic
+		}
+	}
+
+	resources = {
+		category = planet_priests
+		produces = {
+			unity = 4
+			engineering_research = 4
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_liberation_theology
+					is_lithoid = no
+				}
+			}
+			minerals = 2
+			food = 3
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_liberation_theology
+					is_lithoid = yes
+				}
+			}
+			minerals = 4
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_tradition = tr_piety_nature_and_humanity
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_knowledge_seeker
+				}
+			}
+			unity = -2
+			physics_research = 1.5
+			engineering_research = 1.5
+			society_research = 1.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_Fertility_worship
+				}
+			}
+			unity = 1
+			society_research = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_exalted_priesthood
+						has_valid_civic = civic_imperial_cult
+						has_valid_civic = civic_exalted_priesthood
+						has_valid_civic = civic_spiritual_democracy
+					}
+				}
+			}
+			unity = 1
+		}
+		upkeep = {
+			consumer_goods = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_Fertility_worship
+			}
+		}
+		modifier = {
+			planet_amenities_add = 6
+			pop_growth_speed_reduction = -0.02
+		}
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+
+		modifier = { # 可控的动态权重
+			mult = value:job_weights_multiple_resources_modifier|JOB|technophant|RESOURCE1|unity|WEIGHT1|0.80|RESOURCE2|engineering_research|WEIGHT2|0.20|
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.1
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 5
+			has_job = technophant
+		}
+		# Crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+}
+
 #政治家
 politician = {
 	category = ruler
@@ -1056,6 +1223,7 @@ noble = {
 					has_ascension_perk = ev_land_planets
 				}
 			}
+			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -1147,7 +1315,7 @@ executive = {
 		pop_cat_ruler_political_power = 1
 	}
 	country_modifier = {
-		trade_value_reduction = -0.01
+		trade_value_reduction = -0.05
 		country_admin_cap_add = 15
 	}
 	triggered_planet_modifier = {

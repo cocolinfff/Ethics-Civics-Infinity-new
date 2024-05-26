@@ -16,16 +16,6 @@ servant = {
 
 	resources = {
 		category = planet_jobs
-		# 失控女仆兼容
-		upkeep = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				has_trait = trait_machine_maid
-				exists = owner
-				owner = { is_maid_pops_serviced_overlord = yes }
-			}
-			energy = 2
-		}
 	}
 
 	triggered_pop_modifier = {
@@ -52,41 +42,7 @@ servant = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 
-	# 失控女仆兼容：妹抖作为侍仆的额外效果
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_machine_maid
-		}
-		modifier = {
-			planet_amenities_add = 4
-			mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_machine_maid
-			exists = owner
-			owner = { is_maid_pops_serviced_overlord = yes }
-		}
-		modifier = {
-			planet_amenities_add = 2
-			mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_machine_maid
-			exists = owner
-			owner = { is_pleasure_seeker = yes }
-		}
-		modifier = {
-			planet_amenities_add = -1
-			mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-		}
-	}
+	inline_script = { script = rogue_maid/jobs_ECI_comp/servant } #Rogue Maid
 
 	weight = {
 		weight = @special_job_weight
@@ -403,6 +359,7 @@ livestock = {
 	}
 }
 
+#有机陈设
 bio_trophy = {
 	category = bio_trophy
 	clothes_texture_index = 1
@@ -438,36 +395,8 @@ bio_trophy = {
 			consumer_goods = 0.5
 			alloys = 0.25
 		}
-		# 失控女仆兼容
-		produces = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				happiness >= 0.5
-			}
-			unity = -1
-		}
-		produces = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				happiness >= 0.5
-				owner = {
-					has_active_tradition = tr_harmony_pursuit_of_meaning
-				}
-			}
-			physics_research = 0.4
-			society_research = 0.4
-			engineering_research = 0.4
-		}
-		upkeep = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				happiness >= 0.5
-				owner = {
-					has_active_tradition = tr_harmony_pursuit_of_meaning
-				}
-			}
-			consumer_goods = 0.2
-		}
+
+		inline_script = { script = rogue_maid/jobs_resources_ECI_comp/bio_trophy } #Rogue Maid
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -481,6 +410,7 @@ bio_trophy = {
 	triggered_pop_modifier = {
 		pop_housing_usage_add = -1
 	}
+
 	triggered_country_modifier = {
 		potential = {
 			happiness >= 0.5
@@ -490,42 +420,7 @@ bio_trophy = {
 		}
 	}
 
-	# 失控女仆兼容
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			happiness >= 0.5
-		}
-		modifier = {
-			planet_amenities_no_happiness_add = -2
-			planet_jobs_complex_drone_produces_mult = -0.01
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			OR = {
-				owner = {
-					is_ai = yes
-					has_modifier = pop_modifier_master_in_love
-				}
-				has_modifier = pop_modifier_master_in_love
-			}
-		}
-		modifier = {
-			planet_amenities_no_happiness_add = 2
-			planet_crime_no_happiness_add = -1.5
-		}
-	}
-	triggered_country_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			happiness >= 0.5
-		}
-		modifier = {
-			country_edict_fund_add = 1
-		}
-	}
+	inline_script = { script = rogue_maid/jobs_ECI_comp/bio_trophy } #Rogue Maid
 
 	weight = {
 		weight = 500000
@@ -570,6 +465,16 @@ purge = {
 			engineering_research = 1
 			society_research = 1
 			physics_research = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_natural_design
+				}
+			}
+			unity = 0.1
+			energy = 1
 		}
 		produces = { # regular processing
 			trigger = {
@@ -849,18 +754,8 @@ assimilation = {
 			}
 			energy = @living_standard_energy_normal
 		}
-		
-		# 失控女仆兼容：机飞帝国不会同化有基因库的星球上的物种，作为补偿产出一点科研
-		produces = {
-			trigger = {
-				has_global_flag = flag_rogue_maid_mod_activated
-				planet = { has_building = building_gene_bank }
-				owner = { has_country_flag = synthetic_empire }
-			}
-			physics_research = 1
-			society_research = 1
-			engineering_research = 1
-		}
+
+		inline_script = { script = rogue_maid/jobs_resources_ECI_comp/assimilation } #Rogue Maid
 	}
 	
 	weight = {
