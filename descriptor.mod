@@ -1,7 +1,8 @@
-version="3.10.2"
+version="*.*.*"
 tags={
-	"Overhaul"
+    "Font"
 }
-name="Ethics and Civics : Infinity"
-supported_version="3.12.*"
-remote_file_id="2280945168"
+name="ECI_local_test"
+supported_version="9.9.9"
+path="C:/Users/16049/Documents/Paradox Interactive/Stellaris/mod/ECI_local_test"
+picture="thumbnail.png"
