@@ -1,9 +1,9 @@
-version="*.*.*"
+version="3.12.*"
 tags={
 	"Font"
 }
-name="ECI_local_test"
+name="Ethics and Civics Infinity"
 picture="thumbnail.png"
 supported_version="3.12.*"
-path="C:/Users/16049/Documents/Paradox Interactive/Stellaris/mod/ECI_local_test"
+path="C:/Users/16049/Documents/Paradox Interactive/Stellaris/mod/Ethics and Civics Infinity"
 remote_file_id="2280945168"
