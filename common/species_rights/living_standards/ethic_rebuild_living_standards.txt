@@ -579,7 +579,10 @@ living_standard_dystopian_society = {
 	potential = {
 		exists = from
 		from = {
-			is_gestalt = no
+			OR = {
+				is_gestalt = no
+				has_civic = civic_hive_capital_creates_gods
+			}
 			NOR = {
 				is_egalitarian = yes
 				is_pleasure_seeker = yes
@@ -592,7 +595,10 @@ living_standard_dystopian_society = {
 				has_policy_flag = tt_communist_road_5
 			}
 		}
-		NOT = { has_trait = trait_unnatural }
+		NOR = {
+			has_trait = trait_hive_mind
+			has_trait = trait_unnatural
+		}
 	}
 	allow = {
 		hidden_trigger = {
@@ -879,8 +885,11 @@ living_standard_decadent = {
 				has_valid_civic = civic_welfare_state
 			}
 		}
+		OR = {
+			NOT = { has_trait = trait_hive_mind }
+			from = { has_civic = civic_hive_capital_creates_gods }
+		}
 		NOR = {
-			has_trait = trait_hive_mind
 			AND = {
 				from = { is_individual_machine = no }
 				has_trait = trait_machine_unit
@@ -943,11 +952,26 @@ living_standard_decadent = {
 	# Triggered so the auto-generated modifier is hidden.
 	triggered_pop_modifier = {
 		potential = {
-			always = yes
+			is_gestalt = no
 		}
 		living_standard_trade_value_rulers_add = @trade_value_very_high_decadent
 		living_standard_trade_value_specialists_add = @trade_value_high_decadent
 		living_standard_trade_value_workers_add = @trade_value_low_decadent
+	}
+	triggered_pop_modifier = {
+		potential = {
+			from = { is_gestalt = no }
+		}
+		living_standard_trade_value_rulers_add = @trade_value_very_high_decadent
+		living_standard_trade_value_specialists_add = @trade_value_high_decadent
+		living_standard_trade_value_workers_add = @trade_value_low_decadent
+	}
+	triggered_pop_modifier = {
+		potential = {
+			from = { has_civic = civic_hive_capital_creates_gods }
+		}
+		living_standard_trade_value_complex_drone_add = 1
+		living_standard_trade_value_simple_drone_add = 0.5
 	}
 	pop_modifier = {
 		pop_category_rulers_consumer_goods_upkeep_add = @living_standard_luxuries_very_high_decadent
@@ -1885,7 +1909,7 @@ living_standard_subsistence = {
 	}
 }
 
-# 活体陈设
+#活体陈设
 living_organic_trophy = {
 	triggered_pop_modifier = {
 		potential = {
@@ -1936,5 +1960,59 @@ living_organic_trophy = {
 
 	ai_will_do = {
 		factor = 100
+	}
+}
+
+#子个体
+living_standard_hive_mind = {
+	potential = {
+		from = {
+			has_ethic = ethic_gestalt_consciousness
+			NOT = { has_civic = civic_hive_capital_creates_gods }
+		}
+	}
+
+	allow = {
+		if = {
+			limit = {
+				from = { has_authority = auth_hive_mind }
+			}
+			custom_tooltip = {
+				fail_text = species_is_not_hive
+				has_trait = trait_hive_mind
+			}
+		}
+		else_if = {
+			limit = { from = { has_authority = auth_machine_intelligence } }
+			custom_tooltip = {
+				fail_text = species_is_not_machine
+				OR = {
+					has_trait = trait_machine_unit
+					has_trait = trait_mechanical
+					AND = {
+						from = {
+							OR = {
+								has_civic = civic_machine_assimilator
+								has_ascension_perk = ap_mechromancy
+							}
+						}
+						has_trait = trait_cybernetic
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = SPECIES_MUST_NOT_BE_ASSIMILATING
+			NOT = {
+				has_citizenship_type = {
+					type = citizenship_assimilation
+					country = from
+				}
+			}
+		}
+	}
+
+	ai_will_do = {
+		factor = 1
 	}
 }
