@@ -589,6 +589,16 @@ planet_event = {
             add_modifier = { modifier = culture_modifier days = -1 }
         }
 
+        # 奢侈消费
+        if = {
+            limit = {
+                owner = { has_policy_flag = trade_conversion_luxury }
+                planet = { NOT = { has_planet_flag = changed_investment_orientation } }
+            }
+            remove_trade_invest_modifier = yes
+            add_modifier = { modifier = luxury_modifier days = -1 }
+        }
+
         #消费升级
         if = {
             limit = {
@@ -669,7 +679,6 @@ planet_event = {
             add_modifier = { modifier = industrial_progress_modifier days = -1 }
         }
     }
-
 }
 
 country_event = {
@@ -677,7 +686,11 @@ country_event = {
     hide_window = yes
     is_triggered_only = yes
     trigger = {
-        NOT = { has_ethic = ethic_gestalt_consciousness }
+        OR = {
+            is_gestalt = no
+            has_civic = civic_machine_financial_investment
+            has_civic = civic_hive_capital_creates_gods
+        }
     }
 
     immediate = {
@@ -706,6 +719,7 @@ planet_event = {
                     OR = {
                         NOT = { has_ethic = ethic_gestalt_consciousness }
                         has_valid_civic = civic_machine_financial_investment
+                        has_civic = civic_hive_capital_creates_gods
                         AND = {
                             has_active_tradition = tr_future_economy_ges
                             has_technology = tech_ascension_theory

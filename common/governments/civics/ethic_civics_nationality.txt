@@ -1162,6 +1162,7 @@ civic_democracy_and_clean_government = {
 	}
 	modifier = {
 		empire_size_penalty_mult = -0.10
+		election_term_years_mult = -0.25
 	}
 }
 
@@ -1953,6 +1954,7 @@ civic_political_pluralism = {
 		}
 	}
 	modifier = {
+		election_term_years_mult = -0.25
 		pop_citizen_happiness = 0.1
 		pop_factions_unity_produces_add = 0.25
 		country_leader_pool_size = 2
@@ -3001,6 +3003,7 @@ civic_shadow_council = {
 		}
 	}
 	modifier = {
+		election_term_variance_add = 5
 		country_election_cost_mult = -0.75
 		planet_jobs_ruler_produces_mult = 0.1
 		pop_cat_ruler_political_power = 1
@@ -3101,6 +3104,7 @@ civic_parliamentary_system = {
 		}
 	}
 	modifier = {
+		election_term_variance_add = 5
 		pop_factions_produces_mult = 0.33
 		pop_growth_from_immigration = 0.25
 		country_unity_produces_mult = 0.25
@@ -3639,6 +3643,7 @@ civic_spirit_of_rule_by_man = {
 		}
 	}
 	modifier = {
+		election_term_variance_add = 5
 		empire_size_penalty_mult = 0.25
 		planet_crime_mult = 0.25
 	}
@@ -3841,15 +3846,31 @@ civic_individual_machine_replication = {
 		species_archetype = {
 			value = MACHINE
 		}
-		authority = { NOT = { value = auth_corporate } }
-		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = {
+				value = auth_corporate
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_galactic_sovereign_megacorp
+				value = civic_family_business
+				value = civic_world_cooperative
+			}
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	ai_weight = {
 		base = @ai_civic_default_base_weight
 	}
 	modifier = {
-		planet_pop_assembly_mult = 0.20
+		official_exp_gain = 0.15
+		planet_pop_assembly_mult = 0.25
 	}
 }
 
@@ -3859,17 +3880,41 @@ civic_individual_machine_predictive_analysis = {
 		species_archetype = {
 			value = MACHINE
 		}
-		authority = { NOT = { value = auth_corporate } }
-		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = {
+				value = auth_corporate
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_galactic_sovereign_megacorp
+				value = civic_family_business
+				value = civic_world_cooperative
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_materialist
+				value = ethic_materialist
+				value = ethic_fanatic_materialist
+			}
+		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	ai_weight = {
 		base = @ai_civic_default_base_weight
 	}
 	modifier = {
-		num_tech_alternatives_add = 1
+		scientist_exp_gain = 0.15
+		num_tech_alternatives_add = 2
 		intel_decryption_add = 1
-		councilor_research_exp_gain = 0.10
 	}
 }
 
@@ -3879,13 +3924,30 @@ civic_individual_machine_warbots = {
 		species_archetype = {
 			value = MACHINE
 		}
-		authority = { NOT = { value = auth_corporate } }
-		ethics = { NOT = { value = ethic_gestalt_consciousness } }
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = {
+				value = auth_corporate
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_galactic_sovereign_megacorp
+				value = civic_family_business
+				value = civic_world_cooperative
+			}
+		}
 	}
 	possible = {
-		civics = {
-			NOT = {
-				value = civic_machine_obsessional_directive
+		ethics = {
+			OR = {
+				text = civic_tooltip_militarist
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
 			}
 		}
 	}
@@ -3899,10 +3961,118 @@ civic_individual_machine_warbots = {
 			factor = @ai_civic_personality_mismatch_factor
 		}
 	}
-	#	description = civic_tooltip_machine_warbots_effects
 	modifier = {
-		army_damage_mult = 0.2
-		armies_upkeep_mult = -0.2
-		commander_initial_skill = 2
+		commander_exp_gain = 0.15
+		army_damage_mult = 0.25
+		armies_upkeep_mult = -0.25
+	}
+}
+
+#滤波回声
+civic_echo = {
+	description = civic_tooltip_echo_effects
+	swap_type = {
+		name = civic_echo
+		trigger = {
+			any_country = {
+				OR = {
+					has_communications = root
+					has_research_agreement = root
+					has_diplo_migration_treaty = root
+					is_in_federation_with = root
+				}
+			}
+		}
+		modifier = {
+			physics_tech_cost_mult = -0.5
+			society_tech_cost_mult = -0.5
+			engineering_tech_cost_mult = -0.5
+		}
+	}
+	potential = {
+		species_archetype = {
+			value = MACHINE
+		}
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = {
+				value = auth_corporate
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_galactic_sovereign_megacorp
+				value = civic_family_business
+				value = civic_world_cooperative
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_capitalism
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
+			}
+		}
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+	}
+	modifier = {
+		planet_researchers_society_research_produces_add = -2
+		planet_researchers_engineering_research_produces_add = -2
+		planet_researchers_physics_research_produces_add = -2
+	}
+}
+
+#父父子子
+civic_parental_authoritarianism = {
+	description = civic_tooltip_parental_authoritarianism_effects
+	potential = {
+		species_archetype = {
+			value = MACHINE
+		}
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+		authority = {
+			NOT = {
+				value = auth_corporate
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_galactic_sovereign_megacorp
+				value = civic_family_business
+				value = civic_world_cooperative
+			}
+		}
+	}
+	possible = {
+		ethics = {
+			OR = {
+				text = civic_tooltip_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+		}
+	}
+	random_weight = { base = @civic_default_random_weight }
+	ai_weight = {
+		base = @ai_civic_default_base_weight
+	}
+	hide_modifiers = yes
+	modifier = {
+		planet_stability_add = 200
+		planet_amenities_mult = -2
+		pop_happiness = -2
 	}
 }
