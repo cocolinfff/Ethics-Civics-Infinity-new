@@ -23,6 +23,67 @@
 #   }
 #}
 
+# AI科研船BUG修复
+namespace = ethic_ai_science_patch
+country_event = {
+    id = ethic_ai_science_patch.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        is_ai = yes
+    }
+
+   immediate = {
+       every_owned_fleet = {
+           limit = {
+               OR = {
+                   is_ship_size = science
+                   is_ship_size = explorer_vessel
+               }
+               NOT = { exists = leader }
+           }
+           owner = {
+               if = {
+                   limit = {
+                       any_owned_leader = {
+                           leader_class = scientist
+                           is_councilor = no
+                           is_ruler = no
+                       }
+                   }
+                   random_owned_leader = {
+                       limit = {
+                           leader_class = scientist
+                           is_councilor = no
+                           is_ruler = no
+                       }
+                       save_event_target_as = ai_scientist
+                   }
+               }
+               else = {
+                   create_leader = {
+                       class = scientist
+                       name = random
+                       species = owner_main_species
+                   }
+                   last_created_leader = {
+                       save_event_target_as = ai_scientist
+                       if = {
+                           limit = {
+                               has_skill > 1
+                               num_traits = 0
+                           }
+                           add_trait_no_notify = random_common
+                       }
+                   }
+               }
+           }
+           set_leader = event_target:ai_scientist
+       }
+   }
+}
+
 # 狗开的AI专精
 namespace = origin
 country_event = {
