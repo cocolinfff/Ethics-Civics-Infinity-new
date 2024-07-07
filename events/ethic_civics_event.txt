@@ -2343,6 +2343,26 @@ country_event = {
     }
 
     immediate = {
+        if = {
+            limit = {
+                any_owned_planet = {
+                    NOT = { has_deposit = d_mushroom }
+                }
+                NOT = { has_tradition = tr_psionics_breach_shroud }
+                NOT = { has_country_flag = shroud_diplomacy_engaged }
+            }
+            set_country_flag = shroud_diplomacy_engaged
+        }
+        if = {
+            limit = {
+                OR = {
+                    any_owned_planet = { has_deposit = d_mushroom }
+                    has_tradition = tr_psionics_breach_shroud
+                }
+                has_country_flag = shroud_diplomacy_engaged
+            }
+            remove_country_flag = shroud_diplomacy_engaged
+        }
         random_list = {
             1 = {
                 remove_modifier = shroud_cooldown
@@ -2359,7 +2379,12 @@ country_event = {
                 }
                 modifier = {
                     factor = 0
-                    has_modifier = promised_no_shroud
+                    OR = {
+                        has_modifier = promised_no_shroud
+                        any_owned_planet = {
+                            NOT = { has_deposit = d_mushroom }
+                        }
+                    }
                 }
             }
             99 = {}
