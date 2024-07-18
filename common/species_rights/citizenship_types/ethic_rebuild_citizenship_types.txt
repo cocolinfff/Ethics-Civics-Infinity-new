@@ -20,6 +20,10 @@ citizenship_full = {
 			fail_text = "lonely_hive_mind_pops_kill_themselves_citizenship"
 			is_lonely_hive_mind_pop = no
 		}
+#		custom_tooltip = {
+#			fail_text = "disconnected_machine_pops_kill_themselves_citizenship"
+#			is_disconnected_machine_pop = no
+#		}
 		custom_tooltip = {
 			fail_text = "HIVE_MIND_SPECIES_CITIZENS_ONLY"
 			OR = {
@@ -36,17 +40,26 @@ citizenship_full = {
 		}
 		custom_tooltip = {
 			fail_text = too_alien
-			OR = {
-				from = {
-					AND = {
-						has_valid_civic = civic_selective_kinship
-						is_same_species_class = root
+			if = {
+				limit = {
+					from = {
+						NOT = { has_origin = origin_synthetic_fertility }
 					}
+					has_trait = trait_mechanical
 				}
-				from = {
-					NOR = {
-						has_ethic = ethic_xenophobe
-						has_ethic = ethic_fanatic_xenophobe
+				OR = {
+					is_same_species = from
+					from = {
+						AND = {
+							has_valid_civic = civic_selective_kinship
+							is_same_species_class = root
+						}
+					}
+					from = {
+						NOR = {
+							has_ethic = ethic_xenophobe
+							has_ethic = ethic_fanatic_xenophobe
+						}
 					}
 				}
 			}
@@ -86,6 +99,15 @@ citizenship_full = {
 	}
 	ai_will_do = {
 		factor = 1
+		modifier = {
+			factor = 35
+			root = {
+				is_robotic_species = yes
+			}
+			from = {
+				is_individual_machine = yes
+			}
+		}
 	}
 }
 
@@ -115,9 +137,7 @@ citizenship_limited = {
 			AND = {
 				exists = from
 				from = {
-					NOT = {
-						has_authority = auth_hive_mind
-					}
+					NOT = { has_authority = auth_hive_mind }
 					OR = {
 						NOT = { has_authority = auth_machine_intelligence }
 						has_valid_civic = civic_machine_liberator
@@ -136,9 +156,24 @@ citizenship_limited = {
 
 	allow = {
 		custom_tooltip = {
+			fail_text = "presapients_not_accepted_citizenship"
+			OR = {
+				is_sapient = yes
+				from = {
+					NOT = {
+						has_policy_flag = pre_sapients_eat
+						has_policy_flag = pre_sapients_purge
+					}
+				}
+			}
+		}
+		custom_tooltip = {
 			fail_text = "HIVE_MIND_SPECIES_CITIZENS_ONLY"
 			OR = {
-				NOT = { from = { has_authority = auth_hive_mind } }
+				OR = {
+					NOT = { from = { has_authority = auth_hive_mind } }
+					from = { has_valid_civic = civic_hive_guided_sapience }
+				}
 				has_trait = trait_hive_mind
 			}
 		}
@@ -186,6 +221,15 @@ citizenship_limited = {
 				NOT = { has_military_service_type = { type = military_service_full country = from } }
 			}
 		}
+		custom_tooltip = {
+			fail_text = selective_kinship_must_citizen
+			if = {
+				limit = {
+					from = { has_valid_civic = civic_selective_kinship }
+				}
+				NOT = { is_same_species_class = from }
+			}
+		}
 	}
 	ai_will_do = {
 		factor = 3
@@ -204,12 +248,6 @@ citizenship_limited = {
 					has_ethic = ethic_xenophile
 					has_ethic = ethic_fanatic_xenophile
 				}
-			}
-		}
-		modifier = {
-			factor = 25
-			from = {
-				has_valid_civic = civic_permanent_employment
 			}
 		}
 		modifier = {
@@ -293,42 +331,44 @@ citizenship_slavery = {
 				has_trait = trait_zombie
 			}
 		}
-		from = {
-			NOR = {
-				has_valid_civic = civic_machine_servitor
-				has_valid_civic = civic_machine_assimilator
-				has_valid_civic = civic_machine_terminator
-				has_valid_civic = civic_hive_devouring_swarm
-				has_valid_civic = civic_machine_liberator
+		custom_tooltip = {
+			fail_text = SERVITORS_CANNOT_ENSLAVE
+			from = {
+				NOT = { has_valid_civic = civic_machine_servitor }
+			}
+		}
+		custom_tooltip = {
+			fail_text = ASSIMILATORS_CANNOT_ENSLAVE
+			from = {
+				NOT = { has_valid_civic = civic_machine_assimilator }
+			}
+		}
+		custom_tooltip = {
+			fail_text = TERMINATORS_CANNOT_ENSLAVE
+			from = {
+				NOT = { has_valid_civic = civic_machine_terminator }
+			}
+		}
+		custom_tooltip = {
+			fail_text = DEVOURERS_CANNOT_ENSLAVE
+			from = {
+				NOT = { has_valid_civic = civic_hive_devouring_swarm }
 			}
 		}
 		custom_tooltip = {
 			fail_text = empire_xenophile
 			from = {
-				OR = {
-					NOR = {
-						has_ethic = ethic_xenophile
-						has_ethic = ethic_fanatic_xenophile
-					}
-				}
-			}
-		}
-		custom_tooltip = {
-			fail_text = is_broken_shackles_origin
-			NOT = {
-				from = {
-					has_origin = origin_broken_shackles
+				NOR = {
+					has_ethic = ethic_xenophile
+					has_ethic = ethic_fanatic_xenophile
+					has_valid_civic = civic_machine_liberator
 				}
 			}
 		}
 		custom_tooltip = {
 			fail_text = "FANATIC_PURIFIERS_MUST_PURIFY"
 			OR = {
-				NOT = {
-					from = {
-						has_valid_civic = civic_fanatic_purifiers
-					}
-				}
+				NOT = { from = { has_valid_civic = civic_fanatic_purifiers } }
 				is_same_species = from
 			}
 		}
@@ -364,14 +404,18 @@ citizenship_slavery = {
 				}
 			}
 		}
+		custom_tooltip = {
+			fail_text = selective_kinship_must_citizen
+			if = {
+				limit = {
+					from = { has_valid_civic = civic_selective_kinship }
+				}
+				NOT = { is_same_species_class = from }
+			}
+		}
 	}
 	ai_will_do = {
 		factor = 15
-		modifier = {
-			factor = 999
-			has_trait = trait_zombie
-			has_trait = trait_syncretic_proles
-		}
 		modifier = {
 			factor = 999
 			from = { has_civic = civic_hive_capital_creates_gods }
@@ -392,17 +436,24 @@ citizenship_slavery = {
 		modifier = {
 			factor = 0
 			from = {
-				OR = {
-					AND = {
-						is_authoritarian = yes
-						is_xenophobe = no
-					}
-					AND = {
-						has_ethic = ethic_fanatic_authoritarian
-						is_capitalism = no
-					}
-				}
+				is_authoritarian = no
+				is_xenophobe = no
+				is_hive_empire = no
 			}
+		}
+		modifier = {
+			factor = 0.1
+			from = {
+				is_galactic_community_member = yes
+			}
+			OR = {
+				is_active_resolution = "resolution_greatergood_balance_in_the_middle"
+				is_active_resolution = "resolution_greatergood_universal_prosperity_mandate"
+			}
+		}
+		modifier = {
+			factor = 2
+			has_species_flag = syncretic_species@from
 		}
 	}
 }

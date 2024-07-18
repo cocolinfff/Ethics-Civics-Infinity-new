@@ -355,7 +355,7 @@ building_state_farms = {
 
 #国营能源企业
 building_state_energy_enterprise = {
-	icon = building_power_plant_1
+	icon = building_royal_library
 	base_buildtime = @b1_time
 
 	owner_type = corporate
@@ -1185,7 +1185,7 @@ building_worker_community = {
 	}
 
 	convert_to = {
-		building_amusement_megaplex
+		building_foreign_owned_real_estate
 	}
 
 	planet_modifier = {
@@ -1238,6 +1238,12 @@ building_worker_community = {
 			factor = 0
 			planet.owner = {
 				NOT = { is_same_value = planet.branch_office_owner }
+			}
+		}
+		modifier = {
+			factor = 10
+			planet = {
+				free_housing < 0
 			}
 		}
 	}
@@ -1323,7 +1329,6 @@ building_temple_of_socialism = {
 ## 外资企业建筑 ##
 #外资能源企业
 building_private_energy_enterprise = {
-	icon = building_power_plant_2
 	base_buildtime = @b1_time
 
 	owner_type = corporate
@@ -1482,11 +1487,105 @@ building_private_energy_enterprise = {
 	}
 }
 
+#外资房地产
+building_foreign_owned_real_estate = {
+	icon = building_immigrant_intermediary
+	base_buildtime = @b2_time
+
+	owner_type = corporate
+
+	potential = {
+		has_branch_office = yes
+		exists = branch_office_owner
+		branch_office_owner = {
+			is_gestalt = no
+			is_criminal_syndicate = no
+			NOT = { is_same_value = root.owner }
+		}
+	}
+
+	allow = {
+		NOR = {
+			has_building = building_guerrilla_stronghold
+			has_building = building_guerrilla_stronghold_large
+		}
+	}
+
+	destroy_trigger = {
+		exists = branch_office_owner
+		planet.branch_office_owner = {
+			is_same_value = root.owner
+		}
+	}
+
+	convert_to = {
+		building_worker_community
+	}
+
+	planet_modifier = {
+		job_steward_add = 2
+		planet_housing_add = 8
+		pop_ethic_socialism_attraction_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			branch_office_owner = {
+				OR = {
+					is_socialism = no
+					is_authoritarian = yes
+					has_policy_flag = reform_and_opening_up
+				}
+			}
+		}
+		modifier = {
+			job_steward_add = -2
+			job_merchant_add = 1
+			pop_ethic_socialism_attraction_mult = -0.1
+			pop_ethic_capitalism_attraction_mult = 0.1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				free_housing < 0
+			}
+		}
+		modifier = {
+			planet_amenities_mult = -0.15
+			branch_office_value_mult = 0.15
+		}
+	}
+
+	resources = {
+		category = planet_branch_office_buildings
+		produces = {
+			energy = 0.33
+		}
+		cost = {
+			minerals = @b2_minerals
+		}
+		upkeep = {
+			energy = 5
+		}
+	}
+
+	ai_weight = {
+		weight = 10
+		modifier = {
+			factor = 10
+			planet = {
+				free_housing < 0
+			}
+		}
+	}
+}
+
 
 ## 罪企建筑 ##
 #能源窃取中心
 building_energy_theft_center= {
-	icon = building_power_plant_3
 	base_buildtime = @b1_time
 
 	owner_type = corporate
