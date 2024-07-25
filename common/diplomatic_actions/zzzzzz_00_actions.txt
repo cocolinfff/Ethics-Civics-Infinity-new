@@ -1886,6 +1886,49 @@ action_ask_to_join_federation = {
 	}
 }
 
+# 关闭边境
+# Close borders towards another empire, blocking their ships from entering your territory. Usable by and against regular empires only. Harms relations.
+action_close_borders = {
+	icon = "GFX_diplomacy_status_closed_borders"
+	auto_accepted = yes
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	should_show_auto_accept_message_recipient = yes
+	#should_notify_all_communications = yes
+	action_type = negative
+
+	possible = {
+		can_control_access_for = from
+
+		if = {
+			limit = {
+				from = { has_valid_civic = civic_pompous_purists }
+				NOT = { root = { is_overlord_to = from } }
+			}
+			if = {
+				limit = {
+					has_intel = {
+						who = from
+						intel = civics
+					}
+				}
+				custom_tooltip = {
+					fail_text = requires_recipient_not_pompous_borders
+					always = no
+				}
+			}
+			else = {
+				custom_tooltip = {
+					fail_text = diplo_action_no_low_intel
+					always = no
+				}
+			}
+		}
+
+		root = { NOT = { has_valid_civic = civic_tax_inclusive_company } }
+	}
+}
+
 # 提议臣服
 # Turns another empire into a subject peacefully.
 # Intricacies of this relationship, including subject type, are determined by terms of the Agreement between Overlord and subject.

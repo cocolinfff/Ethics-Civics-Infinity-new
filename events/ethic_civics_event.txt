@@ -2453,3 +2453,78 @@ country_event = {
     }
 }
 
+# 包税公司
+namespace = ethic_tax_inclusive_company
+ship_event = { #Entering Unstable Planet System
+    id = ethic_tax_inclusive_company.0
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        any_country = { has_valid_civic = civic_tax_inclusive_company }
+        FROM = {
+            exists = owner
+            owner = { has_valid_civic = civic_tax_inclusive_company }
+        }
+    }
+
+    immediate = {
+        FROMFROM = {
+            owner = {
+                save_event_target_as = taxpayer
+            }
+        }
+        FROM = {
+            owner = {
+                save_event_target_as = taxpackager
+            }
+        }
+        if = {
+            limit = {
+                event_target:taxpayer = {
+                    is_default_empire = yes
+                }
+            }
+            event_target:taxpackager = {
+                owner = {
+                    add_resource = {
+                        energy = 1
+                        mult = FROMFROM.trigger:fleet_power
+                    }
+                }
+            }
+        }
+        if = {
+            limit = {
+                event_target:taxpayer = {
+                    is_amoeba_country_type = yes
+                }
+            }
+            event_target:taxpackager = {
+                owner = {
+                    add_resource = {
+                        food = 1
+                        mult = FROMFROM.trigger:fleet_power
+                    }
+                }
+            }
+        }
+        if = {
+            limit = {
+                event_target:taxpayer = {
+                    is_crystal_country_type = yes
+                }
+            }
+            event_target:taxpackager = {
+                owner = {
+                    add_resource = {
+                        minerals = 1
+                        mult = FROMFROM.trigger:fleet_power
+                    }
+                }
+            }
+        }
+    }
+}
+
