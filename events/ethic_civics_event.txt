@@ -2629,23 +2629,70 @@ country_event = {
 
 # 家国同构
 namespace = ethic_home_country_isomorphism
-country_event = { # Memorial Valuts Civic Paragon Level Tick / FROM = Leader
+country_event = {
     id = ethic_home_country_isomorphism.0
     hide_window = yes
 
     is_triggered_only = yes
 
     trigger = {
-        has_valid_civic = civic_home_country_isomorphism
+        this = {
+            has_valid_civic = civic_home_country_isomorphism
+            NOT = { has_tradition = tr_revolution_adopt }
+        }
+        from = {
+            OR = {
+                has_skill = 8
+                has_trait = leader_trait_legendary_leader
+                AND = {
+                    has_trait = leader_trait_legendary_offspring
+                    has_skill >= 4
+                }
+            }
+            NOT = { has_leader_flag = home_country_isomorphism_contributed }
+        }
+    }
+
+    immediate = {
         FROM = {
+            set_leader_flag = home_country_isomorphism_contributed
+        }
+        every_owned_planet = {
+            limit = {
+                has_building = building_ancestral_hall
+            }
+            change_variable = {
+                which = paragon_home_country_isomorphism
+                value = 1
+            }
+        }
+    }
+}
+country_event = {
+    id = ethic_home_country_isomorphism.1
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        this = {
+            has_valid_civic = civic_home_country_isomorphism
+            NOT = { has_tradition = tr_revolution_adopt }
+        }
+        from = {
             is_ruler = yes
         }
     }
 
     immediate = {
-        change_variable = {
-            which = home_country_isomorphism_vault
-            value = 1
+        every_owned_planet = {
+            limit = {
+                has_building = building_ancestral_hall
+            }
+            change_variable = {
+                which = ruler_home_country_isomorphism
+                value = 1
+            }
         }
     }
 }
