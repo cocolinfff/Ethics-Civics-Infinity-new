@@ -2707,6 +2707,7 @@ country_event = {
 
     trigger = {
         has_valid_civic = civic_revolutionary_terrorism
+        NOT = { has_tradition = tr_virtuality_finish }
     }
 
     immediate = {
@@ -2960,6 +2961,70 @@ planet_event = {
                 }
             }
             kill_pop = yes
+        }
+    }
+}
+
+# 星光魔镜
+namespace = ethic_magic_mirror
+country_event = {
+    id = ethic_magic_mirror.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_magic_mirror
+    }
+
+    immediate = {
+        set_variable = { which = value_num_rival_country value = value:num_rival_country }
+        every_rival_country = {
+            limit = {
+                NOT = {
+                    has_ethic = ethic_gestalt_consciousness
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_country_flag = magic_mirror_rival_country }
+                    NOR = {
+                        has_modifier = adversary_propaganda
+                        has_modifier = communist_propaganda
+                    }
+                }
+                set_country_flag = magic_mirror_rival_country
+                add_modifier = { modifier = adversary_propaganda days = 3599 }
+            }
+        }
+    }
+}
+country_event = {
+    id = ethic_magic_mirror.2
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_magic_mirror
+    }
+
+    immediate = {
+        every_rival_country = {
+            limit = {
+                NOT = {
+                    has_ethic = ethic_gestalt_consciousness
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = magic_mirror_rival_country
+                    NOR = {
+                        has_modifier = adversary_propaganda
+                        has_modifier = communist_propaganda
+                    }
+                }
+                remove_country_flag = magic_mirror_rival_country
+                add_modifier = { modifier = communist_propaganda days = -1 }
+            }
         }
     }
 }
