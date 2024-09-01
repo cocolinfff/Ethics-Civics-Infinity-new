@@ -181,33 +181,29 @@ country_event = {
 
 # 后发先至
 namespace = ethic_civic_procrastination
-event = {
+country_event = {
     id = ethic_civic_procrastination.0
     hide_window = yes
     is_triggered_only = yes
+    trigger = { has_civic = civic_procrastination }
     immediate = {
-        every_country = {
+        if = {
             limit = {
-                has_civic = civic_procrastination
-            }
-            if = {
-                limit = {
-                    NOR = {
-                        has_origin = origin_advanced_start
-                        has_origin = origin_true_yuht
-                    }
+                NOR = {
+                    has_origin = origin_advanced_start
+                    has_origin = origin_true_yuht
                 }
-                country_event = { id = ethic_civic_procrastination.1 days = 7200 }
             }
-            if = {
-                limit = {
-                    OR = {
-                        has_origin = origin_advanced_start
-                        has_origin = origin_true_yuht
-                    }
+            country_event = { id = ethic_civic_procrastination.1 days = 7200 }
+        }
+        if = {
+            limit = {
+                OR = {
+                    has_origin = origin_advanced_start
+                    has_origin = origin_true_yuht
                 }
-                country_event = { id = ethic_civic_procrastination.1 }
             }
+            country_event = { id = ethic_civic_procrastination.1 }
         }
     }
 }
@@ -436,39 +432,41 @@ country_event = {
     }
 }
 
-namespace = ethic_civic_yearly
+namespace = ethic_civic_zhaowen_dao
 # 朝闻道
 country_event = {
-    id = ethic_civic_yearly.2
+    id = ethic_civic_zhaowen_dao.0
     is_triggered_only = yes
     hide_window = yes
 
     trigger = {
-        OR = {
-            has_valid_civic = civic_zhaowen_dao
-        }
+        has_valid_civic = civic_zhaowen_dao
     }
 
     immediate = {
-        random_list = {
-            90 = {	}
-            10 = {
-                country_event = { id = ethic_civic_yearly.20 }
-            }
-        }
+        country_event = { id = ethic_civic_zhaowen_dao.1 }
 
     }
 }
 country_event = {
-    id = ethic_civic_yearly.20
+    id = ethic_civic_zhaowen_dao.1
     is_triggered_only = yes
-    desc = ethic_civic_yearly.20.desc
-    title = ethic_civic_yearly.20.title
+    desc = ethic_civic_zhaowen_dao.1.desc
+    title = ethic_civic_zhaowen_dao.1.title
     immediate = {
-        random_owned_leader = { save_event_target_as = dedication_leader }
+        random_owned_leader = {
+            limit = {
+                leader_class = scientist
+                NOR = {
+                    has_leader_flag = renowned_leader
+                    has_leader_flag = legendary_leader
+                }
+            }
+            save_event_target_as = dedication_leader
+        }
     }
     option = {
-        name = ethic_civic_yearly.20.a
+        name = ethic_civic_zhaowen_dao.1.a
         add_resource = {
             physics_research = 1000
             society_research = 1000
@@ -478,10 +476,41 @@ country_event = {
         event_target:dedication_leader = { kill_leader = { show_notification = no } }
     }
 }
+country_event = {
+    id = ethic_civic_zhaowen_dao.2
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_zhaowen_dao
+    }
+
+    immediate = {
+        random_list = {
+            90 = {	}
+            10 = {
+                add_monthly_resource_mult = {
+                    resource = unity
+                    value = 12
+                }
+                random_owned_pop = {
+                    limit = {
+                        has_research_job = yes
+                    }
+                    while = {
+                        count = 1
+                        kill_pop = yes
+                    }
+                }
+            }
+        }
+    }
+}
 
 # 永远同在
+namespace = ethic_forever_with_us
 country_event = {
-    id = ethic_civic_yearly.3
+    id = ethic_forever_with_us.0
     is_triggered_only = yes
     hide_window = yes
 
@@ -519,27 +548,27 @@ country_event = {
     }
 }
 country_event = {
-    id = ethic_civic_yearly.4
+    id = ethic_forever_with_us.1
     is_triggered_only = yes
-    desc = ethic_civic_yearly.4.desc
-    title = ethic_civic_yearly.4.title
+    desc = ethic_forever_with_us.1.desc
+    title = ethic_forever_with_us.1.title
     trigger = {
         NOT = {
             has_country_flag = vanguard_no_window
         }
     }
     option = {
-        name = ethic_civic_yearly.4.a
+        name = ethic_forever_with_us.1.a
     }
     option = {
-        name = ethic_civic_yearly.4.b
+        name = ethic_forever_with_us.1.b
         hidden_effect = {
             set_country_flag = vanguard_no_window
         }
     }
 }
 planet_event = {
-    id = ethic_civic_yearly.7
+    id = ethic_forever_with_us.2
     is_triggered_only = yes
     hide_window = yes
 
@@ -1306,21 +1335,51 @@ country_event = {
 
 }
 
-# 走近科学
-namespace = ethic_techsetunity
+# 远视主义
+namespace = ethic_ultravisionary_socialism
 country_event = {
-    id = ethic_techsetunity.0
+    id = ethic_ultravisionary_socialism.0
     hide_window = yes
     is_triggered_only = yes
 
     trigger = {
-        has_valid_civic = civic_approaching_science
+        has_valid_civic = civic_ultravisionary_socialism
     }
 
     immediate = {
         add_monthly_resource_mult = {
             resource = unity
             value = 2
+        }
+    }
+}
+
+# 学习型社会
+namespace = ethic_learning_society
+country_event = {
+    id = ethic_learning_society.0
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        OR = {
+            has_valid_civic = civic_learning_society
+            has_valid_civic = civic_learning_society_corporate
+        }
+    }
+
+    immediate = {
+        add_monthly_resource_mult = {
+            resource = engineering_research
+            value = 3
+        }
+        add_monthly_resource_mult = {
+            resource = physics_research
+            value = 3
+        }
+        add_monthly_resource_mult = {
+            resource = society_research
+            value = 3
         }
     }
 }
@@ -2235,7 +2294,6 @@ country_event = {
         }
     }
 }
-
 country_event = {
     id = eci_civic_firing_torch.2
     title = eci_civic_firing_torch.2.name
@@ -2249,7 +2307,6 @@ country_event = {
         custom_tooltip = eci_civic_firing_torch.2.tooltip
     }
 }
-
 planet_event = {
     id = eci_civic_firing_torch.3
     hide_window = yes
@@ -2327,6 +2384,647 @@ country_event = {
         if = {
             limit = { has_civic = civic_answer }
             country_event = { id = ethic_civic_answer.1 days = 15480 }
+        }
+    }
+}
+
+# 菌食菇力者
+namespace = ethic_yunnanese
+country_event = {
+    id = ethic_yunnanese.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_yunnanese
+    }
+
+    immediate = {
+        if = {
+            limit = {
+                any_owned_planet = {
+                    NOT = { has_deposit = d_mushroom }
+                }
+                NOT = { has_tradition = tr_psionics_breach_shroud }
+                NOT = { has_country_flag = shroud_diplomacy_engaged }
+            }
+            set_country_flag = shroud_diplomacy_engaged
+        }
+        if = {
+            limit = {
+                OR = {
+                    any_owned_planet = { has_deposit = d_mushroom }
+                    has_tradition = tr_psionics_breach_shroud
+                }
+                has_country_flag = shroud_diplomacy_engaged
+            }
+            remove_country_flag = shroud_diplomacy_engaged
+        }
+        random_list = {
+            1 = {
+                remove_modifier = shroud_cooldown
+                remove_modifier = shroud_precog_cooldown
+                country_event = { id = utopia.3000 }
+                complex_trigger_modifier = {
+                    trigger = count_owned_planet
+                    parameters = {
+                        limit = {
+                            has_deposit = d_mushroom
+                        }
+                    }
+                    mode = add
+                }
+                modifier = {
+                    factor = 0
+                    OR = {
+                        has_modifier = promised_no_shroud
+                        any_owned_planet = {
+                            NOT = { has_deposit = d_mushroom }
+                        }
+                    }
+                }
+            }
+            99 = {}
+        }
+    }
+}
+
+# 包税公司
+namespace = ethic_tax_inclusive_company
+ship_event = { #Entering Unstable Planet System
+    id = ethic_tax_inclusive_company.0
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        any_country = { has_valid_civic = civic_tax_inclusive_company }
+        FROM = {
+            exists = owner
+            owner = { has_valid_civic = civic_tax_inclusive_company }
+        }
+    }
+
+    immediate = {
+        FROMFROM = {
+            owner = {
+                save_event_target_as = taxpayer
+            }
+        }
+        FROM = {
+            owner = {
+                save_event_target_as = taxpackager
+            }
+        }
+        if = {
+            limit = {
+                event_target:taxpayer = {
+                    is_default_empire = yes
+                }
+            }
+            event_target:taxpackager = {
+                owner = {
+                    add_resource = {
+                        energy = 1
+                        mult = FROMFROM.trigger:fleet_power
+                    }
+                }
+            }
+        }
+        if = {
+            limit = {
+                event_target:taxpayer = {
+                    is_amoeba_country_type = yes
+                }
+            }
+            event_target:taxpackager = {
+                owner = {
+                    add_resource = {
+                        food = 1
+                        mult = FROMFROM.trigger:fleet_power
+                    }
+                }
+            }
+        }
+        if = {
+            limit = {
+                event_target:taxpayer = {
+                    is_crystal_country_type = yes
+                }
+            }
+            event_target:taxpackager = {
+                owner = {
+                    add_resource = {
+                        minerals = 1
+                        mult = FROMFROM.trigger:fleet_power
+                    }
+                }
+            }
+        }
+    }
+}
+
+# 星神启动
+namespace = ethic_xinshin_impact
+country_event = {
+    id = ethic_xinshin_impact.1
+    title = cara_home_lootbox.title
+    desc = lootbox_contents_b
+    is_triggered_only = yes
+    picture = GFX_evt_ancient_artifact
+    show_sound = event_lootbox_good
+
+    immediate = {
+        add_monthly_resource_mult = {
+            resource = consumer_goods
+            value = 6
+            min = 60
+        }
+    }
+
+    option = {
+        name = OK
+    }
+}
+country_event = {
+    id = ethic_xinshin_impact.2
+    title = cara_home_lootbox.title
+    desc = lootbox_contents_n
+    is_triggered_only = yes
+    picture = GFX_evt_ancient_artifact
+    show_sound = event_lootbox_good
+
+    immediate = {
+        add_monthly_resource_mult = {
+            resource = alloys
+            value = 6
+            min = 60
+        }
+    }
+
+    option = {
+        name = OK
+    }
+}
+country_event = {
+    id = ethic_xinshin_impact.3
+    title = cara_home_lootbox.title
+    desc = lootbox_contents_i
+    is_triggered_only = yes
+    picture = GFX_evt_ancient_artifact
+    show_sound = event_lootbox_good
+
+    immediate = {
+        add_monthly_resource_mult = {
+            resource = exotic_gases
+            value = 6
+            min = 60
+        }
+    }
+
+    option = {
+        name = OK
+    }
+}
+country_event = {
+    id = ethic_xinshin_impact.4
+    title = cara_home_lootbox.title
+    desc = lootbox_contents_e
+    is_triggered_only = yes
+    picture = GFX_evt_ancient_artifact
+    show_sound = event_lootbox_good
+
+    immediate = {
+        add_monthly_resource_mult = {
+            resource = volatile_motes
+            value = 6
+            min = 60
+        }
+    }
+
+    option = {
+        name = OK
+    }
+}
+country_event = {
+    id = ethic_xinshin_impact.5
+    title = cara_home_lootbox.title
+    desc = lootbox_contents_h
+    is_triggered_only = yes
+    picture = GFX_evt_ancient_artifact
+    show_sound = event_lootbox_good
+
+    immediate = {
+        add_monthly_resource_mult = {
+            resource = rare_crystals
+            value = 6
+            min = 60
+        }
+    }
+
+    option = {
+        name = OK
+    }
+}
+
+# 家国同构
+namespace = ethic_home_country_isomorphism
+country_event = {
+    id = ethic_home_country_isomorphism.0
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        this = {
+            has_valid_civic = civic_home_country_isomorphism
+            NOT = { has_tradition = tr_revolution_adopt }
+        }
+        from = {
+            OR = {
+                has_skill = 8
+                has_trait = leader_trait_legendary_leader
+                AND = {
+                    has_trait = leader_trait_legendary_offspring
+                    has_skill >= 4
+                }
+            }
+            NOT = { has_leader_flag = home_country_isomorphism_contributed }
+        }
+    }
+
+    immediate = {
+        FROM = {
+            set_leader_flag = home_country_isomorphism_contributed
+        }
+        every_owned_planet = {
+            limit = {
+                has_building = building_ancestral_hall
+            }
+            change_variable = {
+                which = paragon_home_country_isomorphism
+                value = 1
+            }
+        }
+    }
+}
+country_event = {
+    id = ethic_home_country_isomorphism.1
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        this = {
+            has_valid_civic = civic_home_country_isomorphism
+            NOT = { has_tradition = tr_revolution_adopt }
+        }
+        from = {
+            is_ruler = yes
+        }
+    }
+
+    immediate = {
+        every_owned_planet = {
+            limit = {
+                has_building = building_ancestral_hall
+            }
+            change_variable = {
+                which = ruler_home_country_isomorphism
+                value = 1
+            }
+        }
+    }
+}
+
+# 无限恐怖
+namespace = ethic_revolutionary_terrorism
+country_event = {
+    id = ethic_revolutionary_terrorism.0
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_revolutionary_terrorism
+        NOT = { has_tradition = tr_virtuality_finish }
+    }
+
+    immediate = {
+        every_owned_planet = {
+            every_owned_pop = {
+                if = {
+                    limit = { has_ethic = ethic_capitalism }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = { has_ethic = ethic_pacifist }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_militarist = no }
+                        has_ethic = ethic_militarist
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_authoritarian = no }
+                        has_ethic = ethic_authoritarian
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_egalitarian = no }
+                        has_ethic = ethic_egalitarian
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_materialist = no }
+                        has_ethic = ethic_materialist
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_spiritualist = no }
+                        has_ethic = ethic_spiritualist
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_xenophobe = no }
+                        has_ethic = ethic_xenophobe
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_xenophile = no }
+                        has_ethic = ethic_xenophile
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+            }
+        }
+        country_event = { id = ethic_revolutionary_terrorism.1 days = 15 }
+    }
+}
+country_event = {
+    id = ethic_revolutionary_terrorism.1
+    hide_window = yes
+    is_triggered_only = yes
+    immediate = {
+        every_owned_planet = {
+            if = {
+                limit = {
+                    NOT = { has_deposit = d_monument_to_the_victims }
+                }
+                add_deposit = d_monument_to_the_victims
+            }
+            export_trigger_value_to_variable = {
+                trigger = count_owned_pop
+                parameters = {
+                    limit = {
+                        has_pop_flag = revolutionary_terrorism_kill
+                    }
+                }
+                variable = revolutionary_terrorism_value_kill_1
+            }
+            change_variable = {
+                which = revolutionary_terrorism_value_killpop
+                value = revolutionary_terrorism_value_kill_1
+            }
+            every_owned_pop = {
+                limit = {
+                    has_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = {
+                            OR = {
+                                has_valid_civic = civic_reanimated_armies
+                                has_tradition = tr_genetics_adopt
+                            }
+                        }
+                    }
+                    planet = {
+                        create_army = {
+                            name = random
+                            owner = this.owner
+                            species = prev
+                            type = "undead_army"
+                        }
+                    }
+                }
+                kill_pop = yes
+            }
+            every_owned_pop = {
+                add_modifier = {
+                    modifier = revolutionary_terror
+                    days = 360
+                }
+            }
+        }
+    }
+}
+planet_event = {
+    id = ethic_revolutionary_terrorism.2
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        from = { has_valid_civic = civic_revolutionary_terrorism }
+    }
+
+    immediate = {
+        from = {
+            every_owned_pop = {
+                if = {
+                    limit = { has_ethic = ethic_capitalism }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = { has_ethic = ethic_pacifist }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_militarist = no }
+                        has_ethic = ethic_militarist
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_authoritarian = no }
+                        has_ethic = ethic_authoritarian
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_egalitarian = no }
+                        has_ethic = ethic_egalitarian
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_materialist = no }
+                        has_ethic = ethic_materialist
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_spiritualist = no }
+                        has_ethic = ethic_spiritualist
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_xenophobe = no }
+                        has_ethic = ethic_xenophobe
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+                if = {
+                    limit = {
+                        root = { is_xenophile = no }
+                        has_ethic = ethic_xenophile
+                    }
+                    set_pop_flag = revolutionary_terrorism_kill
+                }
+            }
+        }
+        planet_event = { id = ethic_revolutionary_terrorism.3 days = 30 random = 60 }
+    }
+}
+planet_event = {
+    id = ethic_revolutionary_terrorism.3
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        from = { has_valid_civic = civic_revolutionary_terrorism }
+    }
+    immediate = {
+        if = {
+            limit = {
+                NOT = { has_deposit = d_monument_to_the_victims }
+            }
+            add_deposit = d_monument_to_the_victims
+        }
+        export_trigger_value_to_variable = {
+            trigger = count_owned_pop
+            parameters = {
+                limit = {
+                    has_pop_flag = revolutionary_terrorism_kill
+                }
+            }
+            variable = revolutionary_terrorism_value_kill_1
+        }
+        change_variable = {
+            which = revolutionary_terrorism_value_killpop
+            value = revolutionary_terrorism_value_kill_1
+        }
+        every_owned_pop = {
+            limit = {
+                has_pop_flag = revolutionary_terrorism_kill
+            }
+            if = {
+                limit = {
+                    root = {
+                        exists = owner
+                        owner = {
+                            OR = {
+                                has_valid_civic = civic_reanimated_armies
+                                has_tradition = tr_genetics_adopt
+                            }
+                        }
+                    }
+                }
+                planet = {
+                    create_army = {
+                        name = random
+                        owner = this.owner
+                        species = prev
+                        type = "undead_army"
+                    }
+                }
+            }
+            kill_pop = yes
+        }
+    }
+}
+
+# 星光魔镜
+namespace = ethic_magic_mirror
+country_event = {
+    id = ethic_magic_mirror.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_magic_mirror
+    }
+
+    immediate = {
+        set_variable = { which = value_num_rival_country value = value:num_rival_country }
+        every_rival_country = {
+            limit = {
+                NOT = {
+                    has_ethic = ethic_gestalt_consciousness
+                }
+            }
+            if = {
+                limit = {
+                    NOT = { has_country_flag = magic_mirror_rival_country }
+                    NOR = {
+                        has_modifier = adversary_propaganda
+                        has_modifier = communist_propaganda
+                    }
+                }
+                set_country_flag = magic_mirror_rival_country
+                add_modifier = { modifier = adversary_propaganda days = 3599 }
+            }
+        }
+    }
+}
+country_event = {
+    id = ethic_magic_mirror.2
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        has_valid_civic = civic_magic_mirror
+    }
+
+    immediate = {
+        every_rival_country = {
+            limit = {
+                NOT = {
+                    has_ethic = ethic_gestalt_consciousness
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = magic_mirror_rival_country
+                    NOR = {
+                        has_modifier = adversary_propaganda
+                        has_modifier = communist_propaganda
+                    }
+                }
+                remove_country_flag = magic_mirror_rival_country
+                add_modifier = { modifier = communist_propaganda days = -1 }
+            }
         }
     }
 }

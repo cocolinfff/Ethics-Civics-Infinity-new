@@ -21,8 +21,14 @@ building_ancient_control_center = {
 	convert_to = {
 		building_hive_major_capital
 		building_machine_major_capital
-		building_major_capital
+		building_system_capital
 		building_ancient_palace
+	}
+	country_modifier = {
+		country_resource_max_add = 10000
+	}
+	inline_script = {
+		script = buildings/on_all_capital_buildings
 	}
 
 	planet_modifier = {
@@ -65,11 +71,17 @@ building_ancient_hive_capital = {
 			is_fallen_empire = yes
 		}
 	}
+	country_modifier = {
+		country_resource_max_add = 10000
+	}
+	inline_script = {
+		script = buildings/on_all_capital_buildings
+	}
 
 	convert_to = {
 		building_hive_major_capital
 		building_machine_major_capital
-		building_major_capital
+		building_system_capital
 		building_ancient_palace
 		building_ancient_control_center
 	}
@@ -111,7 +123,10 @@ building_ancient_palace = {
 	potential = {
 		exists = owner
 		owner = {
-			is_fallen_empire = yes
+			OR = {
+				is_fallen_empire = yes
+				has_country_flag = eci_bug_gongjuren_flag
+			}
 			is_hive_empire = no
 		}
 	}
@@ -119,7 +134,7 @@ building_ancient_palace = {
 	convert_to = {
 		building_hive_major_capital
 		building_machine_major_capital
-		building_major_capital
+		building_system_capital
 		building_ancient_control_center
 	}
 
@@ -127,6 +142,66 @@ building_ancient_palace = {
 		planet_housing_add = 12
 		planet_amenities_add = 150
 		planet_max_buildings_add = 11
+	}
+	country_modifier = {
+		country_resource_max_add = 10000
+	}
+	inline_script = {
+		script = buildings/on_all_capital_buildings
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_military_dictatorship" }
+			is_capital = yes
+		}
+		modifier = {
+			planet_stability_add = 3
+		}
+		mult = value:councilor_level|TYPE|councilor_military_dictatorship|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_eci_megacorp = yes
+			is_capital = yes
+		}
+		modifier = {
+			job_executive_add = 1
+		}
+		mult = owner.modifier:captial_ruler_add
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_extremely_efficient_storage_country = yes
+			}
+		}
+		modifier = {
+			country_resource_max_add = 10000
+		}
+	}
+	inline_script = {
+		script = jobs/regular_empire_capital_jobs
+		JOB_AMOUNT = 4
+		ENFORCER_ADD = 3
+		JOB_ADD = 2
+		JOB_REMOVE = -2
+		POLICIES_ADD = 2
+		POLICIES_REMOVE = -2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					is_fallen_empire = yes
+					has_country_flag = eci_bug_gongjuren_flag
+				}
+			}
+		}
+		planet_jobs_produces_mult = 1
+		planet_buildings_produces_mult = 1
 	}
 
 	triggered_planet_modifier = {
@@ -228,7 +303,7 @@ building_hab_fe_capital = {
 	}
 
 	convert_to = {
-		building_hab_major_capital
+		building_hab_system_capital
 	}
 
 	resources = {
@@ -306,19 +381,125 @@ building_master_archive = {
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { is_regular_empire = yes }
+			owner = {
+				is_regular_empire = yes
+				is_not_rulers_society = yes
+				NOR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
+		}
+		modifier = {
+			job_researcher_add = 12
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_not_rulers_society = yes
+				OR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
+		}
+		modifier = {
+			job_magician_add = 12
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_not_rulers_society = no
+				NOR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
 		}
 		modifier = {
 			job_head_researcher_add = @fe_jobs
 		}
 	}
 
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_not_rulers_society = no
+				OR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
+		}
+		modifier = {
+			job_legendary_mage_add = @fe_jobs
+		}
+	}
+
 	triggered_desc = {
 		trigger = {
 			exists = owner
-			owner = { is_regular_empire = yes }
+			owner = {
+				is_regular_empire = yes
+				is_not_rulers_society = yes
+				NOR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
+		}
+		text = job_researcher_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_not_rulers_society = yes
+				OR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
+		}
+		text = job_magician_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+				is_not_rulers_society = no
+				NOR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
 		}
 		text = job_head_researcher_effect_desc
+	}
+
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = {
+				is_not_rulers_society = no
+				OR = {
+					has_origin = origin_wizarding_world
+					has_civic = civic_dark_consortium
+				}
+			}
+		}
+		text = job_legendary_mage_effect_desc
 	}
 
 	triggered_planet_modifier = {
@@ -4629,6 +4810,7 @@ building_fe_mine_1 = {
 			OR = {
 				is_fallen_empire = yes
 				has_technology = tech_fe_mine_1
+				has_country_flag = fe_mine_1_can_build
 			}
 		}
 		NOR = {

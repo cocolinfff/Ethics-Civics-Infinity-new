@@ -3,9 +3,151 @@
 @buildings_t3 = 8
 @buildings_t4 = 12
 
+#礼教宗祠
+building_ancestral_hall = {
+	base_buildtime = @b1_time
+	base_cap_amount = 1
+	category = government
+	potential = {
+		exists = owner
+		owner = {
+			has_valid_civic = civic_home_country_isomorphism
+		}
+	}
+	allow = {
+		has_upgraded_capital = yes
+		exists = owner
+		owner = {
+			NOT = { has_tradition = tr_revolution_adopt }
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_regular_empire = no
+				has_tradition = tr_revolution_adopt
+			}
+		}
+	}
+	inline_script = {
+		script = jobs/building_ancestral_hall_jobs
+	}
+	#祭祖机制
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		planet_jobs_unity_produces_mult = 0.3
+		multiplier = planet.paragon_home_country_isomorphism
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_authority = auth_imperial
+			}
+		}
+		planet_stability_add = 5
+		multiplier = planet.ruler_home_country_isomorphism
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+	triggered_desc = {
+		text = building_ancestral_hall_effect
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_authority = auth_imperial }
+		}
+		text = building_ancestral_hall_ruler_effect
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { has_authority = auth_imperial }
+		}
+		text = job_noble_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_not_rulers_society = no }
+		}
+		text = job_supervisor_effect_desc
+	}
+	triggered_desc = {
+		trigger = {
+			exists = owner
+			owner = { is_not_rulers_society = yes }
+		}
+		text = job_culture_worker_effect_desc
+	}
+}
+
+#礼部驻所
+building_ministry_of_rites_dispatch_office = {
+	base_buildtime = @b2_time
+	base_cap_amount = 1
+	owner_type = subject_holding
+
+	category = government
+
+	potential = {
+		has_overlord_dlc = yes
+		exists = owner
+		owner = {
+			has_valid_civic = civic_home_country_isomorphism
+		}
+	}
+
+	allow = {
+		exists = planet
+		planet = { is_capital = yes }
+	}
+
+	planet_modifier = {
+		job_overlord_emperors_apprentice_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet.owner
+			planet.owner = { is_gestalt = yes }
+		}
+		job_overlord_emperors_apprentice_add = -2
+		job_overlord_emperors_apprentice_drone_add = 2
+	}
+
+	resources = {
+		category = planet_holdings
+		cost = {
+			minerals = @b1_minerals
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	triggered_desc = {
+		text = job_overlord_emperors_apprentice_effect_desc
+	}
+}
+
 #私人商业大楼
 building_private_commercial_megaplex = {
-	icon = building_commercial_megaplex
+	icon = holding_emporium
 	base_buildtime = @b2_time
 	can_build = no
 	can_demolish = no
@@ -1506,6 +1648,7 @@ building_primitive_dwellings_eci = {
 	planet_modifier = {
 		planet_housing_add = 5
 		planet_max_buildings_add = 3
+		planet_jobs_produces_mult = -0.2
 	}
 
 	upgrades = {

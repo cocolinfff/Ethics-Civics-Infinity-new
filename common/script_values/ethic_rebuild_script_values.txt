@@ -20,10 +20,7 @@ tech_weight_likelihood = {
 	base = 1.25
 	modifier = {
 		add = 1.25
-		OR = {
-			has_valid_civic = civic_learning_society
-			has_valid_civic = civic_learning_society_corporate
-		}
+		has_valid_civic = civic_technocracy
 	}
 }
 
@@ -363,20 +360,9 @@ society_factor_pops = {
 	divide = society_num_pops
 }
 
-society_stability_original = {
-	base = 0
-	add = modifier:planet_stability_add
-	add = society_stability_sub
-}
-society_stability_target = {
-	base = 1
-	add = modifier:planet_stability_mult
-	mult = society_stability_original
-}
 society_stability_sub = {
-	base = 0
-	add = society_stability_original
-	subtract = society_stability_target
+	base = 1
+	subtract = trigger:planet_stability
 }
 
 society_crime_factor = {
@@ -1268,4 +1254,36 @@ country_fervor_reduce = {
 transcendence_technology_empire_size_effect = {
 	base = -1
 	mult = owner.trigger:empire_size
+}
+
+num_country_admin_cap_mult = {
+	base = 1
+	add = modifier:country_admin_cap_mult
+}
+
+country_admin_cap = {
+	base = 50
+	add = modifier:country_admin_cap_add
+	mult = value:num_country_admin_cap_mult
+}
+
+telepath_trade_value = {
+	base = 0
+	add = owner.modifier:job_telepath_trade_value_add
+	# We want to inherit the bonuses from the branch office owner if they exist as well.
+	modifier = {
+		planet = {
+			has_branch_office = yes
+		}
+		add = planet.branch_office_owner.modifier:job_telepath_trade_value_add
+	}
+	mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+}
+
+num_rival_country = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = any_rival_country
+		mode = add
+	}
 }

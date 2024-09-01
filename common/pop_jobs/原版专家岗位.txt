@@ -23,12 +23,10 @@ soldier = {
 		produces = {
 			trigger = {
 				is_lithoid = no
+				is_robot_species = no
 				exists = owner
 				owner = {
 					is_army_production_country = yes
-					NOT = {
-						has_country_flag = synthetic_empire
-					}
 				}
 			}
 			food = 2
@@ -40,9 +38,6 @@ soldier = {
 				exists = owner
 				owner = {
 					is_army_production_country = yes
-					NOT = {
-						has_country_flag = synthetic_empire
-					}
 				}
 			}
 			minerals = 2
@@ -50,10 +45,10 @@ soldier = {
 		}
 		produces = {
 			trigger = {
+				is_robot_species = no
 				exists = owner
 				owner = {
 					is_army_production_country = yes
-					has_country_flag = synthetic_empire
 				}
 			}
 			energy = 2
@@ -179,9 +174,7 @@ soldier = {
 			owner = {
 				OR = {
 					has_valid_civic = civic_citizen_service
-					has_valid_civic = civic_citizen_service
 					has_valid_civic = civic_military_dictatorship
-					has_valid_civic = civic_citizen_service
 				}
 			}
 		}
@@ -206,6 +199,16 @@ soldier = {
 			owner = { has_valid_civic = civic_sparta_spirit }
 		}
 		ship_fire_rate_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_magic_mirror
+			}
+		}
+		pop_lifestyle_trade_value_mult = 0.05
+		mult = value_num_rival_country
 	}
 
 	triggered_pop_modifier = {
@@ -673,7 +676,7 @@ researcher = {
 			}
 		}
 		modifier = {
-			trade_value_add = 0.5
+			trade_value_add = 1
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
@@ -869,6 +872,18 @@ priest = {
 			}
 			society_research = 2
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_colonial_government
+				}
+				any_country = {
+					has_diplo_migration_treaty = root.owner
+				}
+			}
+			unity = 2
+		}
 		upkeep = {
 			consumer_goods = 2
 		}
@@ -989,6 +1004,16 @@ priest = {
 			planet_amenities_add = 2
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_magic_mirror
+			}
+		}
+		pop_lifestyle_trade_value_mult = 0.05
+		mult = value_num_rival_country
 	}
 	weight = {
 		weight = @specialist_job_weight
@@ -1337,6 +1362,18 @@ haruspex = {
 			}
 			society_research = 2
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_colonial_government
+				}
+				any_country = {
+					has_diplo_migration_treaty = root.owner
+				}
+			}
+			unity = 2
+		}
 	}
 	planet_modifier = {
 		pop_growth_speed_reduction = -0.05
@@ -1478,6 +1515,17 @@ haruspex = {
 			planet_amenities_add = 2
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+			}
+		}
+		modifier = {
+			job_professional_star_fans_add = 2
+		}
 	}
 
 	weight = {
@@ -1924,6 +1972,13 @@ telepath = {
 			}
 		}
 		pop_happiness = -0.025
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		trade_value_add = 1
+		mult = value:telepath_trade_value
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -2485,6 +2540,18 @@ culture_worker = {
 		produces = {
 			unity = 4
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_colonial_government
+				}
+				any_country = {
+					has_diplo_migration_treaty = root.owner
+				}
+			}
+			unity = 2
+		}
 		upkeep = {
 			consumer_goods = 2
 		}
@@ -2601,7 +2668,7 @@ culture_worker = {
 			}
 		}
 		modifier = {
-			pop_lifestyle_trade_mult = 0.025
+			pop_lifestyle_trade_value_mult = 0.025
 		}
 	}
 	triggered_planet_modifier = {
@@ -2626,6 +2693,16 @@ culture_worker = {
 			planet_amenities_add = 5
 		}
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_magic_mirror
+			}
+		}
+		pop_lifestyle_trade_value_mult = 0.05
+		mult = value_num_rival_country
 	}
 	weight = {
 		weight = @specialist_job_weight
@@ -2671,8 +2748,7 @@ bureaucrat = {
 	}
 	possible_precalc = can_fill_specialist_job
 	possible = {
-		complex_specialist_job_check_trigger = yes
-		is_sparta_citizenship_full = no
+		ethic_battle_thrall_job_check_trigger = yes
 	}
 	resources = {
 		category = planet_bureaucrats
@@ -3284,7 +3360,8 @@ healthcare = {
 			}
 		}
 		modifier = {
-			pop_growth_speed_reduction = -0.02
+			pop_growth_speed_reduction = -0.025
+			planet_pop_assembly_organic_mult = 0.025
 			planet_amenities_add = -2
 		}
 	}
@@ -3297,8 +3374,9 @@ healthcare = {
 		}
 		modifier = {
 			pop_cat_ruler_happiness = 0.05
-			pop_lifestyle_trade_mult = 0.02
-			pop_growth_speed_reduction = 0.02
+			pop_lifestyle_trade_value_mult = 0.02
+			pop_growth_speed_reduction = 0.04
+			planet_pop_assembly_organic_mult = -0.04
 		}
 	}
 	triggered_planet_modifier = {
@@ -3487,6 +3565,18 @@ trader = {
 			engineering_research = 0.5
 			society_research = 0.5
 		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_colonial_government
+				}
+				any_country = {
+					has_commercial_pact = root.owner
+				}
+			}
+			influence = 0.1
+		}
 		upkeep = {
 			consumer_goods = 1
 		}
@@ -3510,6 +3600,24 @@ trader = {
 			}
 		}
 		trade_value_add = -3
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			exists = owner
+			owner = {
+				has_valid_civic = civic_colonial_government
+			}
+			exists = owner
+			owner = {
+				has_valid_civic = civic_colonial_government
+			}
+			any_country = {
+				has_commercial_pact = root.owner
+			}
+		}
+		trade_value_add = -2
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 
@@ -3551,7 +3659,7 @@ trader = {
 			}
 		}
 		modifier = {
-			pop_lifestyle_trade_mult = 0.01
+			pop_lifestyle_trade_value_mult = 0.01
 		}
 	}
 	triggered_planet_modifier = {
@@ -3784,7 +3892,7 @@ manager = {
 	}
 	possible_precalc = can_fill_specialist_job
 	possible = {
-		is_sparta_citizenship_full = no
+		ethic_battle_thrall_job_check_trigger = yes
 	}
 	resources = {
 		category = planet_managers
@@ -3874,9 +3982,6 @@ manager = {
 			mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 		}
 	}
-	country_modifier = {
-		trade_value_reduction = 0.02
-	}
 	planet_modifier = {
 		planet_amenities_mult = -0.01
 	}
@@ -3912,7 +4017,7 @@ manager = {
 			}
 		}
 		modifier = {
-			pop_lifestyle_trade_mult = 0.01
+			pop_lifestyle_trade_value_mult = 0.01
 		}
 	}
 	triggered_planet_modifier = {
@@ -3951,6 +4056,17 @@ manager = {
 			}
 		}
 		planet_jobs_worker_produces_mult = 0.02
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_xinshin_impact
+				}
+			}
+		}
+		job_professional_star_fans_add = 1
 	}
 	triggered_pop_modifier = {
 		potential = {
@@ -4019,10 +4135,7 @@ steward = {
 	}
 	possible_precalc = can_fill_specialist_job
 	possible = {
-		is_sparta_slave = no
-	}
-	country_modifier = {
-		trade_value_reduction = 0.01
+		ethic_battle_thrall_job_check_trigger = yes
 	}
 	triggered_planet_modifier = {
 		potential = {
@@ -4032,7 +4145,7 @@ steward = {
 			}
 		}
 		modifier = {
-			pop_lifestyle_trade_mult = 0.01
+			pop_lifestyle_trade_value_mult = 0.01
 		}
 	}
 	triggered_planet_modifier = {
@@ -4577,7 +4690,7 @@ death_chronicler = {
 			}
 		}
 		modifier = {
-			pop_lifestyle_trade_mult = 0.025
+			pop_lifestyle_trade_value_mult = 0.025
 		}
 	}
 	triggered_planet_modifier = {
@@ -5048,6 +5161,7 @@ knight = {
 		OR = {
 			is_enslaved = no
 			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_flower_of_evil }
 		}
 		ethic_battle_thrall_job_check_trigger = yes
 	}

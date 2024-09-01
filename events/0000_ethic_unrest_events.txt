@@ -1,6 +1,70 @@
 namespace = unrest
 @unrest_event_cooldown = 360
 
+planet_event = {
+	id = unrest.50
+	is_triggered_only = yes
+	hide_window = yes
+
+	pre_triggers = {
+		has_owner = yes
+		has_ground_combat = no
+	}
+
+	trigger = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		planet_stability < @stabilitylevel2
+		num_pops >= 10
+		has_orbital_bombardment = no
+		exists = owner
+		owner = {
+			is_country_type = default
+			NOT = {
+				any_situation = {
+					is_situation_type = situation_planetary_revolt
+				}
+			}
+		}
+		owner = {
+			NOT = { has_valid_civic = civic_atomic_society }
+		}
+		NOR = {
+			has_planet_flag = 3_year_owner_change_flag
+			has_planet_flag = recent_revolt_attempt
+		}
+		is_doomsday_planet = no
+		exists = controller
+		controller = { is_same_value = root.owner }
+		OR = {
+			owner = { is_gestalt = yes }
+			any_owned_species = { species_has_happiness_with_owner = root.owner }
+		}
+		NOT = {
+			owner = {
+				has_active_event = { unrest.55 }
+			}
+		}
+		check_variable_arithmetic = { #will the revolt actually tick up?
+			which = value:potential_revolt_situation_monthly_progress_estimation
+			value > 0
+		}
+	}
+
+	immediate = {
+		set_timed_planet_flag = {
+			flag = unrest_timer
+			days = 360
+		}
+		if = { #Getting an impossible to prevent revolt due to culture shock is a bit harsh. (Planet can start with no jobs, for instance)
+			limit = { has_culture_shock = yes }
+			planet_event = { id = unrest.54 days = 1880 random = 180 } #at least 8 years after owner change (including the 3 years via 3_year_owner_change_flag)
+		}
+		else = {
+			planet_event = { id = unrest.54 days = 300 random = 59 } #definitely within the next year
+		}
+	}
+}
+
 situation_event = {
 	id = unrest.100
 	hide_window = yes
