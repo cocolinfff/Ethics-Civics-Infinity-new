@@ -1,0 +1,170 @@
+tr_psionics_adopt = {
+	possible = {
+		if = {
+			limit = {
+				OR = {
+					has_origin = origin_shroudwalker_apprentice
+					has_country_flag = ratling_country
+				}
+			}
+			has_technology = tech_psionic_theory
+		}
+		else = {
+			has_ascension_perk = ap_mind_over_matter
+			has_technology = tech_psionic_theory
+		}
+	}
+	unlocks_agenda = agenda_psionic_supremacy
+	modifier = {
+		custom_tooltip = tr_psionics_adopt_tooltip
+	}
+	on_enabled = {
+		hidden_effect = {
+			country_event = { id = utopia.2600 }
+		}
+	}
+	# Grants the Latent Psionic trait
+
+	tradition_swap = {
+		name = tr_psionics_adopt_shroudwalker
+		inherit_name = yes
+		inherit_icon = yes
+		trigger = {
+			has_origin = origin_shroudwalker_apprentice
+		}
+		modifier = {
+			custom_tooltip = tr_psionics_adopt_shroudwalker_tooltip
+		}
+		on_enabled = {
+			add_research_option = tech_telepathy
+			hidden_effect = {
+				country_event = { id = utopia.2600 }
+			}
+		}
+		weight = {
+			factor = 1
+		}
+	}
+}
+
+tr_psionics_finish = {
+	on_enabled = {
+		hidden_effect = {
+			if = {
+				limit = {
+					has_country_flag = has_shroud_patron
+					NOT = {
+						has_country_flag = covenant_end_of_the_cycle
+					}
+				}
+				country_event = { id = utopia.2658 days = 360 }
+				set_country_flag = confirmation_incoming
+			}
+			if = {
+				limit = {
+					any_planet_within_border = {
+						has_planet_flag = fotd_seperatist_planet@root
+						owner = {
+							has_country_flag = fotd_seperatist_country@root
+						}
+					}
+				}
+				country_event = { id = origin.6110 days = 5 random = 2 }
+			}
+			if = {
+				limit = {
+					OR = {
+						has_origin = origin_legendary_leader_dictatorial
+						AND = {
+							has_country_flag = paragon_origin_reformists_gone
+							has_origin = origin_legendary_leader_imperial
+						}
+					}
+					NOT = { has_country_flag = luminary_ascension_path }
+					exists = ruler
+					ruler = { has_leader_flag = paragon_origin_legendary_leader }
+				}
+				country_event = {
+					id = paragon.5201 days = 3600 random = 7200
+				}
+			}
+			every_owned_leader = {
+				limit = { is_ruler = yes }
+				add_trait = leader_trait_chosen
+			}
+			if = {
+				limit = {
+					NOR = {
+						has_origin = origin_legendary_leader_dictatorial
+						AND = {
+							has_country_flag = paragon_origin_reformists_gone
+							has_origin = origin_legendary_leader_imperial
+						}
+					}
+				}
+				country_event = { id = utopia.3400 }
+			}
+		}
+	}
+	modifier = {
+		edicts_upkeep_mult = -0.1
+		shroud_delve_cooldown = -0.2
+		ascension_perks_add = 1
+	}
+}
+
+tr_psionics_psi_corps = {
+	custom_tooltip = tr_psionics_psi_corps_desc
+	# Unlocks the Psi-Corps building
+}
+
+tr_psionics_mind_readers = {
+	modifier = {
+		custom_tooltip = tr_psionics_mind_readers_tooltip
+		add_base_country_intel = 10
+	}
+}
+
+tr_psionics_psionic_assimilation = {
+	possible = {
+		has_tradition = tr_psionics_psi_corps
+		has_tradition = tr_psionics_mind_readers
+	}
+	custom_tooltip = tr_psionics_psionic_assimilation_desc
+	on_enabled = {
+		hidden_effect = {
+			country_event = { id = utopia.2650 }
+			country_event = {
+				id = enclave.7000
+				days = 360
+				random = 720
+			}
+		}
+	}
+	# Primary species gains the Psionic trait.
+	# Unlocks Psionic Assimilation.
+}
+
+tr_psionics_breach_shroud = {
+	possible = {
+		has_tradition = tr_psionics_psionic_assimilation
+	}
+	on_enabled = {
+		hidden_effect = {
+			country_event = { id = utopia.2655 }
+		}
+	}
+	# Unlocks Special Project to Breach the Shroud
+	# Increases Telepaths psionic output to 10% per job (20% per Psi-Corps)
+	custom_tooltip = tr_psionics_breach_shroud_desc
+}
+
+tr_psionics_shrouded_encryption = {
+	possible = {
+		has_tradition = tr_psionics_psionic_assimilation
+	}
+	modifier = {
+		intel_decryption_add = 2
+		intel_encryption_add = 2
+	}
+}
