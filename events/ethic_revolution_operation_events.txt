@@ -224,8 +224,18 @@ country_event = {
 
 	option = {
 		name = revolution_op.4.b
-		event_target:branch_planet = {
-			planet_event = { id = unrest.55 days = 360 random = 1080 }
+		hidden_effect = {
+			custom_tooltip = revolution_op.4.b_tt
+			event_target:branch_planet = {
+				planet_event = { id = unrest.55 days = 360 random = 1080 }
+			}
+			solar_system = {
+				spawn_random_storm = {
+					type = revolution_storm
+					immediate = yes
+					cosmic_storm_start_position = this.solar_system
+				}
+			}
 		}
 		from.spynetwork = {
 			add_spy_network_level_on_success_effect = { VALUE = -10 }
@@ -387,6 +397,7 @@ espionage_operation_event = {
 
 	option = {
 		name = revolution_op.10.a
+		custom_tooltip = revolution_op.10.a_tt
 		hidden_effect = {
 			event_target:revolution_empire = {
 				declare_war = {
@@ -397,51 +408,19 @@ espionage_operation_event = {
 			}
 			event_target:revolution_target_empire = {
 				revolution_operation_merge = yes
-				country_event = { id = revolution_op.11 days = 1 }
-			}
-		}
-	}
-
-	option = {
-		name = revolution_op.10.b
-		hidden_effect = {
-			event_target:revolution_target_empire = {
-				revolution_operation_civil_war = yes
-				country_event = { id = revolution_op.12 days = 1 }
-			}
-			event_target:revolution_empire = {
-				add_intel = {
-					amount = 99
-					who = event_target:revolution_target_empire
-				}
-				add_opinion_modifier = { modifier = opinion_we_liberated who = event_target:revolution_target_empire }
-				add_monthly_resource_mult = {
-					resource = alloys
-					value = 12
-					min = 150
-					max = 50000
-				}
-				create_fleet = {
-					set_take_point = yes
-					effect = {
-						set_owner = event_target:revolution_empire
-						while = {
-							count = 15
-							create_ship = {
-								name = random
-								random_existing_design = corvette
-							}
+				every_owned_planet = {
+					limit = {
+						NOT = { has_deposit = d_guerrilla_warzone }
+					}
+					solar_system = {
+						spawn_random_storm = {
+							type = revolution_storm
+							immediate = yes
+							cosmic_storm_start_position = this.solar_system
 						}
-						while = {
-							count = 10
-							create_ship = {
-								name = random
-								random_existing_design = destroyer
-							}
-						}
-						set_location = event_target:revolution_empire.capital_scope
 					}
 				}
+				country_event = { id = revolution_op.11 days = 1 }
 			}
 		}
 	}
