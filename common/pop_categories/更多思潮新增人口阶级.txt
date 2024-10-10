@@ -1447,3 +1447,338 @@ postpartum_workers = {
 		}
 	}
 }
+
+striker = {
+	rank = 1
+	clothes_texture_index = 2
+
+	change_job_threshold = 1.15
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		planet_pop_assembly_organic_add = @plantoid_budding_rate
+	}
+
+	#灵飞高级政体
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_direct_democratic
+				has_country_flag = psionics_country
+			}
+		}
+		planetary_ascension_effect_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_corporate
+				has_country_flag = psionics_country
+			}
+		}
+		trade_value_mult = 0.02
+	}
+
+	#先验乌托邦
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+			has_citizenship_type = {
+				country = root.owner
+				type = citizenship_limited
+			}
+		}
+		planet_crime_add = 2
+	}
+
+	#错误复制者
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
+		}
+		planet_pop_assembly_add = 0.5
+	}
+
+	should_apply_unemployment_penalties = {
+		always = no
+	}
+	unemployment_resources = {
+		category = unemployment_resources
+
+		# Unemployment Benefits Crime event
+		upkeep = {
+			trigger = {
+				planet = {
+					has_modifier = unemployment_benefits
+				}
+			}
+			consumer_goods = 2
+		}
+	}
+
+	# This is called whenever a Pop is created, moved to a different planet, or gets a new owner
+	assign_to_pop = {
+		exists = owner
+		owner = {
+			is_gestalt = no
+		}
+	}
+	weight = {
+		weight = 1
+	}
+
+	pop_modifier = {
+		pop_housing_usage_base = 1
+		pop_amenities_usage_base = 1
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = no
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		mult = value:budding_multiplier
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers"
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
+
+	resources = {
+		category = unemployment_resources
+
+		# 社会主义理念
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_transcendental_utopia
+						has_valid_civic = civic_shared_burden
+						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_worker_coop
+						has_valid_civic = civic_world_cooperative
+					}
+				}
+			}
+			unity = 0.25
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_transcendental_utopia
+						is_community_country = yes
+					}
+				}
+			}
+			unity = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_transcendental_utopia
+						has_valid_civic = civic_shared_burden
+						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_worker_coop
+						has_valid_civic = civic_world_cooperative
+					}
+				}
+			}
+			consumer_goods = 0.15
+		}
+
+		# 民族与阶级
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_nazbol
+				}
+				OR = {
+					has_citizenship_type = { country = from type = citizenship_full }
+					has_citizenship_type = { country = from type = citizenship_full_machine }
+				}
+			}
+			unity = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_nazbol
+				}
+			}
+			consumer_goods = 0.5
+		}
+		#单一主义
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_fanatic_xenophobe
+				}
+			}
+			unity = 0.15
+		}
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_xenophobe
+				}
+			}
+			unity = 0.1
+		}
+		#崇外主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.25
+		}
+		#人口凝聚力消耗
+		upkeep = {
+			trigger = {
+				exists = owner
+				exists = planet
+				NOR = {
+					owner = {
+						OR = {
+							has_valid_civic = civic_atomic_society
+							any_neighbor_country = { has_valid_civic = civic_atomic_society }
+							any_rival_country = { has_valid_civic = civic_atomic_society }
+						}
+					}
+					planet = {
+						exists = branch_office_owner
+						branch_office_owner = { has_valid_civic = civic_atomic_society }
+					}
+				}
+			}
+			unity = 0.5
+		}
+		#监工凝聚力消耗
+		upkeep = {
+			unity = 0.25
+			mult = planet.value:count_job|JOB|slave_overseer|
+		}
+
+		# Regular food, mineral and energy upkeep.
+		inline_script = pop_categories/regular_upkeep
+
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/trait_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/ethic_trait_upkeep"
+
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
+
+		# Exotic Metabolism Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_exotic_metabolism
+			}
+			exotic_gases = @exotic_metabolism
+		}
+
+		# Resource Production
+
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_inorganic_breath
+			}
+			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_drake_scaled
+					has_trait = trait_drake_scaled_yg
+				}
+			}
+			alloys = @drake_scaled_trait_resource_production
+		}
+
+		upkeep = {
+			trigger = {
+				is_organic_machine = yes
+			}
+			food = 1
+			mult = modifier:planet_pops_food_upkeep_add
+		}
+		upkeep = {
+			trigger = {
+				has_trait = trait_lithoid_yg
+			}
+			minerals = 1
+			mult = modifier:planet_pops_minerals_upkeep_add
+		}
+	}
+}
