@@ -5,6 +5,15 @@ building_automated_farm = {
 	can_build = yes
 	can_demolish = yes
 	category = resource
+	potential = {
+		exists = owner
+		owner = {
+			NOR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
 	allow = {
 		OR = {
 			owner = { has_active_tradition = tr_future_industry }
@@ -12,6 +21,18 @@ building_automated_farm = {
 			num_free_districts = { type = district_farming value > 0 }
 			num_free_districts = { type = district_pdhab_food value > 0 }
 		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	convert_to = {
+		building_automated_farm_adv
 	}
 
 	triggered_planet_modifier = {
@@ -54,15 +75,8 @@ building_automated_farm = {
 			food = 10
 		}
 
-		# 无科技
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -73,13 +87,77 @@ building_automated_farm = {
 			food = 20
 		}
 		upkeep = {
+			energy = 5
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_artificial_industry }
+		}
+		planet_farmers_food_produces_add = 1
+	}
+	upgrades = {
+		building_nourishment_complex
+	}
+
+	triggered_desc = {
+		text = mod_planet_buildings_food_produces_and_cost_desc
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 0.1
+			num_unemployed > 0
+		}
+	}
+	prerequisites = {
+		"tech_auto_buildings"
+	}
+}
+#自动化农场（活建筑）
+building_automated_farm_adv = {
+	icon = building_automated_farm
+	base_buildtime = @b2_time
+	can_build = yes
+	can_demolish = yes
+	category = resource
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	allow = {
+		OR = {
+			owner = { has_active_tradition = tr_future_industry }
+			owner = { has_valid_civic = civic_artificial_industry }
+			num_free_districts = { type = district_farming value > 0 }
+			num_free_districts = { type = district_pdhab_food value > 0 }
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_active_tradition = tr_future_industry }
+			}
+		}
+		district_farming_max = -1
+		district_pdhab_food_max = -1
+	}
+	resources = {
+		category = planet_automated_farm_adv
+		cost = {
+			minerals = @b2_minerals
+		}
+		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
+				planet = { has_building = building_food_processing_facility }
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -87,33 +165,34 @@ building_automated_farm = {
 					}
 				}
 			}
-			energy = 5
+			food = 5
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_food_processing_center }
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+			}
+			food = 10
 		}
 
-		# 有科技
 		produces = {
 			trigger = {
 				owner = {
 					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
 					}
 				}
 			}
 			food = 20
-			multiplier = modifier:planet_jobs_produces_mult
 		}
 		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-			}
 			energy = 5
-			multiplier = modifier:planet_jobs_upkeep_mult
 		}
 	}
 	triggered_planet_modifier = {
@@ -156,6 +235,15 @@ building_automated_mine = {
 	can_build = yes
 	can_demolish = yes
 	category = resource
+	potential = {
+		exists = owner
+		owner = {
+			NOR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
 	allow = {
 		OR = {
 			owner = { has_active_tradition = tr_future_industry }
@@ -172,6 +260,18 @@ building_automated_mine = {
 			uses_district_set = pdplanethab
 			uses_district_set = planetary_station
 		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	convert_to = {
+		building_automated_mine_adv
 	}
 
 	triggered_planet_modifier = {
@@ -214,15 +314,8 @@ building_automated_mine = {
 			minerals = 10
 		}
 
-		# 无科技
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -233,47 +326,179 @@ building_automated_mine = {
 			minerals = 20
 		}
 		upkeep = {
-			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				owner = {
-					OR = {
-						NOT = { has_valid_civic = civic_artificial_industry }
-						has_active_tradition = tr_future_industry_artificial_industry
-					}
-				}
-			}
 			energy = 5
 		}
 
-		# 有科技
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						is_fallen_empire = yes
+						has_technology = tech_mine_rare_crystals
+					}
+				}
+			}
+			rare_crystals = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						is_fallen_empire = yes
+						has_technology = tech_mine_exotic_gases
+					}
+				}
+			}
+			exotic_gases = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						is_fallen_empire = yes
+						has_technology = tech_mine_volatile_motes
+					}
+				}
+			}
+			volatile_motes = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						is_fallen_empire = yes
+						has_technology = tech_mine_zro
+					}
+				}
+			}
+			sr_zro = 1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_artificial_industry }
+		}
+		planet_miners_minerals_produces_add = 1
+	}
+
+	upgrades = {
+		building_fe_mine_1
+	}
+
+	triggered_desc = {
+		text = mod_planet_buildings_minerals_produces_and_cost_desc
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 0.1
+			num_unemployed > 0
+		}
+	}
+	prerequisites = {
+		"tech_auto_buildings"
+	}
+}
+#自动化矿井（活建筑）
+building_automated_mine_adv = {
+	icon = building_automated_mine_adv
+	desc = {
+		trigger = { uses_district_set = standard }
+		text = building_automated_mine_desc
+	}
+	desc = {
+		trigger = { NOT = { uses_district_set = standard } }
+		text = district_hab_mining_desc
+	}
+	base_buildtime = @b2_time
+	can_build = yes
+	can_demolish = yes
+	category = resource
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	allow = {
+		OR = {
+			owner = { has_active_tradition = tr_future_industry }
+			owner = { has_valid_civic = civic_artificial_industry }
+			num_free_districts = { type = district_mining value > 0 }
+			num_free_districts = { type = district_hab_mining value > 0 }
+			num_free_districts = { type = district_pdhab_mining value > 0 }
+		}
+		OR = {
+			owner = { has_active_tradition = tr_future_industry }
+			owner = { has_valid_civic = civic_artificial_industry }
+			uses_district_set = standard
+			uses_district_set = habitat
+			uses_district_set = pdplanethab
+			uses_district_set = planetary_station
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_active_tradition = tr_future_industry }
+			}
+		}
+		district_mining_max = -1
+		district_pdhab_mining_max = -1
+	}
+	resources = {
+		category = planet_automated_mine_adv
+		cost = {
+			minerals = @b2_minerals
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_mineral_purification_plant }
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+			}
+			minerals = 5
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_mineral_purification_hub }
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+			}
+			minerals = 10
+		}
+
 		produces = {
 			trigger = {
 				owner = {
 					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
 					}
 				}
 			}
 			minerals = 20
-			multiplier = modifier:planet_jobs_produces_mult
 		}
 		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-			}
 			energy = 5
-			multiplier = modifier:planet_jobs_upkeep_mult
 		}
 
 		produces = {
@@ -358,6 +583,15 @@ building_automated_power_plant = {
 	can_build = yes
 	can_demolish = yes
 	category = resource
+	potential = {
+		exists = owner
+		owner = {
+			NOR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
 	allow = {
 		OR = {
 			owner = { has_active_tradition = tr_future_industry }
@@ -366,6 +600,18 @@ building_automated_power_plant = {
 			num_free_districts = { type = district_hab_energy value > 0 }
 			num_free_districts = { type = district_pdhab_energy value > 0 }
 		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	convert_to = {
+		building_automated_power_plant_adv
 	}
 
 	triggered_planet_modifier = {
@@ -408,15 +654,8 @@ building_automated_power_plant = {
 			energy = 10
 		}
 
-		# 无科技
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -427,13 +666,79 @@ building_automated_power_plant = {
 			energy = 20
 		}
 		upkeep = {
+			minerals = 5
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_artificial_industry }
+		}
+		planet_technician_energy_produces_add = 1
+	}
+
+	upgrades = {
+		building_class_3_singularity
+	}
+
+	triggered_desc = {
+		text = mod_planet_buildings_energy_produces_and_cost_desc
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 0.1
+			num_unemployed > 0
+		}
+	}
+	prerequisites = {
+		"tech_auto_buildings"
+	}
+}
+#自动化发电厂（活建筑）
+building_automated_power_plant_adv = {
+	icon = building_automated_power_plant
+	base_buildtime = @b2_time
+	can_build = yes
+	can_demolish = yes
+	category = resource
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	allow = {
+		OR = {
+			owner = { has_active_tradition = tr_future_industry }
+			owner = { has_valid_civic = civic_artificial_industry }
+			num_free_districts = { type = district_generator value > 0 }
+			num_free_districts = { type = district_hab_energy value > 0 }
+			num_free_districts = { type = district_pdhab_energy value > 0 }
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_active_tradition = tr_future_industry }
+			}
+		}
+		district_generator_max = -1
+		district_pdhab_energy_max = -1
+	}
+	resources = {
+		category = planet_automated_power_plant_adv
+		cost = {
+			minerals = @b2_minerals
+		}
+		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
+				planet = { has_building = building_energy_grid }
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -441,33 +746,34 @@ building_automated_power_plant = {
 					}
 				}
 			}
-			minerals = 5
+			energy = 5
+		}
+		produces = {
+			trigger = {
+				planet = { has_building = building_energy_nexus }
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+			}
+			energy = 10
 		}
 
-		# 有科技
 		produces = {
 			trigger = {
 				owner = {
 					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
 					}
 				}
 			}
 			energy = 20
-			multiplier = modifier:planet_jobs_produces_mult
 		}
 		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-			}
 			minerals = 5
-			multiplier = modifier:planet_jobs_upkeep_mult
 		}
 	}
 	triggered_planet_modifier = {
@@ -503,6 +809,154 @@ building_automated_smelter = {
 	can_build = yes
 	can_demolish = yes
 	category = manufacturing
+	potential = {
+		exists = owner
+		owner = {
+			NOR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	allow = {
+		OR = {
+			owner = { has_active_tradition = tr_future_industry }
+			owner = { has_valid_civic = civic_artificial_industry }
+			num_free_districts = { type = district_industrial value > 0 }
+			num_free_districts = { type = district_hab_industrial value > 0 }
+			num_free_districts = { type = district_pdhab_industrial value > 0 }
+			num_free_districts = { type = district_arcology_arms_industry value > 0 }
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	convert_to = {
+		building_automated_smelter_adv
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				NOT = { uses_district_set = ring_world }
+			}
+			NAND = {
+				exists = owner
+				owner = {
+					has_active_tradition = tr_future_industry
+				}
+			}
+		}
+		planet_max_districts_add = -1
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+		}
+
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+			}
+			alloys = 10
+		}
+		upkeep = {
+			trigger = {
+				owner = { is_catalytic_empire = no }
+			}
+			minerals = 5
+			energy = 5
+		}
+		upkeep = {
+			trigger = {
+				owner = { is_catalytic_empire = yes }
+			}
+			food = 6
+			energy = 5
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+				has_building = building_foundry_2
+			}
+			alloys = 6
+		}
+		upkeep = {
+			trigger = {
+				has_building = building_foundry_2
+				owner = { is_catalytic_empire = no }
+			}
+			minerals = 3
+			energy = 3
+		}
+		upkeep = {
+			trigger = {
+				has_building = building_foundry_2
+				owner = { is_catalytic_empire = yes }
+			}
+			food  = 4
+			energy = 3
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_artificial_industry }
+		}
+		planet_metallurgists_alloys_produces_add = 1
+	}
+
+	upgrades = {
+		building_micro_forge
+	}
+
+	triggered_desc = {
+		text = mod_planet_buildings_alloys_produces_and_cost_desc
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 0.1
+			num_unemployed > 0
+		}
+	}
+	prerequisites = {
+		"tech_auto_buildings"
+	}
+}
+#自动化冶炼厂（活建筑）
+building_automated_smelter_adv = {
+	icon = building_automated_smelter
+	base_buildtime = @b2_time
+	can_build = yes
+	can_demolish = yes
+	category = manufacturing
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
 	allow = {
 		OR = {
 			owner = { has_active_tradition = tr_future_industry }
@@ -529,19 +983,13 @@ building_automated_smelter = {
 		planet_max_districts_add = -1
 	}
 	resources = {
-		category = planet_buildings
+		category = planet_automated_smelter_adv
 		cost = {
 			minerals = @b2_minerals
 		}
-		# 无科技
+
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -553,12 +1001,6 @@ building_automated_smelter = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = { is_catalytic_empire = no }
 			}
 			minerals = 5
@@ -566,12 +1008,6 @@ building_automated_smelter = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = { is_catalytic_empire = yes }
 			}
 			food = 6
@@ -579,12 +1015,6 @@ building_automated_smelter = {
 		}
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -597,12 +1027,6 @@ building_automated_smelter = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				has_building = building_foundry_2
 				owner = { is_catalytic_empire = no }
 			}
@@ -611,145 +1035,11 @@ building_automated_smelter = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				has_building = building_foundry_2
 				owner = { is_catalytic_empire = yes }
 			}
 			food  = 4
 			energy = 3
-		}
-
-		# 有科技
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-			}
-			alloys = 10
-			multiplier = modifier:planet_jobs_produces_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				owner = { is_catalytic_empire = no }
-			}
-			minerals = 5
-			energy = 5
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				owner = { is_catalytic_empire = yes }
-			}
-			food = 6
-			energy = 5
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_foundry_2
-			}
-			alloys = 4
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_foundry_2
-				owner = { is_catalytic_empire = no }
-			}
-			minerals = 3
-			energy = 3
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_foundry_2
-				owner = { is_catalytic_empire = yes }
-			}
-			food  = 4
-			energy = 3
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_foundry_3
-			}
-			alloys = 4
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_foundry_3
-				owner = { is_catalytic_empire = no }
-			}
-			minerals = 3
-			energy = 3
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_foundry_3
-				owner = { is_catalytic_empire = yes }
-			}
-			food  = 4
-			energy = 3
-			multiplier = modifier:planet_jobs_upkeep_mult
 		}
 	}
 	triggered_planet_modifier = {
@@ -785,6 +1075,156 @@ building_automated_workshop = {
 	can_build = yes
 	can_demolish = yes
 	category = manufacturing
+	potential = {
+		exists = owner
+		owner = {
+			NOR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	allow = {
+		OR = {
+			owner = { has_active_tradition = tr_future_industry }
+			owner = { has_valid_civic = civic_artificial_industry }
+			num_free_districts = { type = district_industrial value > 0 }
+			num_free_districts = { type = district_hab_industrial value > 0 }
+			num_free_districts = { type = district_pdhab_industrial value > 0 }
+			num_free_districts = { type = district_arcology_civilian_industry value > 0 }
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
+	convert_to = {
+		building_automated_workshop_adv
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				NOT = { uses_district_set = ring_world }
+			}
+			NAND = {
+				exists = owner
+				owner = {
+					has_active_tradition = tr_future_industry
+				}
+			}
+		}
+		planet_max_districts_add = -1
+	}
+	resources = {
+		category = planet_buildings
+		cost = {
+			minerals = @b2_minerals
+		}
+
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+			}
+			consumer_goods = 15
+		}
+		upkeep = {
+			trigger = {
+			}
+			minerals = 5
+			energy = 5
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+				has_building = building_factory_2
+			}
+			consumer_goods = 5
+		}
+		upkeep = {
+			trigger = {
+				has_building = building_factory_2
+			}
+			minerals = 3
+			energy = 3
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						NOT = { has_valid_civic = civic_artificial_industry }
+						has_active_tradition = tr_future_industry_artificial_industry
+					}
+				}
+				has_building = building_factory_3
+			}
+			consumer_goods = 10
+		}
+		upkeep = {
+			trigger = {
+				has_building = building_factory_3
+			}
+			minerals = 6
+			energy = 6
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_artificial_industry }
+		}
+		planet_artisans_consumer_goods_produces_add = 1
+	}
+
+	upgrades = {
+		building_affluence_emporium
+	}
+
+	triggered_desc = {
+		text = mod_planet_buildings_consumer_goods_produces_and_cost_desc
+	}
+	ai_weight = {
+		base = 5
+		modifier = {
+			factor = 0.1
+			num_unemployed > 0
+		}
+	}
+	prerequisites = {
+		"tech_auto_buildings"
+	}
+}
+#自动化工坊（活建筑）
+building_automated_workshop_adv = {
+	icon = building_automated_workshop
+	base_buildtime = @b2_time
+	can_build = yes
+	can_demolish = yes
+	category = manufacturing
+	potential = {
+		exists = owner
+		owner = {
+			OR = {
+				has_technology = tech_tech_adv_auto_buildings_2
+				has_technology = tech_tech_adv_auto_buildings_2_gestalt
+			}
+		}
+	}
 	allow = {
 		OR = {
 			owner = { has_active_tradition = tr_future_industry }
@@ -811,20 +1251,13 @@ building_automated_workshop = {
 		planet_max_districts_add = -1
 	}
 	resources = {
-		category = planet_buildings
+		category = planet_automated_workshop_adv
 		cost = {
 			minerals = @b2_minerals
 		}
 
-		# 无科技
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -836,24 +1269,12 @@ building_automated_workshop = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 			}
 			minerals = 5
 			energy = 5
 		}
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -866,12 +1287,6 @@ building_automated_workshop = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				has_building = building_factory_2
 			}
 			minerals = 3
@@ -879,12 +1294,6 @@ building_automated_workshop = {
 		}
 		produces = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				owner = {
 					OR = {
 						NOT = { has_valid_civic = civic_artificial_industry }
@@ -897,97 +1306,10 @@ building_automated_workshop = {
 		}
 		upkeep = {
 			trigger = {
-				owner = {
-					NOR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
 				has_building = building_factory_3
 			}
 			minerals = 6
 			energy = 6
-		}
-
-		# 有科技
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-			}
-			consumer_goods = 15
-			multiplier = modifier:planet_jobs_produces_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-			}
-			minerals = 5
-			energy = 5
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_factory_2
-			}
-			consumer_goods = 5
-			multiplier = modifier:planet_jobs_produces_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_factory_2
-			}
-			minerals = 3
-			energy = 3
-			multiplier = modifier:planet_jobs_upkeep_mult
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_factory_3
-			}
-			consumer_goods = 10
-			multiplier = modifier:planet_jobs_produces_mult
-		}
-		upkeep = {
-			trigger = {
-				owner = {
-					OR = {
-						has_technology = tech_tech_adv_auto_buildings_2
-						has_technology = tech_tech_adv_auto_buildings_2_gestalt
-					}
-				}
-				has_building = building_factory_3
-			}
-			minerals = 6
-			energy = 6
-			multiplier = modifier:planet_jobs_upkeep_mult
 		}
 	}
 	triggered_planet_modifier = {
