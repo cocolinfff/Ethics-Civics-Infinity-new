@@ -1789,17 +1789,22 @@ revolution_storm_remove = {
 		}
 	}
 
-	revolution_storm_apply_aftermath_modifier = yes
-	shroud_storm_apply_deposits = yes
+	if = {
+		limit = {
+			has_owner = yes
+			owner = { is_galactic_revolution_target = yes }
+		}
+		owner = {
+			revolution_storm_apply_aftermath_modifier = yes
+			revolution_storm_apply_deposits = yes
+		}
+	}
 }
 
 revolution_storm_apply_aftermath_modifier = {
 	every_system_planet = {
 		limit = {
-			OR = {
-				is_colonizable = yes
-				is_colony = yes
-			}
+			is_colony = yes
 		}
 
 		storm_apply_aftermath_modifier = {
@@ -1884,6 +1889,32 @@ revolution_storm_apply_aftermath_modifier = {
 						scope = prev
 					}
 					custom_toast_content_text = revolution_storm_aftermath_custom_desc
+				}
+			}
+		}
+	}
+}
+
+revolution_storm_apply_deposits = {
+	every_system_planet = {
+		limit = {
+			OR = {
+				is_colonizable = yes
+				is_colony = yes
+			}
+			is_artificial = no
+			NOT = { has_deposit = d_monument_to_the_victims }
+		}
+
+		random_list = {
+			80 = {}
+			20 = {
+				add_deposit = d_monument_to_the_victims
+				if = {
+					limit = {
+						has_owner = yes
+					}
+					planet_event = { id = cstorms.80000 }
 				}
 			}
 		}
