@@ -811,113 +811,6 @@ decision_promote_research_models = {
 	}
 }
 
-#收购私人企业
-decision_acquisition_of_private_enterprises = {
-	enactment_time = 30
-	owned_planets_only = yes
-
-	resources = {
-		category = decisions
-		cost = {
-			energy = 2000
-			unity = 100
-		}
-	}
-
-	potential = {
-		owner = {
-			OR = {
-				AND = {
-					is_market_type = yes
-					has_policy_flag = mixed_ownership
-				}
-				has_policy_flag = private_ownership
-				has_policy_flag = family_ownership
-			}
-		}
-		num_buildings = {
-			type = building_private_commercial_megaplex
-			value >= 1
-		}
-	}
-
-	allow = {
-		num_buildings = {
-			type = building_private_commercial_megaplex
-			value >= 1
-		}
-	}
-
-	effect = {
-		remove_building = building_private_commercial_megaplex
-		if = {
-			limit = { owner = { is_ai = no } }
-			add_building = building_commercial_zone
-		}
-		if = {
-			limit = { owner = { is_ai = yes } }
-			random_list = {
-				4 = { add_building = building_commercial_zone }
-				3 = {
-					add_building = building_media_worker_1
-					modifier = {
-						factor = 0
-						OR = {
-							has_modifier = slave_colony
-							has_planet_flag = planetary_station
-						}
-						owner = { is_spiritualist = yes }
-					}
-				}
-				3 = {
-					add_building = building_temple
-					modifier = {
-						factor = 0
-						owner = { is_spiritualist = no }
-						has_modifier = slave_colony
-					}
-				}
-				3 = {
-					add_building = building_research_lab_1
-					modifier = {
-						factor = 0
-						OR = {
-							has_modifier = resort_colony
-							has_modifier = slave_colony
-							has_modifier = crucible_colony
-							has_planet_flag = planetary_station
-							AND = {
-								exists = owner
-								owner = { has_origin =  origin_wizarding_world }
-							}
-						}
-					}
-				}
-				3 = {
-					add_building = building_mage_tower_1
-					modifier = {
-						factor = 0
-						OR = {
-							has_modifier = resort_colony
-							has_modifier = slave_colony
-							has_modifier = crucible_colony
-							has_planet_flag = planetary_station
-							AND = {
-								exists = owner
-								owner = { NOT = { has_origin =  origin_wizarding_world } }
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	ai_weight = {
-		weight = 0
-	}
-}
-
 #关停非法企业
 decision_close_illegal_office = {
 	enactment_time = 30
@@ -926,106 +819,56 @@ decision_close_illegal_office = {
 	resources = {
 		category = decisions
 		cost = {
-			trigger = {
-				has_branch_office = yes
-				branch_office_owner = {
-					NOR = {
-						has_communications = root.owner
-						is_in_federation_with = root.owner
-						is_same_value = root.owner
-						is_country_type = rebel_allience
-					}
-				}
-			}
 			energy = 5000
 			influence = 50
-		}
-		cost = {
-			trigger = {
-				OR = {
-					has_branch_office = no
-					branch_office_owner = {
-						has_communications = root.owner
-						is_in_federation_with = root.owner
-						is_same_value = root.owner
-					}
-				}
-			}
-			energy = 500
 		}
 	}
 
 	potential = {
-		owner = {
-			OR = {
-				is_economic_stance_planned = yes
-				AND = {
-					is_market_type = no
-					has_policy_flag = mixed_ownership
-				}
-				has_policy_flag = labor_ownership
-				has_policy_flag = national_ownership
-			}
+		owner = { is_economic_stance_planned = yes }
+		has_branch_office = yes
+		branch_office_owner = {
+			NOT = { is_same_value = root.owner }
 		}
-		OR = {
-			has_deposit = d_ethic_private_commercial_t2N
-			AND = {
-				has_branch_office = yes
-				branch_office_owner = {
-					NOR = {
-						has_communications = root.owner
-						is_in_federation_with = root.owner
-						is_same_value = root.owner
-						is_country_type = rebel_allience
-					}
-				}
-			}
+		branch_office_owner = {
+			NOT = { is_in_federation_with = root.owner }
+		}
+		branch_office_owner = {
+			NOT = { has_communications = root.owner }
+		}
+		branch_office_owner = {
+			NOT = { is_country_type = rebel_allience }
 		}
 	}
 
 	allow = {
-		OR = {
-			num_buildings = {
-				type = building_private_commercial_megaplex
-				value >= 1
-			}
-			AND = {
-				has_branch_office = yes
-				branch_office_owner = {
-					NOR = {
-						has_communications = root.owner
-						is_in_federation_with = root.owner
-						is_same_value = root.owner
-						is_country_type = rebel_allience
-					}
-				}
-			}
+		has_branch_office = yes
+		branch_office_owner = {
+			NOT = { is_same_value = root.owner }
 		}
 	}
 
 	effect = {
 		hidden_effect = {
 			custom_tooltip = decision_close_illegal_office_effects
-			if = {
-				limit = {
-					has_branch_office = yes
-					branch_office_owner = {
-						NOR = {
-							has_communications = root.owner
-							is_in_federation_with = root.owner
-							is_same_value = root.owner
-							is_country_type = rebel_allience
-						}
-					}
-				}
-				planet_event = { id = ethic_close_illegal_office.1 }
-			}
-			remove_building_private_commercial_megaplex = yes
+			planet_event = { id = ethic_close_illegal_office.1 }
 		}
 	}
 
 	ai_weight = {
-		weight = 0
+		weight = 1
+		modifier = {
+			add = 99999
+			branch_office_owner = {
+				NOT = {
+					is_same_value = root.owner
+				}
+				OR = {
+					has_civic = civic_criminal_heritage
+					has_civic = civic_underworld_society
+				}
+			}
+		}
 	}
 }
 
