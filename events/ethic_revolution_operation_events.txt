@@ -183,22 +183,13 @@ espionage_operation_event = {
 
 	is_triggered_only = yes
 
-	immediate = {
-		owner = {
-			country_event = { id = revolution_op.4 }
-		}
-		target = {
-			country_event = { id = revolution_op.5 days = 1 }
-		}
-	}
-
 	option = {
 		name = ACKNOWLEDGED
 	}
 }
 
 #成功（义军）
-country_event = {
+espionage_operation_event = {
 	id = revolution_op.4
 	title = revolution_op.4.name
 	desc =  revolution_op.4.desc
@@ -213,6 +204,9 @@ country_event = {
 		event_target:branch_planet = {
 			add_deposit = d_guerrilla_warzone
 		}
+		target = {
+			country_event = { id = revolution_op.5 days = 1 }
+		}
 	}
 
 	option = {
@@ -222,23 +216,36 @@ country_event = {
 		}
 	}
 
-	option = {
-		name = revolution_op.4.b
-		hidden_effect = {
-			custom_tooltip = revolution_op.4.b_tt
-			event_target:branch_planet = {
-				planet_event = { id = unrest.55 days = 360 random = 1080 }
-				solar_system = {
-					spawn_random_storm = {
-						type = revolution_storm
-						immediate = yes
-						cosmic_storm_start_position = event_target:branch_planet.solar_system
-					}
-				}
+	after = {
+		destroy_espionage_operation = from
+	}
+}
+espionage_operation_event = {
+	id = revolution_op.04
+	title = revolution_op.4.name
+	desc =  revolution_op.4.desc
+
+	picture = GFX_evt_mercenary_enclave
+	location = event_target:branch_planet
+	show_sound = event_space_battle
+
+	is_triggered_only = yes
+
+	immediate = {
+		target = {
+			every_owned_planet = {
+				add_deposit = d_guerrilla_warzone
 			}
 		}
+		target = {
+			country_event = { id = revolution_op.5 days = 1 }
+		}
+	}
+
+	option = {
+		name = revolution_op.4.a
 		from.spynetwork = {
-			add_spy_network_level_on_success_effect = { VALUE = -10 }
+			add_spy_network_level_on_success_effect = { VALUE = -50 }
 		}
 	}
 
@@ -399,13 +406,6 @@ espionage_operation_event = {
 		name = revolution_op.10.a
 		custom_tooltip = revolution_op.10.a_tt
 		hidden_effect = {
-			event_target:revolution_empire = {
-				declare_war = {
-					target = event_target:revolution_target_empire
-					attacker_war_goal = wg_galactic_revolution
-					name = casus_belli_cb_galactic_revolution
-				}
-			}
 			event_target:revolution_target_empire = {
 				revolution_operation_civil_war = yes
 				every_owned_planet = {
@@ -422,6 +422,39 @@ espionage_operation_event = {
 				}
 				country_event = { id = revolution_op.12 days = 1 }
 			}
+		}
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -25 }
+		}
+	}
+
+	option = {
+		name = revolution_op.10.b
+		trigger = {
+			event_target:revolution_target_empire = {
+				NOR = {
+					is_in_federation_with = event_target:revolution_empire
+					has_subject = event_target:revolution_empire
+					has_overlord = event_target:revolution_empire
+				}
+			}
+		}
+		custom_tooltip = revolution_op.10.b_tt
+		hidden_effect = {
+			event_target:revolution_empire = {
+				declare_war = {
+					target = event_target:revolution_target_empire
+					attacker_war_goal = wg_galactic_revolution
+					name = casus_belli_cb_galactic_revolution
+				}
+			}
+			event_target:revolution_target_empire = {
+				revolution_operation_declare_war = yes
+				country_event = { id = revolution_op.11 days = 1 }
+			}
+		}
+		from.spynetwork = {
+			add_spy_network_level_on_success_effect = { VALUE = -50 }
 		}
 	}
 }
