@@ -142,6 +142,40 @@ espionage_operation_event = {
 	after = {
 	}
 }
+espionage_operation_event = {
+	id = revolution_op.01
+	title = revolution_op.1.name
+	desc = revolution_op.1.desc
+	picture = GFX_evt_board_meeting
+	show_sound = event_spymaster
+	espionage_operation = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		target = {
+			every_owned_planet = { save_event_target_as = branch_planet }
+		}
+		target = {
+			save_event_target_as = op_target
+		}
+		set_espionage_operation_progress_locked = yes
+	}
+
+	option = {
+		name = observation.1205.a
+	}
+	option = {
+		name = revolution_op.1.d.name
+		destroy_espionage_operation = this
+		ai_chance = {
+			factor = 0
+		}
+	}
+
+	after = {
+	}
+}
 
 #建立义军据点-阶段2
 espionage_operation_event = {
@@ -171,10 +205,53 @@ espionage_operation_event = {
 	after = {
 	}
 }
+espionage_operation_event = {
+	id = revolution_op.20
+	title = revolution_op.2.name
+	desc =  revolution_op.2.1.desc
+	picture = GFX_evt_spy_network
+	show_sound = event_default
+	espionage_operation = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		target = {
+			save_event_target_as = op_target
+			every_owned_planet = {
+				if = {
+					limit = { NOT = { has_deposit = d_guerrilla_warzone } }
+					save_event_target_as = branch_planet
+				}
+			}
+		}
+	}
+
+	option = {
+		name = ACKNOWLEDGED
+	}
+
+	after = {
+	}
+}
 
 #建立义军据点-阶段3
 espionage_operation_event = {
 	id = revolution_op.3
+	title = revolution_op.3.name
+	desc = revolution_op.3.desc
+	picture = GFX_evt_acquire_asset
+	show_sound = event_spymaster
+	espionage_operation = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = ACKNOWLEDGED
+	}
+}
+espionage_operation_event = {
+	id = revolution_op.21
 	title = revolution_op.3.name
 	desc = revolution_op.3.desc
 	picture = GFX_evt_acquire_asset
@@ -221,24 +298,50 @@ espionage_operation_event = {
 	}
 }
 espionage_operation_event = {
-	id = revolution_op.04
+	id = revolution_op.22
 	title = revolution_op.4.name
 	desc =  revolution_op.4.desc
 
 	picture = GFX_evt_mercenary_enclave
-	location = event_target:branch_planet
 	show_sound = event_space_battle
 
 	is_triggered_only = yes
 
 	immediate = {
 		target = {
-			every_owned_planet = {
+			save_event_target_as = op_target
+		}
+		event_target:branch_planet = {
+			if = {
+				limit = {
+					is_colony = yes
+					NOT = { has_deposit = d_guerrilla_warzone }
+				}
 				add_deposit = d_guerrilla_warzone
+			}
+		}
+		event_target:op_target = {
+			every_owned_planet = {
+				if = {
+					limit = {
+						is_colony = yes
+						NOT = { has_deposit = d_guerrilla_warzone }
+					}
+					add_deposit = d_guerrilla_warzone
+				}
 			}
 		}
 		target = {
 			country_event = { id = revolution_op.5 days = 1 }
+			every_owned_planet = {
+				if = {
+					limit = {
+						is_colony = yes
+						NOT = { has_deposit = d_guerrilla_warzone }
+					}
+					add_deposit = d_guerrilla_warzone
+				}
+			}
 		}
 	}
 
@@ -422,6 +525,9 @@ espionage_operation_event = {
 				}
 				country_event = { id = revolution_op.12 days = 1 }
 			}
+			last_created_country = {
+				add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:revolution_empire }
+			}
 		}
 		from.spynetwork = {
 			add_spy_network_level_on_success_effect = { VALUE = -25 }
@@ -451,6 +557,13 @@ espionage_operation_event = {
 			event_target:revolution_target_empire = {
 				revolution_operation_declare_war = yes
 				country_event = { id = revolution_op.11 days = 1 }
+			}
+			last_created_country = {
+				set_subject_of = {
+					who = event_target:revolution_empire
+					preset = preset_protectorate
+				}
+				add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:revolution_empire }
 			}
 		}
 		from.spynetwork = {
