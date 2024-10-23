@@ -510,6 +510,14 @@ espionage_operation_event = {
 		custom_tooltip = revolution_op.10.a_tt
 		hidden_effect = {
 			event_target:revolution_target_empire = {
+				every_owned_planet = {
+					if = {
+						limit = {
+							is_capital = yes
+						}
+						set_planet_flag = revolution_target_empire_capital
+					}
+				}
 				revolution_operation_civil_war = yes
 				every_owned_planet = {
 					limit = {
@@ -527,47 +535,26 @@ espionage_operation_event = {
 			}
 			last_created_country = {
 				add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:revolution_empire }
+				add_trust = {
+					who = event_target:revolution_empire
+					amount = 50
+				}
+				every_owned_planet = {
+					if = {
+						limit = {
+							has_planet_flag = revolution_target_empire_capital
+						}
+						set_capital = yes
+						remove_planet_flag = revolution_target_empire_capital
+					}
+				}
+			}
+			event_target:revolution_empire = {
+				add_trust = { amount = 50 who = last_created_country }
 			}
 		}
 		from.spynetwork = {
 			add_spy_network_level_on_success_effect = { VALUE = -25 }
-		}
-	}
-
-	option = {
-		name = revolution_op.10.b
-		trigger = {
-			event_target:revolution_target_empire = {
-				NOR = {
-					is_in_federation_with = event_target:revolution_empire
-					has_subject = event_target:revolution_empire
-					has_overlord = event_target:revolution_empire
-				}
-			}
-		}
-		custom_tooltip = revolution_op.10.b_tt
-		hidden_effect = {
-			event_target:revolution_empire = {
-				declare_war = {
-					target = event_target:revolution_target_empire
-					attacker_war_goal = wg_galactic_revolution
-					name = casus_belli_cb_galactic_revolution
-				}
-			}
-			event_target:revolution_target_empire = {
-				revolution_operation_declare_war = yes
-				country_event = { id = revolution_op.11 days = 1 }
-			}
-			last_created_country = {
-				set_subject_of = {
-					who = event_target:revolution_empire
-					preset = preset_protectorate
-				}
-				add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:revolution_empire }
-			}
-		}
-		from.spynetwork = {
-			add_spy_network_level_on_success_effect = { VALUE = -50 }
 		}
 	}
 }
