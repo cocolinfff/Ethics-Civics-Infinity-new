@@ -4710,3 +4710,419 @@ scion_fallen_2 = {
         }
     }
 }
+
+# 帝国
+galaxy_empire_system = {
+    asteroid_belt = {
+        type = rocky_asteroid_belt
+        radius = 150
+    }
+    usage = misc_system_init
+    usage_odds = {
+        base = 2000000
+        modifier = {
+            factor = 0
+            is_fe_cluster = yes
+        }
+        modifier = {
+            factor = 0
+            has_star_flag = empire_cluster
+        }
+    }
+    max_instances = 1
+    flags = { galaxy_empire ring_world_built }
+    scaled_spawn_chance = 2	# scales by galaxy size (1000 stars = 10x base)
+
+    name = "NAME_Sanctuary"
+
+    class = "sc_g"
+
+    planet = {
+        class = star
+        orbit_distance = 0
+    }
+
+    change_orbit = 45
+
+    planet = {
+        class = "pc_ringworld_habitable"
+        name = "Imperial_Core"
+        orbit_angle = 30
+        orbit_distance = 0
+        deposit_blockers = none
+        modifiers = none
+
+        init_effect = {
+            prevent_anomaly = yes
+            create_species = {
+                name = random
+                class = MSI_SLAVER
+                namelist = HUMAN3
+                portrait = random
+                traits = {
+                    trait = "trait_pc_nuked_preference"
+                    trait = "trait_charismatic"
+                    trait = "trait_intelligent"
+                    trait = "trait_decadent"
+                    trait = "trait_wasteful"
+                }
+                allow_negative_traits = yes
+            }
+            last_created_species = { save_global_event_target_as = origin_EMPIRE_species }
+
+            create_country = {
+                name = "UO_EMPIRE"
+                adjective = "UO_EMPIRE"
+                species = last_created_species
+                type = default
+                flag = {
+                    icon = {
+                        category = "corporate"
+                        file = "corporate_07.dds"
+                    }
+                    background= {
+                        category = "backgrounds"
+                        file = "pattern_01.dds"
+                    }
+                    colors={
+                        "mist_blue"
+                        "bright_purple"
+                        "null"
+                        "null"
+                    }
+                }
+                origin = "origin_galactic_empire"
+                ethos = {
+                    ethic = ethic_fanatic_authoritarian
+                    ethic = ethic_xenophobe
+                    ethic = ethic_fanatic_capitalism
+                }
+                civics = {
+                    civic = civic_triple_the_profit
+                    civic = civic_happiness_factory
+                    civic = civic_parental_authoritarianism_define
+                }
+                authority = auth_imperial
+                effect = {
+                    save_global_event_target_as = EMPIRE_COUNTRY
+                    set_country_flag = MSI
+                    add_basic_resources_effect = { VALUE = 3000 }
+                    add_manufactured_resources_effect = { VALUE = 1500 }
+                    add_advanced_resources_effect = { VALUE = 1000 }
+                    give_physics_tech_tier_1_effect = yes
+                    give_physics_tech_tier_2_effect = yes
+                    give_physics_tech_tier_3_effect = yes
+                    give_physics_tech_tier_4_effect = yes
+                    give_physics_tech_tier_5_effect = yes
+                    give_engineering_tech_tier_1_effect = yes
+                    give_engineering_tech_tier_2_effect = yes
+                    give_engineering_tech_tier_3_effect = yes
+                    give_engineering_tech_tier_4_effect = yes
+                    give_engineering_tech_tier_5_effect = yes
+                    give_society_tech_tier_1_effect = yes
+                    give_society_tech_tier_2_effect = yes
+                    give_society_tech_tier_3_effect = yes
+                    give_society_tech_tier_4_effect = yes
+                    give_society_tech_tier_5_effect = yes
+
+                    # 创建机器人
+                    create_built_robot_species = yes
+                    last_created_species = { save_global_event_target_as = origin_EMPIRE_species_robot }
+
+                    every_country = {
+                        limit = {
+                            has_slave_origin = yes
+                            NOT = { has_country_flag = slavers_assigned }
+                        }
+                        set_country_flag = slavers_assigned
+                        event_target:EMPIRE_COUNTRY = {
+                            set_country_flag = slavers_of_@prev
+                            set_country_flag = special_intro_for@prev
+                        }
+                        species = { set_species_flag = victims_of_@event_target:EMPIRE_COUNTRY }
+                        set_country_flag = victims_of_@event_target:EMPIRE_COUNTRY
+                    }
+                }
+            }
+            create_colony = {
+                owner = event_target:EMPIRE_COUNTRY
+            }
+            event_target:EMPIRE_COUNTRY = {
+                create_starting_leaders = yes
+                set_country_flag = origin_galactic_empire
+                country_event = { id = game_start.9 }
+                owner_species = { set_species_homeworld = prevprev }
+                log = "MSI CREATED"
+            }
+            while = {
+                count = 500
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species
+                }
+            }
+            add_building = building_imperial_capital
+            add_building = building_master_archive
+            add_building = building_affluence_center
+            add_building = building_nano_forge
+            add_building = building_holo_theatres
+            add_building = building_holo_theatres
+            add_building = building_automated_mine_adv
+            add_building = building_automated_mine_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_city }
+            }
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_industrial }
+            }
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+        }
+    }
+    planet = {
+        class = "pc_ringworld_tech"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_seam"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_habitable"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+        deposit_blockers = none
+        modifiers = none
+
+        init_effect = {
+            prevent_anomaly = yes
+            while = {
+                count = 50
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species
+                }
+            }
+            while = {
+                count = 100
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species_robot
+                }
+            }
+            add_building = building_imperial_capital
+            add_building = building_affluence_center
+            add_building = building_affluence_center
+            add_building = building_nano_forge
+            add_building = building_holo_theatres
+            add_building = building_holo_theatres
+            add_building = building_automated_mine_adv
+            add_building = building_automated_mine_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_city }
+            }
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_commercial }
+            }
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+        }
+    }
+    planet = {
+        class = "pc_ringworld_tech"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_seam"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_habitable"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+        deposit_blockers = none
+        modifiers = none
+
+        init_effect = {
+            prevent_anomaly = yes
+            while = {
+                count = 50
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species
+                }
+            }
+            while = {
+                count = 100
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species_robot
+                }
+            }
+            add_building = building_imperial_capital
+            add_building = building_affluence_center
+            add_building = building_affluence_center
+            add_building = building_nano_forge
+            add_building = building_holo_theatres
+            add_building = building_holo_theatres
+            add_building = building_automated_mine_adv
+            add_building = building_automated_mine_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_city }
+            }
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_farming }
+            }
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+        }
+    }
+    planet = {
+        class = "pc_ringworld_tech"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_seam_damaged"
+        name = "pc_ringworld_seam_damaged"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_habitable"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+        deposit_blockers = none
+        modifiers = none
+
+        init_effect = {
+            prevent_anomaly = yes
+            while = {
+                count = 50
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species
+                }
+            }
+            while = {
+                count = 100
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species_robot
+                }
+            }
+            add_building = building_imperial_capital
+            add_building = building_affluence_center
+            add_building = building_affluence_center
+            add_building = building_nano_forge
+            add_building = building_holo_theatres
+            add_building = building_holo_theatres
+            add_building = building_automated_mine_adv
+            add_building = building_automated_mine_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_farm_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_city }
+            }
+            while = {
+                count = 3
+                add_district_and_planet_size_if_needed_effect = { district = district_rw_science }
+            }
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+            add_deposit = d_ethic_space_industry_cluster
+        }
+    }
+    planet = {
+        class = "pc_ringworld_tech"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+    planet = {
+        class = "pc_ringworld_seam"
+        name = "pc_ringworld_habitable"
+        orbit_angle = 30
+        orbit_distance = 0
+    }
+
+    change_orbit = 105
+
+    planet = {
+        count = { min = 1 max = 4 }
+        class = pc_asteroid
+        orbit_distance = 0
+        orbit_angle = { min = 90 max = 270 }
+    }
+
+    change_orbit = 45
+
+    planet = {
+        class = pc_gas_giant
+        orbit_angle = { min = 90 max = 270 }
+        size = 25
+
+        change_orbit = @base_moon_distance
+
+        moon = {
+            count = { min = 1 max = 4 }
+            size = { min = 8 max = 20 }
+            orbit_angle = { min = 90 max = 270 }
+            orbit_distance = 6
+        }
+    }
+
+    change_orbit = 30
+
+    planet = {
+        count = { min = 0 max = 2 }
+        orbit_distance = 20
+        orbit_angle = { min = 90 max = 270 }
+    }
+
+    init_effect = {
+        solar_system = {
+            create_starbase = {
+                size = starbase_starport
+                module = shipyard
+                building = crew_quarters
+                owner = event_target:EMPIRE_COUNTRY
+                effect = {
+                    set_starbase_module = {
+                        slot = 1
+                        module = trading_hub
+                    }
+                }
+            }
+        }
+    }
+}
