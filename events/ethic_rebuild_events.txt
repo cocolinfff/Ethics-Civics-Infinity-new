@@ -1148,6 +1148,28 @@ country_event = {
 # 查看行政容量
 namespace = ethic_admin_cap
 country_event = {
+	id = ethic_admin_cap.0
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		NOT = { has_valid_civic = civic_anarchism }
+		is_community_country = no
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				has_monthly_income = { resource = administrative_capacity_calculation value < 0 }
+				NOT = { has_country_flag = ethic_admin_cap_cooling }
+			}
+			set_timed_country_flag = { flag = ethic_admin_cap_cooling days = 360 }
+			country_event = { id = ethic_admin_cap.1 }
+		}
+	}
+}
+country_event = {
 	id = ethic_admin_cap.1
 	title = "ethic_admin_cap.1.name"
 	desc = "ethic_admin_cap.1.desc"
@@ -1170,6 +1192,12 @@ country_event = {
 	}
 	option = {
 		name = OK
+	}
+	option = {
+		name = ethic_admin_cap.1.a
+		hidden_effect = {
+			set_timed_country_flag = { flag = ethic_admin_cap_cooling days = 3600 }
+		}
 	}
 }
 
@@ -1211,7 +1239,10 @@ country_event = {
 			has_authority = auth_dictatorial
 			has_authority = auth_imperial
 		}
-		NOT = { has_government = gov_communist_society }
+		NOR = {
+			has_government = gov_communist_society
+			has_government = gov_ture_capitalist_society
+		}
 	}
 	immediate = {
 		force_add_civic = civic_debug
