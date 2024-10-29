@@ -3201,3 +3201,52 @@ country_event = {
     }
 }
 
+# 人民军队
+namespace = ethic_martial_brotherhood
+fleet_event = {
+    id = ethic_martial_brotherhood.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        #	|舰队控制者|
+        exists = controller
+        controller = { has_valid_civic = civic_martial_brotherhood }
+        #	|殖民地|
+        from = {
+            is_scope_type = planet
+            is_colony = yes
+            is_under_colonization = no
+            exists = owner
+            owner = { is_same_value = this.controller }
+        }
+    }
+
+    immediate = {
+        from = {
+            add_modifier = { modifier = eci_civic_martial_brotherhood_modifier days = 360 }
+            planet_event = { id = ethic_martial_brotherhood.1 days = 361 }
+        }
+    }
+}
+planet_event = {
+    id = ethic_martial_brotherhood.1
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        exists = owner
+        owner = { has_valid_civic = civic_martial_brotherhood }
+        any_fleet_in_orbit = {
+            exists = controller
+            controller = {
+                has_valid_civic = civic_martial_brotherhood
+                is_same_value = root.owner
+            }
+        }
+    }
+
+    immediate = {
+        add_modifier = { modifier = eci_civic_martial_brotherhood_modifier days = 360 }
+        planet_event = { id = ethic_martial_brotherhood.1 days = 361 }
+    }
+}
+
