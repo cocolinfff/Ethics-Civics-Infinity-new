@@ -3250,3 +3250,68 @@ planet_event = {
     }
 }
 
+# 破车文化
+namespace = ethic_netori_culture
+fleet_event = {
+    id = ethic_netori_culture.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        #	|舰队控制者|
+        exists = controller
+        controller = { has_valid_civic = civic_netori_culture }
+        #	|殖民地|
+        from = {
+            is_scope_type = planet
+            is_colony = yes
+            is_under_colonization = no
+            exists = owner
+            NOT = {
+                owner = { is_same_value = this.controller }
+            }
+        }
+    }
+
+    immediate = {
+        from = {
+            random_list = {
+                6 = {}
+                4 = {
+                    random_pop = {
+                        save_event_target_as = netori_target
+                    }
+                    this.controller = {
+                        save_event_target_as = netori_counrty
+                        random_owned_planet = {
+                            create_pop = {
+                                species = event_target:netori_target
+                            }
+                        }
+                    }
+                    owner = {
+                        add_opinion_modifier = { modifier = opinion_netori who = event_target:netori_counrty }
+                    }
+                }
+            }
+        }
+    }
+}
+
+# 破车文化
+namespace = ethic_warrior_of_love
+event = {
+    id = ethic_warrior_of_love.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        any_country = { has_valid_civic = civic_warrior_of_love }
+    }
+
+    immediate = {
+        every_country = {
+            limit = { NOT = { has_modifier = eci_civic_warrior_of_love_modifier } }
+            add_modifier = { modifier = eci_civic_warrior_of_love_modifier days = -1 }
+        }
+    }
+}
+
