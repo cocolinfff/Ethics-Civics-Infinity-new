@@ -4087,7 +4087,7 @@ eci_bug_home_system = {
         radius = 50
     }
 
-    flags = { empire_home_system bug_system }
+    flags = { empire_home_system EMPIRE_system }
 
     usage = misc_system_init
 
@@ -4147,100 +4147,148 @@ eci_bug_home_system = {
 
         init_effect = {
             prevent_anomaly = yes
-            if = {
-                limit = {
-                    any_country = {
-                        NOT = { has_origin = origin_galaxy_light_liberator }
+            create_species = {
+                name = random
+                class = MSI_SLAVER
+                namelist = HUMAN3
+                portrait = random
+                traits = {
+                    trait = "trait_pc_nuked_preference"
+                    trait = "trait_charismatic"
+                    trait = "trait_intelligent"
+                    trait = "trait_decadent"
+                    trait = "trait_wasteful"
+                }
+                allow_negative_traits = yes
+            }
+            last_created_species = { save_global_event_target_as = origin_EMPIRE_species }
+
+            create_country = {
+                name = "UO_EMPIRE"
+                adjective = "UO_EMPIRE"
+                species = last_created_species
+                type = default
+                flag = {
+                    icon = {
+                        category = "special"
+                        file = "the_empire.dds"
+                    }
+                    background= {
+                        category = "backgrounds"
+                        file = "00_solid.dds"
+                    }
+                    colors={
+                        "grey"
+                        "grey"
+                        "null"
+                        "null"
                     }
                 }
-                create_species = {
-                    name = random
-                    class = random_non_machine
-                    portrait = random
-                    traits = random
-                    homeworld = this
+                origin = "origin_galactic_empire"
+                ethos = {
+                    ethic = ethic_fanatic_authoritarian
+                    ethic = ethic_xenophobe
+                    ethic = ethic_fanatic_capitalism
                 }
-                create_country = {
-                    name = "NAME_ECI_BUG"
-                    authority = auth_dictatorial
-                    species = last_created_species
-                    civics = {
-                        civic = "civic_technocracy"
-                        civic = "civic_zhaowen_dao"
-                        civic = "civic_moth_chasing_flames"
+                civics = {
+                    civic = civic_triple_the_profit
+                    civic = civic_happiness_factory
+                    civic = civic_reeducated_labor
+                    civic = civic_police_state
+                }
+                authority = auth_imperial
+                effect = {
+                    save_global_event_target_as = EMPIRE_COUNTRY
+                    save_global_event_target_as = system_owner
+                    set_country_flag = GALAXY_EMPIRE
+
+                    # Resources
+                    add_basic_resources_effect = { VALUE = 35000 }
+                    add_manufactured_resources_effect = { VALUE = 5000 }
+                    add_advanced_resources_effect = { VALUE = 2500 }
+
+                    give_physics_tech_tier_1_effect = yes
+                    give_physics_tech_tier_2_effect = yes
+                    give_physics_tech_tier_3_effect = yes
+                    give_engineering_tech_tier_1_effect = yes
+                    give_engineering_tech_tier_2_effect = yes
+                    give_engineering_tech_tier_3_effect = yes
+                    give_society_tech_tier_1_effect = yes
+                    give_society_tech_tier_2_effect = yes
+                    give_society_tech_tier_3_effect = yes
+
+                    if = {
+                        limit = {
+                            any_country = { has_origin = origin_galaxy_light_liberator }
+                        }
+                        give_physics_tech_tier_4_effect = yes
+                        give_physics_tech_tier_5_effect = yes
+                        give_engineering_tech_tier_4_effect = yes
+                        give_engineering_tech_tier_5_effect = yes
+                        give_society_tech_tier_4_effect = yes
+                        give_society_tech_tier_5_effect = yes
                     }
-                    ethos = {
-                        ethic="ethic_authoritarian"
-                        ethic="ethic_fanatic_materialist"
-                        ethic="ethic_xenophobe"
-                        ethic="ethic_capitalism"
+
+                    # 创建机器人
+                    create_built_robot_species = yes
+                    last_created_species = { save_global_event_target_as = origin_EMPIRE_species_robot }
+
+                    # Fleets
+                    create_fleet = {
+                        effect = {
+                            set_owner = event_target:EMPIRE_COUNTRY
+                            create_ship = {
+                                name = random
+                                random_existing_design = constructor
+                            }
+                            set_location = event_target:EMPIRE_COUNTRY.capital_star
+                        }
                     }
-                    origin = "origin_true_yuht"
 
-                    effect = {
-                        set_country_flag = eci_bug_gongjuren_flag
-                        save_global_event_target_as = eci_bug_gongjuren
-                        save_global_event_target_as = system_owner
-                        give_technology = {
-                            message = no
-                            tech = tech_jump_drive_1
-                        }
-                        add_modifier = { modifier = eci_bug_gongjuren_start days = 10800 }
-
-                        # Fleets
-                        create_fleet = {
-                            effect = {
-                                set_owner = event_target:eci_bug_gongjuren
-                                create_ship = {
-                                    name = random
-                                    random_existing_design = constructor
-                                }
-                                set_location = event_target:eci_bug_gongjuren.capital_star
+                    create_fleet = {
+                        effect = {
+                            set_owner = event_target:EMPIRE_COUNTRY
+                            create_ship = {
+                                name = random
+                                random_existing_design = science
                             }
+                            set_location = event_target:EMPIRE_COUNTRY.capital_star
+                            save_event_target_as = new_science_ship_target
                         }
+                    }
+                    create_leader = {
+                        name = random
+                        species = event_target:EMPIRE_COUNTRY.species
+                        class = scientist
+                        skill = 1
+                    }
+                    event_target:new_science_ship_target = {
+                        assign_leader = last_created_leader
+                    }
 
-                        create_fleet = {
-                            effect = {
-                                set_owner = event_target:eci_bug_gongjuren
-                                create_ship = {
-                                    name = random
-                                    random_existing_design = science
-                                }
-                                set_location = event_target:eci_bug_gongjuren.capital_star
-                                save_event_target_as = new_science_ship_target
+                    create_fleet = {
+                        effect = {
+                            set_owner = event_target:EMPIRE_COUNTRY
+                            create_ship = {
+                                name = random
+                                random_existing_design = science
                             }
+                            set_location = event_target:EMPIRE_COUNTRY.capital_star
+                            save_event_target_as = new_science_ship_target2
                         }
-                        create_leader = {
-                            name = random
-                            species = event_target:eci_bug_gongjuren.species
-                            class = scientist
-                            skill = 1
-                        }
-                        event_target:new_science_ship_target = {
-                            assign_leader = last_created_leader
-                        }
+                    }
+                    create_leader = {
+                        name = random
+                        species = event_target:EMPIRE_COUNTRY.species
+                        class = scientist
+                        skill = 1
+                    }
+                    event_target:new_science_ship_target2 = {
+                        assign_leader = last_created_leader
+                    }
 
-                        create_fleet = {
-                            effect = {
-                                set_owner = event_target:eci_bug_gongjuren
-                                create_ship = {
-                                    name = random
-                                    random_existing_design = science
-                                }
-                                set_location = event_target:eci_bug_gongjuren.capital_star
-                                save_event_target_as = new_science_ship_target2
-                            }
-                        }
-                        create_leader = {
-                            name = random
-                            species = event_target:eci_bug_gongjuren.species
-                            class = scientist
-                            skill = 1
-                        }
-                        event_target:new_science_ship_target2 = {
-                            assign_leader = last_created_leader
-                        }
-
+                    while = {
+                        count = 5
                         create_fleet = {
                             name = "NAME_Payback_Warship_GOD"
                             effect = {
@@ -4263,239 +4311,48 @@ eci_bug_home_system = {
                                 uses_naval_capacity = no
                             }
                         }
-
-                        # Resources
-                        add_basic_resources_effect = { VALUE = 35000 }
-                        add_manufactured_resources_effect = { VALUE = 5000 }
-                        add_advanced_resources_effect = { VALUE = 250 }
-
-                        # Policies
-                        set_policy = {
-                            policy = research_ethics
-                            option = research_without_bottom_line
-                            cooldown = yes
-                        }
                     }
                 }
-                set_owner = event_target:eci_bug_gongjuren
-                set_controller = event_target:eci_bug_gongjuren
-                set_capital = yes
-
-                while = {
-                    count = 90
-                    create_pop = {
-                        species = owner_main_species
-                        ethos = random
-                    }
-                }
-                planet_event = { id = ethic_true_yuht_start.0 }
-
-                add_deposit = d_ethic_space_industry_cluster
             }
-
-            if = {
-                limit = { any_country = { has_origin = origin_galaxy_light_liberator } }
-                create_species = {
-                    name = random
-                    class = MSI_SLAVER
-                    namelist = HUMAN3
-                    portrait = random
-                    traits = {
-                        trait = "trait_pc_nuked_preference"
-                        trait = "trait_charismatic"
-                        trait = "trait_intelligent"
-                        trait = "trait_decadent"
-                        trait = "trait_wasteful"
-                    }
-                    allow_negative_traits = yes
-                }
-                last_created_species = { save_global_event_target_as = origin_EMPIRE_species }
-
-                create_country = {
-                    name = "UO_EMPIRE"
-                    adjective = "UO_EMPIRE"
-                    species = last_created_species
-                    type = default
-                    flag = {
-                        icon = {
-                            category = "special"
-                            file = "the_empire.dds"
-                        }
-                        background= {
-                            category = "backgrounds"
-                            file = "00_solid.dds"
-                        }
-                        colors={
-                            "grey"
-                            "grey"
-                            "null"
-                            "null"
-                        }
-                    }
-                    origin = "origin_galactic_empire"
-                    ethos = {
-                        ethic = ethic_fanatic_authoritarian
-                        ethic = ethic_xenophobe
-                        ethic = ethic_fanatic_capitalism
-                    }
-                    civics = {
-                        civic = civic_triple_the_profit
-                        civic = civic_happiness_factory
-                        civic = civic_reeducated_labor
-                        civic = civic_police_state
-                    }
-                    authority = auth_imperial
-                    effect = {
-                        save_global_event_target_as = EMPIRE_COUNTRY
-                        save_global_event_target_as = system_owner
-                        set_country_flag = GALAXY_EMPIRE
-
-                        # Resources
-                        add_basic_resources_effect = { VALUE = 35000 }
-                        add_manufactured_resources_effect = { VALUE = 5000 }
-                        add_advanced_resources_effect = { VALUE = 2500 }
-
-                        give_physics_tech_tier_1_effect = yes
-                        give_physics_tech_tier_2_effect = yes
-                        give_physics_tech_tier_3_effect = yes
-                        give_physics_tech_tier_4_effect = yes
-                        give_physics_tech_tier_5_effect = yes
-                        give_engineering_tech_tier_1_effect = yes
-                        give_engineering_tech_tier_2_effect = yes
-                        give_engineering_tech_tier_3_effect = yes
-                        give_engineering_tech_tier_4_effect = yes
-                        give_engineering_tech_tier_5_effect = yes
-                        give_society_tech_tier_1_effect = yes
-                        give_society_tech_tier_2_effect = yes
-                        give_society_tech_tier_3_effect = yes
-                        give_society_tech_tier_4_effect = yes
-                        give_society_tech_tier_5_effect = yes
-
-                        # 创建机器人
-                        create_built_robot_species = yes
-                        last_created_species = { save_global_event_target_as = origin_EMPIRE_species_robot }
-
-                        # Fleets
-                        create_fleet = {
-                            effect = {
-                                set_owner = event_target:eci_bug_gongjuren
-                                create_ship = {
-                                    name = random
-                                    random_existing_design = constructor
-                                }
-                                set_location = event_target:eci_bug_gongjuren.capital_star
-                            }
-                        }
-
-                        create_fleet = {
-                            effect = {
-                                set_owner = event_target:eci_bug_gongjuren
-                                create_ship = {
-                                    name = random
-                                    random_existing_design = science
-                                }
-                                set_location = event_target:eci_bug_gongjuren.capital_star
-                                save_event_target_as = new_science_ship_target
-                            }
-                        }
-                        create_leader = {
-                            name = random
-                            species = event_target:eci_bug_gongjuren.species
-                            class = scientist
-                            skill = 1
-                        }
-                        event_target:new_science_ship_target = {
-                            assign_leader = last_created_leader
-                        }
-
-                        create_fleet = {
-                            effect = {
-                                set_owner = event_target:eci_bug_gongjuren
-                                create_ship = {
-                                    name = random
-                                    random_existing_design = science
-                                }
-                                set_location = event_target:eci_bug_gongjuren.capital_star
-                                save_event_target_as = new_science_ship_target2
-                            }
-                        }
-                        create_leader = {
-                            name = random
-                            species = event_target:eci_bug_gongjuren.species
-                            class = scientist
-                            skill = 1
-                        }
-                        event_target:new_science_ship_target2 = {
-                            assign_leader = last_created_leader
-                        }
-
-                        while = {
-                            count = 5
-                            create_fleet = {
-                                name = "NAME_Payback_Warship_GOD"
-                                effect = {
-                                    set_owner = root
-                                    while = {
-                                        count = 5
-                                        create_ship = {
-                                            name = "NAME_Payback_Warship_GOD"
-                                            design = "NAME_Payback_Warship_MSI"
-                                            graphical_culture = "slaver_01"
-                                            upgradable = no
-                                        }
-                                    }
-                                    set_location = root.capital_scope.star
-                                }
-                                settings = {
-                                    spawn_debris = no
-                                    can_upgrade = no
-                                    can_change_composition = no
-                                    uses_naval_capacity = no
-                                }
-                            }
-                        }
-                    }
-                }
-                create_colony = {
-                    owner = event_target:EMPIRE_COUNTRY
-                }
-                event_target:EMPIRE_COUNTRY = {
-                    create_starting_leaders = yes
-                    set_country_flag = origin_galactic_empire
-                    country_event = { id = game_start.9 }
-                    owner_species = { set_species_homeworld = prevprev }
-                    log = "MSI CREATED"
-                }
-                while = {
-                    count = 200
-                    create_pop = {
-                        species = event_target:origin_EMPIRE_species
-                    }
-                }
-                set_owner = event_target:origin_EMPIRE_species
-                set_controller = event_target:origin_EMPIRE_species
-                set_capital = yes
-                planet_event = { id = ethic_true_yuht_start.0 }
-                remove_all_buildings = yes
-                add_building = building_imperial_capital
-                add_building = building_institute
-                add_building = building_autocurating_vault
-                add_building = building_hall_judgment
-                add_building = building_hall_judgment
-                add_building = building_information_tower
-                add_building = building_automated_power_plant_adv
-                add_building = building_automated_power_plant_adv
-                add_building = building_automated_power_plant_adv
-                add_building = building_automated_power_plant_adv
-                add_building = building_automated_power_plant_adv
-                add_building = building_automated_power_plant_adv
-
-                add_deposit = d_ethic_space_industry_cluster
-
-                set_colony_type = col_capital_administrators
-
-                set_name = Imperial_Core
+            create_colony = {
+                owner = event_target:EMPIRE_COUNTRY
             }
+            event_target:EMPIRE_COUNTRY = {
+                create_starting_leaders = yes
+                set_country_flag = origin_galactic_empire
+                country_event = { id = game_start.9 }
+                owner_species = { set_species_homeworld = prevprev }
+                log = "MSI CREATED"
+            }
+            while = {
+                count = 200
+                create_pop = {
+                    species = event_target:origin_EMPIRE_species
+                }
+            }
+            set_owner = event_target:origin_EMPIRE_species
+            set_controller = event_target:origin_EMPIRE_species
+            set_capital = yes
+            planet_event = { id = ethic_true_yuht_start.0 }
+            remove_all_buildings = yes
+            add_building = building_imperial_capital
+            add_building = building_institute
+            add_building = building_autocurating_vault
+            add_building = building_hall_judgment
+            add_building = building_hall_judgment
+            add_building = building_information_tower
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+            add_building = building_automated_power_plant_adv
+
+            add_deposit = d_ethic_space_industry_cluster
+
+            set_colony_type = col_capital_administrators
+
+            set_name = Imperial_Core
 
             if = {
                 limit = { owner = { is_machine_empire = yes } }
@@ -4689,7 +4546,7 @@ eci_bug_home_system = {
                 size = starbase_starfortress
                 module = shipyard
                 building = crew_quarters
-                owner = event_target:system_owner
+                owner = event_target:EMPIRE_COUNTRY
                 effect = {
                     set_starbase_module = {
                         slot = 1
