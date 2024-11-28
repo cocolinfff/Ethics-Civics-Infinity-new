@@ -3145,6 +3145,7 @@ civic_constitutional_monarchy = {
 	possible = {
 		authority = {
 			OR = {
+				text = civic_tooltip_dem_oli_dic
 				value = auth_democratic
 				value = auth_oligarchic
 				value = auth_dictatorial
@@ -4062,16 +4063,10 @@ civic_echo = {
 	}
 }
 
-#父父子子
-civic_parental_authoritarianism = {
-	description = civic_tooltip_parental_authoritarianism_effects
+#物竞人择
+civic_competitive_selection = {
+	description = civic_tooltip_competitive_selection_effects
 	potential = {
-		species_archetype = {
-			OR = {
-				value = MACHINE
-				value = ROBOT
-			}
-		}
 		ethics = {
 			NOT = {
 				value = ethic_gestalt_consciousness
@@ -4093,34 +4088,45 @@ civic_parental_authoritarianism = {
 	possible = {
 		ethics = {
 			OR = {
-				text = civic_tooltip_authoritarian
-				value = ethic_authoritarian
-				value = ethic_fanatic_authoritarian
+				text = civic_tooltip_capitalism
+				value = ethic_capitalism
+				value = ethic_fanatic_capitalism
 			}
 		}
 	}
-	random_weight = { base = @civic_default_random_weight }
+	random_weight = { base = 1 }
 	ai_weight = {
-		base = @ai_civic_default_base_weight
+		base = 1
+		modifier = {
+			factor = 10
+			has_ethic = ethic_fanatic_capitalism
+			has_ethic = ethic_fanatic_authoritarian
+		}
 	}
-	hide_modifiers = yes
 	modifier = {
-		planet_stability_add = 200
-		planet_amenities_mult = -2
-		pop_happiness = -2
+		country_leader_pool_size = -3
+		pop_growth_speed_reduction = 0.8
+		founder_species_growth_mult = 1
+		leader_initial_skill = 10
 	}
 }
-civic_parental_authoritarianism_define = {
-	icon = "gfx/interface/icons/governments/civics/civic_parental_authoritarianism.dds"
+
+#民主胎儿
+civic_fetal_democracy = {
 	modification = {
 		add = {
-			has_civic = civic_parental_authoritarianism
+			has_tradition = tr_future_finish
+			owner_main_species = { has_trait = trait_memory_inheritance }
 		}
 		remove = {
-			always = no
+			has_tradition = tr_future_finish
+			owner_main_species = {
+				NOT = { has_trait = trait_memory_inheritance }
+			}
 		}
 	}
-	alternate_civic_version = civic_parental_authoritarianism
+	alternate_civic_version = civic_fetal_corporate
+	description = "civic_tooltip_fetal_democracy_effects"
 	potential = {
 		species_archetype = {
 			NOR = {
@@ -4146,23 +4152,34 @@ civic_parental_authoritarianism_define = {
 			}
 		}
 	}
+	traits = {
+		trait = trait_memory_inheritance
+	}
 	possible = {
-		ethics = {
+		authority = {
 			OR = {
-				text = civic_tooltip_authoritarian
-				value = ethic_authoritarian
-				value = ethic_fanatic_authoritarian
+				value = auth_direct_democratic
+				value = auth_democratic
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_parental_authoritarianism
+				value = civic_moth_chasing_flames
+				value = civic_competitive_selection
+			}
+		}
+		species_archetype = {
+			NOR = {
+				text = TRIGGER_NOT_HAS_SPECIES_ARCHETYPE_ROBOT
+				value = MACHINE
+				value = ROBOT
 			}
 		}
 	}
 	random_weight = { base = @civic_default_random_weight }
 	ai_weight = {
 		base = @ai_civic_default_base_weight
-	}
-	modifier = {
-		planet_stability_add = 50
-		planet_amenities_mult = -0.5
-		pop_happiness = -0.5
 	}
 }
 
