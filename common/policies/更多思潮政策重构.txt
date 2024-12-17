@@ -3243,11 +3243,6 @@ economic_stance = {
 		}
 		valid = {
 			OR = {
-				has_ethic = ethic_fanatic_capitalism
-				has_ethic = ethic_capitalism
-				has_valid_civic = civic_characteristic_socialism_pioneer
-			}
-			OR = {
 				is_authoritarian = yes
 				is_militarist = yes
 				is_xenophobe = yes
@@ -3259,6 +3254,14 @@ economic_stance = {
 			}
 		}
 		AI_weight = {
+			modifier = {
+				factor = 0
+				has_ethic = ethic_fanatic_socialism
+			}
+			modifier = {
+				factor = 0.1
+				has_ethic = ethic_socialism
+			}
 			modifier = {
 				factor = 10
 				has_ethic = ethic_fanatic_authoritarian
@@ -3672,6 +3675,66 @@ trade_policy = {
 		AI_weight = {
 			modifier = {
 				factor = 5
+			}
+		}
+	}
+	# 重商主义
+	option = {
+		name = "trade_policy_mercantilism"
+		potential = {
+			OR = {
+				has_federation = no
+				AND = {
+					has_federation = yes
+					federation = {
+						NOT = {
+							has_federation_perk = trade_federation_passive
+						}
+					}
+				}
+			}
+			OR = {
+				AND = {
+					OR = {
+						NOT = { has_ethic = ethic_gestalt_consciousness }
+						has_civic = civic_machine_financial_investment
+						has_civic = civic_hive_capital_creates_gods
+					}
+				}
+				AND = {
+					has_active_tradition = tr_future_economy_ges
+					has_technology = tech_ascension_theory
+				}
+			}
+		}
+		policy_flags = {
+			trade_policy_mercantilism
+		}
+		valid = {
+			is_market_type = yes
+		}
+		modifier = {
+			job_rentier_per_ruler = 0.2
+			job_rentier_per_specialist = 0.1
+		}
+		on_enabled = {
+			hidden_effect = {
+				every_owned_planet = {
+					if = {
+						limit = {
+							OR = {
+								is_capital = yes
+								NOT = { has_planet_flag = changed_investment_orientation }
+							}
+						}
+						planet_event = { id = ethic_trade_invest_event.2 }
+					}
+				}
+			}
+		}
+		AI_weight = {
+			modifier = {
+				factor = 0
 			}
 		}
 	}
