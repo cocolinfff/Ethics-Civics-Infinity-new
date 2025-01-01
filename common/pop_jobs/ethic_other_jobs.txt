@@ -117,6 +117,13 @@ organic_observer = {
 		planet_amenities_add = 1
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
+	triggered_country_modifier = {
+		potential = {
+			always = yes
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_researchers_admin_cap_produces_add|
+	}
 	weight = {
 		weight = 1
 	}
@@ -437,6 +444,14 @@ future_complex_drone = {
 	country_modifier = {
 		country_admin_cap_add = 20
 		country_naval_cap_add = 5
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			always = yes
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_researchers_admin_cap_produces_add|
 	}
 
 	planet_modifier = {
@@ -1009,6 +1024,28 @@ immortal = {
 		potential = {
 			exists = owner
 			owner = {
+				NOT = { has_valid_civic = civic_OGAS }
+			}
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_administrators_admin_cap_produces_add|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_OGAS
+			}
+		}
+		country_admin_cap_add = 1
+		mult = value:scripted_modifier_mult|MODIFIER|planet_researchers_admin_cap_produces_add|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
 				is_authoritarian = yes
 			}
 		}
@@ -1116,6 +1153,127 @@ immortal = {
 	}
 	weight = {
 		weight = 9999
+	}
+}
+
+#食利者
+rentier = {
+	category = rentier
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_palace
+	clothes_texture_index = 1
+	can_set_priority = no
+
+	possible_pre_triggers = {
+		has_owner = yes
+		# is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+		}
+	}
+
+	resources = {
+		category = planet_rentier
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+	}
+}
+
+#脱产者
+postpartum_workers = {
+	category = postpartum_workers
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_paradise_dome
+	clothes_texture_index = 1
+	can_set_priority = no
+
+	possible_pre_triggers = {
+		has_owner = yes
+		# is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_specialist_job
+	possible = {
+		complex_specialist_job_check_trigger = yes
+		is_sparta_slave = no
+	}
+
+	resources = {
+		category = planet_rentier
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+
+	weight = {
+		weight = 50
+	}
+}
+
+#罢工者
+striker = {
+	icon = postpartum_workers
+	category = striker
+	is_capped_by_modifier = yes
+	can_set_priority = no
+	clothes_texture_index = 2
+	building_icon = building_primitive_dwellings
+	contributes_to_diplo_weight = no
+	ignores_favorite = yes #this means that if you favorite e.g. clerks, the +1000 bonus will not matter for jobs working as criminals
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_sapient = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+	}
+
+	possible = {
+		# check that this is not a robot in servitude
+		OR = {
+			is_enslaved = yes
+			has_living_standard = { country = owner type = living_standard_dystopian_society }
+			has_living_standard = { country = owner type = living_standard_stratified }
+			has_living_standard = { country = owner type = living_standard_subsistence }
+		}
+		NOR = {
+			pop_has_ethic = ethic_capitalism
+			pop_has_ethic = ethic_fanatic_capitalism
+			pop_has_ethic = ethic_authoritarian
+			pop_has_ethic = ethic_fanatic_authoritarian
+		}
+	}
+
+	resources = {
+		category = planet_jobs
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+
+	planet_modifier = {
+		trade_value_mult = -0.01
+		pop_ethic_socialism_attraction_mult = 0.025
+		pop_ethic_egalitarian_attraction_mult = 0.025
+	}
+
+	weight = {
+		weight = 10
 	}
 }
 

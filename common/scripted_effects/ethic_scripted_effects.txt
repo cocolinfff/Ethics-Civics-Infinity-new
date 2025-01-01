@@ -1077,8 +1077,8 @@ red_dowm_redux = {
 		add_tradition = tr_right_finish
 
 		add_tradition = tr_revolution_adopt
-		add_tradition = tr_revolution_peoples_of_fleet
-		add_tradition = tr_revolution_power_of_freedom
+		add_tradition = tr_revolution_army_of_peoples
+		add_tradition = tr_revolution_army_of_freedom
 		add_tradition = tr_revolution_army_of_democracy
 		add_tradition = tr_revolution_revolutionary_spirit
 		add_tradition = tr_revolution_revolutionary_propaganda
@@ -1762,105 +1762,264 @@ mobilize_planet = {
 	}
 }
 
+revolution_storm_add = {
+	set_cosmic_storm = {
+		cosmic_storm = prev
+	}
+
+	set_star_flag = storm_system
+	set_global_flag = cosmic_storm_has_occurred
+
+	inline_script = {
+		script = cosmic_storms/StormVisuals
+		STORM_NAME = "revolution_storm"
+	}
+}
+
+revolution_storm_remove = {
+	remove_storm_visuals_effect = yes
+	remove_star_flag = storm_system
+
+	if = {
+		limit = {
+			has_owner = yes
+		}
+		owner = {
+			remove_country_flag = affected_by_shroud_storm
+		}
+	}
+
+	if = {
+		limit = {
+			has_owner = yes
+			owner = { is_galactic_revolution_target = yes }
+		}
+		owner = {
+			revolution_storm_apply_aftermath_modifier = yes
+			revolution_storm_apply_deposits = yes
+		}
+	}
+}
+
+revolution_storm_apply_aftermath_modifier = {
+	every_system_planet = {
+		limit = {
+			is_colony = yes
+		}
+
+		storm_apply_aftermath_modifier = {
+
+			severity = {
+				modifier = "revolution_storm_aftermath_modifier_severity_1"
+				days = @Severity1Duration
+				chance = {
+					base = @Severity1BaseChance
+					modifier = {
+						factor = 0
+						OR = {
+							has_modifier = "revolution_storm_aftermath_modifier_severity_2"
+							has_modifier = "revolution_storm_aftermath_modifier_severity_3"
+						}
+					}
+					modifier = {
+						factor =  $FactorSev1|1$
+					}
+				}
+
+				effect = {
+					set_timed_planet_flag = {
+						flag = AFFECTED_BY_REVOLUTION_STORM
+						days = @Severity1Duration
+					}
+				}
+			}
+
+			severity = {
+				modifier = "revolution_storm_aftermath_modifier_severity_2"
+				days = @Severity2Duration
+				chance = {
+					base = @Severity2BaseChance
+					modifier = {
+						factor = 0
+						has_modifier = "revolution_storm_aftermath_modifier_severity_3"
+					}
+					modifier = {
+						factor =  $FactorSev2|1$
+					}
+				}
+
+				effect = {
+					set_timed_planet_flag = {
+						flag = AFFECTED_BY_REVOLUTION_STORM
+						days = @Severity2Duration
+					}
+				}
+			}
+
+			severity = {
+				modifier = "revolution_storm_aftermath_modifier_severity_3"
+				days = @Severity3Duration
+				chance = {
+					base = @Severity3BaseChance
+					modifier = {
+						factor =  $FactorSev3|1$
+					}
+				}
+
+				effect = {
+					set_timed_planet_flag = {
+						flag = AFFECTED_BY_REVOLUTION_STORM
+						days = @Severity3Duration
+					}
+				}
+			}
+		}
+
+		if = {
+			limit = { is_colony = yes }
+			owner = {
+				create_message = {
+					type = SHROUD_STORM_AFTERMATH
+					localization = MESSAGE_REVOLUTION_STORM_AFTERMATH_DESC
+					days = @toast_important_message_days
+					target = prev
+					variable = {
+						type = name
+						localization = PLANET
+						scope = prev
+					}
+					custom_toast_content_text = revolution_storm_aftermath_custom_desc
+				}
+			}
+		}
+	}
+}
+
+revolution_storm_apply_deposits = {
+	every_system_planet = {
+		limit = {
+			OR = {
+				is_colonizable = yes
+				is_colony = yes
+			}
+			is_artificial = no
+			NOT = { has_deposit = d_monument_to_the_victims }
+		}
+
+		random_list = {
+			80 = {}
+			20 = {
+				add_deposit = d_monument_to_the_victims
+				if = {
+					limit = {
+						has_owner = yes
+					}
+					planet_event = { id = cstorms.80000 }
+				}
+			}
+		}
+	}
+}
+
 remove_building_private_commercial_megaplex = {
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
-	remove_building = building_private_commercial_megaplex
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
+	remove_deposit = d_ethic_private_commercial_t2N
 }

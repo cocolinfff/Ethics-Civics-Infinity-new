@@ -412,6 +412,48 @@ society_amenities_usage = {
 	add = modifier:pop_amenities_usage_mult
 }
 
+living_standard_trade_value = {
+	base = 0
+	modifier = {
+		is_pop_category = ruler
+		add = modifier:living_standard_trade_value_rulers_add
+	}
+	modifier = {
+		is_pop_category = specialist
+		add = modifier:living_standard_trade_value_specialists_add
+	}
+	modifier = {
+		is_pop_category = worker
+		add = modifier:living_standard_trade_value_workers_add
+	}
+	modifier = {
+		is_pop_category = slave
+		add = modifier:living_standard_trade_value_slaves_add
+	}
+	modifier = {
+		is_pop_category = criminal
+		add = modifier:living_standard_trade_value_criminals_add
+	}
+	modifier = {
+		is_pop_category = complex_drone
+		add = modifier:living_standard_trade_value_complex_drone_add
+	}
+	modifier = {
+		is_pop_category = simple_drone
+		add = modifier:living_standard_trade_value_simple_drone_add
+	}
+	modifier = {
+		is_pop_category = rentier
+		add = modifier:living_standard_trade_value_rentier_add
+	}
+	modifier = {
+		is_pop_category = postpartum_workers
+		add = modifier:living_standard_trade_value_postpartum_workers_add
+	}
+	add = modifier:pop_lifestyle_trade_value_add
+	mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+}
+
 society_trade_value_original = {
 	base = 0
 	add = modifier:trade_value_add
@@ -1020,7 +1062,7 @@ planet_ruler_family_structure_robot = {
 	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
 }
 
-num_planet_cat_specialist = {
+num_planet_cat_not_robot_specialist = {
 	base = 0
 	complex_trigger_modifier = {
 		trigger = count_owned_pop
@@ -1036,7 +1078,7 @@ num_planet_cat_specialist = {
 
 planet_specialist_family_structure = {
 	base = 0
-	add = value:num_planet_cat_specialist
+	add = value:num_planet_cat_not_robot_specialist
 	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
 }
 
@@ -1060,7 +1102,7 @@ planet_specialist_family_structure_robot = {
 	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
 }
 
-num_planet_cat_worker = {
+num_planet_cat_not_robot_worker = {
 	base = 0
 	complex_trigger_modifier = {
 		trigger = count_owned_pop
@@ -1076,7 +1118,7 @@ num_planet_cat_worker = {
 
 planet_worker_family_structure = {
 	base = 0
-	add = value:num_planet_cat_worker
+	add = value:num_planet_cat_not_robot_worker
 	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
 }
 
@@ -1286,4 +1328,135 @@ num_rival_country = {
 		trigger = any_rival_country
 		mode = add
 	}
+}
+
+job_rentier_add_variable = {
+	base = 0
+	add = planet.modifier:job_rentier_per_ruler
+	mult = planet.value:count_pop_category|CATEGORY|ruler|
+}
+job_postpartum_workers_add_variable = {
+	base = 0
+	add = planet.modifier:job_rentier_per_specialist
+	mult = planet.value:count_pop_category|CATEGORY|specialist|
+}
+
+storm_resistant_production_multiplier = {
+	base = 1
+
+	modifier = {
+		mult = 0.75
+		has_building = building_storm_resistant_production
+		NOT = {
+			has_modifier = storm_hunkered_down_modifier
+		}
+	}
+
+	modifier = {
+		mult = 0.5
+		has_building = building_storm_resistant_production
+		has_modifier = storm_hunkered_down_modifier
+	}
+
+	modifier = {
+		mult = 0.6
+		has_building = building_advanced_storm_resistant_production
+		NOT = {
+			has_modifier = storm_hunkered_down_modifier
+		}
+	}
+
+	modifier = {
+		mult = 0.2
+		has_building = building_advanced_storm_resistant_production
+		has_modifier = storm_hunkered_down_modifier
+	}
+
+	modifier = {
+		mult = 0.9
+		has_modifier = cultivated_worldscaping_modifier
+	}
+
+	modifier = {
+		mult = 0.9
+		has_modifier = storm_trap_insight_modifier
+	}
+
+	modifier = {
+		mult = 0.5
+		owner = {
+			has_origin = origin_stormborn
+			is_socialism = yes
+		}
+	}
+}
+
+food_building_produce_value = {
+	base = 1
+	add = modifier:planet_farmers_food_produces_add
+	mult = modifier:planet_farmers_food_produces_mult
+	mult = modifier:planet_farmers_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+food_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_farmers_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+minerals_building_produce_value = {
+	base = 1
+	add = modifier:planet_miners_minerals_produces_add
+	mult = modifier:planet_miners_minerals_produces_mult
+	mult = modifier:planet_miners_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+minerals_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_miners_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+energy_building_produce_value = {
+	base = 1
+	add = modifier:planet_technician_energy_produces_add
+	mult = modifier:planet_technician_energy_produces_mult
+	mult = modifier:planet_technician_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+energy_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_technician_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+alloys_building_produce_value = {
+	base = 1
+	add = modifier:planet_metallurgists_alloys_produces_add
+	mult = modifier:planet_metallurgists_alloys_produces_mult
+	mult = modifier:planet_metallurgists_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+alloys_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_metallurgists_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+consumer_goods_building_produce_value = {
+	base = 1
+	add = modifier:planet_artisans_consumer_goods_produces_add
+	mult = modifier:planet_artisans_consumer_goods_produces_mult
+	mult = modifier:planet_artisans_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+consumer_goods_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_artisans_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
 }

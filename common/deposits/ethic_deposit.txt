@@ -5,6 +5,26 @@ d_ethic_society = {
 	
 	potential = { always = no }
 
+	resources = {
+		category = planet_deposits
+		produces = {
+			trigger = {
+				planet = {
+					has_orbital_bombardment = yes
+					solar_system = { is_inside_storm = yes }
+					exists = owner
+					owner = { has_valid_civic = civic_martial_brotherhood }
+				}
+			}
+			unity = 1
+			mult = trigger:count_planet_army
+		}
+	}
+
+	country_modifier = {
+		country_resource_max_add = 1000
+	}
+
 	inline_script = "deposit/ethic_all_capital_type"
 
 	inline_script = "deposit/ethic_deposit_jobs"
@@ -14,6 +34,10 @@ d_ethic_society = {
 	inline_script = "deposit/ethic_juvenile_culture"
 
 	inline_script = "deposit/ethic_answer_stability"
+
+	inline_script = "deposit/ethic_happiness_factory_happiness"
+
+	inline_script = "deposit/ethic_martial_tribes"
 
 	triggered_planet_modifier = {
 		potential = {
@@ -136,6 +160,36 @@ d_ethic_society = {
 		planet_stability_add = -1
 		planet_crime_add = 1
 		mult = trigger:num_pops
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = { free_amenities >= 0 }
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_fetal_democracy
+					has_valid_civic = civic_fetal_corporate
+				}
+			}
+		}
+		pop_growth_speed_reduction = -1
+		mult = trigger:free_amenities
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = { free_amenities < 0 }
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_fetal_democracy
+					has_valid_civic = civic_fetal_corporate
+				}
+			}
+		}
+		pop_growth_speed_reduction = -1
+		mult = trigger:happiness_planet
 	}
 
 	triggered_planet_modifier = {
@@ -675,7 +729,10 @@ d_guerrilla_warzone = {
 
 	potential = { always = no }
 
-	planet_modifier = {
+	triggered_planet_modifier = {
+		potential = {
+			owner = { can_be_revolution_target = yes }
+		}
 		job_guerrilla_add = 3
 		job_guerrilla_leader_add = 1
 		job_liaison_officer_add = 1
@@ -684,6 +741,9 @@ d_guerrilla_warzone = {
 		job_liaison_officer_per_pop = 0.03
 		planet_jobs_worker_produces_mult = -0.05
 		pop_government_ethic_attraction = -1
+	}
+
+	planet_modifier = {
 		pop_ethic_egalitarian_attraction_mult = 0.33
 		pop_ethic_socialism_attraction_mult = 0.33
 	}
@@ -703,6 +763,7 @@ d_ethic_primitive_trade = {
 				planet = {
 					OR = {
 						has_modifier = default_modifier
+						has_modifier = mercantilism_modifier
 						has_modifier = infrastructure_modifier
 						has_modifier = factory_modifier
 						has_modifier = culture_modifier
@@ -754,6 +815,13 @@ d_ethic_primitive_trade = {
 			minerals = 0.2
 			consumer_goods = 0.1
 			alloys = 0.075
+			multiplier = value:ethic_var_trade_value_mult
+		}
+		produces = {
+			trigger = {
+				planet = { has_modifier = mercantilism_modifier }
+			}
+			energy = 1
 			multiplier = value:ethic_var_trade_value_mult
 		}
 		produces = {
@@ -887,7 +955,7 @@ d_ethic_primitive_trade = {
 			food = 0.5
 			consumer_goods = 0.2
 			alloys = 0.1
-			mult = value:pop_branch_office_councilor_level|TYPE|councilor_superhuman_economy_corporate|
+			mult = value:branch_office_councilor_level|TYPE|councilor_superhuman_economy_corporate|
 		}
 
 		produces = {
@@ -1083,7 +1151,11 @@ d_planetary_ascension = {
 
 	triggered_planet_modifier = {
 		potential = {
-			always = yes
+			NOT = { is_planet_class = pc_cosmogenesis_world }
+			exists = owner
+			owner = {
+				NOT = { has_policy_flag = economic_stance_emotional_economy }
+			}
 		}
 		planet_jobs_produces_mult = 0.025
 		planet_jobs_upkeep_mult = 0.025
@@ -1094,9 +1166,39 @@ d_planetary_ascension = {
 	triggered_planet_modifier = {
 		potential = {
 			is_planet_class = pc_cosmogenesis_world
+			exists = owner
+			owner = {
+				NOT = { has_policy_flag = economic_stance_emotional_economy }
+			}
 		}
-		planet_jobs_produces_mult = 0.15
-		planet_jobs_upkeep_mult = -0.05
+		planet_jobs_produces_mult = 0.025
+		planet_jobs_upkeep_mult = 0.025
+		pop_purge_speed = -0.05
+		mult = this.value:ethic_planetary_ascension_tier
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			NOT = { is_planet_class = pc_cosmogenesis_world }
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_emotional_economy
+			}
+		}
+		pop_happiness = 0.1
+		job_environmental_pollution_caused_mult = 0.05
+		mult = this.value:ethic_planetary_ascension_tier
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_planet_class = pc_cosmogenesis_world
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_emotional_economy
+			}
+		}
+		pop_happiness = 0.1
 		pop_purge_speed = -0.05
 		mult = this.value:ethic_planetary_ascension_tier
 	}
@@ -1136,6 +1238,7 @@ d_mushroom = {
 d_living_metal_1 = {
 	station = shipclass_mining_station
 	is_for_colonizable = no
+	icon = "d_ruins_small"
 
 	resources = {
 		category = orbital_mining_deposits
@@ -1144,6 +1247,105 @@ d_living_metal_1 = {
 		}
 	}
 
+	planet_modifier = {
+		district_generator_max = 10
+		district_mining_max = 10
+		district_farming_max = 10
+	}
+
 	potential = { always = no }
 	drop_weight = { weight = 0 }
+}
+
+d_ethic_private_commercial_t2N = {
+	time = 180
+	is_for_colonizable = yes
+	icon = "d_building_complex"
+	potential = { always = no }
+
+	can_be_cleared = {
+		exists = owner
+		owner = {
+			NOT = {
+				has_policy_flag = economic_stance_market
+			}
+		}
+	}
+	category = deposit_cat_rare_blocker
+	resources = {
+		upkeep = {
+			energy = 2
+		}
+		cost = {
+			influence = 0.01
+			energy = 1
+			multiplier = value:ethic_var_trade_value_reducted
+		}
+	}
+	planet_modifier = {
+		planet_max_buildings_add = -1
+		job_merchant_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_valid_civic = civic_eternal_jihad }
+			}
+		}
+		modifier = {
+			job_manager_add = 3
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+				is_duelist_country = no
+			}
+		}
+		modifier = {
+			job_entertainer_add = 2
+			pop_ethic_capitalism_attraction_mult = 0.05
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_eternal_jihad
+				is_duelist_country = yes
+			}
+		}
+		modifier = {
+			job_duelist_add = 2
+			pop_ethic_capitalism_attraction_mult = 0.05
+			pop_ethic_militarist_attraction_mult = 0.05
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_active_tradition = tr_mercantile_commercial_enterprise
+			}
+		}
+		modifier = {
+			job_merchant_add = 1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_consumerism
+				}
+			}
+		}
+		modifier = {
+			job_artisan_add = 1
+		}
+	}
 }

@@ -745,7 +745,7 @@ opinion_dc_vs_democratic = {
 				has_valid_civic = civic_parliamentary_system
 				has_valid_civic = civic_parliamentary_system_corporate
 			}
-			FROM = { has_authority = auth_democratic }
+			FROM = { is_democratic_authority = yes }
 		}
 	}
 	opinion = {
@@ -756,7 +756,7 @@ opinion_dc_vs_democratic = {
 				has_valid_civic = civic_parliamentary_system
 				has_valid_civic = civic_parliamentary_system_corporate
 			}
-			FROM = { has_authority = auth_direct_democratic }
+			FROM = { is_direct_democratic_authority = yes }
 		}
 	}
 }
@@ -772,7 +772,7 @@ opinion_dc_vs_oligarchic = {
 			}
 			FROM = {
 				OR = {
-					has_authority = auth_oligarchic
+					is_oligarchic_authority = yes
 					has_authority = auth_corporate
 				}
 			}
@@ -791,8 +791,8 @@ opinion_dc_vs_autocracy = {
 			}
 			FROM = {
 				OR = {
-					has_authority = auth_imperial
-					has_authority = auth_dictatorial
+					is_imperial_authority = yes
+					is_dictatorial_authority = yes
 				}
 			}
 		}
@@ -806,11 +806,11 @@ opinion_dc_vs_autocracy = {
 			}
 			FROM = {
 				OR = {
-					has_authority = auth_direct_democratic
-					has_authority = auth_democratic
-					has_authority = auth_oligarchic
-					has_authority = auth_dictatorial
-					has_authority = auth_imperial
+					is_direct_democratic_authority = yes
+					is_democratic_authority = yes
+					is_oligarchic_authority = yes
+					is_dictatorial_authority = yes
+					is_imperial_authority = yes
 				}
 			}
 		}
@@ -1106,13 +1106,29 @@ opinion_crazy_exploiter = {
 	opinion = {
 		modifier = {
 			add = -1000
-			has_origin = origin_galaxy_light
+			OR = {
+				has_origin = origin_galaxy_light
+				has_origin = origin_galaxy_light_liberator
+			}
 			FROM = {
 				OR = {
 					has_valid_civic = civic_triple_the_profit
 					has_valid_civic = civic_machine_financial_investment
 					has_valid_civic = civic_hive_capital_creates_gods
 				}
+				NOT = { has_origin = origin_galactic_empire }
+			}
+		}
+	}
+	opinion = {
+		modifier = {
+			add = -2000
+			OR = {
+				has_origin = origin_galaxy_light
+				has_origin = origin_galaxy_light_liberator
+			}
+			FROM = {
+				has_origin = origin_galactic_empire
 			}
 		}
 	}
@@ -1197,11 +1213,42 @@ triggered_authoritarian_opinion_barbaric_despoilers = {
 	trigger = {
 		is_country_type = default
 		is_capitalism = yes
-		NOT = { has_civic = civic_barbaric_despoilers }
-		FROM = { has_civic = civic_barbaric_despoilers }
 	}
 	opinion = {
-		base = -80
+		modifier = {
+			add = -80
+			NOT = { has_civic = civic_barbaric_despoilers }
+			FROM = { has_civic = civic_barbaric_despoilers }
+		}
+	}
+	opinion = {
+		modifier = {
+			add = -1000
+			OR = {
+				has_valid_civic = civic_triple_the_profit
+				has_valid_civic = civic_machine_financial_investment
+				has_valid_civic = civic_hive_capital_creates_gods
+			}
+			NOT = { has_origin = origin_galactic_empire }
+			FROM = {
+				OR = {
+					has_origin = origin_galaxy_light
+					has_origin = origin_galaxy_light_liberator
+				}
+			}
+		}
+	}
+	opinion = {
+		modifier = {
+			add = -2000
+			has_origin = origin_galactic_empire
+			FROM = {
+				OR = {
+					has_origin = origin_galaxy_light
+					has_origin = origin_galaxy_light_liberator
+				}
+			}
+		}
 	}
 }
 
@@ -1409,5 +1456,17 @@ opinion_shared_destiny = {
 			add = 30
 			root = { is_overlord_to = FROM }
 		}
+	}
+}
+
+opinion_netori = {
+	opinion = {
+		base = -25
+	}
+
+	accumulative = yes
+
+	decay = {
+		base = 2
 	}
 }

@@ -1,4 +1,27 @@
 ### region CIVIC CHECK
+# 是直接民主
+is_direct_democratic_authority = {
+	has_authority = auth_direct_democratic
+}
+
+# 是赛博直接民主
+is_cyber_direct_democratic_authority = {
+	is_direct_democratic_authority = yes
+	OR = {
+		has_country_flag = cyber_individualist
+		has_country_flag = cyber_collectivist
+	}
+}
+
+# 是合成直接民主
+is_synth_direct_democratic_authority = {
+	is_direct_democratic_authority = yes
+	OR = {
+		has_country_flag = synth_physical
+		has_country_flag = synth_virtual
+	}
+}
+
 # 没有统治者的社会
 is_not_rulers_society = {
 	optimize_memory
@@ -17,6 +40,7 @@ is_community_society = {
 	OR = {
 		is_community_country = yes
 		has_valid_civic = civic_soviet
+		has_modifier = communist_propaganda
 	}
 }
 
@@ -63,7 +87,6 @@ is_community_country = {
 			has_ethic = ethic_fanatic_socialism
 			has_ascension_perk = ap_anarchy_utopia
 		}
-		has_modifier = communist_propaganda
 	}
 }
 
@@ -74,6 +97,10 @@ is_scientific_socialism = {
 		has_valid_civic = civic_shared_burden
 		has_valid_civic = civic_socialistic
 		has_valid_civic = civic_worker_coop
+		AND = {
+			has_valid_civic = civic_labor_aristocracy
+			is_egalitarian = yes
+		}
 		has_valid_civic = civic_machine_liberator
 	}
 }
@@ -85,6 +112,10 @@ is_true_scientific_socialism = {
 		has_valid_civic = civic_shared_burden
 		has_valid_civic = civic_socialistic
 		has_valid_civic = civic_worker_coop
+		AND = {
+			has_valid_civic = civic_labor_aristocracy
+			is_egalitarian = yes
+		}
 	}
 	NOR = {
 		# has_ethic = ethic_authoritarian
@@ -177,8 +208,9 @@ is_exploiter = {
 		has_ethic = ethic_authoritarian
 		has_ethic = ethic_fanatic_authoritarian
 		has_ethic = ethic_fanatic_xenophobe
-		has_authority = auth_imperial
+		is_imperial_authority = yes
 		has_civic = civic_machine_financial_investment
+		has_civic = civic_hive_capital_creates_gods
 	}
 }
 
@@ -507,11 +539,13 @@ has_theme_civics = {
 				has_valid_civic = civic_cyber_demos_cratos
 				has_valid_civic = civic_technocracy
 				has_valid_civic = civic_cyber_dictatorship
-				has_valid_civic = civic_barbaric_despoilers
+				has_valid_civic = civic_martial_tribes
 				has_valid_civic = civic_worker_coop
 				has_valid_civic = civic_glorious_pioneer
 				has_valid_civic = civic_military_dictatorship
 				has_valid_civic = civic_family_business
+				has_valid_civic = civic_home_country_isomorphism
+				has_valid_civic = civic_colonial_government
 				has_valid_civic = civic_soviet
 			}
 		}
@@ -560,6 +594,15 @@ has_pacifist_topic_civic = {
 		has_valid_civic = civic_peaceful_republic
 		has_valid_civic = civic_executive_committee
 		has_valid_civic = civic_philosopher_king
+	}
+}
+
+# 拥有教权主义主题理念
+has_spiritualist_topic_civic = {
+	OR = {
+		has_valid_civic = civic_spiritual_democracy
+		has_valid_civic = civic_exalted_priesthood
+		has_valid_civic = civic_imperial_cult
 	}
 }
 
@@ -1206,6 +1249,14 @@ can_do_fm_gene_modding = {
 	}
 }
 
+#资源上限检测
+Eci_resource_Max_limit = {
+	resource_stockpile_compare = {
+		resource = $resource$
+		value = value:Eci_resource_max|resource|$resource$|
+	}
+}
+
 
 
 ##########
@@ -1221,5 +1272,17 @@ is_valid_coalition_government = {
 	OR = {
 		has_valid_civic = civic_coalition_government
 		has_valid_civic = civic_coalition_government_overlord
+	}
+}
+
+artial_tribes_has_num_armies_on_planet = {
+	count_planet_army = {
+		count = $NUM$
+		limit = {
+			is_defensive_army = no
+			exists = owner
+			exists = ROOT.owner
+			ROOT.owner = { has_valid_civic = civic_martial_tribes }
+		}
 	}
 }

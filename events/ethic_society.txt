@@ -23,6 +23,43 @@ country_event = {
 		# 贸易额检测
 		eci_primitive_trade = yes
 
+		# 资源爆仓检测
+		if = {
+			limit = {
+				Eci_resource_Max_limit = { resource = energy }
+				NOT = { has_modifier = cm_industrial_boom_energy }
+			}
+			add_modifier = { modifier = cm_industrial_boom_energy days = 360 }
+		}
+		if = {
+			limit = {
+				Eci_resource_Max_limit = { resource = food }
+				NOT = { has_modifier = cm_industrial_boom_food }
+			}
+			add_modifier = { modifier = cm_industrial_boom_food days = 360 }
+		}
+		if = {
+			limit = {
+				Eci_resource_Max_limit = { resource = minerals }
+				NOT = { has_modifier = cm_industrial_boom_mineral }
+			}
+			add_modifier = { modifier = cm_industrial_boom_mineral days = 360 }
+		}
+		if = {
+			limit = {
+				Eci_resource_Max_limit = { resource = consumer_goods }
+				NOT = { has_modifier = cm_industrial_boom_light }
+			}
+			add_modifier = { modifier = cm_industrial_boom_light days = 360 }
+		}
+		if = {
+			limit = {
+				Eci_resource_Max_limit = { resource = alloys }
+				NOT = { has_modifier = cm_industrial_boom_heavy }
+			}
+			add_modifier = { modifier = cm_industrial_boom_heavy days = 360 }
+		}
+
 		# 通货膨胀buff
 		if = {
 			limit = {
@@ -121,6 +158,7 @@ planet_event = {
 		set_variable = { which = society_amenities_usage value = value:society_amenities_usage }
 
 		# 岗位转换检测
+		ethic_rentier_variable = yes
 		if = {
 			limit = { owner = { has_valid_civic = civic_military_dictatorship } }
 			ethic_commandante_to_knight_commander_variable = yes
@@ -154,6 +192,11 @@ planet_event = {
 		}
 		if = {
 			limit = {
+				planet = {
+					NOT = { has_planet_flag = private_commercial_is_building }
+					free_building_slots >= 1
+					NOT = { has_planet_flag = branch_closed_cooldown_planet }
+				}
 				owner = {
 					is_regular_empire = yes
 					OR = {
@@ -165,21 +208,19 @@ planet_event = {
 						has_policy_flag = family_ownership
 					}
 				}
-				planet = {
-					free_building_slots >= 1
-					NOT = { has_planet_flag = branch_closed_cooldown_planet }
-				}
 				OR = {
 					owner = { is_ai = no }
 					planet = { num_unemployed > 0 }
 				}
 			}
-			random_list = {
-				49 = {}
-				1 = {
-					add_building = building_private_commercial_megaplex
-				}
-			}
+			#random_list = {
+			#	49 = {}
+			#	1 = {
+			#		add_building = building_private_commercial_megaplex
+			#	}
+			#}
+			set_planet_flag = private_commercial_is_building
+			planet_event = { id = ethic_society.10000 days = 1080 random = 720 }
 		}
 
 		# 星球领袖负面特质检测
@@ -609,5 +650,62 @@ country_event = {
 			remove_modifier = fanatic_pacifist_defensive_wars_modifier
 			remove_modifier = pacifist_defensive_wars_modifier
 		}
+	}
+}
+
+planet_event = {
+	id = ethic_society.10000
+	hide_window = yes
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = {
+				planet = {
+					free_building_slots >= 1
+					NOT = { has_planet_flag = branch_closed_cooldown_planet }
+				}
+				owner = {
+					is_regular_empire = yes
+					OR = {
+						AND = {
+							is_market_type = yes
+							has_policy_flag = mixed_ownership
+						}
+						has_policy_flag = private_ownership
+						has_policy_flag = family_ownership
+					}
+				}
+				OR = {
+					owner = { is_ai = no }
+					planet = { num_unemployed > 0 }
+				}
+			}
+			if = {	limit = { 
+				owner = { 
+					is_ai = no 
+					NOT = { has_country_flag = first_private_commercial }
+					}
+				} 
+				owner = { 
+					set_country_flag = first_private_commercial
+				}
+				planet_event = { id = ethic_society.10001 } 
+			}
+			add_deposit = d_ethic_private_commercial_t2N
+			remove_planet_flag = private_commercial_is_building
+		}
+	}
+}
+
+planet_event = {
+	id = ethic_society.10001
+	hide_window = no
+	is_triggered_only = yes
+	title = "first_private_commercial_name"
+	desc = "first_private_commercial_desc"
+	picture = GFX_evt_tradedeal
+	option = {
+		name = "first_private_commercial_option"
+		custom_tooltip = "no_notice_any_more"
 	}
 }

@@ -1,0 +1,61 @@
+namespace = ancrel
+
+# Relic Acquired (HIDDEN)
+country_event = {
+    id = ancrel.6499
+    hide_window = yes
+
+    is_triggered_only = yes
+
+    trigger = {
+        From = {
+            is_country_type = default
+            num_owned_relics > 0
+        }
+        FromFrom = { is_capital = yes }
+        any_war = {
+            any_attacker = { is_same_value = root }
+            any_defender = { is_same_value = from }
+            NOT = {
+                using_war_goal = {
+                    type = wg_take_galatron
+                    owner = attacker
+                }
+            }
+        }
+    }
+
+    immediate = {
+        FromFrom = { save_event_target_as = planet }
+        From = { save_event_target_as = victim }
+        random_list = {
+            100 = {
+                modifier = {
+                    factor = 0
+                    has_valid_civic = civic_martial_tribes
+                }
+            }
+            10 = {
+                modifier = {
+                    factor = 15
+                    OR = {
+                        has_valid_civic = civic_barbaric_despoilers
+                        has_valid_civic = civic_martial_tribes
+                    }
+                }
+                modifier = {
+                    factor = 6.67 # 50% chance of success
+                    any_war = {
+                        any_attacker = { is_same_value = root }
+                        any_defender = { is_same_value = from }
+                        using_war_goal = {
+                            type = wg_plunder
+                            owner = attacker
+                        }
+                    }
+                }
+                country_event = { id = ancrel.6500 }
+            }
+        }
+    }
+}

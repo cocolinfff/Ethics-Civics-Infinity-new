@@ -6,9 +6,33 @@ can_trade_leader = {
 	this = { # 失控女仆兼容
 		OR = {
 			has_specialist_subject_leader_trait = yes
+			is_councilor = no
+			is_heir = no
 			AND = {
 				has_global_flag = flag_rogue_maid_mod_activated
 				has_specialist_subject_leader_trait_maid = yes
+			}
+		}
+	}
+	OR = {
+		AND = { # Either from subject to Overlord
+			ROOT = {
+				is_subject = yes
+			}
+			FROM = {
+				is_overlord_to = ROOT
+			}
+		}
+		AND = { # Or from a tactical cogitator empire to a NON tactical cogitator empire
+			ROOT = { has_valid_civic = civic_machine_tactical_algorithms }
+			FROM = {
+				NOT = { has_valid_civic = civic_machine_tactical_algorithms }
+				is_fallen_empire = no
+				NOT = {
+					any_owned_leader = {
+						has_trait = leader_trait_tactical_algorithms
+					}
+				}
 			}
 		}
 	}
@@ -38,10 +62,30 @@ can_trade_leader = {
 				has_authority = auth_hive_mind
 			}
 		}
+		AND = { # Tactical Cogitator option
+			ROOT = {
+				has_valid_civic = civic_machine_tactical_algorithms
+			}
+			FROM = {
+				OR = {
+					is_regular_empire = yes
+					is_hive_empire = yes
+					is_machine_empire = yes
+				}
+				NOT = { has_country_flag = no_murdering_tactical_leaders }
+				NOT = {
+					any_owned_leader = {
+						has_trait = leader_trait_tactical_algorithms
+					}
+				}
+			}
+		}
 		ROOT = {
 			is_servitor_empire = yes
 		}
 	}
+	# Can't trade gestalt nodes
+	is_gestalt_node = no
 	# The overlord can't be a fallen or awakened empire.
 	ROOT = {
 		NAND = {
@@ -51,5 +95,9 @@ can_trade_leader = {
 				is_country_type = awakened_fallen_empire
 			}
 		}
+	}
+	NOR = {
+		has_trait = leader_trait_fotd_scientist
+		has_trait = leader_trait_fotd_commander
 	}
 }
