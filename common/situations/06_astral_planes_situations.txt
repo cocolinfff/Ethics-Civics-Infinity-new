@@ -1,0 +1,521 @@
+situation_a_rift_in_space = {
+	title = {
+		trigger = {
+			NOT = {
+				owner = { has_origin = origin_riftworld }
+			}
+		}
+		text = situation_a_rift_in_space
+	}
+	title = {
+		trigger = {
+			owner = { has_origin = origin_riftworld }
+		}
+		text = situation_a_rift_in_space_riftworld
+	}
+
+	desc = {
+		trigger = {
+			NOT = {
+				owner = { has_origin = origin_riftworld }
+			}
+		}
+		text = situation_a_rift_in_space_desc
+	}
+	desc = {
+		trigger = {
+			owner = { has_origin = origin_riftworld }
+		}
+		text = situation_a_rift_in_space_desc_riftworld_origin
+	}
+
+	picture = GFX_evt_a_rift_in_space
+	category = neutral
+	complete_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_positive
+	initial_progress = 0
+
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_green
+			end = 50
+			custom_tooltip = stage_unknown_effects
+		}
+		stage_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_green
+			end = 100
+			custom_tooltip = stage_unknown_effects
+		}
+	}
+
+	on_monthly = {
+		events = {
+			astral_situation.25
+		}
+	}
+
+	on_progress_complete = {
+		hidden_effect = {
+			owner = {
+				set_country_flag = has_completed_a_rift_in_space_situation
+			}
+			situation_event = { id = astral_situation.20 }
+		}
+		custom_tooltip = situation_a_rift_in_space_finisher_effect
+	}
+
+	abort_trigger = {
+		owner = {
+			OR = {
+				has_technology = tech_rift_sphere
+				has_tech_option = tech_rift_sphere
+			}
+		}
+	}
+
+	approach = {
+		name = situation_a_rift_in_space_standard
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = approach_situation_a_rift_in_space_standard_tt
+		}
+		default = yes
+	}
+	approach = {
+		name = situation_a_rift_in_space_devote_research
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = approach_situation_a_rift_in_space_devote_research_tt
+			custom_tooltip = approach_situation_speed_tooltip
+		}
+		triggered_modifier = {
+			potential = { current_stage = stage_1 }
+			country_physics_research_produces_mult = -0.25
+		}
+		triggered_modifier = {
+			potential = { current_stage = stage_2 }
+			country_physics_research_produces_mult = -0.50
+		}
+		modifier = {
+			country_unity_produces_mult = 0.10
+		}
+	}
+	approach = {
+		name = situation_a_rift_in_space_send_probes
+		icon = GFX_situation_approach_fleet
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = approach_situation_a_rift_in_space_send_probes_tt
+			custom_tooltip = approach_situation_speed_tooltip
+		}
+		triggered_modifier = {
+			potential = { current_stage = stage_1 }
+			country_alloys_produces_mult = -0.25
+		}
+		triggered_modifier = {
+			potential = { current_stage = stage_2 }
+			country_alloys_produces_mult = -0.50
+		}
+		modifier = {
+			country_physics_research_produces_mult = 0.10
+			country_unity_produces_mult = 0.25
+		}
+	}
+
+	monthly_progress = {
+		base = 1
+		modifier = {
+			desc = string_current_approach
+			add = -0.5
+			current_situation_approach = situation_a_rift_in_space_standard
+		}
+		modifier = {
+			desc = string_current_approach
+			add = 0.2
+			current_situation_approach = situation_a_rift_in_space_devote_research
+		}
+		modifier = {
+			desc = string_current_approach
+			add = 0.2
+			current_situation_approach = situation_a_rift_in_space_send_probes
+		}
+	}
+}
+
+situation_destroy_crystal_sphere = {
+	picture = GFX_evt_crystal_sphere
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	category = neutral
+	initial_progress = 0
+
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_green
+			end = 100
+			custom_tooltip = stage_unknown_effects
+		}
+	}
+
+	abort_trigger = {
+		owner = { has_country_flag = has_lost_crystal_sphere }
+	}
+	on_abort = {
+		owner = { remove_country_flag = has_lost_crystal_sphere }
+	}
+
+	on_progress_complete = {
+		hidden_effect = {
+			situation_event = { id = astral_situation.1 }
+		}
+		custom_tooltip = finisher_effects_destroy
+	}
+
+	approach = {
+		name = situation_destroy_crystal_sphere_mechanical
+		icon = GFX_situation_approach_exotic
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = approach_situation_destroy_crystal_sphere_mechanical_tt
+			set_situation_flag = mechanical_agitation_approach
+			remove_situation_flag = astral_method_approach
+		}
+		default = yes
+	}
+
+	approach = {
+		name = situation_destroy_crystal_sphere_astral
+		icon = GFX_situation_approach_astral
+		icon_background = GFX_situation_approach_bg_green
+		allow = {
+			owner = {
+				has_resource = { type = astral_threads amount >= 10 }
+			}
+		}
+		on_select = {
+			custom_tooltip = approach_situation_destroy_crystal_sphere_astral_tt
+			set_situation_flag = astral_method_approach
+			remove_situation_flag = mechanical_agitation_approach
+		}
+		resources = {
+			category = situations
+			upkeep = {
+				astral_threads = 10
+			}
+		}
+		triggered_modifier = {
+			country_society_research_produces_mult = 0.2
+			country_physics_research_produces_mult = 0.2
+			country_engineering_research_produces_mult = 0.2
+		}
+	}
+
+	monthly_progress = {
+		base = 1
+		modifier = {
+			add = -0.2
+			desc = destroy_mechanical_agitation
+			has_situation_flag = mechanical_agitation_approach
+		}
+		modifier = {
+			add = 0.2
+			desc = destroy_astral_method
+			has_situation_flag = astral_method_approach
+		}
+		modifier = {
+			factor = 0
+			desc = rift_sphere_missing
+			owner = {
+				NOT = { has_technology = tech_rift_sphere }
+			}
+		}
+	}
+}
+
+situation_study_crystal_sphere = {
+	picture = GFX_evt_crystal_sphere
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	category = neutral
+	initial_progress = 0
+
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_green
+			end = 100
+			custom_tooltip = stage_unknown_effects
+		}
+	}
+
+	abort_trigger = {
+		owner = { has_country_flag = has_lost_crystal_sphere }
+	}
+	on_abort = {
+		owner = { remove_country_flag = has_lost_crystal_sphere }
+	}
+
+	on_progress_complete = {
+		hidden_effect = {
+			situation_event = { id = astral_situation.5 }
+		}
+		custom_tooltip = finisher_effects_study
+	}
+
+	approach = {
+		name = situation_study_crystal_sphere_observe
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = approach_situation_study_crystal_sphere_observe_tt
+			set_situation_flag = observe_approach
+			remove_situation_flag = mundane_method_approach
+			remove_situation_flag = astral_method_approach
+		}
+		default = yes
+	}
+
+	approach = {
+		name = situation_study_crystal_sphere_mundane
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = approach_situation_study_crystal_sphere_mundane_tt
+			set_situation_flag = mundane_method_approach
+			remove_situation_flag = observe_approach
+			remove_situation_flag = astral_method_approach
+		}
+		triggered_modifier = {
+			country_physics_research_produces_mult = -0.1
+			country_engineering_research_produces_mult = -0.1
+		}
+	}
+
+	approach = {
+		name = situation_study_crystal_sphere_astral
+		icon = GFX_situation_approach_astral
+		icon_background = GFX_situation_approach_bg_green
+		allow = {
+			owner = {
+				has_resource = { type = astral_threads amount >= 10 }
+			}
+		}
+		on_select = {
+			custom_tooltip = approach_situation_study_crystal_sphere_astral_tt
+			set_situation_flag = astral_method_approach
+			remove_situation_flag = observe_approach
+			remove_situation_flag = mundane_method_approach
+		}
+		resources = {
+			category = situations
+			upkeep = {
+				astral_threads = 10
+			}
+		}
+		triggered_modifier = {
+			country_society_research_produces_mult = 0.2
+			country_physics_research_produces_mult = 0.2
+			country_engineering_research_produces_mult = 0.2
+		}
+	}
+
+	monthly_progress = {
+		base = 1
+		modifier = {
+			add = -0.2
+			desc = study_observe_method
+			has_situation_flag = observe_approach
+		}
+		modifier = {
+			add = 0.2
+			desc = study_mundane_method
+			has_situation_flag = mundane_method_approach
+		}
+		modifier = {
+			add = 0.2
+			desc = study_astral_method
+			has_situation_flag = astral_method_approach
+		}
+		modifier = {
+			factor = 0
+			desc = rift_sphere_missing
+			owner = {
+				NOT = { has_technology = tech_rift_sphere }
+			}
+		}
+	}
+}
+
+situation_the_seal = {
+	picture = GFX_evt_situation_the_seal
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	category = neutral
+	initial_progress = 0
+
+	on_start = {
+		save_global_event_target_as = the_seal_situation
+		set_variable = {
+			which = months_since_last_wave
+			value = 0
+		}
+		set_variable = {
+			which = formless_event_delay_between_waves_in_days
+			value = value:convert_months_into_days|VALUE|@formless_event_delay_between_waves_in_months|
+		}
+		event_target:aberrant_country = {
+			set_variable = {
+				which = invader_fleet_strength
+				value = 5
+			}
+		}
+
+		set_saved_date = {
+			key = days_before_spawn
+			days_from_present = formless_event_delay_between_waves_in_days
+			expires = formless_event_delay_between_waves_in_days
+		}
+	}
+
+	on_progress_complete = {
+		custom_tooltip = finisher_effects_the_seal
+		custom_tooltip = aberrant_fleet_spawn_countdown
+		hidden_effect = {
+			owner = {
+				country_event = { id = astral_situation.15 }
+			}
+			clear_global_event_target = the_seal_situation
+			destroy_situation = this
+		}
+	}
+
+	abort_trigger = {
+		owner = { is_hostile = event_target:formless_country }
+	}
+	on_abort = {
+		clear_global_event_target = the_seal_situation
+	}
+
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_green
+			end = @formless_the_seal_situation_final_step_progress
+			custom_tooltip = stage_unknown_effects
+		}
+	}
+
+	approach = {
+		name = situation_the_seal_do_nothing
+		icon = GFX_situation_approach_shrug
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = approach_situation_the_seal_do_nothing_tt
+			set_situation_flag = do_nothing_approach
+			remove_situation_flag = weave_method_approach
+			remove_situation_flag = pump_method_approach
+			hidden_effect = {
+				disable_the_seal_modifiers = yes
+			}
+		}
+		default = yes
+	}
+
+	approach = {
+		name = situation_the_seal_weave_astral_fabric
+		icon = GFX_situation_approach_astral
+		icon_background = GFX_situation_approach_bg_green
+		allow = {
+			owner = {
+				has_resource = { type = astral_threads amount >= 10 }
+			}
+		}
+		on_select = {
+			custom_tooltip = approach_situation_the_seal_weave_astral_fabric_tt
+			set_situation_flag = weave_method_approach
+			remove_situation_flag = do_nothing_approach
+			remove_situation_flag = pump_method_approach
+			hidden_effect = {
+				enable_the_seal_weave_astral_fabric = yes
+			}
+		}
+		active_tooltip = approach_situation_the_seal_weave_astral_fabric_tt
+		resources = {
+			category = situations
+			upkeep = {
+				astral_threads = 10
+			}
+		}
+	}
+
+	approach = {
+		name = situation_the_seal_pump_exotic_gases
+		icon = GFX_situation_approach_exotic
+		icon_background = GFX_situation_approach_bg_green
+		allow = {
+			owner = {
+				has_resource = { type = exotic_gases amount >= 50 }
+			}
+		}
+		on_select = {
+			custom_tooltip = approach_situation_the_seal_pump_exotic_gases_tt
+			set_situation_flag = pump_method_approach
+			remove_situation_flag = do_nothing_approach
+			remove_situation_flag = weave_method_approach
+			hidden_effect = {
+				enable_the_seal_pump_exotic_gases = yes
+			}
+		}
+		active_tooltip = approach_situation_the_seal_pump_exotic_gases_tt
+		resources = {
+			category = situations
+			upkeep = {
+				exotic_gases = 50
+			}
+		}
+	}
+
+	monthly_progress = {
+		base = 1
+		modifier = {
+			add = -0.2
+			desc = the_seal_do_nothing_method
+			has_situation_flag = do_nothing_approach
+		}
+		modifier = {
+			add = 0.4
+			desc = the_seal_weave_method
+			has_situation_flag = weave_method_approach
+		}
+		modifier = {
+			add = 0.2
+			desc = the_seal_pump_method
+			has_situation_flag = pump_method_approach
+		}
+		modifier = {
+			factor = 0
+			desc = formless_seal_defeat_all_fleets
+			check_variable_arithmetic = {
+				which = @formless_the_seal_situation_final_step_progress
+				subtract = @formless_event_situation_progress_on_destroy_invader_fleet
+				value < trigger:situation_progress
+			}
+			event_target:aberrant_country = {
+				any_controlled_fleet = {
+					always = yes
+				}
+			}
+		}
+	}
+
+	on_monthly = {
+		events = {
+			astral_situation.10
+		}
+	}
+}

@@ -6,7 +6,8 @@ citizenship_full = {
 
 	potential = {
 		exists = from
-		NOT = { from = { has_authority = auth_machine_intelligence } }
+		from = { is_machine_empire = no }
+		is_disconnected_drone_pop = no
 	}
 
 	allow = {
@@ -15,21 +16,17 @@ citizenship_full = {
 		custom_tooltip = {
 			fail_text = "pre_sapients_citizenship"
 			is_sapient = yes
-			OR = {
-				AND = {
-					exists = from
-					NOT = { from = { has_valid_civic = civic_transcendental_utopia } }
-				}
-				AND = {
-					exists = from
-					from = { has_valid_civic = civic_transcendental_utopia }
-					OR = {
-						has_trait = trait_social_pheromones
-						has_trait = trait_latent_psionic
-						has_trait = trait_psionic
-						has_trait = trait_cybernetic
-						has_trait = trait_robot_emotion_emulators
-					}
+		}
+		custom_tooltip = {
+			fail_text = "WILDERNESS_SPECIES_CITIZENS_ONLY"
+			if = {
+				limit = { from = { has_valid_civic = civic_transcendental_utopia } }
+				OR = {
+					has_trait = trait_social_pheromones
+					has_trait = trait_latent_psionic
+					has_trait = trait_psionic
+					has_trait = trait_cybernetic
+					has_trait = trait_robot_emotion_emulators
 				}
 			}
 		}
@@ -46,6 +43,20 @@ citizenship_full = {
 			OR = {
 				NOT = { from = { has_authority = auth_hive_mind } }
 				has_trait = trait_hive_mind
+			}
+		}
+		custom_tooltip = {
+			fail_text = "WILDERNESS_SPECIES_CITIZENS_ONLY"
+			if = {
+				limit = { from = { is_wilderness_empire = yes } }
+				has_trait = trait_wilderness
+			}
+		}
+		custom_tooltip = {
+			fail_text = "WILDERNESS_DEAD_WORLD"
+			if = {
+				limit = { from = { is_wilderness_empire = no } }
+				NOT = { has_trait = trait_wilderness }
 			}
 		}
 		custom_tooltip = {
@@ -100,7 +111,7 @@ citizenship_full = {
 			}
 		}
 		custom_tooltip = {
-			fail_text = ROBOTS_ARE_OUTLAWED
+			fail_text = "ROBOTS_NO_RIGHTS"
 			if = {
 				limit = {
 					OR = {
@@ -132,13 +143,13 @@ citizenship_full = {
 citizenship_limited = {
 	new_pop_weight = 0.75
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_happiness = -0.1
 		pop_amenities_usage_mult = -0.25
 		pop_political_power = -0.5
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			exists = owner
 			owner = { has_valid_civic = civic_sparta_spirit }
@@ -169,6 +180,7 @@ citizenship_limited = {
 			}
 			is_shackled_robot_species_rights = yes
 		}
+		is_disconnected_drone_pop = no
 	}
 
 	allow = {
@@ -176,11 +188,13 @@ citizenship_limited = {
 			fail_text = "presapients_not_accepted_citizenship"
 			OR = {
 				is_sapient = yes
+				has_trait = trait_nascent_stage
 				from = {
 					NOT = {
 						has_policy_flag = pre_sapients_eat
 						has_policy_flag = pre_sapients_purge
 					}
+					is_wilderness_empire = yes
 				}
 			}
 		}
@@ -192,6 +206,12 @@ citizenship_limited = {
 					from = { has_valid_civic = civic_hive_guided_sapience }
 				}
 				has_trait = trait_hive_mind
+				AND = {
+					is_sapient = no
+					from = {
+						is_wilderness_empire = yes
+					}
+				}
 			}
 		}
 		custom_tooltip = {
@@ -202,23 +222,26 @@ citizenship_limited = {
 			}
 		}
 		custom_tooltip = {
+			fail_text = "WILDERNESS_DEAD_WORLD"
+			if = {
+				limit = { from = { is_wilderness_empire = no } }
+				NOT = { has_trait = trait_wilderness }
+			}
+		}
+		custom_tooltip = {
 			fail_text = same_species_disallowed
-			OR = {
-				AND = {
-					exists = from
-					NOT = { from = { has_valid_civic = civic_transcendental_utopia } }
-					NOT = { is_same_species = from }
-				}
-				AND = {
-					exists = from
-					from = { has_valid_civic = civic_transcendental_utopia }
-					NOR = {
-						has_trait = trait_social_pheromones
-						has_trait = trait_latent_psionic
-						has_trait = trait_psionic
-						has_trait = trait_cybernetic
-						has_trait = trait_robot_emotion_emulators
-					}
+			NOT = { is_same_species = from }
+		}
+		custom_tooltip = {
+			fail_text = same_species_disallowed
+			if = {
+				limit = { from = { has_valid_civic = civic_transcendental_utopia } }
+				NOR = {
+					has_trait = trait_social_pheromones
+					has_trait = trait_latent_psionic
+					has_trait = trait_psionic
+					has_trait = trait_cybernetic
+					has_trait = trait_robot_emotion_emulators
 				}
 			}
 		}
@@ -305,9 +328,13 @@ citizenship_slavery = {
 		}
 	}
 	potential = {
+		exists = from
 		NAND = {
 			exists = this
 			OR = {
+				from = {
+					is_wilderness_empire = yes
+				}
 				AND = {
 					from = { is_individual_machine = yes }
 					OR = {
@@ -319,11 +346,10 @@ citizenship_slavery = {
 				has_trait = trait_mechanical
 			}
 		}
+		is_disconnected_drone_pop = no
 	}
 	allow = {
-		hidden_trigger = {
-			exists = from
-		}
+		hidden_trigger = { exists = from }
 		custom_tooltip = {
 			fail_text = "presapients_allowed_citizenship"
 			OR = {
@@ -349,21 +375,25 @@ citizenship_slavery = {
 		}
 		custom_tooltip = {
 			fail_text = "HIVE_MIND_MAIN_SPECIES_ALWAYS_CITIZEN"
-			OR = {
-				NAND = {
-					from = {
-						has_authority = auth_hive_mind
-					}
-					is_same_species = from
-				}
+			NAND = {
+				from = { is_hive_empire = yes }
+				has_trait = trait_hive_mind
+			}
+		}
+		custom_tooltip = {
+			fail_text = "WILDERNESS_DEAD_WORLD"
+			if = {
+				limit = { from = { is_wilderness_empire = no } }
+				NOT = { has_trait = trait_wilderness }
 			}
 		}
 		custom_tooltip = {
 			fail_text = same_species_disallowed
-			OR = {
-				NOT = { is_same_species = from }
-				has_trait = trait_zombie
-			}
+			NOT = { is_same_species = from }
+		}
+		custom_tooltip = {
+			fail_text = "lonely_hive_mind_pops_kill_themselves_citizenship"
+			is_lonely_hive_mind_pop = no
 		}
 		custom_tooltip = {
 			fail_text = SERVITORS_CANNOT_ENSLAVE
@@ -416,6 +446,19 @@ citizenship_slavery = {
 					has_ethic = ethic_authoritarian
 					has_ethic = ethic_fanatic_authoritarian
 					has_ethic = ethic_gestalt_consciousness
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = does_not_embrace_species_slavery
+			from = {
+				allows_slavery = yes
+				OR = {
+					has_ethic = ethic_xenophobe
+					has_ethic = ethic_fanatic_xenophobe
+					has_ethic = ethic_authoritarian
+					has_ethic = ethic_fanatic_authoritarian
+					has_ethic = ethic_gestalt_consciousness
 					has_valid_civic = civic_slaver_guilds
 					has_valid_civic = civic_indentured_assets
 					has_valid_civic = civic_reeducated_labor
@@ -424,18 +467,11 @@ citizenship_slavery = {
 		}
 		custom_tooltip = {
 			fail_text = yes_service_yes_citizenship
-			OR = {
-				NOT = {
-					from = {
-						has_valid_civic = civic_citizen_service
-					}
+			if = {
+				limit = {
+					from = { has_valid_civic = civic_citizen_service }
 				}
-				NOT = {
-					has_military_service_type = {
-						type = military_service_full
-						country = from
-					}
-				}
+				NOT = { has_military_service_type = { type = military_service_full country = from } }
 			}
 		}
 		custom_tooltip = {
@@ -556,7 +592,7 @@ citizenship_purge = {
 
 	potential = {
 		exists = from
-		NOT = { from = { has_authority = auth_machine_intelligence } }
+		NOT = { from = { is_machine_empire = yes } }
 		OR = {
 			NOT = {
 				has_trait = trait_mechanical
@@ -763,67 +799,5 @@ citizenship_purge = {
 				is_xenophobe = yes
 			}
 		}
-	}
-}
-
-# 机械融合
-citizenship_full_machine = {
-	is_full_citizenship = yes
-	
-	potential = {
-		host_has_dlc = "Synthetic Dawn Story Pack"
-		exists = from
-		from = {
-			OR = {
-				has_authority = auth_machine_intelligence
-				has_valid_civic = civic_forever_with_us
-			}
-		}
-	}
-	
-	allow = {
-		hidden_trigger = { exists = from }
-		if = {
-			limit = {
-				from = {
-					NOR = {
-						has_valid_civic = civic_machine_assimilator
-						has_valid_civic = civic_forever_with_us
-					}
-				}
-			}
-			custom_tooltip = {
-				fail_text = MACHINE_SPECIES_NOT_MACHINE
-				OR = {
-					has_trait = trait_mechanical
-					has_trait = trait_machine_unit
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				from = { has_valid_civic = civic_forever_with_us }
-			}
-			custom_tooltip = {
-				fail_text = ASSIMILATOR_SPECIES_NOT_CYBORG
-				OR = {
-					has_trait = trait_machine_unit
-					has_trait = trait_unnatural
-				}
-			}
-		}
-		else = {
-			custom_tooltip = {
-				fail_text = ASSIMILATOR_SPECIES_NOT_CYBORG
-				OR = {
-					has_trait = trait_cybernetic
-					has_trait = trait_machine_unit
-					has_trait = trait_mechanical
-				}
-			}
-		}
-	}
-	ai_will_do = {
-		factor = 30
 	}
 }

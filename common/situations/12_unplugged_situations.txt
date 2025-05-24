@@ -1,0 +1,219 @@
+
+# The unplugged are trying to decide if they want to keep being cyborgs or not
+situation_unplugged_identity = {
+	picture = GFX_evt_unplugged
+	# complete_icon_frame = GFX_situation_outcome_frame_blue
+	# complete_icon = GFX_situation_outcome_unknown
+	progress_direction = bidirectional
+	initial_progress = 50
+
+	desc = {
+		trigger = {
+			success_text = {
+				always = yes
+				text = situation_unplugged_identity_desc
+			}
+			success_text = {
+				always = yes
+				text = newline
+			}
+			success_text = {
+				target = {
+					has_faction = prosperity
+				}
+				text = situation_unplugged_prosperity_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = technologist
+				}
+				text = situation_unplugged_technologists_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = totalitarian
+				}
+				text = situation_unplugged_totalitarian_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = traditionalist
+				}
+				text = situation_unplugged_traditionalist_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = xenoist
+				}
+				text = situation_unplugged_xenoist_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = supremacist
+				}
+				text = situation_unplugged_supremacist_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = imperialist
+				}
+				text = situation_unplugged_imperialist_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = isolationist
+				}
+				text = situation_unplugged_isolationist_opinion
+			}
+			success_text = {
+				target = {
+					has_faction = progressive
+				}
+				text = situation_unplugged_progressive_opinion
+			}
+			# Failsafe text
+			success_text = {
+				target = {
+					NOR = {
+						has_faction = prosperity
+						has_faction = technologist
+						has_faction = totalitarian
+						has_faction = traditionalist
+						has_faction = xenoist
+						has_faction = supremacist
+						has_faction = imperialist
+						has_faction = isolationist
+						has_faction = progressive
+					}
+				}
+				text = situation_unplugged_no_opinion
+			}
+		}
+	}
+
+	on_monthly = {
+		events = {
+			unplugged.3900
+			unplugged.3902
+		}
+	}
+	on_start = {
+		unplugged_origin_queue_identity_situation_event_effect = yes
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			is_variable_set = var_unplugged_identity_situation_faction_value
+			desc = situation_unplugged_faction_opinion_tt
+			add = var_unplugged_identity_situation_faction_value
+		}
+		modifier = {
+			is_variable_set = var_unplugged_identity_situation_recent_events_value
+			NOT = {
+				check_variable = {
+					which = var_unplugged_identity_situation_recent_events_value
+					value = 0
+				}
+			}
+			desc = situation_unplugged_recent_events_tt
+			add = var_unplugged_identity_situation_recent_events_value
+		}
+		# Cybernetic and Synthetic paths can be picked up during/before the situation resolves, psionic and genetic cannot
+		modifier = { # The Flesh is Weak
+			target = {
+				has_ascension_perk = ap_the_flesh_is_weak
+			}
+			desc = ap_the_flesh_is_weak
+			add = 6
+		}
+		modifier = { # Synthetic Evolution
+			target = {
+				has_ascension_perk = ap_synthetic_evolution
+			}
+			desc = ap_synthetic_evolution
+			add = 6
+		}
+		modifier = {
+			mult = 0.5
+			desc = situation_unplugged_identity_discourage_change_tt
+			current_situation_approach = situation_unplugged_identity_discourage_change
+		}
+		modifier = {
+			mult = 1.5
+			desc = situation_unplugged_identity_embrace_opinion_tt
+			current_situation_approach = situation_unplugged_identity_embrace_opinion
+		}
+		modifier = {
+			min = -2
+			desc = situation_unplugged_identity_opinion_settled_tt
+			situation_progress < 15
+			situation_progress > 5
+		}
+		modifier = {
+			max = 2
+			desc = situation_unplugged_identity_opinion_settled_tt
+			situation_progress > 85
+			situation_progress < 95
+		}
+		modifier = {
+			min = 0
+			desc = situation_unplugged_identity_opinion_settled_tt
+			situation_progress < 5
+		}
+		modifier = {
+			max = 0
+			desc = situation_unplugged_identity_opinion_settled_tt
+			situation_progress > 95
+		}
+	}
+
+	stages = {
+		unplugged_identity_stage_1 = {
+			icon = GFX_situation_unplugged_stage_decyberize
+			icon_background = GFX_situation_stage_frame_green
+			end = 35
+			custom_tooltip = situation_unplugged_stage_decyberize
+		}
+		unplugged_identity_stage_2 = {
+			icon = GFX_situation_unplugged_stage_remain
+			icon_background = GFX_situation_stage_frame_gray
+			end = 65
+			custom_tooltip = situation_unplugged_stage_remain
+		}
+		unplugged_identity_stage_3 = {
+			icon = GFX_situation_unplugged_stage_cyberize
+			icon_background = GFX_situation_stage_frame_magenta
+			end = 100
+			custom_tooltip = situation_unplugged_stage_cyberize
+		}
+	}
+
+	approach = {
+		name = situation_unplugged_identity_open_conversations
+		icon = GFX_situation_approach_open_conversation
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = situation_unplugged_identity_open_conversations_effect_tt
+		}
+		default = yes
+		#TODO: add AI weights & modifiers/costs
+	}
+	approach = {
+		name = situation_unplugged_identity_discourage_change
+		icon = GFX_situation_approach_discurage_conversation
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = situation_unplugged_identity_discourage_change_effect_tt
+		}
+		#TODO: add AI weights & modifiers/costs
+	}
+	approach = {
+		name = situation_unplugged_identity_embrace_opinion
+		icon = GFX_situation_approach_encurage_conversation
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = situation_unplugged_identity_embrace_opinion_effect_tt
+		}
+		#TODO: add AI weights & modifiers/costs
+	}
+}

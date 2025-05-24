@@ -1,0 +1,364 @@
+
+#Relentless Industrialists
+
+relentless_industrialists_situation = {
+	picture = GFX_evt_relic_world_building
+
+	initial_progress = 50
+
+	abort_trigger = {
+		owner = { is_relentless_industrialist_empire = no }
+	}
+
+	progress_direction = bidirectional
+	complete_category = negative
+	fail_category = positive
+
+	complete_icon = GFX_situation_outcome_negative
+	complete_icon_frame = GFX_situation_outcome_frame_red
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+
+	on_fail = {
+		custom_tooltip = relentless_industrialists_situation_cleanup_tooltip
+		hidden_effect = {
+			situation_event = { id = toxoids.35 }
+		}
+	}
+	on_progress_complete = {
+		custom_tooltip = relentless_industrialists_situation_completion_tooltip
+		hidden_effect = {
+			if = {
+				limit = { current_situation_approach = approach_take_no_action }
+				situation_event = { id = toxoids.25 }
+			}
+			else = {
+				situation_event = { id = toxoids.30 }
+			}
+		}
+	}
+
+	stages = {
+		stage_cleanup = {
+			end = 50
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_green
+		}
+		stage_cataclysm_1 = {
+			end = 80
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			target_modifier = {
+				planet_stability_add = -10
+			}
+		}
+		stage_cataclysm_2 = {
+			end = 100
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			triggered_target_modifier = {
+				potential = {
+					NOT = { has_situation_flag = fine_with_climate_apocalypse }
+				}
+				planet_stability_add = -20
+			}
+			on_first_enter = {
+				set_situation_flag = path_locked
+
+				random_list = {
+					1 = { #Note on weights: it is explicitly intentional that people will not always freak out, even if it is NOT okay.
+						set_situation_flag = fine_with_climate_apocalypse
+						situation_event = { id = toxoids.15 }
+					}
+					4 = {
+						situation_event = { id = toxoids.10 }
+
+						modifier = {
+							factor = 0
+							owner = { empire_has_good_habitability_on_tomb_worlds = yes }
+						}
+					}
+				}
+			}
+		}
+	}
+
+	monthly_progress = {
+		modifier = {
+			desc = string_current_approach
+			NOT = { current_situation_approach = approach_cleanup_efforts }
+			add = 2.5
+		}
+		modifier = {
+			desc = string_current_approach
+			current_situation_approach = approach_cleanup_efforts
+			subtract = 2.5
+		}
+	}
+
+	approach = {
+		name = approach_take_no_action
+		icon = GFX_situation_approach_shrug
+		icon_background = GFX_situation_approach_bg_red
+		default = yes
+
+		allow = {
+			custom_tooltip = {
+				fail_text = too_late_to_change_approach
+				OR = {
+					NOT = { has_situation_flag = path_locked }
+					current_situation_approach = approach_take_no_action
+				}
+			}
+		}
+
+		on_select = {
+			custom_tooltip = approach_climate_do_nothing_tooltip
+		}
+
+		ai_weight = {
+			base = 0
+		}
+	}
+
+	approach = {
+		name = approach_cleanup_efforts
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+
+		allow = {
+			custom_tooltip = {
+				fail_text = too_late_to_change_approach
+				OR = {
+					NOT = { has_situation_flag = path_locked }
+					current_situation_approach = approach_cleanup_efforts
+				}
+			}
+		}
+
+		on_select = {
+			custom_tooltip = approach_climate_cleanup_efforts_tooltip
+		}
+
+		target_modifier = {
+			planet_pops_upkeep_mult = 1
+			planet_buildings_upkeep_mult = 1
+		}
+
+		ai_weight = {
+			base = 1
+		}
+	}
+
+	approach = {
+		name = approach_embrace_change
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+
+		allow = {
+			custom_tooltip = {
+				fail_text = too_late_to_change_approach
+				OR = {
+					NOT = { has_situation_flag = path_locked }
+					current_situation_approach = approach_embrace_change
+				}
+			}
+		}
+		on_select = {
+			custom_tooltip = approach_climate_embrace_change_tooltip
+		}
+
+		resources = {
+			category = situations
+			upkeep = {
+				physics_research = 10
+				society_research = 10
+				engineering_research = 10
+			}
+		}
+
+		ai_weight = {
+			base = 2
+			modifier = {
+				factor = 0
+				owner = { empire_has_good_habitability_on_tomb_worlds = no }
+			}
+		}
+	}
+}
+
+### Toxic Knights Quest
+
+situation_toxic_knights = {
+	picture = GFX_evt_knights
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	on_progress_complete = {
+		custom_tooltip = situation_knights_outcome
+		hidden_effect = {
+			situation_event = { id = toxoids.7250 }
+		}
+		set_situation_locked = yes
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 125
+			custom_tooltip = stage_knights_effects
+		}
+		stage_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_blue
+			end = 250
+			on_first_enter = {
+				situation_event = { id = toxoids.7005 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+		stage_3 = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_blue
+			end = 375
+			on_first_enter = {
+				situation_event = { id = toxoids.7020 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+		stage_4 = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_blue
+			end = 500
+			on_first_enter = {
+				situation_event = { id = toxoids.7050 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+		stage_5 = {
+			icon = GFX_situation_stage_5
+			icon_background = GFX_situation_stage_frame_blue
+			end = 625
+			on_first_enter = {
+				situation_event = { id = toxoids.7075 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+		stage_6 = {
+			icon = GFX_situation_stage_6
+			icon_background = GFX_situation_stage_frame_blue
+			end = 750
+			on_first_enter = {
+				situation_event = { id = toxoids.7110 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+		stage_7 = {
+			icon = GFX_situation_stage_7
+			icon_background = GFX_situation_stage_frame_blue
+			end = 875
+			on_first_enter = {
+				situation_event = { id = toxoids.7140 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+		stage_8 = {
+			icon = GFX_situation_stage_8
+			icon_background = GFX_situation_stage_frame_blue
+			end = 1000
+			on_first_enter = {
+				situation_event = { id = toxoids.7195 }
+			}
+			custom_tooltip = stage_knights_effects
+		}
+	}
+	approach = {
+		name = situation_toxic_knights_regular
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		on_select = {
+			custom_tooltip = approach_toxic_knights_regular_tt
+		}
+		default = yes
+		modifier = {
+			planet_jobs_alloys_produces_mult = -0.10
+			country_energy_produces_mult = -0.20
+		}
+	}
+	approach = {
+		name = situation_toxic_knights_generous
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_green
+		on_select = {
+			custom_tooltip = approach_toxic_knights_generous_tt
+		}
+		modifier = {
+			planet_jobs_alloys_produces_mult = -0.15
+			country_energy_produces_mult = -0.30
+			country_unity_produces_mult = 0.10
+		}
+	}
+	approach = {
+		name = situation_toxic_knights_frugal
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_red
+		resources = {
+   			category = situations
+   			cost = { influence = 100 }
+		}
+
+		on_select = {
+			custom_tooltip = approach_toxic_knights_frugal_tt
+		}
+		modifier = {
+			planet_jobs_alloys_produces_mult = -0.05
+			country_energy_produces_mult = -0.10
+		}
+	}
+	on_monthly = {
+		events = {
+			toxoids.8010
+		}
+		random_events = {
+			1200 = 0
+			10 = toxoids.8000
+			10 = toxoids.8005
+		}
+	}
+	monthly_progress = {
+		base = 0.4
+		modifier = {
+			add = 0.2
+			desc = situation_toxic_knights_generous_tt
+			current_situation_approach = situation_toxic_knights_generous
+		}
+		modifier = {
+			add = -0.2
+			desc = situation_toxic_knights_frugal_tt
+			current_situation_approach = situation_toxic_knights_frugal
+		}
+		modifier = {
+			add = -0.2
+			desc = situation_toxic_knights_policy_tt
+			owner = {
+				NOR = {
+					has_policy_flag = toxic_knights_questing
+					has_policy_flag = toxic_knights_diplomats
+				}
+			}
+		}
+		modifier = {
+			add = owner.value:toxic_knight_job_number
+			desc = situation_toxic_knights_jobs_tt
+		}
+		modifier = {
+			mult = 1.2
+			desc = situation_toxic_knights_motivation_tt
+			owner = { has_modifier = motivated_knights }
+		}
+		modifier = {
+			mult = 0.8
+			desc = situation_toxic_knights_demotivation_tt
+			owner = { has_modifier = demotivated_knights }
+		}
+	}
+}

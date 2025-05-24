@@ -1,14 +1,12 @@
 complex_drone = {
-	rank = 0
-	clothes_texture_index = 2
-
+	rank = 3
 	change_job_threshold = 1.25
 
 	weight = {
 		weight = 2
 	}
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_housing_usage_base = 1
 		pop_amenities_usage_no_happiness_base = 1
 	}
@@ -19,49 +17,23 @@ complex_drone = {
 	}
 
 	resettlement_cost = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_civic = civic_machine_ota_updates
-					has_civic = civic_hive_subsumed_will
-				}
-			}
-		}
 		energy = 100
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_tiyanki_pop = yes
-		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
+	resettlement_cost = {
+		trigger = {
 			owner = {
-				has_active_tradition = tr_future_economy_ges
-				has_technology = tech_ascension_theory
+				NOR = {
+					has_valid_civic = civic_machine_ota_updates
+					has_valid_civic = civic_hive_subsumed_will
+				}
 			}
 		}
-		trade_value_add = 0.5
+		unity = 10
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
 
 	#无尽虫群
 	triggered_planet_modifier = {
@@ -71,7 +43,7 @@ complex_drone = {
 				has_policy_flag = endless_swarm
 			}
 		}
-		pop_growth_speed_reduction = -0.01
+		pop_decline_speed = -0.01
 	}
 
 	#有机奇点
@@ -96,24 +68,12 @@ complex_drone = {
 		planet_pop_assembly_mult = 0.01
 	}
 
-	#机械造神
-	triggered_planet_modifier = {
-		potential = {
-			owner = { has_valid_civic = civic_hive_capital_creates_gods }
-		}
-		trade_value_add = 1
-	}
-
 	triggered_planet_modifier = {
 		potential = {
 			is_unemployed = yes
 			owner = { is_ai = yes }
 		}
 		planet_jobs_produces_mult = 0.02
-	}
-
-	unemployment_resources = {
-		category = unemployment_resources
 	}
 
 	resources = {
@@ -130,69 +90,21 @@ complex_drone = {
 			society_research = 1
 		}
 
-		# Regular food, mineral and energy upkeep.
-		inline_script = "pop_categories/regular_upkeep"
-
-		# Additional food, mineral and energy upkeep.
-		inline_script = pop_categories/ethic_trait_upkeep
-
-		# Additional energy upkeep for cyborgs.
-		inline_script = "pop_categories/cyborg_upkeep"
-
-		# Exotic Metabolism Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_exotic_metabolism
-			}
-			exotic_gases = @exotic_metabolism
-		}
-
-		# Resource Production
-
-		# Lithoid Trait Output
-		inline_script = "pop_categories/trait_production"
-
+		#资本造神
 		produces = {
 			trigger = {
-				is_organic_species = yes
-				has_trait = trait_inorganic_breath
+				owner = { has_civic = civic_hive_capital_creates_gods }
 			}
-			exotic_gases = @inorganic_breath
-		}
-
-		produces = {
-			trigger = {
-				OR = {
-					has_trait = trait_drake_scaled
-					has_trait = trait_drake_scaled_yg
-				}
-			}
-			alloys = @drake_scaled_trait_resource_production
-		}
-
-		upkeep = {
-			trigger = {
-				is_organic_machine = yes
-			}
-			food = 1
-			mult = modifier:planet_pops_food_upkeep_add
-		}
-		upkeep = {
-			trigger = {
-				has_trait = trait_lithoid_yg
-			}
-			minerals = 1
-			mult = modifier:planet_pops_minerals_upkeep_add
+			trade = 2
 		}
 		upkeep = {
 			trigger = {
 				owner = { has_civic = civic_hive_capital_creates_gods }
 			}
-			consumer_goods = 1
+			consumer_goods = 1.5
 			mult = modifier:pop_category_complex_drones_consumer_goods_upkeep_add
 		}
-		
+
 		#合成之爱的额外食物维护
 		upkeep = {
 			trigger = {
@@ -209,28 +121,7 @@ complex_drone = {
 			unity = 0.25
 		}
 
-
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = { has_civic = civic_network_of_the_mind }
-				}
-			}
-			unity = 0.5
-		}
-
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_civic = civic_network_of_the_mind
-				}
-			}
-			unity = 0.25
-		}
-
-        # 复杂无人机天然神经网络修正
+		# 复杂无人机天然神经网络修正
 		produces = {
 			trigger = {
 				exists = owner
@@ -247,53 +138,16 @@ complex_drone = {
 }
 
 simple_drone = {
-	rank = 0
-	clothes_texture_index = 2
-
+	rank = 2
 	change_job_threshold = 1.15
 
-	# This is called whenever a Pop is created, moved to a different planet, or gets a new owner
-	assign_to_pop = {
-		exists = owner
-		owner = { is_gestalt = yes }
-	}
 	weight = {
 		weight = 1
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_tiyanki_pop = yes
-		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
-	}
-
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_housing_usage_base = 1
 		pop_amenities_usage_no_happiness_base = 1
-	}
-	triggered_pop_modifier = {
-		potential = {
-			has_global_flag = flag_rogue_maid_mod_activated
-			has_trait = trait_working_machine
-		}
-		modifier = {
-			pop_crime_no_happiness_add = -1
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_tiyanki_pop = yes
-		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
 	}
 
 	# scope: pop to be resettled
@@ -302,47 +156,23 @@ simple_drone = {
 	}
 
 	resettlement_cost = {
-		trigger = {
-			exists = owner
-			owner = {
-				NOR = {
-					has_civic = civic_machine_ota_updates
-					has_civic = civic_hive_subsumed_will
-				}
-			}
-		}
 		energy = 100
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
+	resettlement_cost = {
+		trigger = {
 			owner = {
-				OR = {
-					has_civic = civic_network_of_the_mind
-					AND = {
-						has_active_tradition = tr_future_economy_ges
-						has_technology = tech_ascension_theory
-					}
+				NOR = {
+					has_valid_civic = civic_machine_ota_updates
+					has_valid_civic = civic_hive_subsumed_will
 				}
 			}
 		}
-		trade_value_add = 0.5
+		unity = 10
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_budding_pop = yes
-		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			can_assemble_tiyanki_pop = yes
-		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
-	}
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
 
 	#无尽虫群
 	triggered_planet_modifier = {
@@ -352,7 +182,7 @@ simple_drone = {
 				has_policy_flag = endless_swarm
 			}
 		}
-		pop_growth_speed = 0.01
+		logistic_growth_mult = 0.01
 	}
 
 	#有机奇点
@@ -377,35 +207,12 @@ simple_drone = {
 		planet_pop_assembly_mult = 0.01
 	}
 
-	#机械造神
-	triggered_planet_modifier = {
-		potential = {
-			owner = { has_valid_civic = civic_hive_capital_creates_gods }
-		}
-		trade_value_add = 0.5
-	}
-
 	triggered_planet_modifier = {
 		potential = {
 			is_unemployed = yes
 			owner = { is_ai = yes }
 		}
 		planet_jobs_produces_mult = 0.02
-	}
-
-	unemployment_resources = {
-		category = unemployment_resources
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_hive_empire = yes
-				}
-			}
-			minerals = 1
-		}
-		upkeep = {
-		}
 	}
 
 	resources = {
@@ -421,59 +228,13 @@ simple_drone = {
 			engineering_research = 1
 			society_research = 1
 		}
-		# Regular food, mineral and energy upkeep.
-		inline_script = "pop_categories/regular_upkeep"
 
-		# Additional food, mineral and energy upkeep.
-		inline_script = pop_categories/ethic_trait_upkeep
-
-		# Additional energy upkeep for cyborgs.
-		inline_script = "pop_categories/cyborg_upkeep"
-
-		# Exotic Metabolism Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_exotic_metabolism
-			}
-			exotic_gases = @exotic_metabolism
-		}
-
-		# Resource Production
-
-		# Lithoid Trait Output
-		inline_script = "pop_categories/trait_production"
-
+		#资本造神
 		produces = {
 			trigger = {
-				is_organic_species = yes
-				has_trait = trait_inorganic_breath
+				owner = { has_civic = civic_hive_capital_creates_gods }
 			}
-			exotic_gases = @inorganic_breath
-		}
-
-		produces = {
-			trigger = {
-				OR = {
-					has_trait = trait_drake_scaled
-					has_trait = trait_drake_scaled_yg
-				}
-			}
-			alloys = @drake_scaled_trait_resource_production
-		}
-
-		upkeep = {
-			trigger = {
-				is_organic_machine = yes
-			}
-			food = 1
-			mult = modifier:planet_pops_food_upkeep_add
-		}
-		upkeep = {
-			trigger = {
-				has_trait = trait_lithoid_yg
-			}
-			minerals = 0.2
+			trade = 1
 		}
 		upkeep = {
 			trigger = {
@@ -482,7 +243,7 @@ simple_drone = {
 			consumer_goods = 1
 			mult = modifier:pop_category_simple_drones_consumer_goods_upkeep_add
 		}
-		
+
 		#合成之爱的额外食物维护
 		upkeep = {
 			trigger = {
@@ -499,28 +260,7 @@ simple_drone = {
 			unity = 0.15
 		}
 
-		
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = { has_civic = civic_network_of_the_mind }
-				}
-			}
-			unity = 0.25
-		}
-
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_civic = civic_network_of_the_mind
-				}
-			}
-			unity = 0.15
-		}
-
-        # 简单无人机天然神经网络修正
+		# 简单无人机天然神经网络修正
 		produces = {
 			trigger = {
 				exists = owner
@@ -534,4 +274,130 @@ simple_drone = {
 			society_research = 1
 		}
 	}
+}
+
+maintenance_drone = {
+	rank = 1
+
+	weight = {
+		weight = 0
+	}
+
+	pop_group_modifier = {
+		pop_housing_usage_base = 1
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = yes
+	}
+
+	resettlement_cost = {
+		energy = 100
+	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
+
+	#无尽虫群
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = endless_swarm
+			}
+		}
+		logistic_growth_mult = 0.01
+	}
+
+	#有机奇点
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = organic_singularity
+			}
+		}
+		planet_jobs_productive_produces_mult = 0.01
+	}
+
+	#机械嬗变
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mechanical_transmutation
+			}
+		}
+		planet_pop_assembly_mult = 0.01
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			is_unemployed = yes
+			owner = { is_ai = yes }
+		}
+		planet_jobs_produces_mult = 0.02
+	}
+
+	resources = {
+		category = pop_category_maintenance_drones
+
+		#求道协议
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_policy_flag = dao_seeking_protocol }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+
+		#资本造神
+		produces = {
+			trigger = {
+				owner = { has_civic = civic_hive_capital_creates_gods }
+			}
+			trade = 0.5
+		}
+		upkeep = {
+			trigger = {
+				owner = { has_civic = civic_hive_capital_creates_gods }
+			}
+			consumer_goods = 0.5
+			mult = modifier:pop_category_simple_drones_consumer_goods_upkeep_add
+		}
+
+		#合成之爱的额外食物维护
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_machine_syntheticLove
+				}
+			}
+			food = 0.5
+		}
+
+		#人口凝聚力消耗
+		upkeep = {
+			unity = 0.15
+		}
+
+		# 简单无人机天然神经网络修正
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					is_hive_empire = yes
+					has_civic = civic_hive_natural_neural_network
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+	}
+
 }

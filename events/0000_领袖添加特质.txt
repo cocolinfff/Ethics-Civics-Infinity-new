@@ -1,0 +1,754 @@
+############################
+#
+# Leader Events
+#
+############################
+
+namespace = leader
+
+# Fired by on_added_to_leader_pool
+# A leader is added to the leader pool, available for recruitment
+# scope: country, from: leader
+# Add traits from civics
+country_event = {
+	id = leader.100
+	hide_window = yes
+
+	is_triggered_only = yes
+
+
+	trigger = {
+		NOT = { has_country_flag = spawning_renowned_leader }
+	}
+
+	immediate = {
+
+		# Champions of the Empire
+		# Adds a random common trait
+		if = {
+			limit = {
+				has_tradition = tr_aptitude_champions_of_the_empire
+			}
+			from = {
+				add_trait_no_notify = "random_common"
+			}
+		}
+
+		# Optimized Neurology
+		# Adds a random common trait
+		if = {
+			limit = {
+				has_country_flag = genetic_ascension_stage_1_purity
+				has_genetic_stage_1_tradition = yes
+			}
+			from = {
+				add_trait_no_notify = "random_common"
+			}
+		}
+
+		# Aristocratic Elite
+		# 20% Chance for a random positive trait and a random negative trait
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_aristocratic_elite
+					has_valid_civic = civic_feudal_realm
+					has_valid_civic = civic_peaceful_republic
+					has_valid_civic = civic_socialistic
+				}
+			}
+			from = {
+				random_list = {
+					80 = {  }
+					20 = {
+						add_trait_no_notify = "random_common"
+						add_trait_no_notify = "random_negative"
+						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
+						if = {
+							limit = {
+								owner = {
+									OR = {
+										has_valid_civic = civic_aristocratic_elite
+										has_valid_civic = civic_feudal_realm
+									}
+								}
+							}
+							change_background_job = noble
+						}
+						else_if = {
+							limit = {
+								owner = {
+									has_valid_civic = civic_peaceful_republic
+								}
+							}
+							change_background_job = supervisor
+						}
+					}
+				}
+			}
+		}
+
+		# 哲人王
+		# 领袖有25%的概率随机获得正面特质
+		if = {
+			limit = {
+				OR = {
+					has_civic = civic_civil_education
+					has_valid_civic = civic_socialistic
+				}
+			}
+			from = {
+				random_list = {
+					75 = {  }
+					25 = {
+						add_trait_no_notify = "random_common"
+						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
+						if = {
+							limit = {
+								owner = {
+									has_valid_civic = civic_civil_education
+								}
+							}
+							change_background_job = teacher
+						}
+					}
+				}
+			}
+		}
+
+		# 父父子子
+		# 领袖有20%的概率随机获得正面特质
+		if = {
+			limit = {
+				has_valid_civic = civic_parental_authoritarianism
+			}
+			from = {
+				random_list = {
+					5 = { add_trait_no_notify = leader_trait_stubborn }
+					5 = { add_trait_no_notify = leader_trait_substance_abuser }
+					5 = { add_trait_no_notify = leader_trait_arrested_development }
+					5 = { add_trait_no_notify = leader_trait_nervous }
+					5 = { add_trait_no_notify = leader_trait_lethargic }
+					5 = { add_trait_no_notify = leader_trait_passive }
+					5 = { add_trait_no_notify = leader_trait_tyrannical }
+					5 = { add_trait_no_notify = leader_trait_paranoid }
+					5 = { add_trait_no_notify = leader_trait_melancholic }
+					5 = { add_trait_no_notify = leader_trait_fallible }
+					5 = { add_trait_no_notify = leader_trait_lavish_lifestyle }
+					5 = { add_trait_no_notify = leader_trait_excessive }
+					5 = { add_trait_no_notify = leader_trait_reclusive }
+					5 = { add_trait_no_notify = leader_trait_intolerant }
+					5 = { add_trait_no_notify = leader_trait_volatile }
+
+					1 = { add_trait_no_notify = leader_trait_adaptable }
+					1 = { add_trait_no_notify = leader_trait_eager }
+					1 = { add_trait_no_notify = leader_trait_cautious }
+					1 = { add_trait_no_notify = leader_trait_unyielding }
+					1 = { add_trait_no_notify = leader_trait_restrained }
+					1 = { add_trait_no_notify = leader_trait_meticulous }
+					1 = { add_trait_no_notify = leader_trait_carefree }
+					1 = { add_trait_no_notify = leader_trait_maniacal }
+					1 = { add_trait_no_notify = trait_ruler_charismatic }
+					1 = { add_trait_no_notify = leader_trait_inquisitive }
+				}
+			}
+		}
+
+		# Technocracy
+		# Adds a random expertise trait
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_technocracy
+				}
+				from = { leader_class = scientist }
+			}
+			from = {
+				add_random_expertise_trait_effect = yes
+			}
+		}
+
+		# Crusader Spirit
+		# Adds the Crusader trait
+		if = {
+			limit = {
+				has_valid_civic = civic_crusader_spirit
+				from = { leader_class = commander }
+			}
+			from = {
+				add_trait_no_notify = leader_trait_crusader
+			}
+		}
+
+		# Letters of Marque
+		# Adds the Corsair trait
+		if = {
+			limit = {
+				has_civic = civic_crusader_spirit_corporate
+				from = { leader_class = commander }
+			}
+			from = {
+				add_trait_no_notify = leader_trait_corsair
+			}
+		}
+
+		# Tactical Algorithms
+		# Adds the Tactical Algorithms trait
+		if = {
+			limit = {
+				has_civic = civic_machine_tactical_algorithms
+				from = { leader_class = commander }
+			}
+			from = {
+				add_trait_no_notify = leader_trait_tactical_algorithms
+			}
+		}
+
+		# Storm Chasers
+		# Adds the Storm Rider trait
+		if = {
+			limit = {
+				has_origin = origin_storm_chasers
+			}
+			from = {
+				switch = {
+					trigger = leader_class
+					commander = {
+						add_trait_no_notify = leader_trait_storm_rider_commander
+					}
+					scientist = {
+						add_trait_no_notify = leader_trait_storm_rider_scientist
+					}
+					official = {
+						add_trait_no_notify = leader_trait_storm_rider_official
+					}
+				}
+			}
+		}
+
+		# Treasure Hunters
+		# Adds the Adventurous Spirit trait
+		if = {
+			limit = {
+				has_origin = origin_treasure_hunters
+			}
+			from = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
+					TRAIT = leader_trait_adventurous_spirit_3
+				}
+			}
+		}
+
+		# Biochemical Composure/Cloning Authorities
+		if = {
+			limit = {
+				from = {
+					leader_can_have_backup_clone = yes
+				}
+			}
+			from = {
+				random_list = {
+					75 = {
+						# Base 75% chance of nothing
+						modifier = {
+							factor = 0
+							root = {
+								is_cloning_authority = yes
+								has_cloning_biochemical_composure_tradition = yes
+							}
+						}
+					}
+					25 = {
+						add_trait_no_notify = leader_trait_has_backup_clone
+					}
+				}
+			}
+		}
+
+		# Genetic Purity Authorities
+		if = {
+			limit = {
+				is_purity_authority = yes
+				is_imperial_authority = no
+				is_hive_empire = no
+				is_megacorp = no
+				from = {
+					species = {
+						is_robotic_species = no
+					}
+				}
+			}
+			from = {
+				add_trait = trait_leader_genetic_purist
+			}
+		}
+
+		# Biotic Dominion
+		if = {
+			limit = {
+				is_purity_authority = yes
+				is_imperial_authority = yes
+				from = {
+					is_same_species = root.ruler
+				}
+			}
+			from = {
+				add_trait_no_notify = trait_imperial_heir
+			}
+		}
+
+		# Unplugged
+		# Adds Cybernetic Benefits Trait
+		if = {
+			limit = {
+				has_origin = origin_unplugged
+				from = {
+					leader_class = commander
+					species = {
+						is_same_value = prevprev.owner_main_species
+					}
+				}
+			}
+
+			owner_main_species = {
+				switch = {
+					trigger = has_trait
+					trait_unplugged_cybernetic_positives_3 = {
+						prev.from = {
+							add_trait_no_notify = leader_trait_unplugged_cybernetic_positives_3
+						}
+					}
+					trait_unplugged_cybernetic_positives_2 = {
+						prev.from = {
+							add_trait_no_notify = leader_trait_unplugged_cybernetic_positives_2
+						}
+					}
+					trait_unplugged_cybernetic_positives_1 = {
+						prev.from = {
+							add_trait_no_notify = leader_trait_unplugged_cybernetic_positives_1
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Fired by on_game_start_country
+# scope: country
+# Add traits from civics
+country_event = {
+	id = leader.110
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		# Aristocratic Elite
+		# 20% Chance for a random positive trait and a random negative trait
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_aristocratic_elite
+					has_valid_civic = civic_feudal_realm
+					has_valid_civic = civic_peaceful_republic
+					has_valid_civic = civic_socialistic
+				}
+			}
+			every_owned_leader = {
+				random_list = {
+					80 = {  }
+					20 = {
+						add_trait_no_notify = "random_common"
+						add_trait_no_notify = "random_negative"
+						# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Check made in paragon_2.2200.
+						if = {
+							limit = {
+								owner = {
+									OR = {
+										has_valid_civic = civic_aristocratic_elite
+										has_valid_civic = civic_feudal_realm
+									}
+								}
+							}
+							change_background_job = noble
+						}
+						else_if = {
+							limit = {
+								owner = {
+									has_valid_civic = civic_peaceful_republic
+								}
+							}
+							change_background_job = supervisor
+						}
+					}
+				}
+			}
+		}
+
+		# Remnants
+		# Adds a Archaeostudies Expertise trait
+		if = {
+			limit = {
+				has_ancrel = yes
+				has_origin = origin_remnants
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = scientist
+					OR = {
+						is_councilor_type = councilor_research
+						is_councilor_type = councilor_gestalt_cognitive
+					}
+				}
+				add_trait_no_notify = leader_trait_expertise_archaeostudies
+			}
+		}
+
+		# Static Research Analysis
+		# Adds a random Expertise trait
+		if = {
+			limit = {
+				is_machine_empire = yes
+				has_valid_civic = civic_machine_predictive_analysis
+			}
+			every_owned_leader = {
+				limit = {
+					is_councilor_type = councilor_gestalt_cognitive
+				}
+				add_random_expertise_trait_effect = yes
+			}
+		}
+
+
+		# Technocracy
+		# Adds a random Expertise trait
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_technocracy
+				}
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = scientist
+				}
+				add_random_expertise_trait_effect = yes
+			}
+		}
+
+		# Crusader Spirit
+		# Adds the Crusader trait
+		if = {
+			limit = {
+				has_valid_civic = civic_crusader_spirit
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = commander
+				}
+				add_trait_no_notify = leader_trait_crusader
+			}
+		}
+
+		# Letters of Marque
+		# Adds the Corsair trait
+		if = {
+			limit = { has_civic = civic_crusader_spirit_corporate }
+			every_owned_leader = {
+				limit = {
+					leader_class = commander
+				}
+				add_trait_no_notify = leader_trait_corsair
+			}
+		}
+
+		# Tactical Algorithms
+		# Adds the Tactical Algorithms trait
+		if = {
+			limit = {
+				has_civic = civic_machine_tactical_algorithms
+			}
+			every_owned_leader = {
+				limit = {
+					leader_class = commander
+				}
+				add_trait_no_notify = leader_trait_tactical_algorithms
+			}
+		}
+
+		# Storm Chasers
+		# Adds the Storm Rider trait
+		if = {
+			limit = {
+				has_origin = origin_storm_chasers
+			}
+			every_owned_leader = {
+				switch = {
+					trigger = leader_class
+					commander = {
+						add_trait_no_notify = leader_trait_storm_rider_commander
+					}
+					scientist = {
+						add_trait_no_notify = leader_trait_storm_rider_scientist
+					}
+					official = {
+						add_trait_no_notify = leader_trait_storm_rider_official
+					}
+				}
+			}
+		}
+
+		# Treasure Hunters
+		# Adds the Adventurous Spirit trait
+		if = {
+			limit = {
+				has_origin = origin_treasure_hunters
+			}
+			every_owned_leader = {
+				give_trait_no_notify_ignore_autocracy_restriction = {
+					TRAIT = leader_trait_adventurous_spirit_3
+				}
+			}
+		}
+	}
+}
+
+# New heir appointed
+leader_event = {
+	id = leader.200
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		exists = owner
+	}
+
+	immediate = {
+		# Set age to be younger than normal.
+		set_variable_to_random_value = {
+			which = heir_age_mod
+			min = -10
+			max = 0
+			rounded = yes
+		}
+		add_age = heir_age_mod
+
+		####################
+		# CLASS RANDOMISER #
+		####################
+
+		# Set skill level to 1
+		set_skill = 1
+		# Add generic level modifiers
+		add_skill_without_trait_selection = owner.modifier:leader_initial_skill
+
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						# Commander
+						has_valid_civic = civic_crusader_spirit_corporate
+						has_tradition = tr_supremacy_war_games
+						has_valid_civic = civic_distinguished_admiralty
+						has_valid_civic = civic_crusader_spirit
+						# Official
+						has_valid_civic = civic_aristocratic_elite
+						has_tradition = tr_domination_colonial_viceroys
+						# Scientist
+						has_valid_civic = civic_technocracy
+						has_tradition = tr_discovery_science_division
+						# Current Ruler's Class
+						has_valid_civic = civic_philosopher_king
+					}
+				}
+			}
+
+			# All classes have a base weight of 10.
+			# Civics that boost only one class add 40.
+			# Civics that boost two classes add 20 to each class.
+			# Traditions that boost a class add 20.
+
+			random_list = {
+				# Commander
+				0 = {
+					modifier = {
+						add = value:heir_class_weight_commander
+					}
+					change_leader_class = commander
+					add_skill_without_trait_selection = owner.modifier:commander_initial_skill
+				}
+				# Official
+				0 = {
+					modifier = {
+						add = value:heir_class_weight_official
+					}
+					change_leader_class = official
+					add_skill_without_trait_selection = owner.modifier:official_initial_skill
+				}
+				# Scientist
+				0 = {
+					modifier = {
+						add = value:heir_class_weight_scientist
+					}
+					change_leader_class = scientist
+					add_skill_without_trait_selection = owner.modifier:scientist_initial_skill
+				}
+			}
+		}
+
+		##########
+		# TRAITS #
+		##########
+
+		# Initial Traits, set after determining class.
+		add_trait_no_notify = trait_imperial_heir
+		add_trait_no_notify = "random_common"
+
+		# Chance for a negative trait.
+		random_list = {
+			95 = { }
+			5 = {
+				add_trait_no_notify = "random_common"
+				add_trait_no_notify = "random_negative"
+				# Variable "leader_pending_negative_traits_unmodified" doesn't exist yet, can't reduce it yet. Checked now made in paragon_2.2200.
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_philosopher_king }
+				}
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_civil_education }
+				}
+			}
+		}
+
+		# Champions of the Empire
+		# Adds a random common trait
+		if = {
+			limit = {
+				owner = {
+					has_tradition = tr_aptitude_champions_of_the_empire
+				}
+			}
+			add_trait_no_notify = "random_common"
+		}
+
+		# Optimized Neurology
+		# Adds a random common trait
+		if = {
+			limit = {
+				owner = {
+					has_country_flag = genetic_ascension_stage_1_purity
+					has_genetic_stage_1_tradition = yes
+				}
+			}
+			add_trait = "random_common"
+		}
+
+		# Under One Rule
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						has_origin = origin_legendary_leader_imperial
+						has_valid_civic = civic_imperial_cult
+						ruler = { has_trait = leader_trait_legendary_offspring }
+					}
+				}
+			}
+			add_trait_no_notify = leader_trait_legendary_offspring
+		}
+
+		# Technocracy
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_technocracy
+					}
+				}
+				leader_class = scientist
+			}
+			add_random_expertise_trait_effect = yes
+		}
+
+		# Crusader Spirit
+		if = {
+			limit = {
+				owner = {
+					has_valid_civic = civic_crusader_spirit
+				}
+				leader_class = commander
+			}
+			add_trait_no_notify = leader_trait_crusader
+		}
+
+		# Letters of Marque
+		if = {
+			limit = {
+				owner = {
+					has_valid_civic = civic_crusader_spirit_corporate
+				}
+				leader_class = commander
+			}
+			add_trait_no_notify = leader_trait_corsair
+		}
+
+		# Storm Chasers
+		# Adds the Storm Rider trait
+		if = {
+			limit = {
+				owner = {
+					has_origin = origin_storm_chasers
+				}
+			}
+			switch = {
+				trigger = leader_class
+				commander = {
+					add_trait_no_notify = leader_trait_storm_rider_commander
+				}
+				scientist = {
+					add_trait_no_notify = leader_trait_storm_rider_scientist
+				}
+				official = {
+					add_trait_no_notify = leader_trait_storm_rider_official
+				}
+			}
+		}
+
+		# Treasure Hunters
+		if = {
+			limit = {
+				owner = {
+					has_origin = origin_treasure_hunters
+				}
+			}
+			give_trait_no_notify_ignore_autocracy_restriction = {
+				TRAIT = leader_trait_adventurous_spirit_3
+			}
+		}
+
+		# Biochemical Composure/Cloning Authorities
+		if = {
+			limit = {
+				leader_can_have_backup_clone = yes
+			}
+			random_list = {
+				75 = {
+					# Base 75% chance of nothing
+					modifier = {
+						factor = 0
+						root = {
+							is_cloning_authority = yes
+							has_cloning_biochemical_composure_tradition = yes
+						}
+					}
+				}
+				25 = {
+					add_trait_no_notify = leader_trait_has_backup_clone
+				}
+			}
+		}
+	}
+}

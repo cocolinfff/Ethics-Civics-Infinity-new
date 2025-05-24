@@ -1,0 +1,2191 @@
+@stage_1_workforce_penalty = -0.33
+@stage_2_workforce_penalty = -0.50
+@stage_3_workforce_penalty = -0.66
+@stage_4_workforce_penalty = -0.75
+
+situation_energy_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = advisor.20 days = 10 random = 20 }
+			save_event_target_as = kaleidoscope_new_owner
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+		random_playable_country = {
+			limit = {
+				has_country_flag = gave_kaleidoscope_to@owner
+			}
+			country_event = { id = situation.2025 days = 10 random = 20 }
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				energy = @bailout_basic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	on_monthly = {
+		random_events = {
+			80 = 0
+			20 = origin.4170	# Payback | MSI helping you
+		}
+	}
+
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_machine_empire = yes
+					}
+				}
+				pop_calculator_physicist_bonus_workforce_mult = @stage_1_workforce_penalty
+				pop_calculator_biologist_bonus_workforce_mult = @stage_1_workforce_penalty
+				pop_calculator_engineer_bonus_workforce_mult = @stage_1_workforce_penalty
+			}
+			modifier = {
+				#		planet_crime_per_pop = 0.1 #todo: doesn't exist
+				diplo_weight_economy_mult = -0.1
+				planet_pop_assembly_reduction = 0.1
+				ship_disengage_chance_mult = -0.1
+				ship_weapon_damage = -0.20
+				ship_speed_mult = -0.20
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_planet = {
+							is_planet_class = pc_cosmogenesis_world
+						}
+					}
+				}
+				pop_neural_chip_bonus_workforce_mult = -1
+				pop_purge_speed = 2
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_machine_empire = yes
+					}
+				}
+				pop_calculator_physicist_bonus_workforce_mult = @stage_2_workforce_penalty
+				pop_calculator_biologist_bonus_workforce_mult = @stage_2_workforce_penalty
+				pop_calculator_engineer_bonus_workforce_mult = @stage_2_workforce_penalty
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_planet = {
+							is_planet_class = pc_cosmogenesis_world
+						}
+					}
+				}
+				pop_neural_chip_bonus_workforce_mult = -1
+				pop_purge_speed = 2
+			}
+			modifier = {
+				diplo_weight_economy_mult = -0.2
+				planet_pop_assembly_reduction = 0.2
+				ship_disengage_chance_mult = -0.25
+				ship_weapon_damage = -0.40
+				ship_speed_mult = -0.40
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_machine_empire = yes
+					}
+				}
+				pop_calculator_physicist_bonus_workforce_mult = @stage_3_workforce_penalty
+				pop_calculator_biologist_bonus_workforce_mult = @stage_3_workforce_penalty
+				pop_calculator_engineer_bonus_workforce_mult = @stage_3_workforce_penalty
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_planet = {
+							is_planet_class = pc_cosmogenesis_world
+						}
+					}
+				}
+				pop_neural_chip_bonus_workforce_mult = -1
+				pop_purge_speed = 2
+			}
+			modifier = {
+				diplo_weight_economy_mult = -0.33
+				planet_pop_assembly_reduction = 0.33
+				ship_disengage_chance_mult = -0.50
+				ship_weapon_damage = -0.60
+				ship_speed_mult = -0.60
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			on_first_enter = {
+				situation_event = { id = deficit.100 }
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_machine_empire = yes
+					}
+				}
+				pop_calculator_physicist_bonus_workforce_mult = @stage_4_workforce_penalty
+				pop_calculator_biologist_bonus_workforce_mult = @stage_4_workforce_penalty
+				pop_calculator_engineer_bonus_workforce_mult = @stage_4_workforce_penalty
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_planet = {
+							is_planet_class = pc_cosmogenesis_world
+						}
+					}
+				}
+				pop_neural_chip_bonus_workforce_mult = -1
+				pop_purge_speed = 2
+			}
+			modifier = {
+				diplo_weight_economy_mult = -0.5
+				planet_pop_assembly_reduction = 0.5
+				ship_disengage_chance_mult = -0.75
+				planet_jobs_produces_mult = -0.1
+				ship_weapon_damage = -0.8
+				ship_speed_mult = -0.8
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.110 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|energy|
+			desc = string_expenditures_greater_than_income_energy
+			owner = { has_actual_deficit = { RESOURCE = energy } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_energy
+			owner = {
+				resource_income_compare = {
+					resource = energy
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_energy
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = energy }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_cut_science_investment
+		icon = GFX_situation_approach_research
+		icon_background = GFX_situation_approach_bg_red
+		modifier = {
+			planet_researchers_produces_mult = -0.5
+			planet_buildings_energy_upkeep_mult = -0.2
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_mineral_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				minerals = @bailout_basic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	on_monthly = {
+		random_events = {
+			80 = 0
+			20 = origin.4170	# Payback | MSI helping you
+		}
+	}
+
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_hive_empire = yes
+					}
+				}
+				modifier = {
+					pop_calculator_physicist_bonus_workforce_mult = @stage_1_workforce_penalty
+					pop_calculator_biologist_bonus_workforce_mult = @stage_1_workforce_penalty
+					pop_calculator_engineer_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_lithoid_empire = yes }
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.2
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = LITHOID
+						}
+					}
+				}
+				modifier = {
+					lithoid_pop_happiness = -0.1
+					lithoid_logistic_growth_mult = -0.2
+				}
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_hive_empire = yes
+					}
+				}
+				modifier = {
+					pop_calculator_physicist_bonus_workforce_mult = @stage_2_workforce_penalty
+					pop_calculator_biologist_bonus_workforce_mult = @stage_2_workforce_penalty
+					pop_calculator_engineer_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_lithoid_empire = yes }
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.33
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = LITHOID
+						}
+					}
+				}
+				modifier = {
+					lithoid_pop_happiness = -0.15
+					lithoid_logistic_growth_mult = -0.33
+				}
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_hive_empire = yes
+					}
+				}
+				modifier = {
+					pop_calculator_physicist_bonus_workforce_mult = @stage_3_workforce_penalty
+					pop_calculator_biologist_bonus_workforce_mult = @stage_3_workforce_penalty
+					pop_calculator_engineer_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_lithoid_empire = yes }
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.5
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = LITHOID
+						}
+					}
+				}
+				modifier = {
+					lithoid_pop_happiness = -0.2
+					lithoid_logistic_growth_mult = -0.5
+				}
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			on_first_enter = {
+				situation_event = { id = deficit.125 }
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_hive_empire = yes
+					}
+				}
+				modifier = {
+					pop_calculator_physicist_bonus_workforce_mult = @stage_4_workforce_penalty
+					pop_calculator_biologist_bonus_workforce_mult = @stage_4_workforce_penalty
+					pop_calculator_engineer_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+						is_catalytic_empire = no
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_lithoid_empire = yes }
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.75
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = LITHOID
+						}
+					}
+				}
+				modifier = {
+					lithoid_pop_happiness = -0.25
+					lithoid_logistic_growth_mult = -0.75
+				}
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.130 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|minerals|
+			desc = string_expenditures_greater_than_income_minerals
+			owner = { has_actual_deficit = { RESOURCE = minerals } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_minerals
+			owner = {
+				resource_income_compare = {
+					resource = minerals
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_minerals
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = minerals }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_cut_investment
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_red
+		triggered_modifier = {
+			potential = {
+				owner = { is_hive_empire = yes }
+			}
+			modifier = {
+				planet_researchers_produces_mult = -0.25
+				planet_researchers_upkeep_mult = -0.5
+			}
+		}
+		triggered_modifier = {
+			potential = {
+				owner = { country_uses_consumer_goods = yes }
+			}
+			modifier = {
+				planet_artisans_produces_mult = -0.25
+				planet_artisans_upkeep_mult = -0.5
+			}
+		}
+		triggered_modifier = {
+			potential = {
+				owner = { is_catalytic_empire = no }
+			}
+			modifier = {
+				planet_metallurgists_produces_mult = -0.25
+				planet_metallurgists_upkeep_mult = -0.5
+			}
+		}
+		potential = {
+			owner = {
+				OR = {
+					is_hive_empire = yes
+					is_catalytic_empire = no
+					country_uses_consumer_goods = yes
+				}
+			}
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_food_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	abort_trigger = {
+		owner = { country_uses_food = no }
+	}
+	on_abort = {
+		owner = {
+			if = {
+				limit = { country_uses_food = yes }
+				add_resource = {
+					food = @bailout_basic_base_amount
+					mult = value:bailout_scaling_factor
+				}
+			}
+		}
+	}
+
+	initial_progress = 15
+	on_monthly = {
+		random_events = {
+			80 = 0
+			20 = origin.4170	# Payback | MSI helping you
+		}
+	}
+
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					biological_pop_happiness = -0.1
+					biological_logistic_growth_mult = -0.2
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_lithoid_empire = no
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.2
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					biological_pop_happiness = -0.15
+					biological_logistic_growth_mult = -0.33
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_lithoid_empire = no
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.33
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_2_workforce_penalty
+				}
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					biological_pop_happiness = -0.2
+					biological_logistic_growth_mult = -0.5
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_lithoid_empire = no
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.5
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_3_workforce_penalty
+				}
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			on_first_enter = {
+				situation_event = { id = deficit.140 }
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					biological_pop_happiness = -0.25
+					biological_logistic_growth_mult = -0.75
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_lithoid_empire = no
+						any_owned_species = {
+							is_archetype = BIOLOGICAL
+						}
+					}
+				}
+				modifier = {
+					bonus_pop_growth_mult = -0.75
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						country_uses_consumer_goods = yes
+						is_gestalt = yes
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_artisan_drone_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = no
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_foundry_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = {
+						is_gestalt = yes
+						is_catalytic_empire = yes
+					}
+				}
+				modifier = {
+					pop_fabricator_bonus_workforce_mult = @stage_4_workforce_penalty
+				}
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.145 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|food|
+			desc = string_expenditures_greater_than_income_food
+			owner = { has_actual_deficit = { RESOURCE = food } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_food
+			owner = {
+				resource_income_compare = {
+					resource = food
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_food
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = food }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_invest_in_farmers
+		icon = GFX_situation_approach_energy_credits
+		icon_background = GFX_situation_approach_bg_green
+		potential = {
+			owner = { country_uses_food = yes }
+		}
+		modifier = {
+			planet_farmers_food_produces_add = 0.5
+			planet_farmers_energy_upkeep_add = 0.5
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_consumer_goods_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	abort_trigger = {
+		owner = { country_uses_consumer_goods = no }
+	}
+	on_abort = {
+		owner = {
+			if = {
+				limit = { country_uses_consumer_goods = yes }
+				add_resource = {
+					consumer_goods = @bailout_consumer_goods_base_amount
+					mult = value:bailout_scaling_factor
+				}
+			}
+		}
+	}
+
+	initial_progress = 15
+	on_monthly = {
+		random_events = {
+			80 = 0
+			20 = origin.4170	# Payback | MSI helping you
+		}
+	}
+
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				pop_happiness = -0.05
+				country_unity_produces_mult = -0.15
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_physicist_bonus_workforce_mult = @stage_1_workforce_penalty
+					pop_biologist_bonus_workforce_mult = @stage_1_workforce_penalty
+					pop_engineer_bonus_workforce_mult = @stage_1_workforce_penalty
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_government_ethic_attraction = -0.25
+				}
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				pop_happiness = -0.1
+				country_unity_produces_mult = -0.3
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_physicist_bonus_workforce_mult = -0.50
+					pop_biologist_bonus_workforce_mult = -0.50
+					pop_engineer_bonus_workforce_mult = -0.50
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_government_ethic_attraction = -0.50
+				}
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				pop_happiness = -0.15
+				country_unity_produces_mult = -0.45
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_physicist_bonus_workforce_mult = -0.66
+					pop_biologist_bonus_workforce_mult = -0.66
+					pop_engineer_bonus_workforce_mult = -0.66
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_government_ethic_attraction = -0.75
+				}
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			modifier = {
+				pop_happiness = -0.2
+				country_unity_produces_mult = -0.6
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_physicist_bonus_workforce_mult = -0.75
+					pop_biologist_bonus_workforce_mult = -0.75
+					pop_engineer_bonus_workforce_mult = -0.75
+				}
+			}
+			triggered_modifier = {
+				potential = {
+					owner = { is_gestalt = no }
+				}
+				modifier = {
+					pop_government_ethic_attraction = -1
+				}
+			}
+			on_first_enter = {
+				situation_event = { id = deficit.155 }
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.160 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|consumer_goods|
+			desc = string_expenditures_greater_than_income_consumer_goods
+			owner = { has_actual_deficit = { RESOURCE = consumer_goods } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_consumer_goods
+			owner = {
+				resource_income_compare = {
+					resource = consumer_goods
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_consumer_goods
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = consumer_goods }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_cut_investment
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_red
+		modifier = {
+			planet_pops_consumer_goods_upkeep_mult = -0.5
+			planet_jobs_consumer_goods_upkeep_mult = -0.5
+			country_unity_produces_mult = -0.5
+		}
+		triggered_modifier = {
+			potential = {
+				owner = { is_gestalt = no }
+			}
+			modifier = {
+				planet_researchers_produces_mult = -0.5
+			}
+		}
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_alloys_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				alloys = @bailout_alloys_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	on_monthly = {
+		random_events = {
+			80 = 0
+			20 = origin.4170	# Payback | MSI helping you
+		}
+	}
+
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				pop_bonus_workforce_mult = -0.10
+				planet_pop_assembly_mult = -0.25
+				planet_pop_assemblers_upkeep_mult = 0.25
+				ships_energy_upkeep_mult = 0.10
+				starbases_energy_upkeep_mult = 0.10
+				habitat_stability_add = -10
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				pop_bonus_workforce_mult = -0.20
+				planet_pop_assembly_mult = -0.50
+				planet_pop_assemblers_upkeep_mult = 0.50
+				ships_energy_upkeep_mult = 0.20
+				starbases_energy_upkeep_mult = 0.20
+				ship_armor_mult = -0.33
+				ship_fire_rate_mult = -0.33
+				habitat_stability_add = -15
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				pop_bonus_workforce_mult = -0.30
+				planet_pop_assembly_mult = -0.75
+				planet_pop_assemblers_upkeep_mult = 0.75
+				ships_energy_upkeep_mult = 0.20
+				starbases_energy_upkeep_mult = 0.20
+				ship_armor_mult = -0.66
+				ship_fire_rate_mult = -0.66
+				habitat_stability_add = -20
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			on_first_enter = {
+				situation_event = { id = deficit.170 }
+			}
+			modifier = {
+				pop_bonus_workforce_mult = -0.50
+				planet_pop_assembly_mult = -1
+				planet_pop_assemblers_upkeep_mult = 1
+				ships_energy_upkeep_mult = 0.30
+				starbases_energy_upkeep_mult = 0.30
+				ship_armor_mult = -0.99
+				ship_fire_rate_mult = -0.99
+				habitat_stability_add = -30
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.175 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|alloys|
+			desc = string_expenditures_greater_than_income_alloys
+			owner = { has_actual_deficit = { RESOURCE = alloys } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_alloys
+			owner = {
+				resource_income_compare = {
+					resource = alloys
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_alloys
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = alloys }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_cut_maintenance
+		icon = GFX_situation_approach_fleet
+		icon_background = GFX_situation_approach_bg_red
+		potential = {
+			owner = {
+				any_owned_planet = {
+					is_planet_class = "pc_habitat"
+				}
+			}
+		}
+		modifier = {
+			# upkeep for habitat capital + updated version is just 5 alloys,
+			# might as well wave off the cost entirely
+			planet_buildings_hab_capital_upkeep_mult = -1
+		}
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_invest_in_alloys_production
+		icon = GFX_situation_approach_energy_credits
+		icon_background = GFX_situation_approach_bg_green
+		modifier = {
+			planet_metallurgists_produces_mult = 0.50
+			planet_metallurgists_upkeep_mult = 0.50
+		}
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_rare_crystals_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				rare_crystals = @bailout_strategic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				planet_jobs_produces_mult = -0.05
+				weapon_type_energy_weapon_damage_mult = -0.3
+				ship_sensor_range_add = -1
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				planet_jobs_produces_mult = -0.1
+				weapon_type_energy_weapon_damage_mult = -0.5
+				ship_sensor_range_add = -1
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				planet_jobs_produces_mult = -0.15
+				weapon_type_energy_weapon_damage_mult = -0.7
+				ship_sensor_range_add = -2
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			modifier = {
+				planet_jobs_produces_mult = -0.2
+				weapon_type_energy_weapon_damage_mult = -0.9
+				ship_sensor_range_add = -3
+			}
+			on_first_enter = {
+				situation_event = { id = deficit.185 }
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.190 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|rare_crystals|
+			desc = string_expenditures_greater_than_income_rare_crystals
+			owner = { has_actual_deficit = { RESOURCE = rare_crystals } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_rare_crystals
+			owner = {
+				resource_income_compare = {
+					resource = rare_crystals
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_rare_crystals
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = rare_crystals }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_recycling
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		modifier = {
+			planet_structures_rare_crystals_upkeep_mult = -0.25
+			planet_building_refund_mult = 0.5
+			planet_structures_cost_mult = 0.5
+		}
+		ai_weight = {
+			base = 0
+		}
+	}
+	approach = {
+		name = deficit_approach_invest_in_crystal_producers
+		icon = GFX_situation_approach_energy_credits
+		icon_background = GFX_situation_approach_bg_green
+		potential = {
+			owner = { country_uses_food = yes }
+		}
+		modifier = {
+			planet_translucers_rare_crystals_produces_mult = 0.25
+			planet_translucers_upkeep_mult = 0.25
+			planet_sr_miners_rare_crystals_produces_mult = 0.25
+			#No upkeep increase for crystal miners because it'd also target mote farmers etc too
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_volatile_motes_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				volatile_motes = @bailout_strategic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				planet_jobs_produces_mult = -0.05
+				deposit_blockers_cost_mult = 0.20
+				planet_clear_blocker_speed_mult = -0.20
+				weapon_type_kinetic_weapon_damage_mult = -0.30
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				planet_jobs_produces_mult = -0.10
+				deposit_blockers_cost_mult = 0.40
+				planet_clear_blocker_speed_mult = -0.40
+				weapon_type_kinetic_weapon_damage_mult = -0.50
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				planet_jobs_produces_mult = -0.15
+				deposit_blockers_cost_mult = 0.60
+				planet_clear_blocker_speed_mult = -0.60
+				weapon_type_kinetic_weapon_damage_mult = -0.70
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			modifier = {
+				planet_jobs_produces_mult = -0.20
+				deposit_blockers_cost_mult = 0.80
+				planet_clear_blocker_speed_mult = -0.80
+				weapon_type_kinetic_weapon_damage_mult = -0.90
+			}
+			on_first_enter = {
+				situation_event = { id = deficit.200 }
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.205 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|volatile_motes|
+			desc = string_expenditures_greater_than_income_volatile_motes
+			owner = { has_actual_deficit = { RESOURCE = volatile_motes } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_volatile_motes
+			owner = {
+				resource_income_compare = {
+					resource = volatile_motes
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_volatile_motes
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = volatile_motes }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_recycling
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		modifier = {
+			planet_structures_volatile_motes_upkeep_mult = -0.25
+			planet_building_refund_mult = 0.5
+			planet_structures_cost_mult = 0.5
+		}
+		ai_weight = {
+			base = 0
+		}
+	}
+	approach = {
+		name = deficit_approach_invest_in_mote_producers
+		icon = GFX_situation_approach_energy_credits
+		icon_background = GFX_situation_approach_bg_green
+		modifier = {
+			planet_chemists_volatile_motes_produces_mult = 0.25
+			planet_chemists_upkeep_mult = 0.25
+			planet_sr_miners_volatile_motes_produces_mult = 0.25
+			#No upkeep increase for mote harvesters because it'd also target mote farmers etc too
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}
+
+situation_exotic_gases_deficit = {
+	picture = GFX_evt_deficit
+	category = negative
+	fail_icon = GFX_situation_outcome_meh
+	fail_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_bankrupcy
+	complete_icon_frame = GFX_situation_outcome_frame_red
+
+	on_start = {
+		set_situation_flag = deficit_situation
+		owner = {
+			country_event = { id = timeline.19 } # Timeline Deficit
+		}
+	}
+	on_abort = {
+		owner = {
+			add_resource = {
+				exotic_gases = @bailout_strategic_base_amount
+				mult = value:bailout_scaling_factor
+			}
+		}
+	}
+
+	initial_progress = 15
+	stages = {
+		deficit_first = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_red
+			end = 25
+			modifier = {
+				planet_jobs_produces_mult = -0.05
+				ship_speed_mult = -0.2
+				terraform_speed_mult = -0.2
+			}
+		}
+		deficit_second = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_red
+			end = 50
+			modifier = {
+				planet_jobs_produces_mult = -0.1
+				ship_speed_mult = -0.4
+				terraform_speed_mult = -0.4
+			}
+		}
+		deficit_third = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 75
+			modifier = {
+				planet_jobs_produces_mult = -0.15
+				ship_speed_mult = -0.6
+				terraform_speed_mult = -0.6
+			}
+		}
+		deficit_fourth = {
+			icon = GFX_situation_stage_4
+			icon_background = GFX_situation_stage_frame_red
+			end = 100
+			modifier = {
+				planet_jobs_produces_mult = -0.2
+				ship_speed_mult = -0.8
+				terraform_speed_mult = -0.8
+			}
+			on_first_enter = {
+				situation_event = { id = deficit.215 }
+			}
+		}
+	}
+
+	on_progress_complete = {
+		country_defaulted_in_situation_tooltip = yes
+		hidden_effect = {
+			situation_event = { id = deficit.220 }
+		}
+	}
+	on_fail = {
+		custom_tooltip = deficit_situation_finish_tooltip
+		hidden_effect = { destroy_situation = this }
+	}
+	monthly_progress = {
+		base = 0
+		modifier = {
+			add = value:deficit_situation_progress_value|RESOURCE|exotic_gases|
+			desc = string_expenditures_greater_than_income_exotic_gases
+			owner = { has_actual_deficit = { RESOURCE = exotic_gases } }
+		}
+		modifier = {
+			subtract = 5
+			desc = string_not_in_deficit_exotic_gases
+			owner = {
+				resource_income_compare = {
+					resource = exotic_gases
+					value >= 0
+				}
+			}
+		}
+		modifier = {
+			subtract = 1
+			desc = string_resource_reserves_exotic_gases
+			owner = {
+				has_negative_income_with_stockpile = { RESOURCE = exotic_gases }
+			}
+		}
+		modifier = {
+			desc = civilian_difficulty
+			mult = 0.1
+			situation_monthly_progress > 0
+			is_difficulty = 0
+			owner = {
+				is_ai = no
+			}
+		}
+		modifier = {
+			desc = cadet_difficulty
+			mult = 0.5
+			situation_monthly_progress > 0
+			is_difficulty = 1
+			owner = {
+				is_ai = no
+			}
+		}
+	}
+	approach = {
+		name = deficit_approach_do_nothing
+		icon = GFX_situation_approach_this_is_fine
+		icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+		ai_weight = {
+			base = 1
+		}
+	}
+	approach = {
+		name = deficit_approach_recycling
+		icon = GFX_situation_approach_balance_sheet
+		icon_background = GFX_situation_approach_bg_yellow
+		modifier = {
+			planet_structures_exotic_gases_upkeep_mult = -0.25
+			planet_building_refund_mult = 0.5
+			planet_structures_cost_mult = 0.5
+		}
+		ai_weight = {
+			base = 0
+		}
+	}
+	approach = {
+		name = deficit_approach_invest_in_gas_producers
+		icon = GFX_situation_approach_energy_credits
+		icon_background = GFX_situation_approach_bg_green
+		modifier = {
+			planet_refiners_exotic_gases_produces_mult = 0.25
+			planet_refiners_upkeep_mult = 0.25
+			planet_sr_miners_exotic_gases_produces_mult = 0.25
+			#No upkeep increase for gas extractors because it'd also target mote farmers etc too
+		}
+
+		ai_weight = {
+			base = 0
+			modifier = {
+				add = 2
+				current_stage = deficit_third
+			}
+			modifier = {
+				add = 2
+				current_stage = deficit_fourth
+			}
+		}
+	}
+}

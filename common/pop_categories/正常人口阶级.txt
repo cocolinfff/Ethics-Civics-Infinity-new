@@ -1,6 +1,6 @@
 
 ruler = {
-	rank = 3
+	rank = 4
 	clothes_texture_index = 1
 
 	change_job_threshold = 2.0
@@ -23,23 +23,12 @@ ruler = {
 	unemployment_resources = {
 		category = unemployment_resources
 
-		#利他主义
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_altruism
-				}
-			}
-			unity = 2
-		}
-
 		#反乌托邦
 		produces = {
 			trigger = {
 				has_standard_dystopian_society_living_standard_type = yes
 				is_lithoid = no
-				is_robot_pop = no
+				is_robot_pop_group = no
 			}
 			energy = 5
 			minerals = 3
@@ -50,7 +39,7 @@ ruler = {
 				has_standard_dystopian_society_living_standard_type = yes
 				OR = {
 					is_lithoid = yes
-					is_robot_pop = yes
+					is_robot_pop_group = yes
 				}
 			}
 			energy = 5
@@ -72,10 +61,10 @@ ruler = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
 			is_unemployed = yes
@@ -92,7 +81,7 @@ ruler = {
 
 		pop_happiness = 0.10
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			is_enslaved = yes
 			owner = {
@@ -103,7 +92,7 @@ ruler = {
 		pop_housing_usage_base = 0.5
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			is_enslaved = no
 			planet = {
@@ -133,16 +122,16 @@ ruler = {
 		mult = modifier:planet_rulers_crime_add
 	}
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_housing_usage_base = 1
 		pop_amenities_usage_base = 1
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = { always = yes }
 		pop_housing_usage_base = 1
 		mult = modifier:pop_rulers_housing_usage_base
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = { always = yes }
 		pop_amenities_usage_base = 1
 		mult = modifier:pop_rulers_amenities_usage_base
@@ -233,31 +222,31 @@ ruler = {
 				has_country_flag = psionics_country
 			}
 		}
-		trade_value_mult = 0.02
+		planet_pops_trade_produces_mult = 0.02
 	}
 
-	#资本主义
+	#效率主义
 	triggered_planet_modifier = {
 		potential = {
-			happiness >= 0.4
+			is_robot_pop_group = yes
 			exists = owner
 			owner = {
-				has_ethic = ethic_fanatic_capitalism
+				has_ethic = ethic_fanatic_materialist
 			}
 		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		pop_bonus_workforce_mult = 0.01
 	}
+
+	#教权主义
 	triggered_planet_modifier = {
 		potential = {
-			happiness >= 0.4
+			has_ethic = ethic_spiritualist
 			exists = owner
 			owner = {
-				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_materialist
 			}
 		}
-		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		pop_bonus_workforce_mult = 0.01
 	}
 
 	#先验乌托邦
@@ -277,7 +266,7 @@ ruler = {
 	triggered_planet_modifier = {
 		potential = {
 			is_lithoid = no
-			is_robot_pop = no
+			is_robot_pop_group = no
 			exists = owner
 			owner = {
 				has_valid_civic = civic_banquet_politics
@@ -303,7 +292,7 @@ ruler = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			is_robot_pop = yes
+			is_robot_pop_group = yes
 			exists = owner
 			owner = {
 				has_valid_civic = civic_banquet_politics
@@ -323,7 +312,7 @@ ruler = {
 			owner = { has_valid_civic = civic_flower_of_evil }
 		}
 		planet_crime_mult = 0.01
-		pop_growth_speed_reduction = 0.01
+		pop_decline_speed = 0.01
 	}
 
 	#错误复制者
@@ -335,20 +324,6 @@ ruler = {
 		planet_pop_assembly_add = 0.5
 	}
 
-	#滤波回声
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_mechanical
-				has_trait = trait_machine_unit
-			}
-			exists = owner
-			owner = { has_valid_civic = civic_echo }
-		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-
 	#人治精神
 	triggered_planet_modifier = {
 		potential = {
@@ -356,15 +331,6 @@ ruler = {
 			owner = { has_valid_civic = civic_spirit_of_rule_by_man }
 		}
 		pop_cat_specialist_happiness = -0.02
-	}
-
-	#精神自由
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_beacon_of_liberty }
-		}
-		trade_value_mult = 0.01
 	}
 
 	#光荣与梦想
@@ -415,7 +381,7 @@ ruler = {
 		planet_amenities_add = 2
 		mult = value:Joker_planet_worker_happiness
 	}
-	
+
 	#银河子宫
 	triggered_planet_modifier = {
 		potential = {
@@ -428,14 +394,14 @@ ruler = {
 		potential = {
 			is_galactic_uterus_country = yes
 		}
-		pop_growth_speed_reduction = -0.01
+		pop_decline_speed = -0.01
 		mult = value:num_planet_cat_not_robot_specialist
 	}
 	triggered_planet_modifier = {
 		potential = {
 			is_galactic_uterus_country = yes
 		}
-		pop_growth_speed = -0.01
+		logistic_growth_mult = -0.01
 		mult = value:num_planet_cat_not_robot_worker
 	}
 
@@ -448,20 +414,6 @@ ruler = {
 			}
 		}
 		planet_pop_assembly_mult = 0.01
-	}
-
-	# 超节奏生活
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_super_fast_paced_life
-				}
-			}
-		}
-		trade_value_add = 1.75
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
 	}
 
 	# 私人医疗
@@ -478,7 +430,7 @@ ruler = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 		mult = value:budding_multiplier
 	}
 
@@ -486,7 +438,7 @@ ruler = {
 		potential = {
 			can_assemble_tiyanki_pop = yes
 		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+		logistic_growth_mult = @tiyanki_budding_rate
 	}
 
 	# Triggered Modifiers
@@ -522,7 +474,7 @@ ruler = {
 				exists = owner
 				owner = {
 					has_active_tradition = tr_isolated_ethnic_purity
-					is_socialism = yes
+					is_egalitarian = yes
 				}
 			}
 			energy = 0.5
@@ -553,15 +505,15 @@ ruler = {
 			}
 			unity = 1
 		}
-		#利他主义
+		#超节奏生活
 		produces = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_valid_civic = civic_altruism
+					has_valid_civic = civic_super_fast_paced_life
 				}
 			}
-			unity = 0.5
+			trade = 1.75
 		}
 		#国教崇拜
 		produces = {
@@ -600,28 +552,6 @@ ruler = {
 				}
 			}
 			unity = 2
-		}
-		#走近科学
-		produces = {
-			trigger = {
-				is_enslaved = no
-				exists = owner
-				owner = {
-					has_valid_civic = civic_approaching_science
-				}
-			}
-			physics_research = 0.5
-			engineering_research = 0.5
-			society_research = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_approaching_science
-				}
-			}
-			consumer_goods = 0.25
 		}
 		# 唯心飞升
 		produces = {
@@ -668,7 +598,10 @@ ruler = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_ethic = ethic_authoritarian
+					OR = {
+						has_ethic = ethic_authoritarian
+						has_ethic = ethic_conciliationsm
+					}
 				}
 			}
 			unity = 2
@@ -691,7 +624,10 @@ ruler = {
 				is_enslaved = no
 				owner = {
 					exists = owner
-					has_ethic = ethic_xenophobe
+					OR = {
+						has_ethic = ethic_xenophobe
+						has_ethic = ethic_nationalism
+					}
 				}
 			}
 			unity = 0.1
@@ -715,13 +651,88 @@ ruler = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_ethic = ethic_fanatic_xenophile
+					OR = {
+						has_ethic = ethic_xenophile
+						has_ethic = ethic_nationalism
+					}
 					NOT = {
 						any_enslaved_species = {
 							NOT = { is_same_species = root }
 						}
 					}
 				}
+			}
+			unity = 0.25
+		}
+		#道德主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_pacifist
+					is_at_war = no
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_pacifist
+						has_ethic = ethic_defensivism
+					}
+					is_at_war = no
+				}
+			}
+			unity = 0.25
+		}
+		#军国主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+					is_at_war = yes
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_militarist
+						has_ethic = ethic_defensivism
+					}
+					is_at_war = yes
+				}
+			}
+			unity = 0.5
+		}
+		#效率主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_materialist
+				}
+				is_robot_pop_group = yes
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_materialist
+						has_ethic = ethic_pragmatism
+					}
+				}
+				is_robot_pop_group = yes
 			}
 			unity = 0.25
 		}
@@ -747,73 +758,48 @@ ruler = {
 			}
 			unity = 0.5
 		}
-
-		# Regular food, mineral and energy upkeep.
-		inline_script = pop_categories/regular_upkeep
-
-		# Additional energy upkeep for cyborgs.
-		inline_script = "pop_categories/cyborg_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/trait_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/ethic_trait_upkeep"
-
-		# Instrument of Desire Upkeep
-		inline_script = "pop_categories/instrument_upkeep"
-
-		# Exotic Metabolism Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_exotic_metabolism
-			}
-			exotic_gases = @exotic_metabolism
-		}
-
-		# Resource Production
-
-		# Lithoid Trait Output
-		inline_script = "pop_categories/trait_production"
-
-		produces = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_inorganic_breath
-			}
-			exotic_gases = @inorganic_breath
-		}
+		# Living Standard Trait Output
+		inline_script = "pop_categories/living_standard_ruler_production"
 
 		produces = {
 			trigger = {
 				OR = {
-					has_trait = trait_drake_scaled
-					has_trait = trait_drake_scaled_yg
+					has_ethic = ethic_fanatic_spiritualist
+					has_ethic = ethic_spiritualist
 				}
+				owner = { has_valid_civic = civic_gospel_of_the_masses }
 			}
-			alloys = @drake_scaled_trait_resource_production
+			trade = @trade_value_prosperity_gospel
 		}
 
-		upkeep = {
+		produces = {
 			trigger = {
-				is_organic_machine = yes
+				has_trait = trait_inner_darkness
 			}
-			food = 1
-			mult = modifier:planet_pops_food_upkeep_add
+			sr_dark_matter = @inner_darkness_dark_matter_production
 		}
-		upkeep = {
+
+		produces = {
 			trigger = {
-				has_trait = trait_lithoid_yg
+				planet = {
+					has_modifier = pm_gaseous_fauna
+				}
 			}
-			minerals = 1
-			mult = modifier:planet_pops_minerals_upkeep_add
+			exotic_gases = @gaseous_fauna_exotic_gases_production
+		}
+		produces = {
+			trigger = {
+				planet = {
+					has_modifier = pm_gaseous_fauna
+				}
+			}
+			exotic_gases = @gaseous_fauna_exotic_gases_production
 		}
 	}
 }
 
 specialist = {
-	rank = 2
+	rank = 3
 	clothes_texture_index = 3
 
 	keep_from_former_job = yes
@@ -836,23 +822,12 @@ specialist = {
 	unemployment_resources = {
 		category = unemployment_resources
 
-		#利他主义
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_altruism
-				}
-			}
-			unity = 2
-		}
-
 		#反乌托邦
 		produces = {
 			trigger = {
 				has_standard_dystopian_society_living_standard_type = yes
 				is_lithoid = no
-				is_robot_pop = no
+				is_robot_pop_group = no
 			}
 			energy = 5
 			minerals = 3
@@ -863,7 +838,7 @@ specialist = {
 				has_standard_dystopian_society_living_standard_type = yes
 				OR = {
 					is_lithoid = yes
-					is_robot_pop = yes
+					is_robot_pop_group = yes
 				}
 			}
 			energy = 5
@@ -887,7 +862,7 @@ specialist = {
 					has_global_flag = eci_family_yes
 					is_marriage_market_country = no
 				}
-				is_robot_pop = no
+				is_robot_pop_group = no
 			}
 			consumer_goods = 0.05
 			mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
@@ -898,7 +873,7 @@ specialist = {
 					has_global_flag = eci_family_yes
 					is_marriage_market_country = no
 				}
-				is_robot_pop = no
+				is_robot_pop_group = no
 			}
 			energy = 0.1
 			mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
@@ -909,10 +884,10 @@ specialist = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
 			is_unemployed = yes
@@ -929,7 +904,7 @@ specialist = {
 
 		pop_happiness = 0.10
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			is_enslaved = yes
 			owner = {
@@ -940,7 +915,7 @@ specialist = {
 		pop_housing_usage_base = 0.5
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			planet = {
 				exists = army_leader
@@ -968,16 +943,16 @@ specialist = {
 		mult = modifier:planet_specialists_crime_add
 	}
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_housing_usage_base = 1
 		pop_amenities_usage_base = 1
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = { always = yes }
 		pop_housing_usage_base = 1
 		mult = modifier:pop_specialists_housing_usage_base
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = { always = yes }
 		pop_amenities_usage_base = 1
 		mult = modifier:pop_specialists_amenities_usage_base
@@ -1068,31 +1043,31 @@ specialist = {
 				has_country_flag = psionics_country
 			}
 		}
-		trade_value_mult = 0.02
+		planet_pops_trade_produces_mult = 0.02
 	}
 
-	#资本主义
+	#效率主义
 	triggered_planet_modifier = {
 		potential = {
-			happiness >= 0.4
+			is_robot_pop_group = yes
 			exists = owner
 			owner = {
-				has_ethic = ethic_fanatic_capitalism
+				has_ethic = ethic_fanatic_materialist
 			}
 		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		pop_bonus_workforce_mult = 0.01
 	}
+
+	#教权主义
 	triggered_planet_modifier = {
 		potential = {
-			happiness >= 0.4
+			has_ethic = ethic_spiritualist
 			exists = owner
 			owner = {
-				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_materialist
 			}
 		}
-		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		pop_bonus_workforce_mult = 0.01
 	}
 
 	#先验乌托邦
@@ -1112,7 +1087,7 @@ specialist = {
 	triggered_planet_modifier = {
 		potential = {
 			is_lithoid = no
-			is_robot_pop = no
+			is_robot_pop_group = no
 			exists = owner
 			owner = {
 				has_valid_civic = civic_banquet_politics
@@ -1138,7 +1113,7 @@ specialist = {
 	}
 	triggered_planet_modifier = {
 		potential = {
-			is_robot_pop = yes
+			is_robot_pop_group = yes
 			exists = owner
 			owner = {
 				has_valid_civic = civic_banquet_politics
@@ -1158,7 +1133,7 @@ specialist = {
 			owner = { has_valid_civic = civic_flower_of_evil }
 		}
 		planet_crime_mult = 0.01
-		pop_growth_speed_reduction = 0.01
+		pop_decline_speed = 0.01
 	}
 
 	#错误复制者
@@ -1168,29 +1143,6 @@ specialist = {
 			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
 		}
 		planet_pop_assembly_add = 0.5
-	}
-
-	#滤波回声
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_mechanical
-				has_trait = trait_machine_unit
-			}
-			exists = owner
-			owner = { has_valid_civic = civic_echo }
-		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-
-	#精神自由
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_beacon_of_liberty }
-		}
-		trade_value_mult = 0.01
 	}
 
 	#光荣与梦想
@@ -1258,7 +1210,7 @@ specialist = {
 			is_galactic_uterus_country = yes
 		}
 		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		multiplier = triger:planet_pops_trade_produces_mult
 	}
 
 	#机械嬗变
@@ -1272,25 +1224,11 @@ specialist = {
 		planet_pop_assembly_mult = 0.01
 	}
 
-	# 超节奏生活
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_super_fast_paced_life
-				}
-			}
-		}
-		trade_value_add = 0.75
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-
 	triggered_planet_modifier = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 		mult = value:budding_multiplier
 	}
 
@@ -1298,7 +1236,7 @@ specialist = {
 		potential = {
 			can_assemble_tiyanki_pop = yes
 		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+		logistic_growth_mult = @tiyanki_budding_rate
 	}
 
 	# Triggered Modifiers
@@ -1334,22 +1272,22 @@ specialist = {
 				exists = owner
 				owner = {
 					has_active_tradition = tr_isolated_ethnic_purity
-					is_socialism = yes
+					is_egalitarian = yes
 				}
 			}
 			energy = 0.5
 			minerals = 0.5
 			food = 0.5
 		}
-		#利他主义
+		#超节奏生活
 		produces = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_valid_civic = civic_altruism
+					has_valid_civic = civic_super_fast_paced_life
 				}
 			}
-			unity = 0.5
+			trade = 0.75
 		}
 		#滤波回声
 		produces = {
@@ -1362,6 +1300,7 @@ specialist = {
 				owner = { has_valid_civic = civic_echo }
 			}
 			unity = 1
+			trade = 1
 		}
 
 		#国教崇拜
@@ -1390,28 +1329,6 @@ specialist = {
 			physics_research = 1
 			engineering_research = 1
 			society_research = 1
-		}
-		#走近科学
-		produces = {
-			trigger = {
-				is_enslaved = no
-				exists = owner
-				owner = {
-					has_valid_civic = civic_approaching_science
-				}
-			}
-			physics_research = 0.5
-			engineering_research = 0.5
-			society_research = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_approaching_science
-				}
-			}
-			consumer_goods = 0.25
 		}
 		# 唯心飞升
 		produces = {
@@ -1444,7 +1361,7 @@ specialist = {
 			unity = 0.25
 		}
 
-		#自由主义
+		#平等主义
 		produces = {
 			trigger = {
 				exists = owner
@@ -1458,7 +1375,10 @@ specialist = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_ethic = ethic_egalitarian
+					OR = {
+						has_ethic = ethic_egalitarian
+						has_ethic = ethic_conciliationsm
+					}
 				}
 			}
 			unity = 0.75
@@ -1481,7 +1401,10 @@ specialist = {
 				is_enslaved = no
 				owner = {
 					exists = owner
-					has_ethic = ethic_xenophobe
+					OR = {
+						has_ethic = ethic_xenophobe
+						has_ethic = ethic_nationalism
+					}
 				}
 			}
 			unity = 0.1
@@ -1505,13 +1428,88 @@ specialist = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_ethic = ethic_fanatic_xenophile
+					OR = {
+						has_ethic = ethic_xenophile
+						has_ethic = ethic_nationalism
+					}
 					NOT = {
 						any_enslaved_species = {
 							NOT = { is_same_species = root }
 						}
 					}
 				}
+			}
+			unity = 0.25
+		}
+		#道德主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_pacifist
+					is_at_war = no
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_pacifist
+						has_ethic = ethic_defensivism
+					}
+					is_at_war = no
+				}
+			}
+			unity = 0.25
+		}
+		#军国主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+					is_at_war = yes
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_militarist
+						has_ethic = ethic_defensivism
+					}
+					is_at_war = yes
+				}
+			}
+			unity = 0.5
+		}
+		#效率主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_materialist
+				}
+				is_robot_pop_group = yes
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_materialist
+						has_ethic = ethic_pragmatism
+					}
+				}
+				is_robot_pop_group = yes
 			}
 			unity = 0.25
 		}
@@ -1537,73 +1535,40 @@ specialist = {
 			}
 			unity = 0.5
 		}
-
-		# Regular food, mineral and energy upkeep.
-		inline_script = pop_categories/regular_upkeep
-
-		# Additional energy upkeep for cyborgs.
-		inline_script = "pop_categories/cyborg_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/trait_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/ethic_trait_upkeep"
-
-		# Instrument of Desire Upkeep
-		inline_script = "pop_categories/instrument_upkeep"
-
-		# Exotic Metabolism Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_exotic_metabolism
-			}
-			exotic_gases = @exotic_metabolism
-		}
-
-		# Resource Production
-
-		# Lithoid Trait Output
-		inline_script = "pop_categories/trait_production"
-
-		produces = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_inorganic_breath
-			}
-			exotic_gases = @inorganic_breath
-		}
+		# Living Standard Trait Output
+		inline_script = "pop_categories/living_standard_specialist_production"
 
 		produces = {
 			trigger = {
 				OR = {
-					has_trait = trait_drake_scaled
-					has_trait = trait_drake_scaled_yg
+					has_ethic = ethic_fanatic_spiritualist
+					has_ethic = ethic_spiritualist
 				}
+				owner = { has_valid_civic = civic_gospel_of_the_masses }
 			}
-			alloys = @drake_scaled_trait_resource_production
+			trade = @trade_value_prosperity_gospel
 		}
 
-		upkeep = {
+		produces = {
 			trigger = {
-				is_organic_machine = yes
+				has_trait = trait_inner_darkness
 			}
-			food = 1
-			mult = modifier:planet_pops_food_upkeep_add
+			sr_dark_matter = @inner_darkness_dark_matter_production
 		}
-		upkeep = {
+
+		produces = {
 			trigger = {
-				has_trait = trait_lithoid_yg
+				planet = {
+					has_modifier = pm_gaseous_fauna
+				}
 			}
-			minerals = 1
-			mult = modifier:planet_pops_minerals_upkeep_add
+			exotic_gases = @gaseous_fauna_exotic_gases_production
 		}
 	}
 }
 
 worker = {
-	rank = 1
+	rank = 2
 	clothes_texture_index = 2
 
 	change_job_threshold = 1.15
@@ -1612,7 +1577,7 @@ worker = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 	}
 
 	#感性经济
@@ -1682,31 +1647,31 @@ worker = {
 				has_country_flag = psionics_country
 			}
 		}
-		trade_value_mult = 0.02
+		planet_pops_trade_produces_mult = 0.02
 	}
 
-	#资本主义
+	#效率主义
 	triggered_planet_modifier = {
 		potential = {
-			happiness >= 0.4
+			is_robot_pop_group = yes
 			exists = owner
 			owner = {
-				has_ethic = ethic_fanatic_capitalism
+				has_ethic = ethic_fanatic_materialist
 			}
 		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		pop_bonus_workforce_mult = 0.01
 	}
+
+	#教权主义
 	triggered_planet_modifier = {
 		potential = {
-			happiness >= 0.4
+			has_ethic = ethic_spiritualist
 			exists = owner
 			owner = {
-				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_materialist
 			}
 		}
-		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		pop_bonus_workforce_mult = 0.01
 	}
 
 	#先验乌托邦
@@ -1730,7 +1695,7 @@ worker = {
 			owner = { has_valid_civic = civic_flower_of_evil }
 		}
 		planet_crime_mult = 0.01
-		pop_growth_speed_reduction = 0.01
+		pop_decline_speed = 0.01
 	}
 
 	#错误复制者
@@ -1742,27 +1707,31 @@ worker = {
 		planet_pop_assembly_add = 0.5
 	}
 
-	#滤波回声
+	#劳动民主
 	triggered_planet_modifier = {
 		potential = {
-			OR = {
-				has_trait = trait_mechanical
-				has_trait = trait_machine_unit
-			}
 			exists = owner
-			owner = { has_valid_civic = civic_echo }
+			owner = { has_valid_civic = civic_shared_burden }
 		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		planet_amenities_add = 100
 	}
 
-	#精神自由
+	#先验乌托邦
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_valid_civic = civic_beacon_of_liberty }
+			owner = { has_valid_civic = civic_transcendental_utopia }
 		}
-		trade_value_mult = 0.01
+		planet_amenities_add = 150
+	}
+
+	#共产主义社会
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_communist_society }
+		}
+		planet_crime_mult = -0.05
 	}
 
 	#光荣与梦想
@@ -1810,7 +1779,7 @@ worker = {
 			is_galactic_uterus_country = yes
 		}
 		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		multiplier = triger:planet_pops_trade_produces_mult
 	}
 
 	#机械嬗变
@@ -1824,20 +1793,6 @@ worker = {
 		planet_pop_assembly_mult = 0.01
 	}
 
-	# 超节奏生活
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_super_fast_paced_life
-				}
-			}
-		}
-		trade_value_add = 0.25
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-
 	# 流量密码
 	triggered_planet_modifier = {
 		potential = {
@@ -1848,21 +1803,6 @@ worker = {
 		}
 		trade_value_add = 0.5
 		mult = value:society_amenities_usage
-	}
-
-	# 工人合作社
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_world_cooperative
-					has_valid_civic = civic_worker_coop
-				}
-			}
-		}
-		trade_value_add = 0.25
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
 	}
 
 	# 革命先锋队
@@ -1890,66 +1830,6 @@ worker = {
 		pop_amenities_usage_mult = -0.01
 	}
 
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			prosperity_gospel_check_trigger = yes
-		}
-		trade_value_add = @trade_value_prosperity_gospel
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			has_shared_burden_living_standard_type = yes
-		}
-		trade_value_add = @trade_value_shared_burden
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			OR = {
-				has_decadent_living_standard_type = yes
-				has_very_high_living_standard_type = yes
-			}
-		}
-		trade_value_add = @trade_value_very_high
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			has_high_living_standard_type = yes
-		}
-		trade_value_add = @trade_value_high
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			OR = {
-				has_normal_living_standard_type = yes
-				has_academic_living_standard_type = yes
-			}
-		}
-		trade_value_add = @trade_value_normal
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			has_stratified_living_standard_type = yes
-		}
-		trade_value_add = @trade_value_low
-	}
-	triggered_planet_modifier = {
-		potential = {
-			can_generate_trade_value = yes
-			has_low_living_standard_type = yes
-		}
-		trade_value_add = @trade_value_very_low
-	}
-
 	should_apply_unemployment_penalties = {
 		NOR = {
 			has_very_high_living_standard_type = yes
@@ -1964,17 +1844,6 @@ worker = {
 	}
 	unemployment_resources = {
 		category = unemployment_resources
-
-		#利他主义
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_altruism
-				}
-			}
-			unity = 2
-		}
 
 		# Unemployment Benefits Crime event
 		upkeep = {
@@ -1994,7 +1863,7 @@ worker = {
 					is_marriage_market_country = no
 				}
 				is_lithoid = no
-				is_robot_pop = no
+				is_robot_pop_group = no
 			}
 			food = 0.1
 			mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
@@ -2016,29 +1885,29 @@ worker = {
 					has_global_flag = eci_family_yes
 					is_marriage_market_country = no
 				}
-				is_robot_pop = yes
+				is_robot_pop_group = yes
 			}
 			alloys = 0.05
 			mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
 		}
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
-			has_job = clerk
+			has_job_type = clerk
 			owner = { has_modifier = paragon_origin_strengthened_government_ii }
 		}
 		pop_political_power = 0.25
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
-			has_job = clerk
+			has_job_type = clerk
 			owner = { has_modifier = paragon_origin_strengthened_government_iii }
 		}
 		pop_political_power = 0.50
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			is_enslaved = no
 			planet = {
@@ -2052,7 +1921,7 @@ worker = {
 			pop_defense_armies_add = 1
 		}
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
 			is_unemployed = yes
@@ -2068,7 +1937,7 @@ worker = {
 
 		pop_happiness = 0.10
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			is_enslaved = yes
 			owner = {
@@ -2079,7 +1948,7 @@ worker = {
 		pop_housing_usage_base = 0.5
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			planet = {
 				exists = army_leader
@@ -2104,7 +1973,7 @@ worker = {
 		weight = 1
 	}
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_cat_postpartum_workers_happiness = 0.02
 	}
 	triggered_planet_modifier = {
@@ -2113,16 +1982,16 @@ worker = {
 		mult = modifier:planet_workers_crime_add
 	}
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_housing_usage_base = 1
 		pop_amenities_usage_base = 1
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = { always = yes }
 		pop_housing_usage_base = 1
 		mult = modifier:pop_workers_housing_usage_base
 	}
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = { always = yes }
 		pop_amenities_usage_base = 1
 		mult = modifier:pop_workers_amenities_usage_base
@@ -2150,7 +2019,7 @@ worker = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 		mult = value:budding_multiplier
 	}
 
@@ -2158,7 +2027,7 @@ worker = {
 		potential = {
 			can_assemble_tiyanki_pop = yes
 		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+		logistic_growth_mult = @tiyanki_budding_rate
 	}
 
 	# Triggered Modifiers
@@ -2181,7 +2050,7 @@ worker = {
 			trigger = {
 				has_standard_dystopian_society_living_standard_type = yes
 				is_lithoid = no
-				is_robot_pop = no
+				is_robot_pop_group = no
 			}
 			energy = 5
 			minerals = 3
@@ -2192,7 +2061,7 @@ worker = {
 				has_standard_dystopian_society_living_standard_type = yes
 				OR = {
 					is_lithoid = yes
-					is_robot_pop = yes
+					is_robot_pop_group = yes
 				}
 			}
 			energy = 5
@@ -2217,22 +2086,22 @@ worker = {
 				exists = owner
 				owner = {
 					has_active_tradition = tr_isolated_ethnic_purity
-					is_socialism = yes
+					is_egalitarian = yes
 				}
 			}
 			energy = 0.5
 			minerals = 0.5
 			food = 0.5
 		}
-		#利他主义
+		#超节奏生活
 		produces = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_valid_civic = civic_altruism
+					has_valid_civic = civic_super_fast_paced_life
 				}
 			}
-			unity = 0.5
+			trade = 0.25
 		}
 		#国教崇拜
 		produces = {
@@ -2261,7 +2130,9 @@ worker = {
 				owner = { has_valid_civic = civic_echo }
 			}
 			unity = 1
+			trade = 1
 		}
+		
 		#朝闻道
 		produces = {
 			trigger = {
@@ -2274,6 +2145,21 @@ worker = {
 			engineering_research = 0.5
 			society_research = 0.5
 		}
+
+		# 工人合作社
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_world_cooperative
+						has_valid_civic = civic_worker_coop
+					}
+				}
+			}
+			trade = 0.25
+		}
+		
 		# 余粮征集
 		produces = {
 			trigger = {
@@ -2284,28 +2170,6 @@ worker = {
 				}
 			}
 			unity = 2
-		}
-		#走近科学
-		produces = {
-			trigger = {
-				is_enslaved = no
-				exists = owner
-				owner = {
-					has_valid_civic = civic_approaching_science
-				}
-			}
-			physics_research = 0.5
-			engineering_research = 0.5
-			society_research = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_approaching_science
-				}
-			}
-			consumer_goods = 0.25
 		}
 
 		# 社会主义理念
@@ -2430,6 +2294,17 @@ worker = {
 			}
 			unity = 0.25
 		}
+
+		#平等主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_egalitarian
+				}
+			}
+			unity = 0.5
+		}
 		#单一主义
 		produces = {
 			trigger = {
@@ -2448,7 +2323,10 @@ worker = {
 				is_enslaved = no
 				owner = {
 					exists = owner
-					has_ethic = ethic_xenophobe
+					OR = {
+						has_ethic = ethic_xenophobe
+						has_ethic = ethic_nationalism
+					}
 				}
 			}
 			unity = 0.1
@@ -2472,13 +2350,88 @@ worker = {
 			trigger = {
 				exists = owner
 				owner = {
-					has_ethic = ethic_fanatic_xenophile
+					OR = {
+						has_ethic = ethic_xenophile
+						has_ethic = ethic_nationalism
+					}
 					NOT = {
 						any_enslaved_species = {
 							NOT = { is_same_species = root }
 						}
 					}
 				}
+			}
+			unity = 0.25
+		}
+		#道德主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_pacifist
+					is_at_war = no
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_pacifist
+						has_ethic = ethic_defensivism
+					}
+					is_at_war = no
+				}
+			}
+			unity = 0.25
+		}
+		#军国主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_militarist
+					is_at_war = yes
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_militarist
+						has_ethic = ethic_defensivism
+					}
+					is_at_war = yes
+				}
+			}
+			unity = 0.5
+		}
+		#效率主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_materialist
+				}
+				is_robot_pop_group = yes
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_ethic = ethic_materialist
+						has_ethic = ethic_pragmatism
+					}
+				}
+				is_robot_pop_group = yes
 			}
 			unity = 0.25
 		}
@@ -2508,67 +2461,52 @@ worker = {
 			unity = 0.15
 			mult = planet.value:count_job|JOB|slave_overseer|
 		}
-
-		# Regular food, mineral and energy upkeep.
-		inline_script = pop_categories/regular_upkeep
-
-		# Additional energy upkeep for cyborgs.
-		inline_script = "pop_categories/cyborg_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/trait_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/ethic_trait_upkeep"
-
-		# Instrument of Desire Upkeep
-		inline_script = "pop_categories/instrument_upkeep"
-
-		# Exotic Metabolism Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_exotic_metabolism
-			}
-			exotic_gases = @exotic_metabolism
-		}
-
-		# Resource Production
-
-		# Lithoid Trait Output
-		inline_script = "pop_categories/trait_production"
-
-		produces = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_inorganic_breath
-			}
-			exotic_gases = @inorganic_breath
-		}
+		# Living Standard Trait Output
+		inline_script = "pop_categories/living_standard_worker_production"
 
 		produces = {
 			trigger = {
 				OR = {
-					has_trait = trait_drake_scaled
-					has_trait = trait_drake_scaled_yg
+					has_ethic = ethic_fanatic_spiritualist
+					has_ethic = ethic_spiritualist
 				}
+				owner = { has_valid_civic = civic_gospel_of_the_masses }
 			}
-			alloys = @drake_scaled_trait_resource_production
+			trade = @trade_value_prosperity_gospel
 		}
 
-		upkeep = {
+		produces = {
 			trigger = {
-				is_organic_machine = yes
+				has_trait = trait_inner_darkness
 			}
-			food = 1
-			mult = modifier:planet_pops_food_upkeep_add
+			sr_dark_matter = @inner_darkness_dark_matter_production
 		}
-		upkeep = {
+
+		produces = {
 			trigger = {
-				has_trait = trait_lithoid_yg
+				planet = {
+					has_modifier = pm_gaseous_fauna
+				}
 			}
-			minerals = 1
-			mult = modifier:planet_pops_minerals_upkeep_add
+			exotic_gases = @gaseous_fauna_exotic_gases_production
+		}
+
+		produces = {
+			trigger = {
+				planet = {
+					has_modifier = pm_raining_corpses
+				}
+			}
+			minor_artifacts = @raining_corpses_resource_amount
+		}
+
+		produces = {
+			trigger = {
+				planet = {
+					has_modifier = pm_raining_corpses_no_ancrel
+				}
+			}
+			consumer_goods = @raining_corpses_resource_amount
 		}
 	}
 }
@@ -2593,7 +2531,7 @@ slave = {
 		pop_cat_rentier_political_power = 0.1
 	}
 
-	pop_modifier = {
+	pop_group_modifier = {
 		pop_political_power = -0.75
 		pop_housing_usage_base = 0.75
 		pop_amenities_usage_base = 0.75
@@ -2612,7 +2550,7 @@ slave = {
 		potential = {
 			can_assemble_budding_pop = yes
 		}
-		planet_pop_assembly_organic_add = @plantoid_budding_rate
+		logistic_growth_mult = @plantoid_budding_rate
 		mult = value:budding_multiplier
 	}
 
@@ -2620,7 +2558,7 @@ slave = {
 		potential = {
 			can_assemble_tiyanki_pop = yes
 		}
-		planet_pop_assembly_organic_add = @tiyanki_budding_rate
+		logistic_growth_mult = @tiyanki_budding_rate
 	}
 
 	# Triggered Modifiers
@@ -2638,7 +2576,7 @@ slave = {
 		mult = value:councilor_level|TYPE|councilor_indentured_assets|
 	}
 
-	triggered_pop_modifier = {
+	triggered_pop_group_modifier = {
 		potential = {
 			owner = {
 				has_councilor = { COUNCILOR = "councilor_slaver_guilds" }
@@ -2675,7 +2613,7 @@ slave = {
 				has_country_flag = psionics_country
 			}
 		}
-		trade_value_mult = 0.02
+		planet_pops_trade_produces_mult = 0.02
 	}
 
 	#共识算法
@@ -2708,30 +2646,6 @@ slave = {
 		planet_stability_add = -1
 	}
 
-	#资本主义
-	triggered_planet_modifier = {
-		potential = {
-			happiness >= 0.4
-			exists = owner
-			owner = {
-				has_ethic = ethic_fanatic_capitalism
-			}
-		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			happiness >= 0.4
-			exists = owner
-			owner = {
-				has_ethic = ethic_capitalism
-			}
-		}
-		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-
 	#先验乌托邦
 	triggered_planet_modifier = {
 		potential = {
@@ -2752,7 +2666,7 @@ slave = {
 			owner = { has_valid_civic = civic_flower_of_evil }
 		}
 		planet_amenities_mult = 0.01
-		pop_growth_speed = 0.01
+		logistic_growth_mult = 0.01
 	}
 
 	#错误复制者
@@ -2764,27 +2678,13 @@ slave = {
 		planet_pop_assembly_add = 0.5
 	}
 
-	#滤波回声
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_mechanical
-				has_trait = trait_machine_unit
-			}
-			exists = owner
-			owner = { has_valid_civic = civic_echo }
-		}
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
-	}
-
 	#银河子宫
 	triggered_planet_modifier = {
 		potential = {
 			is_galactic_uterus_country = yes
 		}
 		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		multiplier = triger:planet_pops_trade_produces_mult
 	}
 
 	triggered_planet_modifier = {
@@ -2792,7 +2692,7 @@ slave = {
 			is_enslaved = yes
 		}
 		trade_value_add = 2
-		pop_lifestyle_trade_value_mult = 0.01
+		planet_pops_trade_produces_mult = 0.01
 		mult = value:scripted_modifier_mult|MODIFIER|planet_jobs_slave_produces_mult|
 	}
 
@@ -2904,7 +2804,7 @@ slave = {
 			}
 		}
 		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_lifestyle_trade_value_mult|
+		multiplier = triger:planet_pops_trade_produces_mult
 	}
 
 	resources = {
@@ -2979,68 +2879,36 @@ slave = {
 				owner = { has_valid_civic = civic_echo }
 			}
 			unity = 1
+			trade = 1
 		}
-
-		# Regular food, mineral and energy upkeep.
-		inline_script = pop_categories/regular_upkeep
-
-		# Additional energy upkeep for cyborgs.
-		inline_script = "pop_categories/cyborg_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/trait_upkeep"
-
-		# Additional energy upkeep for robot traits.
-		inline_script = "pop_categories/ethic_trait_upkeep"
-
-		# Instrument of Desire Upkeep
-		inline_script = "pop_categories/instrument_upkeep"
-
-		# Exotic Metabolism Upkeep
-		upkeep = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_exotic_metabolism
-			}
-			exotic_gases = @exotic_metabolism
-		}
-
-		# Resource Production
-
-		# Lithoid Trait Output
-		inline_script = "pop_categories/trait_production"
-
-		produces = {
-			trigger = {
-				is_organic_species = yes
-				has_trait = trait_inorganic_breath
-			}
-			exotic_gases = @inorganic_breath
-		}
+		# Living Standard Trait Output
+		inline_script = "pop_categories/living_standard_specialist_production"
 
 		produces = {
 			trigger = {
 				OR = {
-					has_trait = trait_drake_scaled
-					has_trait = trait_drake_scaled_yg
+					has_ethic = ethic_fanatic_spiritualist
+					has_ethic = ethic_spiritualist
 				}
+				owner = { has_valid_civic = civic_gospel_of_the_masses }
 			}
-			alloys = @drake_scaled_trait_resource_production
+			trade = @trade_value_prosperity_gospel
 		}
 
-		upkeep = {
+		produces = {
 			trigger = {
-				is_organic_machine = yes
+				has_trait = trait_inner_darkness
 			}
-			food = 1
-			mult = modifier:planet_pops_food_upkeep_add
+			sr_dark_matter = @inner_darkness_dark_matter_production
 		}
-		upkeep = {
+
+		produces = {
 			trigger = {
-				has_trait = trait_lithoid_yg
+				planet = {
+					has_modifier = pm_gaseous_fauna
+				}
 			}
-			minerals = 1
-			mult = modifier:planet_pops_minerals_upkeep_add
+			exotic_gases = @gaseous_fauna_exotic_gases_production
 		}
 	}
 }

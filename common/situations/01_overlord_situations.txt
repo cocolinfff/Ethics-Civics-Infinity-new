@@ -1,0 +1,273 @@
+###################################
+# Shroudwalker Enclave Divinations
+###################################
+
+divination_visitors = {
+	picture = GFX_evt_atmospheric_entry
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	abort_trigger = {
+		OR = {
+			NOT = { exists = event_target:shroudwalker_enclave_country }
+			owner = { is_hostile = event_target:shroudwalker_enclave_country }
+		}
+	}
+	modifier = {
+		# pop_ethic_xenophile_attraction_mult = 0.1
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 100
+		}
+	}
+	on_monthly = {
+		events = {
+			enclave.5555
+		}
+		random_events = {
+			10 = 0
+			1 = enclave.4150 # "Joint Operation: Dismembered Cloud"
+			1 = enclave.4151 # "A Most Irritating Envoy"
+			1 = enclave.5070 # "Rogue Shaman"
+			1 = enclave.5085 # "The Great Schism"
+			1 = enclave.5165 # Brain Slug - distar.170
+			1 = enclave.5170 # The Doorway - colony.3005
+			1 = enclave.5175 # Atmospheric Ecosystem - colony.300
+			1 = enclave.5190 # Hero Redivivus
+			1 = enclave.5560 # Wayward Pilgrims
+		}
+	}
+	monthly_progress = {
+		base = 2 #total: 100
+		#Player actions & policies:
+		modifier = {
+			add = 2
+			desc = divination_visitors_embrace
+			owner = {
+				OR = {
+					has_policy_flag = diplo_stance_cooperative
+					has_policy_flag = first_contact_proactive
+					count_envoy = {
+						limit = {
+							has_envoy_task = { task = improve_relations }
+						}
+						count > 2
+					}
+					count_rival_country = {
+						count < 1
+						limit = { is_rival = prev }
+					}
+				}
+			}
+		}
+		modifier = {
+			add = -2
+			desc = divination_visitors_denied
+			owner = {
+				OR = {
+					has_policy_flag = diplo_stance_isolationist
+					has_policy_flag = first_contact_attack_allowed
+					count_envoy = {
+						limit = {
+							has_envoy_task = { task = harm_relations }
+						}
+						count > 2
+					}
+					count_rival_country = {
+						count > 1
+						limit = { is_rival = prev }
+					}
+				}
+			}
+		}
+	}
+	on_progress_complete = {
+		custom_tooltip = divination_situation_end
+		hidden_effect = {
+			if = {
+				limit = {
+					has_situation_flag = divination_occurring
+				}
+				situation_event = { id = enclave.416 }
+			}
+			else = {
+				situation_event = { id = enclave.5557 }
+			}
+		}
+	}
+	on_fail = {
+		custom_tooltip = divination_situation_end
+		hidden_effect = { destroy_situation = this }
+	}
+	approach = {
+		name = into_the_unknown
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+	}
+}
+
+divination_locus = {
+	picture = GFX_evt_clocks
+	complete_icon_frame = GFX_situation_outcome_frame_blue
+	complete_icon = GFX_situation_outcome_unknown
+	abort_trigger = {
+		OR = {
+			NOT = { exists = event_target:shroudwalker_enclave_country }
+			owner = { is_hostile = event_target:shroudwalker_enclave_country }
+		}
+	}
+	modifier = {
+		planet_resettlement_unemployed_destination_mult = 0.10
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 100
+		}
+	}
+	on_monthly = {
+		events = {
+			enclave.5556
+		}
+		random_events = {
+			10 = 0
+			1 = enclave.5000 # "All Too Lucid"
+			1 = enclave.5050 # "Shrouded"
+			1 = enclave.5500 # "Shattered Frontier" (> 50% progress)
+			1 = enclave.5125 # "Floating Parts" (> 10% progress)
+			1 = enclave.5150 # Lightshow - anomaly.235 (>10% progress)
+			1 = enclave.5155 # Grimacing - anomaly.230 (>10% progress)
+			1 = enclave.5160 # Improbable Teapot - anomaly.4060
+			1 = enclave.5185 # Terminal Orbit - anomaly.2570 (>15% progress)
+			1 = enclave.5180 # The Color of Science - anomaly.6740 (>15% progress)
+		}
+	}
+	monthly_progress = {
+		base = 2 #total: 100
+		#Player actions & policies:
+		modifier = {
+			add = 2
+			desc = divination_locus_embrace
+			owner = {
+				OR = {
+					has_policy_flag = diplo_stance_cooperative
+					has_policy_flag = first_contact_proactive
+					has_policy_flag = border_policy_open
+				}
+			}
+		}
+		modifier = {
+			add = -2
+			desc = divination_locus_denied
+			owner = {
+				OR = {
+					has_policy_flag = diplo_stance_isolationist
+					has_policy_flag = first_contact_cautious
+					has_policy_flag = border_policy_closed
+				}
+			}
+		}
+		#Situation event outcomes:
+		modifier = {
+			add = 5
+			desc = divination_locus_embrace
+			OR = {
+				has_situation_flag = shattered_frontier_embraced
+			}
+		}
+		modifier = {
+			add = -5
+			desc = divination_locus_denied
+			OR = {
+				has_situation_flag = shattered_frontier_denied
+			}
+		}
+	}
+	on_progress_complete = {
+		custom_tooltip = divination_situation_end
+		hidden_effect = {
+			if = {
+				limit = {
+					has_situation_flag = divination_occurring
+				}
+				situation_event = { id = enclave.416 }
+			}
+			else = {
+				situation_event = { id = enclave.5557 }
+			}
+		}
+	}
+	on_fail = {
+		custom_tooltip = divination_situation_end
+		hidden_effect = { destroy_situation = this }
+	}
+	approach = {
+		name = into_the_unknown
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+	}
+}
+
+shroudwalker_spy_network = {
+	picture = GFX_evt_shroudwalker_enclave
+	complete_icon_frame = GFX_situation_outcome_frame_green
+	complete_icon = GFX_situation_outcome_unknown
+	abort_trigger = {
+		OR = {
+			NOT = { exists = event_target:shroudwalker_enclave_country }
+			owner = { is_hostile = event_target:shroudwalker_enclave_country }
+		}
+	}
+	stages = {
+		stage_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 100
+		}
+	}
+	monthly_progress = {
+		base = 12.5
+		modifier = {
+			factor = 2
+			desc = shroudwalker_spy_network_modifier
+			owner = {
+				OR = {
+					has_origin = origin_shroudwalker_apprentice
+					has_ascension_perk = ap_mind_over_matter
+				}
+			}
+		}
+	}
+	on_progress_complete = {
+		custom_tooltip = shroudwalker_spy_network_finish
+		hidden_effect = {
+			owner = {
+				fire_on_action = {
+					on_action = on_shroudwalker_insight_situation_finish
+					scopes = { from = root.target }
+				}
+			}
+			destroy_situation = this
+		}
+	}
+	approach = {
+		name = into_the_unknown
+		icon = GFX_situation_approach_unity
+		icon_background = GFX_situation_approach_bg_green
+		default = yes
+		on_select = {
+			custom_tooltip = deficit_approach_do_nothing_tooltip
+		}
+	}
+}
