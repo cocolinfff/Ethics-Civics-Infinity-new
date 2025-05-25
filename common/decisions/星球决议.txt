@@ -38,10 +38,7 @@ decision_xinshin_impact = {
                         limit = {
                             has_job = professional_star_fans
                         }
-                        kill_pop_group = {
-                            pop_group = this
-                            amount = killed_biomass
-                        }
+                        kill_single_pop = yes
                     }
                 }
             }
@@ -207,37 +204,37 @@ decision_promote_basic_industry_models = {
             AND = {
                 num_assigned_jobs = {
                     job = technician
-                    value >= 4
+                    value >= 400
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = miner
-                    value >= 4
+                    value >= 400
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = farmer
-                    value >= 4
+                    value >= 400
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = scrap_miner
-                    value >= 4
+                    value >= 400
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = angler
-                    value >= 4
+                    value >= 400
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = labour_hero
-                    value >= 2
+                    value >= 200
                 }
             }
         }
@@ -301,37 +298,25 @@ decision_promote_worker_models = {
             AND = {
                 num_assigned_jobs = {
                     job = foundry_specialist
-                    value >= 2
+                    value >= 200
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = artisan_specialist
-                    value >= 2
+                    value >= 200
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = artisan
-                    value >= 2
+                    value >= 200
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = foundry
-                    value >= 2
-                }
-            }
-            AND = {
-                num_assigned_jobs = {
-                    job = primitive_foundry
-                    value >= 2
-                }
-            }
-            AND = {
-                num_assigned_jobs = {
-                    job = primitive_artisan
-                    value >= 2
+                    value >= 200
                 }
             }
         }
@@ -394,20 +379,36 @@ decision_promote_research_models = {
         OR = {
             AND = {
                 num_assigned_jobs = {
-                    job = researcher
-                    value >= 2
+                    job = physicist
+                    value >= 200
                 }
             }
             AND = {
                 num_assigned_jobs = {
-                    job = head_researcher
-                    value >= 1
+                    job = biologist
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = engineer
+                    value >= 200
                 }
             }
             AND = {
                 num_assigned_jobs = {
                     job = magician
-                    value >= 2
+                    value >= 200
+                }
+            }
+            AND = {
+                exists = owner
+                owner = {
+                    politician_is_science_director = yes
+                }
+                num_assigned_jobs = {
+                    job = politician
+                    value >= 100
                 }
             }
             AND = {
@@ -425,8 +426,8 @@ decision_promote_research_models = {
                     }
                 }
                 num_assigned_jobs = {
-                    job = priest
-                    value >= 2
+                    job = bureaucrat
+                    value >= 200
                 }
             }
         }
@@ -658,5 +659,55 @@ decision_abolish_economic_zone = {
                 value >= 100
             }
         }
+    }
+}
+
+#建造卫星城市
+decision_build_satellite_city = {
+    owned_planets_only = yes
+    enactment_time = 360
+    icon = decision_satellite_in_orbit
+
+    resources = {
+        category = decisions
+        cost = {
+            alloys = 300
+            minerals = 500
+        }
+        cost = {
+            trigger = {
+                exists = owner
+                owner = { has_technology = tech_assembly_pattern }
+            }
+            minerals = 200
+        }
+        cost = {
+            trigger = {
+                exists = owner
+                owner = { has_technology = tech_construction_templates }
+            }
+            minerals = 300
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            OR = {
+                is_regular_empire = yes
+                is_gestalt = yes
+            }
+        }
+    }
+
+    allow = {
+    }
+
+    effect = {
+        add_deposit = d_satellite_city
+    }
+
+    ai_weight = {
+        weight = 0
     }
 }

@@ -244,7 +244,7 @@ situation_event = {
         owner = {
             set_country_flag = cybercreed_final_form
             set_country_flag = cybernetics_traditions_unlocked
-            every_owned_pop = {
+            every_owned_pop_group = {
                 limit = {
                     has_trait = trait_cybernetic
                     has_ethic = ethic_spiritualist
@@ -638,5 +638,87 @@ country_event = {
             is_ai = no
             is_direct_democratic_authority = yes
         }
+    }
+}
+
+
+
+namespace = bio
+situation_event = {
+    id = bio.50
+    title = "bio.50.name"
+    desc = "bio.50.desc"
+    picture = GFX_evt_genetic_ascension_purity
+    show_sound = event_laboratory_sound
+    situation = this
+    is_triggered_only = yes
+
+    trigger = {
+        NOT = { has_situation_flag = biogenesis_50_fire }
+        situation_progress >= 20
+        has_situation_flag = purity_approach_selected
+    }
+
+    immediate = {
+        set_situation_flag = situation_biogenesis_pause
+        set_situation_flag = biogenesis_50_fire
+    }
+
+    option = {
+        name = bio.50.a
+        owner = {
+            add_modifier = {
+                modifier = supremacy_denied
+                days = 1800
+            }
+        }
+        ai_chance = {
+            factor = 1
+            modifier = {
+                factor = 3
+                owner = {
+                    is_egalitarian = yes
+                }
+            }
+        }
+    }
+
+    option = {
+        name = bio.50.b
+        owner = {
+            add_modifier = {
+                modifier = augment_appreciation
+                days = 1800
+            }
+            hidden_effect = {
+                every_owned_species = {
+                    limit = {
+                        OR = {
+                            is_archetype = PRESAPIENT
+                            is_archetype = BIOLOGICAL
+                            is_archetype = LITHOID
+                        }
+                    }
+                    set_species_traits_purity_count_variable = yes
+                }
+            }
+        }
+        ai_chance = {
+            factor = 1
+            modifier = {
+                factor = 2
+                owner_species = {
+                    OR = {
+                        is_archetype = PRESAPIENT
+                        is_archetype = BIOLOGICAL
+                        is_archetype = LITHOID
+                    }
+                }
+            }
+        }
+    }
+
+    after = {
+        remove_situation_flag = situation_biogenesis_pause
     }
 }

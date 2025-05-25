@@ -533,10 +533,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_egalitarian }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -558,10 +555,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_authoritarian }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -583,10 +577,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_egalitarian }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -608,10 +599,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_authoritarian }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -633,10 +621,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_spiritualist }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -658,10 +643,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_materialist }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -702,10 +684,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_militarist }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -727,10 +706,7 @@ country_event = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_xenophile }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -764,10 +740,7 @@ country_event = {
 						4 = { }
 						3 = { pop_change_ethic = ethic_xenophobe }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -1089,10 +1062,7 @@ country_event = {
 					random_list = {
 						19 = { }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -1107,10 +1077,7 @@ country_event = {
 					random_list = {
 						8 = { }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -1128,10 +1095,7 @@ country_event = {
 					random_list = {
 						9 = { }
 						1 = {
-							kill_pop_group = {
-								pop_group = this
-								amount = killed_biomass
-							}
+							kill_single_pop = yes
 						}
 					}
 				}
@@ -1183,14 +1147,6 @@ country_event = {
 			which = empire_size_r
 			value = trigger:empire_size
 		}
-		set_variable = {
-			which = num_pops_r
-			value = trigger:num_pops
-		}
-		set_variable = {
-			which = num_owned_planets_r
-			value = trigger:num_owned_planets
-		}
 	}
 	option = {
 		name = OK
@@ -1221,6 +1177,27 @@ planet_event = {
 	}
 }
 
+# 道德主义强制停战
+namespace = ethic_fanatic_pacifist_stop_war
+country_event = {
+	id = ethic_fanatic_pacifist_stop_war.1
+	hide_window = yes
+
+	trigger = {
+		is_at_war = yes
+		has_ethic = ethic_fanatic_pacifist
+	}
+
+	immediate = {
+		random_list = {
+			99 = {}
+			1 = {
+				every_war = { remove_war_participant = attacker }
+			}
+		}
+	}
+}
+
 # 共产主义社会
 namespace = ethic_communist_society
 country_event = {
@@ -1231,16 +1208,23 @@ country_event = {
 	is_triggered_only = yes
 	trigger = {
 		OR = {
-			is_community_country = yes
-			has_civic = civic_galactic_sovereign_people
+			has_ethic = ethic_fanatic_egalitarian
+			has_valid_civic = civic_shared_burden
+			has_valid_civic = civic_socialistic
 		}
-		NOT = { has_country_flag = communist_society }
+		NOR = {
+			has_ethic = ethic_xenophobe
+			has_ethic = ethic_fanatic_xenophobe
+		}
+		is_democratic_country = yes
+		has_tradition = tr_future_society
+		has_technology = tech_ascension_theory
+		NOT = { has_civic = civic_communist_society }
 	}
 	immediate = {
-		hidden_effect = { set_country_flag = communist_society }
-		force_add_civic = civic_communist_society
 	}
 	option = {
 		name = ethic_communist_society.1.a
+		force_add_civic = civic_communist_society
 	}
 }

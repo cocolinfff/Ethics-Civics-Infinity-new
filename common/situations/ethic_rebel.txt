@@ -1,0 +1,230 @@
+situation_ethic_rebel = {
+    picture = GFX_evt_dark_alley
+    category = negative
+    desc = situation_ethic_rebel_desc
+    fail_icon = GFX_situation_outcome_meh
+    fail_icon_frame = GFX_situation_outcome_frame_green
+    complete_icon = GFX_situation_outcome_bankrupcy
+    complete_icon_frame = GFX_situation_outcome_frame_red
+    on_start = {
+        owner = {
+            set_country_flag = rebel_set
+            if = {
+                limit = { is_ai = yes }
+                random_list = {
+                    1 = { root = { set_situation_flag = rebel_positive } }
+                    1 = { root = { set_situation_flag = rebel_quiet } }
+                    1 = { root = { set_situation_flag = rebel_nothing } }
+                    1 = {
+                        root = {
+                            set_situation_flag = rebel_negative
+                            add_situation_progress = 70
+                        }
+                    }
+                }
+            }
+        }
+    }
+    start_value = 20
+    stages = {
+        rebel_1 = {
+            icon = GFX_situation_stage_1
+            icon_background = GFX_situation_stage_frame_red
+            end = 25
+            modifier = {
+                planet_stability_add = -20
+                pop_government_ethic_attraction = -1
+            }
+        }
+        rebel_2 = {
+            icon = GFX_situation_stage_2
+            icon_background = GFX_situation_stage_frame_red
+            end = 50
+            modifier = {
+                planet_stability_add = -40
+                diplo_weight_economy_mult = -0.25
+                pop_government_ethic_attraction = -2
+            }
+        }
+        rebel_3 = {
+            icon = GFX_situation_stage_3
+            icon_background = GFX_situation_stage_frame_red
+            end = 75
+            modifier = {
+                planet_stability_add = -60
+                diplo_weight_economy_mult = -0.5
+                pop_government_ethic_attraction = -3
+            }
+        }
+        rebel_4 = {
+            icon = GFX_situation_stage_4
+            icon_background = GFX_situation_stage_frame_red
+            end = 100
+            on_first_enter = {
+                situation_event = { id = unity_deficit.100 }
+            }
+            modifier = {
+                planet_stability_add = -80
+                diplo_weight_economy_mult = -0.5
+                pop_government_ethic_attraction = -5
+            }
+        }
+    }
+    monthly_progress = { # min for 3 years both finish and abort
+        base = 1
+        modifier = {
+            add = 1
+            has_situation_flag = rebel_quiet
+        }
+        modifier = {
+            add = 2
+            has_situation_flag = rebel_positive
+        }
+        modifier = {
+            add = 0
+            has_situation_flag = rebel_nothing
+        }
+        modifier = {
+            add = -2
+            has_situation_flag = rebel_negative
+        }
+    }
+    on_abort = {
+        hidden_effect = {
+            owner = { remove_country_flag = rebel_set }
+        }
+    }
+    on_progress_complete = {
+        custom_tooltip = ethic_rebel_happened
+        hidden_effect = {
+            owner = { remove_country_flag = rebel_set }
+            owner = {
+                switch = {
+                    trigger = has_country_flag
+                    ethic_materialist_rebel_set = { generate_rebel_final = { ETHIC = materialist } }
+                    ethic_spiritualist_rebel_set = { generate_rebel_final = { ETHIC = spiritualist } }
+                    ethic_pacifist_rebel_set = { generate_rebel_final = { ETHIC = pacifist } }
+                    ethic_militarist_rebel_set = { generate_rebel_final = { ETHIC = militarist } }
+                    ethic_xenophobe_rebel_set = { generate_rebel_final = { ETHIC = xenophobe } }
+                    ethic_xenophile_rebel_set = { generate_rebel_final = { ETHIC = xenophile } }
+                    ethic_authoritarian_rebel_set = { generate_rebel_final = { ETHIC = authoritarian } }
+                    ethic_egalitarian_rebel_set = { generate_rebel_final = { ETHIC = egalitarian } }
+                    ethic_capitalism_rebel_set = { generate_rebel_final = { ETHIC = capitalism } }
+                    ethic_socialism_rebel_set = { generate_rebel_final = { ETHIC = socialism } }
+                }
+            }
+            destroy_situation = this
+        }
+    }
+    on_fail = {
+        destroy_situation = this
+    }
+    approach = { # positive 积极促进
+        name = ethic_rebel_positive
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_green
+        resources = {
+            category = situations
+            upkeep = {
+                influence = 3
+            }
+        }
+        modifier = {
+            planet_stability_add = -20
+            planet_crime_add = 50
+            country_unity_produces_mult = -1
+        }
+        on_select = {
+            custom_tooltip = ethic_rebel_positive_tooltip
+            hidden_effect = {
+                set_rebel_dynamic_flag = { FLAG = rebel_positive }
+            }
+        }
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 1
+                has_situation_flag = rebel_positive
+            }
+        }
+    }
+
+    approach = { # quiet 暗中联系
+        name = ethic_rebel_quiet
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_green
+        resources = {
+            category = situations
+            upkeep = {
+                influence = 2
+            }
+        }
+        modifier = {
+            country_unity_produces_mult = -0.5
+            planet_crime_add = 25
+        }
+        on_select = {
+            custom_tooltip = ethic_rebel_quiet_tooltip
+            hidden_effect = {
+                set_rebel_dynamic_flag = { FLAG = rebel_quiet }
+            }
+        }
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 1
+                has_situation_flag = rebel_quiet
+            }
+        }
+    }
+
+    approach = { # nothing 视若无物
+        name = ethic_rebel_nothing
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_green
+        modifier = {
+            country_unity_produces_mult = -0.5
+        }
+        on_select = {
+            custom_tooltip = ethic_rebel_nothing_tooltip
+            hidden_effect = {
+                set_rebel_dynamic_flag = { FLAG = rebel_nothing }
+            }
+        }
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 1
+                root = { has_situation_flag = rebel_nothing}
+            }
+        }
+    }
+
+    approach = { # negative 积极镇压
+        name = ethic_rebel_negative
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_green
+        resources = {
+            category = situations
+            upkeep = {
+                influence = 2
+            }
+        }
+        modifier = {
+            pop_happiness = -0.25
+        }
+        on_select = {
+            custom_tooltip = ethic_rebel_negative_tooltip
+            hidden_effect = {
+                set_rebel_dynamic_flag = { FLAG = rebel_negative }
+            }
+        }
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 1
+                root = { has_situation_flag = rebel_negative }
+            }
+        }
+    }
+}

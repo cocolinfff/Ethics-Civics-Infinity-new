@@ -190,3 +190,136 @@ coordinator = {
         }
     }
 }
+
+#后勤工蜂
+logistics_drone = {
+    category = complex_drone
+
+    swappable_data = {
+        default = {
+            condition_string = DRONE_JOB_TRIGGER
+            building_icon = building_mineral_purification_plant
+            icon = low_tech_bureaucrat
+        }
+        swap_type = {
+            trigger = {
+                exists = owner
+                owner = {
+                    OR = {
+                        has_civic = civic_hive_capital_creates_gods
+                        has_civic = civic_machine_financial_investment
+                    }
+                }
+            }
+            name = trader
+            desc = trader
+            icon = overlord_trader
+            building_icon = tendril_cradle_building_3
+            weight = 5
+        }
+        swap_type = {
+            trigger = {
+                exists = owner
+                owner = {
+                    is_wilderness_empire = yes
+                }
+            }
+            name = spindlesymbiont
+            desc = spindlesymbiont
+            icon = spindlesymbiont
+            building_icon = tendril_cradle_building_3
+            weight = 10
+        }
+    }
+
+    tags = { trade }
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_enslaved = no
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+
+    possible_precalc = can_fill_drone_job
+
+    resources = {
+        category = planet_traders
+        produces = {
+            trade = 5
+        }
+        produces = {
+            trigger = {
+                exists = owner
+                owner = {
+                    OR = {
+                        has_civic = civic_hive_capital_creates_gods
+                        has_civic = civic_machine_financial_investment
+                    }
+                }
+            }
+            consumer_goods = 3
+        }
+        upkeep = {
+            trigger = {
+                exists = owner
+                owner = {
+                    OR = {
+                        has_civic = civic_hive_capital_creates_gods
+                        has_civic = civic_machine_financial_investment
+                    }
+                }
+            }
+            minerals = 3
+        }
+    }
+
+    country_modifier = {
+        country_resource_max_trade_add = 100
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            always = yes
+        }
+        planet_amenities_no_happiness_add = 250
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = { has_tradition = tr_synchronicity_integrated_preservation }
+        }
+        planet_amenities_no_happiness_add = 250
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                has_tradition = tr_virtuality_5
+            }
+        }
+        planet_amenities_no_happiness_add = 250
+    }
+
+    weight = {
+        weight = @simple_drone_job_weight
+        mult = value:job_weights_modifier|JOB|logistics_drone|RESOURCE|trade|
+    }
+
+    inline_script = "jobs/automodding_priority_trade"
+
+    promotion = {
+        time = @standard_promotion_time
+        effect = {
+            pop_amount_change_category = {
+                CATEGORY = simple_drone
+                AMOUNT = local_pop_amount
+            }
+        }
+    }
+}
