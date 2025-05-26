@@ -1,0 +1,574 @@
+
+#To use one of them, refer to them elsewhere in script via "value:<value>" e.g. value:example_value
+#IMPORTANT NOTE: Be mindful of performance when using these in triggers that are checked often!
+
+# example_value = {
+# 	base = 10 #default: 0
+
+# 	# List of valid mathematical operations:
+# 	# 	Numerical (modifying by a number):
+# 	# 	- set/weight (both do the same, replaces the current result with this value)
+# 	# 	- add
+# 	# 	- subtract
+# 	# 	- factor/mult/multiply ("multiply" fits the name scheme of the rest better, but the other two were kept for historical reasons)
+# 	# 	- divide
+# 	# 	- modulo
+# 	# 	- round_to (rounds to nearest of that value, e.g. 10.7 round_to 5 gives you 10)
+# 	# 	- max (sets to specified value if currently above it)
+# 	# 	- min (sets to specified value if currently below it)
+# 	# 	- pow (value is multiplied by itself to the power of x; be careful, you can get overflows if you are not careful)
+# 	# 	Simple (do not need a number, but just "yes", e.g. "round = yes")
+# 	# 	- round (sets to nearest full number)
+# 	# 	- ceiling (rounds up)
+# 	# 	- floor (rounds down)
+# 	# 	- abs (multiply by -1 if negative)
+# 	# 	- square (multiply by itself)
+# 	# 	- square_root
+
+# 	#All mathematical operations except weight and factor can be used inline e.g.
+# 	add = 100
+# 	multiply = value:some_other_script_value
+# 	round = yes
+# 	#(Note: weight and factor will instead overwrite the base value - use set, mult or multiply instead)
+
+# 	#They can also be used in modifier = {} fields, which lets you only apply them if triggers are true
+# 	modifier = {
+# 		max = owner.max_example_variable 					#Variable set by set_variable
+# 		owner = { is_variable_set = max_example_variable }	#Only applied if this trigger is true
+# 	}
+# 	# What works for right hand side values of mathematical operations? See events/00_how_to_use_variables for full list.
+
+# 	complex_trigger_modifier = { 	#This lets you get the value of a trigger that you can't use in one-liners because it uses {}
+# 		trigger = count_owned_planet
+# 		trigger_scope = owner 		#Lets you get the result of the trigger on a different scope. Default is "this"
+# 		parameters = { 				#Stick any further information necessary in here, like you'd do within the {} of the trigger normally
+# 			limit = { num_pops > 10 }
+# 		}
+# 		mode = add 					#Allows all numerical operations
+# 		mult = 5 					#Multiplies the outcome by this. In this example, this means adding 5 for each planet with more than 10 pops
+# 	}
+# }
+
+# Final note: script_values use the same metascript system as scripted_triggers and scripted_effects
+# This means that you can input parameters into them, in a similar fashion as described in scripted_effects/99_advanced_documentation.txt
+# For format for doing so is value:my_value|PARAM1|value1|PARAM2|value2|.
+# Then you can use $PARAM1$ in the script value and it will replace it with value1
+
+civilian_country_naval_cap = {
+	base = 0
+	add = modifier:civilian_country_naval_cap_add
+}
+
+civilian_planet_defense_armies = {
+	base = 0
+	add = modifier:civilian_planet_defense_armies_add
+}
+
+num_mobilization_pop = {
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				is_pop_category = civilian
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+	ceiling = yes
+}
+
+num_mobilization_civilian = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				is_pop_category = civilian
+				is_enslaved = no
+				NOR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+					has_trait = trait_latent_psionic
+					has_trait = trait_psionic
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+	ceiling = yes
+}
+
+num_mobilization_psionic = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				is_pop_category = civilian
+				is_enslaved = no
+				OR = {
+					has_trait = trait_latent_psionic
+					has_trait = trait_psionic
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+	ceiling = yes
+}
+
+num_mobilization_robot = {
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				is_pop_category = civilian
+				OR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+}
+
+num_mobilization_no_robot = {
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				is_pop_category = civilian
+				NOR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+}
+
+num_mobilization_slave = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				is_pop_category = civilian
+				is_enslaved = yes
+				NOT = {
+					has_slavery_type = { type = slavery_military }
+				}
+				NOR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+	ceiling = yes
+}
+
+num_mobilization_thrall = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				#is_pop_category = civilian
+				#奴隶兵即使不是平民阶层也会被动员
+				has_slavery_type = { type = slavery_military }
+				NOR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 500
+		owner = {
+			has_policy_flag = volunteers_only
+		}
+	}
+	modifier = {
+		divide = 400
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	modifier = {
+		divide = 200
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = extensive_conscription
+				has_policy_flag = military_euphony
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 100
+		owner = {
+			OR = {
+				has_policy_flag = service_by_requirement
+				has_policy_flag = militia_association
+			}
+		}
+	}
+	modifier = {
+		divide = 50
+		owner = {
+			OR = {
+				has_policy_flag = all_people_are_soldiers
+				has_policy_flag = military_euphony
+			}
+		}
+	}
+	modifier = {
+		divide = 40
+		owner = {
+			OR = {
+				has_policy_flag = scraping_the_barrel
+				has_policy_flag = sparta_system
+			}
+		}
+	}
+	ceiling = yes
+}
+
+num_mobilization_knight = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = num_assigned_jobs
+		parameters = {
+			job = knight_commander
+		}
+		mode = add
+	}
+	complex_trigger_modifier = {
+		trigger = num_assigned_jobs
+		parameters = {
+			job = knight
+		}
+		mode = add
+	}
+	divide = 100
+	ceiling = yes
+}
+
+num_mobilization_squire = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = num_assigned_jobs
+		parameters = {
+			job = squire
+		}
+		mode = add
+	}
+	divide = 100
+	ceiling = yes
+}

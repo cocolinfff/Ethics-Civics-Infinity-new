@@ -686,7 +686,7 @@ military_service = {
 			NOR = {
 				has_valid_civic = civic_feudal_realm
 				has_valid_civic = civic_military_dictatorship
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
 				has_origin = origin_toxic_knights
 			}
 			is_gestalt = no
@@ -694,12 +694,18 @@ military_service = {
 		}
 		valid = {
 			NOR = {
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
+			}
+			OR = {
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_fanatic_pacifist
 			}
 		}
 		modifier = {
-			pop_citizen_happiness = 0.05
-			army_morale = 0.25
+			country_trust_cap_add = 50
+			country_trust_growth = 0.3
+			pop_citizen_happiness = 0.15
+			logistic_growth_mult = 0.05
 		}
 		policy_flags = {
 			demilitarized_state
@@ -713,20 +719,54 @@ military_service = {
 		}
 	}
 	option = {
-		name = "volunteer_military_service"
+		name = "volunteers_only"
+		potential = {
+			NOR = {
+				has_valid_civic = civic_feudal_realm
+				has_valid_civic = civic_military_dictatorship
+				has_valid_civic = civic_having_a_national_army
+				has_origin = origin_toxic_knights
+			}
+			is_gestalt = no
+			is_community_society = no
+		}
+		valid = {
+			NOR = {
+				has_valid_civic = civic_having_a_national_army
+			}
+		}
+		modifier = {
+			army_starting_experience_add = 100
+			army_morale = 0.2
+			pop_citizen_happiness = 0.05
+			civilian_country_naval_cap_add = 0.15
+		}
+		policy_flags = {
+			volunteers_only
+		}
+		AI_weight = {
+			factor = 5
+			modifier = {
+				factor = 10
+				has_ethic = ethic_pacifist
+			}
+		}
+	}
+	option = {
+		name = "limited_conscription"
 		potential = {
 			is_gestalt = no
 			is_community_society = no
 			NOR = {
 				has_valid_civic = civic_feudal_realm
 				has_valid_civic = civic_military_dictatorship
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
 				has_origin = origin_toxic_knights
 			}
 
 		}
 		policy_flags = {
-			volunteer_military_service
+			limited_conscription
 		}
 		valid = {
 			NOR = {
@@ -734,22 +774,23 @@ military_service = {
 			}
 		}
 		modifier = {
-
+			civilian_country_naval_cap_add = 0.25
+			civilian_planet_defense_armies_add = 0.25
 		}
 		AI_weight = {
 			factor = 6
 		}
 	}
 	option = {
-		name = "limited_conscription"
+		name = "extensive_conscription"
 		policy_flags = {
-			limited_conscription
+			extensive_conscription
 		}
 		potential = {
 			NOR = {
 				has_valid_civic = civic_feudal_realm
 				has_valid_civic = civic_military_dictatorship
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
 				has_origin = origin_toxic_knights
 			}
 			is_gestalt = no
@@ -762,7 +803,8 @@ military_service = {
 			}
 		}
 		modifier = {
-
+			civilian_country_naval_cap_add = 0.5
+			civilian_planet_defense_armies_add = 0.5
 		}
 		AI_weight = {
 			factor = 5
@@ -776,15 +818,15 @@ military_service = {
 		}
 	}
 	option = {
-		name = "extensive_conscription"
+		name = "service_by_requirement"
 		policy_flags = {
-			extensive_conscription
+			service_by_requirement
 		}
 		potential = {
 			NOR = {
 				has_valid_civic = civic_feudal_realm
 				has_valid_civic = civic_military_dictatorship
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
 				has_origin = origin_toxic_knights
 			}
 			is_gestalt = no
@@ -796,6 +838,10 @@ military_service = {
 				has_ethic = ethic_fanatic_militarist
 				has_ethic = ethic_authoritarian
 				has_ethic = ethic_fanatic_authoritarian
+				is_at_war = yes
+				owner_main_species = {
+					has_virtual_species_trait = yes
+				}
 			}
 			NOR = {
 				has_ethic = ethic_pacifist
@@ -803,7 +849,8 @@ military_service = {
 			}
 		}
 		modifier = {
-
+			civilian_country_naval_cap_add = 1
+			civilian_planet_defense_armies_add = 0.75
 		}
 		AI_weight = {
 			factor = 6
@@ -825,7 +872,7 @@ military_service = {
 			NOR = {
 				has_valid_civic = civic_feudal_realm
 				has_valid_civic = civic_military_dictatorship
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
 				has_origin = origin_toxic_knights
 			}
 			is_gestalt = no
@@ -835,10 +882,23 @@ military_service = {
 			OR = {
 				has_ethic = ethic_fanatic_militarist
 				has_ethic = ethic_fanatic_authoritarian
+				AND = {
+					is_at_war = yes
+					OR = {
+						has_ethic = ethic_militarist
+						has_ethic = ethic_authoritarian
+					}
+				}
+				owner_main_species = {
+					has_virtual_species_trait = yes
+				}
 			}
 		}
 		modifier = {
-
+			civilian_country_naval_cap_add = 2
+			civilian_planet_defense_armies_add = 1
+			planet_army_build_speed_mult = 0.5
+			starbase_shipyard_build_speed_mult = 0.5
 		}
 		AI_weight = {
 			factor = 0.1
@@ -848,6 +908,47 @@ military_service = {
 				has_ethic = ethic_fanatic_militarist
 				has_ethic = ethic_fanatic_authoritarian
 			}
+			modifier = {
+				factor = 10000
+				owner_main_species = {
+					has_virtual_species_trait = yes
+				}
+			}
+		}
+	}
+	option = {
+		name = "scraping_the_barrel"
+		policy_flags = {
+			scraping_the_barrel
+		}
+		potential = {
+			NOR = {
+				has_valid_civic = civic_feudal_realm
+				has_valid_civic = civic_military_dictatorship
+				has_valid_civic = civic_having_a_national_army
+				has_origin = origin_toxic_knights
+			}
+			is_gestalt = no
+			is_community_society = no
+		}
+		valid = {
+			is_at_war = yes
+			OR = {
+				has_ethic = ethic_fanatic_militarist
+				has_ethic = ethic_fanatic_authoritarian
+				owner_main_species = {
+					has_virtual_species_trait = yes
+				}
+			}
+		}
+		modifier = {
+			civilian_country_naval_cap_add = 3
+			civilian_planet_defense_armies_add = 2
+			planet_army_build_speed_mult = 1
+			starbase_shipyard_build_speed_mult = 1
+		}
+		AI_weight = {
+			factor = 0
 		}
 	}
 	option = {
@@ -856,13 +957,14 @@ military_service = {
 			sparta_system
 		}
 		potential = {
-			has_valid_civic = civic_sparta_spirit
+			has_valid_civic = civic_having_a_national_army
 		}
 		valid = {
-			has_valid_civic = civic_sparta_spirit
+			has_valid_civic = civic_having_a_national_army
 		}
 		modifier = {
-
+			civilian_country_naval_cap_add = 4
+			civilian_planet_defense_armies_add = 3
 		}
 		AI_weight = {
 			factor = 1000
@@ -878,7 +980,7 @@ military_service = {
 		}
 		valid = {
 			NOT = {
-				has_valid_civic = civic_sparta_spirit
+				has_valid_civic = civic_having_a_national_army
 			}
 			OR = {
 				has_origin = origin_toxic_knights
@@ -890,10 +992,10 @@ military_service = {
 		modifier = {
 			armies_cost_mult = 1
 			armies_upkeep_mult = 1
-			army_defense_health_mult = 0.5
-			army_morale_damage_mult = 0.25
 			planet_building_stronghold_build_speed_mult = 1
 			planet_building_fortress_build_speed_mult = 1
+			civilian_country_naval_cap_add = 0.5
+			civilian_planet_defense_armies_add = 2
 		}
 		AI_weight = {
 			factor = 10
@@ -956,6 +1058,8 @@ military_service = {
 			planet_army_build_speed_mult = 0.33
 			armies_cost_mult = -0.25
 			armies_upkeep_mult = -0.5
+			civilian_country_naval_cap_add = 1
+			civilian_planet_defense_armies_add = 1
 		}
 		AI_weight = {
 			factor = 10
@@ -1029,6 +1133,8 @@ military_service = {
 		}
 		modifier = {
 			country_enclave_capacity_mult = 1
+			civilian_country_naval_cap_add = 2
+			civilian_planet_defense_armies_add = 0.5
 		}
 		AI_weight = {
 			modifier = {

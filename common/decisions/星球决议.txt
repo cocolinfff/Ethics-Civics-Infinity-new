@@ -711,3 +711,346 @@ decision_build_satellite_city = {
         weight = 0
     }
 }
+
+#动员当地预备役
+decision_mobilizing_local_reserves = {
+    owned_planets_only = yes
+    icon = decision_martial_law
+
+    resources = {
+        category = decisions
+        cost = {
+            minerals = 50
+            unity = 10
+            mult = num_pops
+            mult = root.value:num_mobilization_pop
+        }
+    }
+
+    potential = {
+        owner = {
+            OR = {
+                is_at_war = yes
+                has_crisis = yes
+            }
+            NOR = {
+                has_policy_flag = military_group
+                has_policy_flag = demilitarized_state
+            }
+            OR = {
+                any_war = {
+                    any_defender = {
+                        is_same_value = root
+                    }
+                }
+                NOT = {
+                    has_policy_flag = volunteers_only
+                }
+            }
+        }
+    }
+
+    allow = {
+        custom_tooltip = {
+            fail_text = no_modifier_mobilization
+            NOR = {
+                has_modifier = modifier_mobilization_0
+                has_modifier = modifier_mobilization_1
+                has_modifier = modifier_mobilization_2
+                has_modifier = modifier_mobilization_3
+                has_modifier = modifier_mobilization_4
+                has_modifier = modifier_mobilization_5
+                has_modifier = modifier_mobilization_virtual
+                has_modifier = modifier_mobilization_virtual_5
+            }
+        }
+        OR = {
+            is_capital = yes
+            owner = {
+                NOT = {
+                    has_civic = civic_having_a_national_army
+                }
+            }
+        }
+    }
+
+    effect = {
+        hidden_effect = {
+            mobilize_planet = yes
+        }
+        if = {
+            limit = {
+                owner_main_species = {
+                    has_virtual_species_trait = yes
+                }
+                owner = {
+                    has_policy_flag = scraping_the_barrel
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_virtual_5
+            }
+        }
+        else_if = {
+            limit = {
+                owner_main_species = {
+                    has_virtual_species_trait = yes
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_virtual
+            }
+        }
+        else_if = {
+            limit = {
+                owner = {
+                    has_policy_flag = scraping_the_barrel
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_5
+            }
+        }
+        else_if = {
+            limit = {
+                owner = {
+                    has_policy_flag = all_people_are_soldiers
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_4
+            }
+        }
+        else_if = {
+            limit = {
+                owner = {
+                    has_policy_flag = service_by_requirement
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_3
+            }
+        }
+        else_if = {
+            limit = {
+                owner = {
+                    has_policy_flag = extensive_conscription
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_2
+            }
+        }
+        else_if = {
+            limit = {
+                owner = {
+                    has_policy_flag = limited_conscription
+                }
+            }
+            add_modifier = {
+                modifier = modifier_mobilization_1
+            }
+        }
+        else = {
+            add_modifier = {
+                modifier = modifier_mobilization_0
+            }
+        }
+        custom_tooltip = decision_mobilizing_local_reserves_effect
+    }
+
+    ai_weight = {
+        base = 0
+    }
+}
+
+#宣布全国总动员
+decision_general_mobilization = {
+    owned_planets_only = yes
+    icon = decision_martial_law
+
+    resources = {
+        category = decisions
+        cost = {
+            minerals = 50
+            unity = 10
+            mult = num_pops
+            mult = root.owner.value:num_mobilization_pop
+        }
+    }
+
+    potential = {
+        owner = {
+            OR = {
+                is_at_war = yes
+                has_crisis = yes
+            }
+            NOR = {
+                has_policy_flag = military_group
+                has_policy_flag = demilitarized_state
+            }
+            OR = {
+                any_war = {
+                    any_defender = {
+                        is_same_value = root
+                    }
+                }
+                NOT = {
+                    has_policy_flag = volunteers_only
+                }
+            }
+        }
+    }
+
+    allow = {
+        custom_tooltip = {
+            fail_text = no_modifier_mobilization
+            NOR = {
+                has_modifier = modifier_mobilization_0
+                has_modifier = modifier_mobilization_1
+                has_modifier = modifier_mobilization_2
+                has_modifier = modifier_mobilization_3
+                has_modifier = modifier_mobilization_4
+                has_modifier = modifier_mobilization_5
+                has_modifier = modifier_mobilization_virtual
+                has_modifier = modifier_mobilization_virtual_5
+            }
+        }
+    }
+
+    effect = {
+        hidden_effect = {
+            owner = {
+                every_owned_planet = {
+                    mobilize_planet = yes
+                }
+            }
+        }
+        owner = {
+            every_owned_planet = {
+                if = {
+                    limit = {
+                        owner_main_species = {
+                            has_virtual_species_trait = yes
+                        }
+                        owner = {
+                            has_policy_flag = scraping_the_barrel
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_virtual_5
+                    }
+                }
+                else_if = {
+                    limit = {
+                        owner_main_species = {
+                            has_virtual_species_trait = yes
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_virtual
+                    }
+                }
+                else_if = {
+                    limit = {
+                        owner = {
+                            has_policy_flag = scraping_the_barrel
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_5
+                    }
+                }
+                else_if = {
+                    limit = {
+                        owner = {
+                            has_policy_flag = all_people_are_soldiers
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_4
+                    }
+                }
+                else_if = {
+                    limit = {
+                        owner = {
+                            has_policy_flag = service_by_requirement
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_3
+                    }
+                }
+                else_if = {
+                    limit = {
+                        owner = {
+                            has_policy_flag = extensive_conscription
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_2
+                    }
+                }
+                else_if = {
+                    limit = {
+                        owner = {
+                            has_policy_flag = limited_conscription
+                        }
+                    }
+                    add_modifier = {
+                        modifier = modifier_mobilization_1
+                    }
+                }
+                else = {
+                    add_modifier = {
+                        modifier = modifier_mobilization_0
+                    }
+                }
+            }
+        }
+        custom_tooltip = decision_mobilizing_local_reserves_effect
+    }
+
+    ai_weight = {
+        base = 0
+    }
+}
+
+#招募本地雇佣兵
+decision_recruiting_local_mercenaries = {
+    owned_planets_only = yes
+    icon = decision_martial_law
+
+    resources = {
+        category = decisions
+    }
+
+    potential = {
+        OR = {
+            owner = {
+                is_at_war = yes
+            }
+            has_crisis = yes
+        }
+        owner = {
+            has_policy_flag = military_group
+        }
+    }
+
+    allow = {
+        has_upgraded_capital = yes
+        NOT = {
+            has_modifier = modifier_mercenaries
+        }
+    }
+
+    effect = {
+        planet_event = {
+            id = ethic_society.3
+        }
+    }
+
+    ai_weight = {
+        base = 100
+    }
+}
