@@ -143,6 +143,60 @@ planet_event = {
 	}
 }
 
+# 蜂群吃人
+namespace = ethic_rebuild_swarm
+planet_event = {
+	id = ethic_rebuild_swarm.1
+	title = "ethic_rebuild_swarm.1.name"
+	desc = "ethic_rebuild_swarm.1.desc"
+	picture = GFX_evt_circuitry_modification
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			is_hive_empire = yes
+		}
+		fromfrom = {
+			is_robotic_species = no
+			from = {
+				owner_main_species = {
+					NOT = { is_same_species = prevprev }
+				}
+			}
+		}
+		fromfrom.species = {
+			NOT = { has_species_flag = eaten_by@root.owner }
+		}
+		NOT = {
+			any_galaxy_species = {
+				has_species_flag = eaten_by@root.owner
+				is_same_species = fromfrom.species
+			}
+		}
+	}
+
+	immediate = {
+		fromfrom.species = {
+			set_species_flag = eaten_by@root.owner
+		}
+		from = {
+			change_variable = {
+				which = species_eaten
+				value = 1
+			}
+			remove_modifier = swarm_species_eaten
+			add_modifier = {
+				modifier = swarm_species_eaten
+				multiplier = species_eaten
+			}
+		}
+	}
+
+	option = {
+		name = "ethic_rebuild_swarm.1.a"
+	}
+}
+
 # 自动扩张星基
 namespace = ethic_auto_base
 country_event = {
@@ -210,7 +264,10 @@ event = {
 				}
 				exists = owner
 				owner = {
-					is_eci_megacorp = yes
+					OR = {
+						is_eci_megacorp = yes
+						has_valid_civic = civic_beacon_of_liberty
+					}
 				}
 			}
 			establish_branch_office = owner
@@ -228,6 +285,7 @@ planet_event = {
 			OR = {
 				is_eci_megacorp = yes
 				has_active_tradition = tr_future_economy
+				has_valid_civic = civic_beacon_of_liberty
 			}
 		}
 		this = {
@@ -309,7 +367,7 @@ country_event = {
 		}
 	}
 	immediate = {
-		every_owned_pop_group = {
+		every_owned_pop = {
 			if = {
 				limit = {
 					is_same_species = root
@@ -526,15 +584,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_egalitarian
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_authoritarian }
 					random_list = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_egalitarian }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -548,15 +604,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_authoritarian
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_egalitarian }
 					random_list = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_authoritarian }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -570,15 +624,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_socialism
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
-					limit = { has_ethic = ethic_authoritarian }
+					limit = { has_ethic = ethic_capitalism }
 					random_list = {
 						8 = { }
-						1 = { pop_change_ethic = ethic_egalitarian }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { pop_change_ethic = ethic_socialism }
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -589,18 +641,16 @@ country_event = {
 	option = {
 		name = "ethic_kennedy.2.d"
 		trigger = { is_socialism = yes }
-		shift_ethic = ethic_fanatic_authoritarian
+		shift_ethic = ethic_fanatic_capitalism
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
-					limit = { has_ethic = ethic_egalitarian }
+					limit = { has_ethic = ethic_socialism }
 					random_list = {
 						8 = { }
-						1 = { pop_change_ethic = ethic_authoritarian }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { pop_change_ethic = ethic_capitalism }
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -614,15 +664,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_spiritualist
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_materialist }
 					random_list = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_spiritualist }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -636,15 +684,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_materialist
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_spiritualist }
 					random_list = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_materialist }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -658,7 +704,7 @@ country_event = {
 		shift_ethic = ethic_fanatic_pacifist
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_militarist }
 					random_list = {
@@ -677,15 +723,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_militarist
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_pacifist }
 					random_list = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_militarist }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -699,15 +743,13 @@ country_event = {
 		shift_ethic = ethic_fanatic_xenophile
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = { has_ethic = ethic_xenophobe }
 					random_list = {
 						8 = { }
 						1 = { pop_change_ethic = ethic_xenophile }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -721,7 +763,7 @@ country_event = {
 		shift_ethic = ethic_fanatic_xenophobe
 		custom_tooltip = government_cooldown_reseted
 		hidden_effect = {
-			every_owned_pop_group = {
+			every_owned_pop = {
 				if = {
 					limit = {
 						is_same_species = root
@@ -739,9 +781,7 @@ country_event = {
 					random_list = {
 						4 = { }
 						3 = { pop_change_ethic = ethic_xenophobe }
-						1 = {
-							kill_single_pop = yes
-						}
+						3 = { kill_pop = yes }
 					}
 				}
 			}
@@ -852,7 +892,7 @@ country_event = {
 	}
 
 	immediate = {
-		every_owned_pop_group = {
+		every_owned_pop = {
 			limit = {
 				is_same_species = ROOT
 			}
@@ -960,7 +1000,7 @@ country_event = {
 						factor = 2
 						ROOT = { has_ethic = ethic_fanatic_socialism }
 					}
-					pop_change_ethic = ethic_egalitarian
+					pop_change_ethic = ethic_socialism
 				}
 				30 = {
 					modifier = {
@@ -969,9 +1009,9 @@ country_event = {
 					}
 					modifier = {
 						factor = 2
-						ROOT = { has_ethic = ethic_fanatic_authoritarian }
+						ROOT = { has_ethic = ethic_fanatic_capitalism }
 					}
-					pop_change_ethic = ethic_authoritarian
+					pop_change_ethic = ethic_capitalism
 				}
 			}
 		}
@@ -999,16 +1039,16 @@ country_event = {
 		hidden_effect = {
 			if = {
 				limit = {
-					has_ethic = ethic_authoritarian
+					has_ethic = ethic_capitalism
 				}
-				country_remove_ethic = ethic_authoritarian
-				shift_ethic = ethic_egalitarian
+				country_remove_ethic = ethic_capitalism
+				shift_ethic = ethic_socialism
 			}
 			if = {
 				limit = {
-					has_ethic = ethic_fanatic_authoritarian
+					has_ethic = ethic_fanatic_capitalism
 				}
-				country_remove_ethic = ethic_fanatic_authoritarian
+				country_remove_ethic = ethic_fanatic_capitalism
 				shift_ethic = ethic_fanatic_socialism
 			}
 			if = {
@@ -1058,12 +1098,10 @@ country_event = {
 					flag = not_revolution
 					years = @post_revolutionary_check_years_1
 				}
-				every_owned_pop_group = {
+				every_owned_pop = {
 					random_list = {
 						19 = { }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -1073,12 +1111,10 @@ country_event = {
 					flag = not_revolution
 					years = @post_revolutionary_check_years_2
 				}
-				every_owned_pop_group = {
+				every_owned_pop = {
 					random_list = {
 						8 = { }
-						1 = {
-							kill_single_pop = yes
-						}
+						2 = { kill_pop = yes }
 					}
 				}
 			}
@@ -1091,12 +1127,10 @@ country_event = {
 					modifier = post_revolutionary_unret
 					years = @post_revolutionary_check_years
 				}
-				every_owned_pop_group = {
+				every_owned_pop = {
 					random_list = {
 						9 = { }
-						1 = {
-							kill_single_pop = yes
-						}
+						1 = { kill_pop = yes }
 					}
 				}
 			}
@@ -1139,13 +1173,21 @@ country_event = {
 	id = ethic_admin_cap.1
 	title = "ethic_admin_cap.1.name"
 	desc = "ethic_admin_cap.1.desc"
-	picture = GFX_evt_MSI
+	picture = GFX_evt_ECI
 	is_triggered_only = yes
 	immediate = {
 		set_variable = { which = admin_cap value = value:country_admin_cap }
 		set_variable = {
 			which = empire_size_r
 			value = trigger:empire_size
+		}
+		set_variable = {
+			which = num_pops_r
+			value = trigger:num_pops
+		}
+		set_variable = {
+			which = num_owned_planets_r
+			value = trigger:num_owned_planets
 		}
 	}
 	option = {
@@ -1182,6 +1224,7 @@ namespace = ethic_fanatic_pacifist_stop_war
 country_event = {
 	id = ethic_fanatic_pacifist_stop_war.1
 	hide_window = yes
+	is_triggered_only = yes
 
 	trigger = {
 		is_at_war = yes

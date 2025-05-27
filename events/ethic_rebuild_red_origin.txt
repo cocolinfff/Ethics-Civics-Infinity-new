@@ -1,0 +1,2684 @@
+###############################
+# 《苏东往事》
+# by Hathaway682
+###############################
+
+namespace = red_origin
+
+event = {
+	id = red_origin.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		# Imperial Vassal
+		if = {
+			limit = {
+				any_playable_country = {
+					has_origin = origin_red_satellite
+				}
+			}
+			red_origin_start_effect = yes
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.5700
+
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_red_satellite
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					closest_system = {
+						limit = { has_star_flag = soviet_union_empire_flag }
+						max_steps = 5
+					}
+				}
+			}
+			capital_scope.solar_system = {
+				spawn_system = {
+					min_distance = 30
+					max_distance = 80
+					min_jumps = 2
+					max_jumps = 3
+					hyperlane = yes
+					initializer = soviet_union_system_8_init
+				}
+			}
+		}
+		# Have met aliens (their liege)
+		set_country_flag = first_contact_event
+		set_country_flag = Story2 # Already encountered spacefarers
+
+		event_target:origin_red_homeland_country = {
+			every_subject = {
+				establish_communications_no_message = root
+				every_system_within_border = {
+					set_surveyed = {
+						surveyed = yes
+						surveyor = root
+					}
+				}
+			}
+			establish_communications_no_message = root
+			every_system_within_border = {
+				set_surveyed = {
+					surveyed = yes
+					surveyor = root
+				}
+			}
+		}
+		set_subject_of = {
+			who = event_target:origin_red_homeland_country
+		}
+		overlord = {
+			add_opinion_modifier = {
+				modifier = opinion_imperial_vassal_ai_opinion
+				who = root
+			}
+		}
+		random_agreement = {
+			limit = {
+				owner = { is_same_value = root.overlord }
+				target = { is_same_value = root }
+			}
+			set_agreement_terms = {
+				subject_diplomacy = subject_can_do_diplomacy
+				subject_integration = subject_can_not_be_integrated
+				subject_expand = subject_can_expand_with_tithe
+				subject_holdings_limit = subject_holdings_limit_1
+				joins_subject_wars = joins_subject_wars_defensive
+				joins_overlord_wars = joins_overlord_wars_none
+			}
+		}
+	}
+}
+
+# Choose Vassal Specialization & Intro Event Chain
+country_event = {
+	id = red_origin.5703
+	title = TRANSMISSION
+	desc = red_origin.5703.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	trigger = {
+		has_origin = origin_red_satellite
+		is_ai = no
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = soviet_union_empire }
+		capital_scope = {
+			add_holding = {
+				holding = holding_garrison
+				owner = event_target:soviet_union_empire
+			}
+		}
+	}
+
+	option = {
+		name = red_origin.5703.a
+		icon = {
+			icon = GFX_option_icon_hostile
+			text = dialog_hostile_overlord
+		}
+		set_country_flag = imperial_fiefdom_harsh_response
+		event_target:soviet_union_empire = {
+			add_opinion_modifier = {
+				who = root
+				modifier = opinion_imperial_vassal_harsh_response_overlord_opinion
+			}
+		}
+	}
+	option = {
+		name = red_origin.5703.b
+		default_hide_option = yes
+		icon = {
+			icon = GFX_option_icon_isolationist
+			text = dialog_wary_union
+		}
+	}
+	option = {
+		name = red_origin.5703.c
+		icon = {
+			icon = GFX_option_icon_friendly
+			text = dialog_friendly_overlord
+		}
+		set_country_flag = imperial_fiefdom_grateful_response
+		event_target:soviet_union_empire = {
+			add_opinion_modifier = {
+				who = root
+				modifier = opinion_imperial_vassal_grateful_response_overlord_opinion
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.5705
+	title = TRANSMISSION
+	desc = {
+		trigger = {
+			has_country_flag = imperial_fiefdom_harsh_response
+		}
+		text = red_origin.5705.desc.harsh
+	}
+	desc = {
+		trigger = {
+			has_country_flag = imperial_fiefdom_grateful_response
+		}
+		text = red_origin.5705.desc.grateful
+	}
+	desc = {
+		trigger = {
+			has_country_flag = imperial_fiefdom_reconsider_response
+		}
+		text = red_origin.5705.desc.reconsider
+	}
+	desc = {
+		trigger = {
+			NOR = {
+				has_country_flag = imperial_fiefdom_harsh_response
+				has_country_flag = imperial_fiefdom_grateful_response
+				has_country_flag = imperial_fiefdom_reconsider_response
+			}
+		}
+		text = red_origin.5705.desc
+	}
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	trigger = {
+		has_origin = origin_red_satellite
+		is_ai = no
+	}
+
+	option = {
+		name = red_origin.5705.a
+		origin_imperial_fiefdom_bulwark_specialization_effect = yes
+	}
+	option = {
+		name = red_origin.5705.b
+		hidden_effect = {
+			country_event = { id = red_origin.5706 }
+		}
+	}
+	option = {
+		name = red_origin.5705.c
+		default_hide_option = yes
+		origin_imperial_fiefdom_scholarium_specialization_effect = yes
+	}
+	option = {
+		name = red_origin.5705.d
+		hidden_effect = {
+			country_event = { id = red_origin.5707 }
+		}
+	}
+	option = {
+		name = red_origin.5705.e
+		origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+	}
+	option = {
+		name = red_origin.5705.f
+		hidden_effect = {
+			country_event = { id = red_origin.5708 }
+		}
+	}
+
+	after = {
+		remove_country_flag = imperial_fiefdom_harsh_response
+		remove_country_flag = imperial_fiefdom_grateful_response
+	}
+}
+
+country_event = { # Learn more about Bulwarks
+	id = red_origin.5706
+	title = TRANSMISSION
+	desc = red_origin.5706.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	option = {
+		name = red_origin.5706.a
+		default_hide_option = yes
+		origin_imperial_fiefdom_bulwark_specialization_effect = yes
+	}
+	option = {
+		name = red_origin.5706.b
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+			set_country_flag = imperial_fiefdom_reconsider_response
+		}
+	}
+}
+
+country_event = { # Learn more about Scholaria
+	id = red_origin.5707
+	title = TRANSMISSION
+	desc = red_origin.5707.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	option = {
+		name = red_origin.5707.a
+		default_hide_option = yes
+		origin_imperial_fiefdom_scholarium_specialization_effect = yes
+	}
+	option = {
+		name = red_origin.5707.b
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+			set_country_flag = imperial_fiefdom_reconsider_response
+		}
+	}
+}
+
+country_event = { # Learn more about Prospectoria
+	id = red_origin.5708
+	title = TRANSMISSION
+	desc = red_origin.5708.desc
+
+	diplomatic = yes
+
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:soviet_union_empire
+		planet_background = event_target:soviet_union_empire
+		graphical_culture = event_target:soviet_union_empire
+		city_level = event_target:soviet_union_empire
+		room = event_target:soviet_union_empire.ruler
+	}
+
+	option = {
+		name = red_origin.5708.a
+		default_hide_option = yes
+		origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+	}
+	option = {
+		name = red_origin.5708.b
+		hidden_effect = {
+			country_event = { id = red_origin.5705 }
+			set_country_flag = imperial_fiefdom_reconsider_response
+		}
+	}
+}
+
+# AI Setup
+country_event = {
+	id = red_origin.5710
+	
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_red_satellite
+		is_ai = yes
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = soviet_union_empire }
+
+		if = { # Influence reduction modifier
+			limit = {
+				NOT = { has_country_flag = origin_red_satellite_rival_country }
+			}
+			add_modifier = {
+				modifier = imperial_vassal_ai_modifier
+				days = -1
+			}
+		}
+
+		# Opinion Modifiers
+		add_opinion_modifier = {
+			modifier = opinion_imperial_overlord_ai_opinion
+			who = event_target:soviet_union_empire
+		}
+		event_target:soviet_union_empire = {
+			every_subject = {
+				limit = {
+					is_ai = no
+				}
+				root = {
+					add_opinion_modifier = {
+						modifier = opinion_imperial_vassal_ai_opinion
+						who = prev
+					}
+				}
+			}
+		}
+
+		random_agreement = { # Agreement Terms with Overlord
+			limit = {
+				owner = { is_same_value = root.overlord }
+				target = { is_same_value = root }
+			}
+			set_agreement_terms = { # Generic values everyone gets
+				subject_integration = subject_can_not_be_integrated
+				subject_holdings_limit = subject_holdings_limit_1
+				joins_subject_wars = joins_subject_wars_all
+				joins_overlord_wars = joins_overlord_wars_none
+			}
+			if = { # Rival Country specific
+				limit = {
+					root = { has_country_flag = origin_red_satellite_rival_country }
+				}
+				set_agreement_terms = {
+					subject_diplomacy = subject_can_do_diplomacy
+				}
+			}
+			else = { # Rest
+				set_agreement_terms = {
+					subject_diplomacy = subject_can_not_do_diplomacy
+				}
+				random_list = {
+					1 = {
+						set_agreement_terms = {
+							subject_expand = subject_cannot_expand
+						}
+					}
+					1 = {
+						set_agreement_terms = {
+							subject_expand = subject_can_expand_with_tithe
+						}
+					}
+				}
+			}
+		}
+
+		if = { # Rival Country bonuses
+			limit = {
+				has_country_flag = origin_red_satellite_rival_country
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = random
+						random_existing_design = science
+					}
+					set_location = root.capital_star
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = random
+						random_existing_design = constructor
+					}
+					set_location = root.capital_star
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					create_ship = {
+						name = random
+						random_existing_design = constructor
+					}
+					set_location = root.capital_star
+				}
+			}
+			create_fleet = {
+				effect = {
+					set_owner = root
+					while = {
+						count = 5
+						create_ship = {
+							name = random
+							design = NAME_Dagger
+						}
+					}
+					set_location = root.capital_star
+				}
+			}
+			add_resource = { 
+				energy = 2000 
+				food = 1000
+				minerals = 1000
+				influence = 300
+			}
+		}
+
+		# Holding Building
+		capital_scope = {
+			add_holding = {
+				holding = holding_garrison
+				owner = event_target:soviet_union_empire
+			}
+		}
+	}
+}
+
+country_event = {  #AI选类型
+	id = red_origin.5711
+	hide_window = yes
+
+	is_triggered_only = yes
+	trigger = {
+		OR = {
+			has_origin = origin_red_satellite
+			has_origin = origin_imperial_vassal
+		}
+		is_ai = yes
+	}
+
+	immediate = {
+		if = {
+			limit = { has_valid_civic = civic_warrior_culture }
+			origin_imperial_fiefdom_bulwark_specialization_effect = yes
+		}
+		if = {
+			limit = {
+				OR = {
+					has_valid_civic = civic_world_cooperative
+					has_valid_civic = civic_corvee_system
+				}
+			}
+			origin_imperial_fiefdom_scholarium_specialization_effect = yes
+		}
+		if = {
+			limit = {
+				has_valid_civic = civic_worker_coop
+			}
+			origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+		}
+	}
+
+	after = {
+		remove_country_flag = imperial_fiefdom_harsh_response
+		remove_country_flag = imperial_fiefdom_grateful_response
+	}
+}
+
+## Overlord Dissolution Events
+# Pre-Event
+country_event = { # Overlord
+	id = red_origin.5715
+
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_red_satellite_overlord
+	}
+
+	immediate = {
+		country_event = {
+			id = red_origin.5720
+			days = 1200
+			random = 8400
+		}
+	}
+}
+
+# Previous Leader dies, succession crisis
+country_event = { # Overlord version
+	id = red_origin.5720
+	
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_origin = origin_red_satellite_overlord
+	}
+
+	immediate = {
+		ruler = {
+			kill_leader = { show_notification = no }
+		}
+	}
+}
+
+#领袖逝世
+country_event = {
+	id = red_origin.6001
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		from = {
+			has_leader_flag = union_leader_1
+		}
+	}
+
+	immediate = {
+		change_government = {
+			authority = auth_oligarchic
+		}
+		save_event_target_as = soviet_union
+		from = {
+			save_event_target_as = dead_leader
+		}
+		every_subject = {
+			limit = { 
+				is_ai = no	
+			}
+			country_event = {
+				id = red_origin.6002
+			}
+		}
+		random_list = {
+			3 = {
+				country_event = {
+					id = red_origin.6003
+					days = 720
+				}
+			}
+			3 = {
+				country_event = {
+					id = red_origin.6005
+					days = 720
+				}
+			}
+			3 = {
+				country_event = {
+					id = red_origin.6007
+					days = 720
+				}
+			}
+			1 = {
+				country_event = {
+					id = red_origin.6009
+					days = 720
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.6002
+	title = red_origin.6002.name
+	desc = red_origin.6002.desc
+	picture = GFX_evt_disease_outbreak
+	is_triggered_only = yes
+
+	option = {
+		name = red_origin.6002.a
+		custom_tooltip = red_origin.6002.tooltip
+	}
+}
+
+#技官掌权
+country_event = {
+	id = red_origin.6003
+	hide_window = yes
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = soviet_union
+		change_government = {
+			authority = auth_dictatorial
+			cooldown = no
+		}
+		set_country_flag = materialist_coup
+		country_remove_ethic = ethic_xenophile
+		country_remove_ethic = ethic_militarist
+		country_remove_ethic = ethic_materialist
+		country_add_ethic = ethic_fanatic_materialist
+		country_add_ethic = ethic_xenophile
+		force_remove_civic = civic_socialistic
+		force_remove_civic = civic_liberator
+		force_add_civic = civic_technocracy
+		force_add_civic = civic_ultravisionary_socialism
+		force_add_civic = civic_functional_architecture
+		ruler = {
+			save_event_target_as = new_leader
+			set_leader_flag = union_leader_2
+		}
+		every_playable_country = {
+			limit = {
+				is_ai = no
+				has_communications = root
+			}
+			country_event = {
+				id = red_origin.6004
+			}
+		}
+		start_situation = {
+			type = situation_road_to_dissolution
+			target = capital_scope
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.6004
+	title = red_origin.6004.name
+	desc = red_origin.6004.desc
+	picture = GFX_evt_voting
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			overlord = { has_origin = origin_red_satellite_overlord }
+		}
+		name = red_origin.6004.a
+		custom_tooltip = red_origin.6004.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			OR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+		name = red_origin.6004.b
+		custom_tooltip = red_origin.6004.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			NOR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+		name = red_origin.6004.c
+		custom_tooltip = red_origin.6004.tooltip
+	}
+}
+
+#强硬派掌权
+country_event = {
+	id = red_origin.6005
+	hide_window = yes
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = soviet_union
+		change_government = {
+			authority = auth_dictatorial
+			cooldown = no
+		}
+		set_country_flag = militarist_coup
+		country_remove_ethic = ethic_xenophile
+		country_remove_ethic = ethic_militarist
+		country_remove_ethic = ethic_materialist
+		country_add_ethic = ethic_fanatic_militarist
+		country_add_ethic = ethic_materialist
+		force_remove_civic = civic_liberator
+		force_remove_civic = civic_socialistic
+		force_add_civic = civic_labor_aristocracy
+		force_add_civic = civic_nationalistic_zeal
+		force_add_civic = civic_distinguished_admiralty
+		ruler = {
+			save_event_target_as = new_leader
+			set_leader_flag = union_leader_3
+		}
+		every_playable_country = {
+			limit = {
+				is_ai = no
+				has_communications = root
+			}
+			country_event = {
+				id = red_origin.6006
+			}
+		}
+		start_situation = {
+			type = situation_road_to_dissolution
+			target = capital_scope
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.6006
+	title = red_origin.6006.name
+	desc = red_origin.6006.desc
+	picture = GFX_evt_civil_action
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			overlord = { has_origin = origin_red_satellite_overlord }
+		}
+		name = red_origin.6006.a
+		custom_tooltip = red_origin.6006.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			OR = {
+				has_ethic = ethic_egalitarian
+				has_ethic = ethic_fanatic_egalitarian
+			}
+		}
+		name = red_origin.6006.b
+		custom_tooltip = red_origin.6006.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			NOR = {
+				has_ethic = ethic_egalitarian
+				has_ethic = ethic_fanatic_egalitarian
+			}
+			NOR = {
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_authoritarian
+			}
+		}
+		name = red_origin.6006.c
+		custom_tooltip = red_origin.6006.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			OR = {
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_authoritarian
+			}
+		}
+		name = red_origin.6006.d
+		custom_tooltip = red_origin.6006.tooltip
+	}
+}
+
+#开放派掌权
+country_event = {
+	id = red_origin.6007
+	hide_window = yes
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = soviet_union
+		change_government = {
+			authority = auth_oligarchic
+			cooldown = no
+		}
+		set_country_flag = xenophile_coup
+		country_remove_ethic = ethic_xenophile
+		country_remove_ethic = ethic_militarist
+		country_remove_ethic = ethic_materialist
+		country_add_ethic = ethic_fanatic_xenophile
+		country_add_ethic = ethic_pacifist
+		force_remove_civic = civic_socialistic
+		force_remove_civic = civic_liberator
+		force_add_civic = civic_labor_aristocracy
+		force_add_civic = civic_political_pluralism
+		force_add_civic = civic_spy_agency
+		ruler = {
+			save_event_target_as = new_leader
+			set_leader_flag = union_leader_4
+		}
+		every_playable_country = {
+			limit = {
+				is_ai = no
+				has_communications = root
+			}
+			country_event = {
+				id = red_origin.6008
+			}
+		}
+		start_situation = {
+			type = situation_road_to_dissolution
+			target = capital_scope
+		}
+		
+	}
+}
+
+country_event = {
+	id = red_origin.6008
+	title = red_origin.6008.name
+	desc = red_origin.6008.desc
+	picture = GFX_evt_announcement
+	is_triggered_only = yes
+
+	option = {
+		name = red_origin.6008.a
+		custom_tooltip = red_origin.6008.tooltip
+	}
+}
+
+#地上天国
+country_event = {
+	id = red_origin.6009
+	hide_window = yes
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = soviet_union
+		change_government = {
+			authority = auth_democratic
+			cooldown = no
+		}
+		set_country_flag = spiritualist_coup
+		country_remove_ethic = ethic_xenophile
+		country_remove_ethic = ethic_militarist
+		country_remove_ethic = ethic_materialist
+		country_add_ethic = ethic_fanatic_spiritualist
+		country_add_ethic = ethic_xenophile
+		force_remove_civic = civic_liberator
+		force_remove_civic = civic_socialistic
+		force_add_civic = civic_spiritual_democracy
+		force_add_civic = civic_knowledge_seeker
+		force_add_civic = civic_liberation_theology
+		ruler = {
+			save_event_target_as = new_leader
+			set_leader_flag = union_leader_4
+		}
+		every_playable_country = {
+			limit = {
+				is_ai = no
+				has_communications = root
+			}
+			country_event = {
+				id = red_origin.6010
+			}
+		}
+		start_situation = {
+			type = situation_road_to_dissolution
+			target = capital_scope
+		}
+
+	}
+}
+
+country_event = {
+	id = red_origin.6010
+	title = red_origin.6010.name
+	desc = red_origin.6010.desc
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	option = {
+		name = red_origin.6010.a
+		custom_tooltip = red_origin.6010.tooltip
+		trigger = {
+			NOR = {
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_fanatic_spiritualist
+			}
+		}
+	}
+	option = {
+		name = red_origin.6010.b
+		custom_tooltip = red_origin.6010.tooltip
+		trigger = {
+			OR = {
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_fanatic_spiritualist
+			}
+		}
+	}
+}
+
+#二段修
+country_event = {
+	id = red_origin.6011
+	hide_window = yes
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = soviet_union
+		switch = {
+			trigger = has_country_flag
+			materialist_coup = {
+				change_government = {
+					authority = auth_oligarchic
+					cooldown = no
+				}
+				country_remove_ethic = ethic_xenophile
+				country_remove_ethic = ethic_fanatic_socialism
+				country_add_ethic = ethic_socialism
+				country_add_ethic = ethic_authoritarian
+				country_add_ethic = ethic_militarist
+				force_remove_civic = civic_cyber_dictatorship
+				force_add_civic = civic_consumerism
+				force_add_civic = civic_police_state
+				every_playable_country = {
+					limit = {
+						is_ai = no
+						has_communications = root
+					}
+					country_event = {
+						id = red_origin.6012
+					}
+				}
+			}
+			militarist_coup = {
+				change_government = {
+					authority = auth_dictatorial
+					cooldown = no
+				}
+				country_remove_ethic = ethic_materialist
+				country_remove_ethic = ethic_fanatic_socialism
+				country_add_ethic = ethic_socialism
+				country_add_ethic = ethic_authoritarian
+				country_add_ethic = ethic_xenophobe
+				force_remove_civic = civic_labor_aristocracy
+				force_add_civic = civic_nazbol
+				every_playable_country = {
+					limit = {
+						is_ai = no
+						has_communications = root
+					}
+					country_event = {
+						id = red_origin.6013
+					}
+				}
+			}
+			xenophile_coup = {
+				change_government = {
+					authority = auth_democratic
+					cooldown = no
+				}
+				country_remove_ethic = ethic_pacifist
+				country_remove_ethic = ethic_fanatic_socialism
+				country_add_ethic = ethic_capitalism
+				country_add_ethic = ethic_fanatic_egalitarian
+				force_remove_civic = civic_labor_aristocracy
+				force_remove_civic = civic_spy_agency
+				force_add_civic = civic_beacon_of_liberty
+				force_add_civic = civic_characteristic_socialism_pioneer
+				every_playable_country = {
+					limit = {
+						is_ai = no
+						has_communications = root
+					}
+					country_event = {
+						id = red_origin.6014
+					}
+				}
+			}
+			spiritualist_coup = {
+				change_government = {
+					authority = auth_imperial
+					cooldown = no
+				}
+				ruler = {
+					add_trait = leader_trait_ruler_chosen
+				}
+				country_remove_ethic = ethic_xenophile
+				country_remove_ethic = ethic_fanatic_socialism
+				country_add_ethic = ethic_fanatic_xenophobe
+				country_add_ethic = ethic_authoritarian
+				force_remove_civic = civic_socialistic
+				force_add_civic = civic_fanatic_purifiers
+				force_remove_civic = civic_liberation_theology
+				force_add_civic = civic_imperial_cult
+				force_add_civic = civic_psionic_sovereign
+				every_playable_country = {
+					limit = {
+						is_ai = no
+						has_communications = root
+					}
+					country_event = {
+						id = red_origin.6015
+					}
+				}
+				every_subject = {
+					set_subject_of = {
+						who = none
+					}
+				}
+				random_situation = {
+					limit = {
+						is_situation_type = situation_road_to_dissolution
+					}
+					destroy_situation = this
+				}
+			}
+		}
+		ruler = {
+			save_event_target_as = new_leader
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.6012
+	title = red_origin.6012.name
+	desc = red_origin.6012.desc
+	picture = GFX_evt_alien_segregation
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			overlord = { has_origin = origin_red_satellite_overlord }
+		}
+		name = red_origin.6012.a
+		custom_tooltip = red_origin.6012.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			OR = {
+				has_ethic = ethic_egalitarian
+				has_ethic = ethic_fanatic_egalitarian
+			}
+		}
+		name = red_origin.6012.b
+		custom_tooltip = red_origin.6012.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			NOR = {
+				has_ethic = ethic_egalitarian
+				has_ethic = ethic_fanatic_egalitarian
+			}
+			NOR = {
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_authoritarian
+			}
+		}
+		name = red_origin.6012.b
+		custom_tooltip = red_origin.6012.tooltip
+	}
+	option = {
+		trigger = {
+			OR = {
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_fanatic_authoritarian
+			}
+		}
+		name = red_origin.6012.c
+		custom_tooltip = red_origin.6012.tooltip
+	}
+}
+
+country_event = {
+	id = red_origin.6013
+	title = red_origin.6013.name
+	desc = red_origin.6013.desc
+	picture = GFX_evt_victorious_army
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			overlord = { has_origin = origin_red_satellite_overlord }
+			NOR = {
+				has_ethic = ethic_militarist
+				has_ethic = ethic_fanatic_militarist
+			}
+		}
+		name = red_origin.6013.a
+		custom_tooltip = red_origin.6013.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			OR = {
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_fanatic_pacifist
+			}
+		}
+		name = red_origin.6013.b
+		custom_tooltip = red_origin.6013.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			NOR = {
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_fanatic_pacifist
+			}
+			NOR = {
+				has_ethic = ethic_militarist
+				has_ethic = ethic_fanatic_militarist
+			}
+		}
+		name = red_origin.6013.a
+		custom_tooltip = red_origin.6013.tooltip
+	}
+	option = {
+		trigger = {
+			OR = {
+				has_ethic = ethic_militarist
+				has_ethic = ethic_fanatic_militarist
+			}
+		}
+		name = red_origin.6013.c
+		custom_tooltip = red_origin.6013.tooltip
+	}
+}
+
+country_event = {
+	id = red_origin.6014
+	title = red_origin.6014.name
+	desc = red_origin.6014.desc
+	picture = GFX_evt_financial_instruments
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			overlord = { has_origin = origin_red_satellite_overlord }
+		}
+		name = red_origin.6014.a
+		custom_tooltip = red_origin.6014.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			OR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+		name = red_origin.6014.b
+		custom_tooltip = red_origin.6014.tooltip
+	}
+	option = {
+		trigger = {
+			NOT = { overlord = { has_origin = origin_red_satellite_overlord } }
+			NOR = {
+				has_ethic = ethic_socialism
+				has_ethic = ethic_fanatic_socialism
+			}
+			NOR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_capitalism
+			}
+		}
+		name = red_origin.6014.c
+		custom_tooltip = red_origin.6014.tooltip
+	}
+	option = {
+		trigger = {
+			OR = {
+				has_ethic = ethic_capitalism
+				has_ethic = ethic_fanatic_capitalism
+			}
+		}
+		name = red_origin.6014.d
+		custom_tooltip = red_origin.6014.tooltip
+	}
+}
+
+country_event = {
+	id = red_origin.6015
+	title = red_origin.6015.name
+	desc = red_origin.6015.desc
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			NOR = {
+				has_civic = civic_fanatic_purifiers
+				has_civic = civic_hive_devouring_swarm
+				has_civic = civic_hive_devouring_swarm_lithoid
+				has_civic = civic_machine_terminator
+				has_civic = civic_nazbol
+				has_civic = civic_glory_and_dream
+			}
+		}
+		name = red_origin.6015.a
+		custom_tooltip = red_origin.6015.tooltip
+	}
+	option = {
+		trigger = {
+			OR = {
+				has_civic = civic_fanatic_purifiers
+				has_civic = civic_hive_devouring_swarm
+				has_civic = civic_hive_devouring_swarm_lithoid
+				has_civic = civic_machine_terminator
+				has_civic = civic_barbaric_despoilers
+				has_civic = civic_nazbol
+				has_civic = civic_glory_and_dream
+			}
+		}
+		name = red_origin.6015.b
+		custom_tooltip = red_origin.6015.tooltip
+	}
+}
+
+#解体
+country_event = {
+	id = red_origin.1991
+	hide_window = yes
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = previous_union
+		set_country_flag = origin_red_satellite_ex_union
+		set_origin = origin_default
+		shift_ethic = ethic_fanatic_capitalism
+		change_government = {
+			authority = auth_oligarchic
+			civics = random
+		}
+		set_name = random
+		change_country_flag = random
+		red_satellite_death = yes
+		leader = {
+			save_event_target_as = previous_leader
+			unassign_leader = this
+		}
+		event_target:captial_leader = {
+			save_event_target_as = new_leader
+			root = {
+				assign_leader = prev
+			}
+		}
+		every_subject = { # Release and notify current subjects
+			set_subject_of = { who = none }
+		}
+		every_playable_country = {
+			limit = { is_ai = no }
+			country_event = { id = red_origin.1992 }
+		}
+		export_trigger_value_to_variable = { trigger = count_owned_planet variable = splintering_worlds }
+		divide_variable = { which = splintering_worlds value = 2 }
+		floor_variable = splintering_worlds
+		while = { # iterate through all splintering worlds
+			limit = {
+				any_owned_planet = {
+					is_capital = no
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 2
+							}
+						}
+						NOT = { has_planet_flag = soviet_union_planet_2 }
+					}
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 3
+							}
+						}
+						NOT = { has_planet_flag = soviet_union_planet_3 }
+					}
+				}
+			}
+			random_system_within_border = { # we want a country per colonized system
+				limit = {
+					is_capital_system = no
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 2
+							}
+						}
+						NOT = { has_star_flag = soviet_union_system_2_flag }
+					}
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 3
+							}
+						}
+						NOT = { has_star_flag = soviet_union_system_3_flag }
+					}
+					any_system_planet = { is_colony = yes }
+				}
+				random_system_planet = {
+					limit = { is_colony = yes }
+					create_country = {
+						name = random
+						type = default
+						authority = random
+						civics = random
+						species = root.species
+						ethos = random
+						origin = origin_default
+						day_zero_contact = no
+						effect = {
+							set_country_flag = origin_red_satellite_ex_union
+							set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
+							set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
+							save_event_target_as = current_splinter
+							copy_techs_from = {
+								target = root
+							}
+							change_government = {
+								civics = random
+							}
+							establish_communications_no_message = root
+							every_playable_country = { # Establish Contact with previous vassals
+								limit = {
+									has_communications = root
+									NOT = { has_communications = event_target:current_splinter }
+								}
+								establish_communications_no_message = event_target:current_splinter
+							}
+							every_playable_country = {
+								limit = {
+									NOT = { has_communications = root }
+									has_active_first_contact_with = root
+								}
+								establish_contact = {
+									who = event_target:current_splinter
+									location = event_target:current_splinter.capital_star
+								}
+							}
+							red_satellite_death = yes
+
+							root = { # Give them one of the previous Overlord's fleets
+								random_owned_fleet = {
+									set_owner = event_target:current_splinter
+								}
+							}
+
+							# Give them a fleet of their own
+							create_fleet_from_naval_cap = 0.3
+							create_fleet_from_naval_cap = 0.2
+							create_fleet_from_naval_cap = 0.1
+
+							# Give them some starting resources
+							add_basic_resources_effect = { VALUE = 3000 }
+							add_manufactured_resources_effect = { VALUE = 1500 }
+							add_advanced_resources_effect = { VALUE = 1000 }
+
+						}
+					}
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								set_owner = event_target:current_splinter
+								if = {
+									limit = { has_starbase_size = starbase_outpost }
+									set_starbase_size = starbase_starport
+									set_starbase_module = {
+										slot = 1
+										module = shipyard
+									}
+									set_starbase_module = {
+										slot = 2
+										module = shipyard
+									}
+								}
+								else_if = {
+									limit = {
+										NOT = { has_starbase_module = shipyard }
+									}
+									set_starbase_module = {
+										slot = 1
+										module = shipyard
+									}
+									set_starbase_module = {
+										slot = 2
+										module = shipyard
+									}
+								}
+							}
+						}
+						else = {
+							create_starbase = {
+								size = starbase_starport
+								module = shipyard
+								module = shipyard
+								owner = event_target:current_splinter
+							}
+						}
+						add_claims = {
+							who = root.owner
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+							}
+							set_owner = event_target:current_splinter
+						}
+					}
+					set_owner = event_target:current_splinter
+				}
+				every_neighbor_system = {
+					limit = {
+						exists = owner
+						owner = { is_same_value = root.owner }
+						exists = starbase
+						NOR = {
+							any_system_planet = {
+								is_colony = yes
+							}
+							any_neighbor_system = {
+								any_system_planet = {
+									is_capital = yes
+									owner = {
+										is_same_value = root
+									}
+								}
+							}
+						}
+					}
+					starbase = { set_owner = event_target:current_splinter }
+				}
+				event_target:current_splinter = {
+					while = {
+						count = 3
+						every_system_within_border = {
+							every_neighbor_system = {
+								limit = {
+									exists = owner
+									owner = { is_same_value = root.owner }
+									exists = starbase
+									NOR = {
+										any_system_planet = {
+											is_colony = yes
+										}
+										any_neighbor_system = {
+											any_system_planet = {
+												is_colony = yes
+												owner = {
+													OR = {
+														is_same_value = root
+														has_country_flag = origin_red_satellite_ex_union
+													}
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 2
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 1
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 3
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 2
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 4
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 3
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 5
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 4
+												}
+											}
+										}
+									}
+								}
+								starbase = { set_owner = event_target:current_splinter }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = red_origin.1989
+	title = red_origin.1989.name
+	desc = red_origin.1989.desc
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	option = {
+		name = red_origin.1989.a
+		custom_tooltip = red_origin.1989.tooltip
+	}
+	option = {
+		name = red_origin.1989.b
+		custom_tooltip = red_origin.1989.tooltip
+	}
+}
+
+country_event = {
+	id = red_origin.1992
+	title = red_origin.1992.name
+	desc = red_origin.1992.desc
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	option = {
+		name = red_origin.1992.a
+		custom_tooltip = red_origin.1992.tooltip
+	}
+	option = {
+		name = red_origin.1992.b
+		custom_tooltip = red_origin.1992.tooltip
+	}
+}
+#
+##迈向独立之路：启动事件
+#country_event = {
+#	id = red_origin.6010
+#	title = red_origin.6010.name
+#	desc = red_origin.6010.desc
+#	picture = GFX_evt_galactic_senate
+#	is_triggered_only = yes
+#
+#	option = { #开启改革路线
+#		name = red_origin.6010.a
+#		custom_tooltip = red_origin.6010.a.tooltip
+#		start_situation = {
+#			type = situation_road_to_independent
+#			target = capital_scope
+#		}
+#		set_country_flag = road_to_independent
+#	}
+#	option = { #暂且观望
+#		name = red_origin.6010.b
+#		custom_tooltip = red_origin.6010.b.tooltip
+#	}
+#}
+#
+##第三阶段开始：宗主
+#country_event = {
+#	id = red_origin.6011
+#	title = red_origin.6011.name
+#	desc = red_origin.6011.desc
+#	picture = GFX_evt_galactic_senate
+#	is_triggered_only = yes
+#
+#	option = { #该敲打一下他们了
+#		name = red_origin.6011.a
+#		custom_tooltip = red_origin.6011.a.tooltip
+#	}
+#	option = { #是时候给他们自由了
+#		name = red_origin.6011.b
+#		custom_tooltip = red_origin.6011.b.tooltip
+#		#附庸国不会收到相关信息
+#	}
+#}
+#
+##附庸收到宗主干涉预警
+#country_event = {
+#	id = red_origin.6012
+#	title = red_origin.6012.name
+#	desc = red_origin.6012.desc
+#	picture = GFX_evt_galactic_senate
+#	is_triggered_only = yes
+#
+#	option = { #那就让他们来啊！
+#		name = red_origin.6013.a
+#		custom_tooltip = red_origin.6012.a.tooltip
+#	}
+#	option = { #我们谈谈
+#		name = red_origin.6013.b
+#		custom_tooltip = red_origin.6012.b.tooltip
+#	}
+#	option = { #怂了
+#		name = red_origin.6013.b
+#		custom_tooltip = red_origin.6012.b.tooltip
+#	}
+#}
+
+###终曲
+
+#八一九事件
+country_event = {
+	id = red_origin.819
+	title = red_origin.819.name
+	desc = red_origin.819.desc
+	picture = GFX_evt_crisis_declared
+	is_triggered_only = yes
+
+	immediate = {
+		overlord = {
+			save_global_event_target_as = from_overlord
+			capital_star = {
+				save_global_event_target_as = from_overlord_star
+			}
+			leader = {
+				save_global_event_target_as = overlord_leader
+			}
+			capital_scope = {
+				sector = {
+					leader = {
+						save_global_event_target_as = captial_leader
+					}
+				}
+			}
+			random_owned_fleet = {
+				limit = {
+					exists = leader
+					is_ship_class = shipclass_military
+				}
+				leader = {
+					save_global_event_target_as = coup_leader
+				}
+				set_location = prev.capital_scope
+				save_global_event_target_as = coup_fleet
+			}
+		}
+	}
+
+	option = { #支持紧急状态委员会，为社会主义而战！
+		name = red_origin.819.a
+		custom_tooltip = red_origin.819.a.tooltip
+		hidden_effect = {
+			set_country_flag = soc_supporter
+			every_playable_country = {
+				limit = {
+					OR = {
+						overlord = { has_origin = origin_red_satellite_overlord }
+						has_origin = origin_red_satellite
+					}
+					NOT = { has_country_flag = soc_supporter }
+				}
+				country_event = {
+					id = red_origin.8191
+				}
+			}
+			country_event = {
+				id = red_origin.8193
+				days = 3
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				factor = 100
+				has_country_flag = human_1
+				OR = {
+					has_valid_civic = civic_shared_burden
+					has_valid_civic = civic_advanced_socialism
+					has_valid_civic = civic_socialistic
+				}
+			}
+		}
+	}
+	option = { #我们看着就好
+		name = red_origin.819.b
+		custom_tooltip = red_origin.819.b.tooltip
+		hidden_effect = {
+			country_event = {
+				id = red_origin.8192
+				days = 3
+			}
+		}
+	}
+}
+
+#玩家决定干涉，其他成员国选边
+country_event = {
+	id = red_origin.8191
+	title = red_origin.819.name
+	desc = red_origin.819.desc
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	option = { #共产方
+		name = red_origin.8191.a
+		set_country_flag = soc_supporter
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0.5
+				has_ethic = ethic_xenophobe
+			}
+			modifier = {
+				factor = 0
+ 				NOR = {
+					is_capitalism = yes
+					has_ethic = ethic_fanatic_authoritarian
+					has_ethic = ethic_fanatic_xenophobe
+				}
+ 			}
+		}
+	}
+	option = { #改革方
+		name = red_origin.8191.b
+		set_country_flag = cap_supporter
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_egalitarian = yes
+				is_xenophobe = no
+				has_ethic = ethic_fanatic_socialism
+			}
+		}
+	}
+}
+
+#没有人选择干涉，819被镇压
+country_event = {
+	id = red_origin.8192
+	title = red_origin.8192.name
+	desc = red_origin.8192.desc
+	picture = GFX_evt_surrender
+	is_triggered_only = yes
+
+	option = { #老大哥要寄了
+		name = red_origin.8192.a
+	}
+}
+
+#开战！
+country_event = {
+	id = red_origin.8193
+	title = red_origin.8193.name
+
+	desc = {
+		trigger = {
+			NOT = {
+				any_playable_country = {
+					NOT = { is_same_value = root }
+					has_country_flag = soc_supporter
+				}
+			}
+		}
+		text = red_origin.8193.desc.alone
+	}
+
+	desc = {
+		trigger = {
+			any_playable_country = {
+				NOT = { is_same_value = root }
+				has_country_flag = soc_supporter
+			}
+		}
+		text = red_origin.8193.desc
+	}
+	picture = GFX_evt_galactic_senate
+	is_triggered_only = yes
+
+	immediate = {
+		event_target:from_overlord = {
+			random_situation = {
+				limit = {
+					is_situation_type = situation_road_to_dissolution
+				}
+				destroy_situation = this
+			}
+			every_subject = {
+				set_subject_of = {
+					who = none
+				}
+			}
+		}
+		declare_war = {
+			target = event_target:from_overlord
+			attacker_war_goal = wg_galactic_revolution_communist_interstellar
+			effect = {
+				every_playable_country = {
+					limit = {
+						has_country_flag = soc_supporter
+					}
+					join_war_on_side = {
+						war = prev
+						side = attackers
+					}
+				}
+				every_playable_country = {
+					limit = {
+						has_country_flag = cap_supporter
+					}
+					join_war_on_side = {
+						war = prev
+						side = defenders
+					}
+				}
+				set_war_flag = 819_war
+			}
+		}
+		event_target:coup_fleet = {
+			set_owner = root
+		}
+		event_target:from_overlord = {
+			capital_scope = {
+				set_controller = root
+				solar_system = {
+					every_fleet_in_system = {
+						limit = {
+							is_ship_class = shipclass_military
+							NOT = {
+								is_same_value = event_target:coup_fleet
+							}
+						}
+						set_mia = yes
+					}
+				}
+			}
+		}
+	}
+
+	option = { #骰子已经掷下
+		name = red_origin.8193.a
+	}
+}
+
+#胜利
+country_event = {
+	id = red_origin.8194
+	title = red_origin.8194.name
+	desc = red_origin.8194.desc
+	picture = GFX_evt_grand_speech
+	is_triggered_only = yes
+
+	trigger = {
+		fromfrom = {
+			has_war_flag = 819_war
+		}
+		from = {
+			has_origin = origin_red_satellite_overlord
+		}
+	}
+
+	immediate = {
+		event_target:captial_leader = {
+			kill_leader = {
+				show_notification = no
+			}
+		}
+		event_target:overlord_leader = {
+			unassign_leader = this
+		}
+		event_target:coup_leader = {
+			from = {
+				assign_leader = prev
+			}
+		}
+		event_target:from_overlord = {
+			save_global_event_target_as = previous_union
+			set_country_flag = origin_red_satellite_ex_union
+			country_event = {
+				id = red_origin.8196
+				days = 1
+			}
+			set_name = "NAME_Red_Origin_Ex_Union"
+			export_trigger_value_to_variable = { trigger = count_owned_planet variable = splintering_worlds }
+			divide_variable = { which = splintering_worlds value = 2 }
+			floor_variable = splintering_worlds
+			while = { # iterate through all splintering worlds
+				limit = {
+					any_owned_planet = {
+						is_capital = no
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 2
+								}
+							}
+							NOT = { has_star_flag = soviet_union_planet_2 }
+						}
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 3
+								}
+							}
+							NOT = { has_star_flag = soviet_union_planet_3 }
+						}
+					}
+				}
+				random_system_within_border = { # we want a country per colonized system
+					limit = {
+						is_capital_system = no
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 2
+								}
+							}
+							NOT = { has_star_flag = soviet_union_system_2_flag }
+						}
+						OR = {
+							root = {
+								check_variable = {
+									which = splintering_worlds
+									value >= 3
+								}
+							}
+							NOT = { has_star_flag = soviet_union_system_3_flag }
+						}
+						any_system_planet = { is_colony = yes }
+					}
+					random_system_planet = {
+						limit = { is_colony = yes }
+						create_country = {
+							name = random
+							type = default
+							authority = random
+							civics = random
+							species = root.species
+							ethos = random
+							origin = origin_default
+							day_zero_contact = no
+							effect = {
+								set_country_flag = origin_red_satellite_ex_union
+								set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
+								set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
+								save_global_event_target_as = current_splinter
+								copy_techs_from = {
+									target = root
+								}
+								change_government = {
+									civics = random
+								}
+								establish_communications_no_message = root
+								every_playable_country = { # Establish Contact with previous vassals
+									limit = {
+										has_communications = root
+										NOT = { has_communications = event_target:current_splinter }
+									}
+									establish_communications_no_message = event_target:current_splinter
+								}
+								every_playable_country = {
+									limit = {
+										NOT = { has_communications = root }
+										has_active_first_contact_with = root
+									}
+									establish_contact = {
+										who = event_target:current_splinter
+										location = event_target:current_splinter.capital_star
+									}
+								}
+
+								root = { # Give them one of the previous Overlord's fleets
+									random_owned_fleet = {
+										set_owner = event_target:current_splinter
+									}
+								}
+
+								# Give them a fleet of their own
+								create_fleet_from_naval_cap = 0.3
+								create_fleet_from_naval_cap = 0.2
+								create_fleet_from_naval_cap = 0.1
+
+								# Give them some starting resources
+								add_basic_resources_effect = { VALUE = 3000 }
+								add_manufactured_resources_effect = { VALUE = 1500 }
+								add_advanced_resources_effect = { VALUE = 1000 }
+
+							}
+						}
+						solar_system = {
+							if = {
+								limit = { exists = starbase }
+								starbase = {
+									set_owner = event_target:current_splinter
+									if = {
+										limit = { has_starbase_size = starbase_outpost }
+										set_starbase_size = starbase_starport
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+									else_if = {
+										limit = {
+											NOT = { has_starbase_module = shipyard }
+										}
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+								}
+							}
+							else = {
+								create_starbase = {
+									size = starbase_starport
+									module = shipyard
+									module = shipyard
+									owner = event_target:current_splinter
+								}
+							}
+							add_claims = {
+								who = root.owner
+								show_notification = no
+							}
+							every_system_planet = {
+								limit = {
+									is_colony = yes
+								}
+								set_owner = event_target:current_splinter
+							}
+						}
+						set_owner = event_target:current_splinter
+					}
+					every_neighbor_system = {
+						limit = {
+							exists = owner
+							owner = { is_same_value = root.owner }
+							exists = starbase
+							NOR = {
+								any_system_planet = {
+									is_colony = yes
+								}
+								any_neighbor_system = {
+									any_system_planet = {
+										is_capital = yes
+										owner = {
+											is_same_value = root
+										}
+									}
+								}
+							}
+						}
+						starbase = { set_owner = event_target:current_splinter }
+					}
+					event_target:current_splinter = {
+						while = {
+							count = 3
+							every_system_within_border = {
+								every_neighbor_system = {
+									limit = {
+										exists = owner
+										owner = { is_same_value = root.owner }
+										exists = starbase
+										NOR = {
+											any_system_planet = {
+												is_colony = yes
+											}
+											any_neighbor_system = {
+												any_system_planet = {
+													is_colony = yes
+													owner = {
+														OR = {
+															is_same_value = root
+															has_country_flag = origin_red_satellite_ex_union
+														}
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 2
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 1
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 3
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 2
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 4
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 3
+													}
+												}
+											}
+											AND = {
+												distance = {
+													source = root.capital_scope
+													min_jumps = 1
+													max_jumps = 5
+												}
+												NOT = {
+													distance = {
+														source = event_target:current_splinter.capital_scope
+														min_jumps = 1
+														max_jumps = 4
+													}
+												}
+											}
+										}
+									}
+									starbase = { set_owner = event_target:current_splinter }
+								}
+							}
+						}
+					}
+				}
+			}
+			join_alliance = {
+				who = root
+				override_requirements = yes
+			}
+		}
+		every_playable_country = {
+			limit = {
+				NOT = { is_same_value = root }
+				OR = {
+					has_country_flag = origin_red_satellite_ex_union
+					has_country_flag = soc_supporter
+					has_country_flag = cap_supporter
+				}
+				NOT = { has_ethic = ethic_fanatic_socialism }
+			}
+			shift_ethic = ethic_fanatic_socialism
+			change_government = {
+				authority = random
+				civics = random
+				cooldown = no
+				remove_invalid_civics = yes
+			}
+			set_name = random
+		}
+		every_playable_country = {
+			limit = {
+				NOT = { is_same_value = root }
+				OR = {
+					has_country_flag = origin_red_satellite_ex_union
+					has_country_flag = soc_supporter
+					has_country_flag = cap_supporter
+				}
+			}
+			join_alliance = {
+				who = root
+				override_requirements = yes
+			}
+		}
+		every_playable_country = {
+			limit = {
+				has_country_flag = origin_red_satellite_ex_union
+			}
+			set_name = random
+		}
+		root = {
+			federation = {
+				set_federation_type = TT_communist_federation
+				set_name = random
+				add_cohesion = 200
+			}
+		}
+		root = {
+			save_global_event_target_as = new_union
+		}
+	}
+
+	option = { #新联邦万岁!
+		name = red_origin.8194.a
+	}
+}
+
+#失败
+country_event = {
+	id = red_origin.8195
+	title = red_origin.8195.name
+	desc = red_origin.8195.desc
+	picture = GFX_evt_imperial_vassal
+	is_triggered_only = yes
+
+	trigger = {
+		fromfrom = {
+			has_war_flag = 819_war
+		}
+		from = {
+			has_origin = origin_red_satellite_overlord
+		}
+	}
+
+	immediate = {
+		event_target:from_overlord = {
+			save_global_event_target_as = previous_union
+		set_country_flag = origin_red_satellite_ex_union
+		set_origin = origin_default
+		country_remove_ethic = ethic_fanatic_socialism
+		country_add_ethic = ethic_fanatic_capitalism
+		change_government = {
+			authority = auth_oligarchic
+			civics = random
+		}
+		set_name = random
+		change_country_flag = random
+		leader = {
+			save_global_event_target_as = previous_leader
+			unassign_leader = this
+		}
+		event_target:captial_leader = {
+			save_global_event_target_as = new_leader
+			root = {
+				assign_leader = prev
+			}
+		}
+		every_subject = { # Release and notify current subjects
+			set_subject_of = { who = none }
+		}
+		every_playable_country = {
+			limit = { is_ai = no }
+			country_event = { id = red_origin.1992 }
+		}
+		export_trigger_value_to_variable = { trigger = count_owned_planet variable = splintering_worlds }
+		divide_variable = { which = splintering_worlds value = 2 }
+		floor_variable = splintering_worlds
+		while = { # iterate through all splintering worlds
+			limit = {
+				any_owned_planet = {
+					is_capital = no
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 2
+							}
+						}
+						NOT = { has_planet_flag = soviet_union_planet_2 }
+					}
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 3
+							}
+						}
+						NOT = { has_planet_flag = soviet_union_planet_3 }
+					}
+				}
+			}
+			random_system_within_border = { # we want a country per colonized system
+				limit = {
+					is_capital_system = no
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 2
+							}
+						}
+						NOT = { has_star_flag = soviet_union_system_2_flag }
+					}
+					OR = {
+						root = {
+							check_variable = {
+								which = splintering_worlds
+								value >= 3
+							}
+						}
+						NOT = { has_star_flag = soviet_union_system_3_flag }
+					}
+					any_system_planet = { is_colony = yes }
+				}
+				random_system_planet = {
+					limit = { is_colony = yes }
+					create_country = {
+						name = random
+						type = default
+						authority = random
+						civics = random
+						species = root.species
+						ethos = random
+						origin = origin_default
+						day_zero_contact = no
+						effect = {
+							set_country_flag = origin_red_satellite_ex_union
+							set_country_flag = origin_red_satellite_ex_union@event_target:previous_union # also unique in case of MP (while the overlord survives...)
+							set_timed_country_flag = { flag = day_0 days = 7 } # suppresses the contact events, but not notifications
+							save_global_event_target_as = current_splinter
+							copy_techs_from = {
+								target = root
+							}
+							change_government = {
+								civics = random
+							}
+							establish_communications_no_message = root
+							every_playable_country = { # Establish Contact with previous vassals
+								limit = {
+									has_communications = root
+									NOT = { has_communications = event_target:current_splinter }
+								}
+								establish_communications_no_message = event_target:current_splinter
+							}
+							every_playable_country = {
+								limit = {
+									NOT = { has_communications = root }
+									has_active_first_contact_with = root
+								}
+								establish_contact = {
+									who = event_target:current_splinter
+									location = event_target:current_splinter.capital_star
+								}
+							}
+
+							root = { # Give them one of the previous Overlord's fleets
+								random_owned_fleet = {
+									set_owner = event_target:current_splinter
+								}
+							}
+
+							# Give them a fleet of their own
+							create_fleet_from_naval_cap = 0.3
+							create_fleet_from_naval_cap = 0.2
+							create_fleet_from_naval_cap = 0.1
+
+							# Give them some starting resources
+							add_basic_resources_effect = { VALUE = 3000 }
+							add_manufactured_resources_effect = { VALUE = 1500 }
+							add_advanced_resources_effect = { VALUE = 1000 }
+
+						}
+					}
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								set_owner = event_target:current_splinter
+								if = {
+									limit = { has_starbase_size = starbase_outpost }
+									set_starbase_size = starbase_starport
+									set_starbase_module = {
+										slot = 1
+										module = shipyard
+									}
+									set_starbase_module = {
+										slot = 2
+										module = shipyard
+									}
+								}
+								else_if = {
+									limit = {
+										NOT = { has_starbase_module = shipyard }
+									}
+									set_starbase_module = {
+										slot = 1
+										module = shipyard
+									}
+									set_starbase_module = {
+										slot = 2
+										module = shipyard
+									}
+								}
+							}
+						}
+						else = {
+							create_starbase = {
+								size = starbase_starport
+								module = shipyard
+								module = shipyard
+								owner = event_target:current_splinter
+							}
+						}
+						add_claims = {
+							who = root.owner
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+							}
+							set_owner = event_target:current_splinter
+						}
+					}
+					set_owner = event_target:current_splinter
+				}
+				every_neighbor_system = {
+					limit = {
+						exists = owner
+						owner = { is_same_value = root.owner }
+						exists = starbase
+						NOR = {
+							any_system_planet = {
+								is_colony = yes
+							}
+							any_neighbor_system = {
+								any_system_planet = {
+									is_capital = yes
+									owner = {
+										is_same_value = root
+									}
+								}
+							}
+						}
+					}
+					starbase = { set_owner = event_target:current_splinter }
+				}
+				event_target:current_splinter = {
+					while = {
+						count = 3
+						every_system_within_border = {
+							every_neighbor_system = {
+								limit = {
+									exists = owner
+									owner = { is_same_value = root.owner }
+									exists = starbase
+									NOR = {
+										any_system_planet = {
+											is_colony = yes
+										}
+										any_neighbor_system = {
+											any_system_planet = {
+												is_colony = yes
+												owner = {
+													OR = {
+														is_same_value = root
+														has_country_flag = origin_red_satellite_ex_union
+													}
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 2
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 1
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 3
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 2
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 4
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 3
+												}
+											}
+										}
+										AND = {
+											distance = {
+												source = root.capital_scope
+												min_jumps = 1
+												max_jumps = 5
+											}
+											NOT = {
+												distance = {
+													source = event_target:current_splinter.capital_scope
+													min_jumps = 1
+													max_jumps = 4
+												}
+											}
+										}
+									}
+								}
+								starbase = { set_owner = event_target:current_splinter }
+							}
+						}
+					}
+				}
+			}
+		}
+		}
+		shift_ethic = ethic_fanatic_capitalism
+		change_government = {
+			authority = auth_oligarchic
+			civics = random
+		}
+		set_name = random
+		leader = {
+			save_global_event_target_as = previous_leader
+			unassign_leader = this
+		}
+	}
+
+	option = { #妈了个臭鸡，干！
+		name = red_origin.8195.a
+	}
+}
+
+country_event = {
+	id = red_origin.8196
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		event_target:previous_union = {
+			join_alliance = {
+				who = event_target:new_union
+				override_requirements = yes
+			}
+		}
+	}
+}
+
+################################################
+#### 既然是red origins 塞点revolution也不成问题吧
+
+event = {
+	id = red_origin.10000
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = {
+				any_playable_country = {
+					has_origin = origin_revolution
+					is_ai = no
+				}
+			}
+			every_playable_country = {
+				limit = { is_ai = yes }
+				shift_ethic = ethic_fanatic_capitalism
+			}
+		}
+	}
+}
