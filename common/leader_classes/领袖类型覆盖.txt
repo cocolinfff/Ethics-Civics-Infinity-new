@@ -1,0 +1,539 @@
+@base_leader_cap = 3
+
+official = {
+	name = official
+	name_plural = official_plural
+	description = official_description
+	can_govern_planet = yes
+	max_trait_points = 1
+	can_have_traits = yes
+	can_be_assigned_to_federation = yes
+	can_be_assigned_to_galactic_community = yes
+	leader_capacity = @base_leader_cap
+	resources = {
+		category = leader_officials
+		inline_script = "paragon/leader_base_cost"
+		inline_script = "paragon/leader_base_upkeep"
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_tradition = tr_politics_adopt
+				}
+				OR = {
+					is_assigned_to_galcom = yes
+					is_strengthing_imperial_authority = yes
+					is_undermining_imperial_authority = yes
+				}
+			}
+			influence = 0.1
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				is_idle = no
+				exists = owner
+				owner = {
+					has_valid_civic = civic_aristocratic_elite
+				}
+			}
+			unity = 1
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+					is_lithoid = no
+				}
+			}
+			energy = 15
+			food = 15
+			consumer_goods = 15
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+					is_lithoid = yes
+				}
+			}
+			energy = 15
+			minerals = 15
+			consumer_goods = 15
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = { has_valid_civic = civic_labor_aristocracy }
+			}
+			consumer_goods = 12
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = {
+					has_ethic = ethic_spiritualist
+				}
+			}
+			unity = 1
+			mult = trigger:num_pops
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = {
+					has_ethic = ethic_fanatic_spiritualist
+				}
+			}
+			unity = 2
+			mult = trigger:num_pops
+		}
+		produces = {
+			trigger = {
+				leader_age <= 16
+				owner = { has_valid_civic = civic_juvenile_culture }
+			}
+			unity = 1
+			mult = trigger:num_pops
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 2
+			or = {
+				is_pacifist = yes
+				is_egalitarian = yes
+			}
+		}
+	}
+
+	ai_location_weight = {
+		modifier = {
+			add = 10
+			exists = FROM
+			from = {
+				is_scope_type = planet
+			}
+		}
+		complex_trigger_modifier = {
+			potential = {
+				exists = FROM
+				from = {
+					is_scope_type = planet
+				}
+			}
+			trigger = pop_amount
+			trigger_scope = from
+			mode = add
+			mult = 0.0001
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = planet
+			MODIFIER = planet
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = federation
+			MODIFIER = federation
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = galactic_community
+			MODIFIER = galcom
+		}
+	}
+
+	replaces_old_class = "governor"
+
+	leader_background_job_weight = {
+		politician = 200
+		executive = 200
+		bureaucrat = 100
+		manager = 100
+	}
+	icon = 4
+}
+
+commander = {
+	name = commander
+	name_plural = commander_plural
+	description = commander_description
+	can_lead_navy = yes
+	can_lead_army = yes
+	can_govern_planet = yes
+	max_trait_points = 1
+	can_have_traits = yes
+	leader_capacity = @base_leader_cap
+	resources = {
+		category = leader_commanders
+		inline_script = "paragon/leader_base_cost"
+		inline_script = "paragon/leader_base_upkeep"
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+					is_lithoid = no
+				}
+			}
+			energy = 15
+			food = 15
+			minerals = 15
+			alloys = 10
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+					is_lithoid = yes
+				}
+			}
+			energy = 15
+			minerals = 30
+			alloys = 10
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = { has_valid_civic = civic_labor_aristocracy }
+			}
+			alloys = 9
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = {
+					has_ethic = ethic_spiritualist
+				}
+			}
+			unity = 1
+			mult = trigger:num_pops
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = {
+					has_ethic = ethic_fanatic_spiritualist
+				}
+			}
+			unity = 2
+			mult = trigger:num_pops
+		}
+		produces = {
+			trigger = {
+				leader_age <= 16
+				owner = { has_valid_civic = civic_juvenile_culture }
+			}
+			unity = 1
+			mult = trigger:num_pops
+		}
+	}
+	ai_weight = {
+		modifier = {
+			factor = 2
+			or = {
+				is_militarist = yes
+				is_authoritarian = yes
+			}
+		}
+	}
+	ai_location_weight = {
+		modifier = {
+			add = 10
+			exists = FROM
+			from = {
+				OR = {
+					is_scope_type = fleet
+					is_scope_type = ship
+				}
+				is_civilian = no
+			}
+		}
+		complex_trigger_modifier = {
+			potential = {
+				exists = FROM
+				from = {
+					OR = {
+						is_scope_type = fleet
+						is_scope_type = ship
+					}
+					is_civilian = no
+				}
+			}
+			trigger = num_ships
+			trigger_scope = from
+			mode = add
+			mult = 1
+		}
+		modifier = {
+			add = 5
+			exists = FROM
+			from = {
+				is_scope_type = planet
+				planet_stability <= 10
+			}
+		}
+		modifier = {
+			add = 5
+			exists = FROM
+			from = {
+				is_scope_type = planet
+				planet_crime >= 25
+			}
+		}
+		complex_trigger_modifier = {
+			potential = {
+				exists = FROM
+				from = {
+					is_scope_type = planet
+					OR = {
+						planet_stability <= 10
+						planet_crime >= 25
+					}
+				}
+			}
+			trigger = pop_amount
+			trigger_scope = from
+			mode = add
+			mult = 0.0001
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = planet
+			MODIFIER = planet
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = fleet
+			MODIFIER = fleet
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = army
+			MODIFIER = army
+		}
+	}
+	replaces_old_class = "admiral"
+	replaces_old_class = "general"
+	leader_background_job_weight = {
+		commandante = 250
+		soldier = 150
+		telepath = 100
+		conscript = 20
+	}
+	icon = 1
+}
+
+scientist = {
+	name = scientist
+	name_plural = scientist_plural
+	description = scientist_description
+	can_research_tech = yes
+	can_research_special_projects = yes
+	can_crew_science_ship = yes
+	can_research_anomalies = yes
+	can_survey = yes
+	can_boost_cloaking_detection = yes
+	can_research_archaeology_site = yes
+	can_explore_rifts = yes
+	can_conduct_active_reconnaissance = yes
+	can_govern_planet = yes
+	max_trait_points = 1
+	leader_capacity = @base_leader_cap
+	resources = {
+		category = leader_scientists
+		inline_script = "paragon/leader_base_cost"
+		inline_script = "paragon/leader_base_upkeep"
+		produces = {
+			trigger = {
+				owner = {
+					is_regular_empire = yes
+					has_ethic = ethic_materialist
+				}
+			}
+			physics_research = 0.5
+			engineering_research = 0.5
+			society_research = 0.5
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					is_regular_empire = yes
+					has_ethic = ethic_fanatic_materialist
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_valid_civic = civic_superhuman_economy
+						has_valid_civic = civic_superhuman_economy_corporate
+					}
+				}
+			}
+			physics_research = 10
+			engineering_research = 10
+			society_research = 10
+			unity = 8
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = { has_valid_civic = civic_labor_aristocracy }
+			}
+			consumer_goods = 12
+			mult = trigger:has_total_skill
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = {
+					has_ethic = ethic_spiritualist
+				}
+			}
+			unity = 1
+			mult = trigger:num_pops
+		}
+		produces = {
+			trigger = {
+				OR = {
+					is_ruler = yes
+					is_councilor_type = councilor_king
+				}
+				owner = {
+					has_ethic = ethic_fanatic_spiritualist
+				}
+			}
+			unity = 2
+			mult = trigger:num_pops
+		}
+		produces = {
+			trigger = {
+				leader_age <= 16
+				owner = { has_valid_civic = civic_juvenile_culture }
+			}
+			unity = 1
+			mult = trigger:num_pops
+		}
+	}
+
+	ai_weight = {
+		base = 50
+	}
+	minimum_ai_target = 3
+	ai_location_weight = {
+		modifier = {
+			add = 10
+			exists = FROM
+			FROM = {
+				is_scope_type = ship
+				is_ship_class = shipclass_science_ship
+			}
+		}
+		modifier = {
+			add = 1
+			exists = FROM
+			FROM = {
+				is_scope_type = planet
+			}
+		}
+		modifier = {
+			mult = 10
+			exists = FROM
+			FROM = {
+				is_scope_type = planet
+				exists = owner
+				owner = {
+					has_valid_civic = civic_technocracy
+				}
+			}
+		}
+		complex_trigger_modifier = {
+			potential = {
+				exists = FROM
+				from = {
+					is_scope_type = planet
+				}
+			}
+			trigger = pop_amount
+			trigger_scope = from
+			mode = add
+			mult = 0.000025
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = planet
+			MODIFIER = planet
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = fleet
+			MODIFIER = self
+		}
+		inline_script = {
+			script = paragon/num_traits_with_modifier
+			SCOPE = fleet
+			MODIFIER = fleet
+		}
+	}
+	leader_background_job_weight = {
+		head_researcher = 250
+		researcher = 150
+		telepath = 100
+		chemist = 100
+		healthcare = 100
+		archaeoengineers = 100
+	}
+	icon = 3
+}

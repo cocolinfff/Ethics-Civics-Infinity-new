@@ -1,0 +1,1841 @@
+# All leaders will have a common trait-point value set in defines, which they use to grab traits
+# leader_trait = yes - this tags the trait as a leader-trait and not a species-trait
+# initial = no - if set to no, this trait can not be granted to leaders when they are generated
+# leader_class = { admiral scientist }  -- OR  - if not set, it can be given to all leader-types except Rulers
+# requires_traits = { trait_psionic } -- AND - leader-trait can only be randomly given on generation if the leaders species has this trait
+# requires_governments = { despotic_hegemony ai_overlordship } -- OR - leader-trait can only be randomly given on generation if the Empire has this type of government form
+# prerequisites = { tech_psionic_theory } - AND - leader-trait can only be given if the technology specified has been researched by the Empire
+# ai_categories = { survey engineering physics society }
+# ai_weight - standard drop weight modifier, scope = country
+###########
+# Balance #
+###########
+#effects on research traits
+@categorybonus = 0.15
+
+####################
+#     原版特质     #
+####################
+
+trait_syncretic_proles = {
+	cost = 1
+	potential_crossbreeding_chance = 0.33
+	advanced_trait = yes
+	opposites = { "trait_intelligent" "trait_erudite" "trait_natural_engineers" "trait_natural_physicists" "trait_natural_sociologists" }
+	initial = no
+	randomized = no
+	species_potential_add = {
+		can_do_advanced_gene_modding = yes
+	}
+	species_possible_remove = {
+		can_remove_beneficial_genetic_traits = yes
+	}
+	icon = "gfx/interface/icons/traits/trait_primitive.dds"
+	allowed_archetypes = { BIOLOGICAL LITHOID }
+
+	custom_tooltip = TRAIT_SYNCRETIC_PROLES_EFFECT
+	modifier = {
+		pop_happiness = 0.10
+		planet_jobs_produces_mult = 0.10
+	}
+	slave_cost = {
+		energy = 500
+	}
+}
+
+leader_trait_psionic = {
+	inline_script = {
+		script = trait/icon_psionic
+		CLASS = leader
+		ICON = "GFX_leader_trait_psionic"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
+	}
+	# Any Class - Ruler
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		pop_government_ethic_attraction = 0.10
+		country_ruler_influence_produces_add = 0.5
+	}
+	# Commander - Fleet Modifier
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = commander
+		}
+		ship_weapon_damage = 0.10
+		ship_shield_hardening_add = 0.10
+	}
+	# Commander - Army Modifier
+	triggered_army_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = commander
+		}
+		army_morale = 0.10
+		army_morale_damage_mult = 0.10
+	}
+	# Scientist - Science Ship Modifier
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		science_ship_survey_speed = 0.10
+		ship_archaeological_site_clues_add = 1
+	}
+	triggered_modifier = {
+		potential = {
+			has_astral_planes_dlc = yes
+			is_ruler = no
+			leader_class = scientist
+		}
+		ship_astral_rift_clues_add = 1
+	}
+	# Official - GalCom Modifier
+	triggered_galcom_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = official
+		}
+		resolutions_cost_mult = -0.10
+	}
+	# Official - Federation Modifier
+	triggered_federation_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = official
+		}
+		federation_experience_add = 1
+	}
+	# Any Class - Planet Modifier
+	triggered_planet_modifier = {
+		potential = {
+			is_ruler = no
+		}
+		planet_jobs_unity_produces_mult = 0.10
+	}
+	# Any Class - Sector Modifier
+	triggered_sector_modifier = {
+		potential = {
+			is_ruler = no
+		}
+		planet_jobs_unity_produces_mult = 0.05
+	}
+	leader_class = { commander scientist official }
+	initial = no
+	randomized = no
+	notify_on_gained = no
+}
+
+leader_trait_cyborg = {
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_cyborg"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
+	}
+	# Any Class - Ruler
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		planet_structures_upkeep_mult = -0.25
+		empire_size_districts_mult = -0.05
+	}
+	# Commander - Fleet Modifier
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = commander
+		}
+		ship_weapon_damage = 0.10
+		ship_weapon_range_mult = 0.15
+		ship_orbital_bombardment_mult = 0.20
+	}
+	# Commander - Self Modifier
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = commander
+		}
+		planet_combat_width_add = 2
+	}
+	# Scientist - Science Ship Modifier
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		ship_anomaly_generation_chance_mult = 0.25
+	}
+	# Official - GalCom Modifier
+	triggered_galcom_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = official
+		}
+		diplo_weight_technology_mult = 0.10
+	}
+	# Official - Federation Modifier
+	triggered_federation_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = official
+		}
+		federation_experience_add = 1
+	}
+	# Any Class - Planet Modifier
+	triggered_planet_modifier = {
+		potential = {
+			is_ruler = no
+		}
+		planet_jobs_physics_research_produces_mult = 0.10
+		planet_jobs_society_research_produces_mult = 0.10
+		planet_jobs_engineering_research_produces_mult = 0.10
+	}
+	# Any Class - Sector Modifier
+	triggered_sector_modifier = {
+		potential = {
+			is_ruler = no
+		}
+		planet_jobs_physics_research_produces_mult = 0.05
+		planet_jobs_society_research_produces_mult = 0.05
+		planet_jobs_engineering_research_produces_mult = 0.05
+	}
+	# Cyborg Oligarchic councilors
+	triggered_self_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_cyber_oligarchy = yes
+			}
+			is_councilor = yes
+		}
+		leader_lifespan_add = 40
+		custom_tooltip = "BLANK_STRING"
+	}
+	# Driven Assimilator - Neural Chorus Modifier
+	triggered_self_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_authority = auth_machine_intelligence
+				has_country_flag = driven_neural_chorus
+			}
+		}
+		leaders_upkeep_mult = -0.25
+	}
+	leader_class = { commander scientist official }
+	initial = no
+	randomized = no
+	notify_on_gained = no
+}
+
+leader_trait_ritualistic_implants_cyborg = {
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_ritualistic_implants_cyborg"
+		RARITY = common
+		COUNCIL = triggered
+		TIER = none
+	}
+	# Any Class - Ruler
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		planet_structures_upkeep_mult = -0.10
+		empire_size_districts_mult = -0.05
+	}
+	# Commander - Fleet Modifier
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = commander
+		}
+		ship_weapon_damage = 0.05
+		ship_weapon_range_mult = 0.10
+		ship_orbital_bombardment_mult = 0.15
+	}
+	# Commander - Self Modifier
+	triggered_self_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = commander
+		}
+		planet_combat_width_add = 1
+	}
+	# Scientist - Science Ship Modifier
+	triggered_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = scientist
+		}
+		ship_anomaly_generation_chance_mult = 0.15
+	}
+	# Official - GalCom Modifier
+	triggered_galcom_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = official
+		}
+		diplo_weight_technology_mult = 0.05
+	}
+	# Official - Federation Modifier
+	triggered_federation_modifier = {
+		potential = {
+			is_ruler = no
+			leader_class = official
+		}
+		federation_experience_add = 0.5
+	}
+	# Any Class - Planet Modifier
+	triggered_planet_modifier = {
+		potential = {
+			is_ruler = no
+		}
+		planet_jobs_physics_research_produces_mult = 0.05
+		planet_jobs_society_research_produces_mult = 0.05
+		planet_jobs_engineering_research_produces_mult = 0.05
+	}
+	# Any Class - Sector Modifier
+	triggered_sector_modifier = {
+		potential = {
+			is_ruler = no
+		}
+		planet_jobs_physics_research_produces_mult = 0.025
+		planet_jobs_society_research_produces_mult = 0.025
+		planet_jobs_engineering_research_produces_mult = 0.025
+	}
+	leader_class = { commander scientist official }
+	opposites = {
+		leader_trait_synthetic
+		leader_trait_cyborg
+	}
+	initial = no
+	randomized = no
+	notify_on_gained = no
+}
+
+trait_storm_touched = {
+	cost = 0
+	initial = no
+	randomized = no
+	species_potential_add = {
+		from = { has_valid_civic = civic_storm_callers }
+	}
+	species_possible_remove = {
+		always = no
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	allowed_archetypes = {
+		BIOLOGICAL
+		LITHOID
+	}
+
+	triggered_pop_modifier = {
+		potential = {
+			exists = planet
+			planet.solar_system = {
+				has_star_flag = storm_system
+			}
+		}
+		planet_jobs_produces_mult = 0.1
+		pop_amenities_usage_mult = -0.1
+	}
+
+	custom_tooltip_with_modifiers = "trait_storm_touched_modifier_tooltip"
+
+	ai_weight = {
+		weight = 100
+	}
+}
+
+####################
+#    ECI新增特质    #
+####################
+
+trait_fallen_god = {
+	cost = 0
+	potential_crossbreeding_chance = 0
+	opposites = { "trait_zombie" "trait_nerve_stapled" "trait_flesh_components" }
+	initial = no
+	randomized = no
+	advanced_trait = no
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		always = yes
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	infertile = yes
+
+	allowed_archetypes = { BIOLOGICAL LITHOID }
+	icon = "gfx/interface/icons/traits/trait_psionic_species.dds"
+	custom_tooltip = TRAIT_FALLEN_GOD_EFFECT
+	slave_cost = {
+		energy = 150
+	}
+}
+
+trait_symbiotic = {
+	cost = 1
+	potential_crossbreeding_chance = 0.33
+	opposites = {
+		"trait_intelligent"
+		"trait_erudite"
+		"trait_natural_engineers"
+		"trait_natural_physicists"
+		"trait_natural_sociologists"
+	}
+	initial = no
+	species_potential_add = {
+		always = no
+	}
+	icon = "gfx/interface/icons/traits/trait_symbiotic.dds"
+	allowed_archetypes = {
+		BIOLOGICAL
+		LITHOID
+	}
+	custom_tooltip = TRAIT_SYMBIOTIC_EFFECT
+	modifier = {
+		pop_happiness = 0.1
+	}
+}
+
+trait_slave_gene = {
+	cost = 1
+	potential_crossbreeding_chance = 0.33
+	opposites = {
+		"trait_intelligent"
+		"trait_erudite"
+		"trait_natural_engineers"
+		"trait_natural_physicists"
+		"trait_natural_sociologists"
+		"trait_fallen_god"
+	}
+	initial = no
+	randomized = no
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		can_remove_presapient_genetic_traits = yes
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	icon = "gfx/interface/icons/traits/trait_slave_gene.dds"
+	allowed_archetypes = {
+		BIOLOGICAL
+		LITHOID
+	}
+	custom_tooltip = TRAIT_SLAVE_GENE_EFFECT
+	modifier = {
+		planet_jobs_produces_mult = 0.15
+		army_damage_mult = 0.15
+		pop_growth_speed = -0.1
+	}
+}
+
+trait_unnatural = {
+	cost = 0
+	potential_crossbreeding_chance = 0
+	icon = "gfx/interface/icons/traits/trait_cybernetic.dds"
+	initial = no
+	randomized = no
+	immortal_leaders = yes
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		always = no
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	custom_tooltip_with_modifiers = genelock_trait_tooltip
+	modifier = {
+		pop_environment_tolerance = 2
+	}
+	triggered_pop_modifier = { #won't show in trait tooltips, use custom_tooltip/custom_tooltip_with_modifiers
+		potential = {
+			exists = owner
+			owner = {
+				has_cybernetic_ascension = yes
+				has_psionic_ascension = yes
+			}
+		}
+		species_empire_size_mult = -0.10
+		planet_jobs_produces_mult = 0.1
+	}
+	triggered_pop_modifier = { #won't show in trait tooltips, use custom_tooltip/custom_tooltip_with_modifiers
+		potential = {
+			exists = owner
+			owner = {
+				has_synthetic_ascension = yes
+			}
+		}
+		planet_jobs_engineering_research_produces_mult = 0.1
+		planet_jobs_society_research_produces_mult = 0.1
+		planet_jobs_physics_research_produces_mult = 0.1
+	}
+
+	leader_age_min = 45
+	leader_age_max = 150
+}
+
+trait_ultraman = {
+	cost = 0
+	initial = no
+	randomized = no
+	immortal_leaders = yes
+	species_potential_add = {
+		always = no
+	}
+	potential_crossbreeding_chance = 1.0
+	opposites = { "trait_adaptive" "trait_extremely_adaptive" "trait_robust" "trait_adaptive_lithoid" }
+	allowed_archetypes = { BIOLOGICAL LITHOID }
+	modifier = {
+		planet_jobs_produces_mult = 0.99
+		planet_jobs_unity_produces_mult = 0.99
+		army_damage_mult = 0.99
+		pop_environment_tolerance = -0.99
+	}
+	slave_cost = {
+		energy = 5000
+	}
+	ai_weight = {
+		weight = 0
+	}
+}
+
+trait_metal_based_life = {
+	cost = 2
+	potential_crossbreeding_chance = 0
+
+	sorting_priority = 20
+
+	initial = yes
+	randomized = no
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		always = no
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	forced_happiness = no
+	immortal_leaders = no
+
+	leader_age_min = 12
+	leader_age_max = 50
+
+	allowed_archetypes = { BIOLOGICAL }
+	ai_weight = {
+		weight = 0
+	}
+
+	icon = "gfx/interface/icons/traits/trait_mutagenic.dds"
+
+	modifier = {
+		habitability_floor_add = 0.5
+		leader_lifespan_mult = 0.5
+		planet_pops_food_upkeep_add = -0.75
+		planet_pops_energy_upkeep_add = 0.25
+		BIOLOGICAL_pop_growth_speed = -0.5
+	}
+}
+
+trait_eci_presapient_starborn = {
+	cost = 0
+	initial = no
+	sapient = no
+	species_possible_remove = {
+		can_remove_presapient_genetic_traits = yes
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+	allowed_archetypes = { BIOLOGICAL PRESAPIENT LITHOID }
+	modifier = {
+		scientist_initial_skill = 1
+		leader_lifespan_add = 15
+		pop_environment_tolerance = 0.1
+	}
+}
+
+trait_source_of_life = {
+	cost = 0
+	initial = no
+	randomized = no
+	immortal_leaders = yes
+	species_potential_add = {
+		always = no
+	}
+	potential_crossbreeding_chance = 1.0
+	allowed_archetypes = { BIOLOGICAL LITHOID }
+
+	custom_tooltip_with_modifiers = source_of_life_trait_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = planet
+			planet = { is_artificial = no }
+		}
+		habitability_floor_add = 0.8
+	}
+	slave_cost = {
+		energy = 5000
+	}
+	ai_weight = {
+		weight = 0
+	}
+}
+
+trait_psionic_robot = {
+	cost = 0
+	potential_crossbreeding_chance = 0.25
+	icon = "gfx/interface/icons/traits/trait_psionic_species.dds"
+
+	improves_leaders = yes
+	initial = no
+	randomized = no
+	species_potential_add = {
+		always = no
+	}
+	species_possible_remove = {
+		always = no
+	}
+	species_possible_merge_add = {
+		always = no
+	}
+
+	allowed_archetypes = { MACHINE ROBOT }
+
+	modifier = {
+		planet_jobs_physics_research_produces_mult = 0.10
+		planet_jobs_society_research_produces_mult = 0.10
+		planet_jobs_engineering_research_produces_mult = 0.10
+		planet_jobs_unity_produces_mult = 0.10
+		pop_decline_speed = -0.10
+	}
+	slave_cost = {
+		energy = 1500
+	}
+	assembly_score = {
+		base = 0.5
+		modifier = {
+			add = 0.5
+			from = { has_research_designation = yes }
+		}
+		modifier = {
+			add = 0.5
+			from = { has_unity_designation = yes }
+		}
+		modifier = {
+			add = 0.5
+			from = { has_building = building_order_keep }
+		}
+		modifier = {
+			subtract = 1.5
+			from.owner = { has_ascension_perk = ap_the_flesh_is_weak }
+		}
+	}
+}
+
+####################
+#   高级机械特质   #
+####################
+
+#后备隐藏能源
+trait_backup_hiddenenergy = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_backup_hiddenenergy_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		modifier = {
+			army_damage_mult = 1
+			army_collateral_damage_mult = 2
+		}
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			army_damage_mult = 2
+			army_collateral_damage_mult = 4
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -10
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#集成冶炼
+trait_integrated_smelting = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_integrated_smelting_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_jobs_alloys_produces_mult = 0.25
+		planet_jobs_minerals_upkeep_mult = 0.25
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			planet_jobs_alloys_produces_mult = 0.5
+			planet_jobs_minerals_upkeep_mult = 0.5
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -10
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#碎片化组装
+trait_debris_assemble = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_debris_assemble_tooltip
+	triggered_planet_growth_habitability_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_pop_assembly_mult = 0.2
+	}
+	triggered_planet_growth_habitability_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		planet_pop_assembly_mult = 0.4
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_jobs_produces_mult = -0.05
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			planet_jobs_produces_mult = -0.1
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -10
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#一次性
+trait_disposable = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_disposable_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		pop_amenities_usage_no_happiness_mult = -0.33
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			pop_amenities_usage_no_happiness_mult = -0.66
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -10
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#超频组件
+trait_overclocking_module = {
+	cost = 2
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_overclocking_module_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_jobs_physics_research_produces_mult = 0.4
+		planet_jobs_society_research_produces_mult = 0.4
+		planet_jobs_engineering_research_produces_mult = 0.4
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			planet_jobs_physics_research_produces_mult = 0.8
+			planet_jobs_society_research_produces_mult = 0.8
+			planet_jobs_engineering_research_produces_mult = 0.8
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -30
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#玄秘代码
+trait_mysterious_code = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_mysterious_code_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_jobs_unity_produces_mult = 0.3
+		pop_amenities_usage_no_happiness_mult = 0.05
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			planet_jobs_unity_produces_mult = 0.6
+			pop_amenities_usage_no_happiness_mult = 0.1
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -10
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#高效回收
+trait_efficient_recycling = {
+	cost = 2
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_efficient_recycling_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_jobs_minerals_produces_mult = 0.25
+		planet_jobs_minerals_upkeep_mult = -0.25
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			planet_jobs_minerals_produces_mult = 0.5
+			planet_jobs_minerals_upkeep_mult = -0.5
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -20
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#纳米传动
+trait_nano_transmission = {
+	cost = 2
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_ghostly_craftsmanship }
+	randomized = no
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_ghostly_craftsmanship }
+	}
+	species_possible_merge_remove = {
+		always = yes
+	}
+	custom_tooltip_with_modifiers = trait_nano_transmission_tooltip
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { NOT = { has_edict = full_thread_overload_edict } }
+		}
+		planet_jobs_energy_produces_mult = 0.25
+		planet_jobs_energy_upkeep_mult = -0.25
+	}
+	triggered_pop_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_edict = full_thread_overload_edict }
+		}
+		modifier = {
+			planet_jobs_energy_produces_mult = 0.5
+			planet_jobs_energy_upkeep_mult = 0.5
+		}
+	}
+	modifier = {
+		leader_lifespan_add = -20
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+##############
+#异合构造特质#
+##############
+
+#营养师
+trait_agrarian_yg = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	randomized = no
+	modifier = {
+		planet_jobs_food_produces_mult = 0.1
+		pop_job_amenities_mult = 0.1
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 500
+	}
+}
+
+#电磁感应
+trait_ingenious_yg = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	randomized = no
+	modifier = {
+		planet_jobs_energy_produces_mult = 0.1
+		planet_jobs_minerals_produces_mult = 0.1
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 500
+	}
+}
+
+#强壮
+trait_strong_yg = {
+	cost = 1
+	opposites = { "trait_very_strong_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	randomized = no
+	modifier = {
+		army_damage_mult = 0.20
+		planet_jobs_simple_drone_produces_mult = 0.025
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#聪慧
+trait_intelligent_yg = {
+	cost = 1
+	opposites = { "trait_erudite_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	randomized = no
+	modifier = {
+		planet_jobs_physics_research_produces_mult = 0.10
+		planet_jobs_society_research_produces_mult = 0.10
+		planet_jobs_engineering_research_produces_mult = 0.10
+		planet_pops_food_upkeep_add = 0.1
+
+	}
+	slave_cost = {
+		energy = 500
+	}
+}
+
+#善于适应
+trait_adaptive_yg = {
+	cost = 1
+	opposites = { "trait_nonadaptive_yg" "trait_extremely_adaptive_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		pop_environment_tolerance = 0.20
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 500
+	}
+}
+
+#快速繁殖
+trait_rapid_breeders_yg = {
+	cost = 1
+	opposites = { "trait_fertile_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_pop_assembly_mult = 0.10
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#长寿
+trait_enduring_yg = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		leader_lifespan_add = 30
+		planet_pops_food_upkeep_add = 0.1
+	}
+	opposites = { "trait_fleeting_yg" "trait_fleeting_yg" }
+	slave_cost = {
+		energy = 500
+	}
+}
+
+#魅力非凡
+trait_charismatic_yg = {
+	cost = 1
+	opposites = { "trait_repugnant_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		pop_job_amenities_mult = 0.20
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 500
+	}
+}
+
+#石质
+trait_lithoid_yg = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_pops_food_upkeep_mult = -1
+		planet_pops_minerals_upkeep_add = 0.25
+	}
+
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#光合作用
+trait_plantoid_phototrophic_yg = {
+	cost = 1
+	opposites = { "trait_plantoid_radiotrophic_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_pops_energy_upkeep_mult = -0.25
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#辐照合成
+trait_plantoid_radiotrophic_yg = {
+	cost = 1
+	opposites = { "trait_plantoid_phototrophic_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_pops_energy_upkeep_mult = -0.15
+		pop_environment_tolerance = 0.10
+		planet_pops_food_upkeep_add = 0.2
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#出芽生殖
+trait_plantoid_budding_yg = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_pop_assembly_add = 0.01
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 100
+	}
+}
+
+#剧毒
+trait_noxious_yg = {
+	cost = 1
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		army_damage_mult = 0.40
+		pop_job_amenities_mult = -0.20
+		planet_pops_food_upkeep_add = 0.1
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+##超级特质
+
+#非常强壮
+trait_very_strong_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_geneyg_modding = yes
+	}
+	initial = no
+	opposites = { "trait_strong_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		army_damage_mult = 0.40
+		planet_jobs_simple_drone_produces_mult = 0.05
+		planet_pops_food_upkeep_add = 0.2
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#极易适应
+trait_extremely_adaptive_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_geneyg_modding = yes
+	}
+	initial = no
+	opposites = { "trait_nonadaptive_yg" "trait_adaptive_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		pop_environment_tolerance = 0.40
+		planet_pops_food_upkeep_add = 0.2
+	}
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#博学多识
+trait_erudite_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_geneyg_modding = yes
+	}
+	initial = no
+	opposites = { "trait_intelligent_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_jobs_physics_research_produces_mult = 0.2
+		planet_jobs_society_research_produces_mult = 0.2
+		planet_jobs_engineering_research_produces_mult = 0.2
+		negative_leader_traits_species = -1
+		leaders_upkeep_mult = -0.1
+		planet_pops_food_upkeep_add = 0.3
+	}
+	slave_cost = {
+		energy = 2000
+	}
+}
+
+#强健
+trait_robust_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_geneyg_modding = yes
+	}
+	initial = no
+	opposites = { "trait_nonadaptive_yg" }
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		pop_environment_tolerance = 0.30
+		planet_jobs_produces_mult = 0.05
+		leader_lifespan_add = 50
+		planet_pops_food_upkeep_add = 0.2
+	}
+	slave_cost = {
+		energy = 2000
+	}
+}
+
+#天生巧匠
+trait_natural_machinist_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_geneyg_modding = yes
+	}
+	initial = no
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_jobs_alloys_produces_mult = 0.10
+		planet_jobs_consumer_goods_produces_mult = 0.10
+		planet_pops_food_upkeep_add = 0.2
+	}
+	slave_cost = {
+		energy = 2000
+	}
+}
+
+#龙鳞化
+trait_drake_scaled_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_xsyg_modding = yes
+	}
+	initial = no
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		army_health = 1.2
+		planet_pops_food_upkeep_add = 0.2
+	}
+
+	slave_cost = {
+		energy = 1000
+	}
+}
+
+#虚体化
+trait_voidling_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_xsyg_modding = yes
+	}
+	initial = no
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		habitability_floor_add = 0.20
+		planet_pops_food_upkeep_add = -0.2
+	}
+	slave_cost = {
+		energy = 1500
+	}
+}
+
+#多肢化
+trait_tiyanki_yg = {
+	cost = 2
+	species_potential_add = {
+		can_do_advanced_xsyg_modding = yes
+	}
+	initial = no
+	allowed_archetypes = { ROBOT MACHINE }
+	allowed_origins = { origin_heterozygous_structure }
+	species_potential_add = {
+		exists = from
+		from = { has_origin = origin_heterozygous_structure }
+	}
+	modifier = {
+		planet_pop_assembly_mult = 0.1
+		planet_jobs_produces_mult = 0.05
+		planet_pops_food_upkeep_add = 0.2
+	}
+	slave_cost = {
+		energy = 1500
+	}
+}
+
+
+####################
+#     领袖特质     #
+####################
+
+leader_trait_expertise_good_trading = {
+	# This is needed due to the technocracy effects
+	force_councilor_trait = yes
+	leader_trait_type = veteran
+	inline_script = {
+		script = trait/icon_society
+		CLASS = scientist
+		ICON = "GFX_leader_trait_expertise_good_trading"
+		RARITY = free_or_veteran
+		COUNCIL = yes
+		TIER = 1
+	}
+	councilor_modifier = {
+		category_good_trading_research_speed_mult = 0.05
+		category_good_trading_draw_chance_mult = 0.25
+	}
+	inline_script = {
+		script =  traits/technocracy_expertise_effects
+		FIELD = society
+		TIER = 1
+	}
+	leader_potential_add = {
+		is_specialist_researcher_society = no
+		can_leader_get_council_trait_trigger = yes
+		OR = {
+			has_paragon_dlc = no
+			has_trait = subclass_scientist_councilor
+		}
+	}
+	leader_class = { scientist }
+	ai_weight = 100
+	selectable_weight = {
+		inline_script = paragon/subclass_free_trait_weight
+		inline_script = paragon/council_weight_mult
+	}
+}
+leader_trait_expertise_good_trading_2 = {
+	replace_traits = { "leader_trait_expertise_good_trading" }
+	leader_trait_type = veteran
+	inline_script = {
+		script = trait/icon_society
+		CLASS = scientist
+		ICON = "GFX_leader_trait_expertise_good_trading"
+		RARITY = free_or_veteran
+		COUNCIL = yes
+		TIER = 2
+	}
+	councilor_modifier = {
+		category_good_trading_research_speed_mult = 0.10
+		category_good_trading_draw_chance_mult = 0.35
+	}
+	inline_script = {
+		script =  traits/technocracy_expertise_effects
+		FIELD = society
+		TIER = 2
+	}
+	leader_class = { scientist }
+	ai_weight = 100
+}
+leader_trait_expertise_good_trading_3 = {
+	replace_traits = { "leader_trait_expertise_good_trading_2" }
+	leader_trait_type = veteran
+	inline_script = {
+		script = trait/icon_society
+		CLASS = scientist
+		ICON = "GFX_leader_trait_expertise_good_trading"
+		RARITY = veteran
+		COUNCIL = yes
+		TIER = 3
+	}
+	councilor_modifier = {
+		category_good_trading_research_speed_mult = 0.15
+		category_good_trading_draw_chance_mult = 0.75
+	}
+	inline_script = {
+		script =  traits/technocracy_expertise_effects
+		FIELD = society
+		TIER = 3
+	}
+	leader_potential_add = {
+		has_paragon_dlc = yes
+	}
+	leader_class = { scientist }
+	ai_weight = 100
+}
+
+trait_ruler_immortal = {
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_intemporal"
+		RARITY = paragon
+		COUNCIL = no
+		TIER = none
+	}
+	immortal_leaders = yes
+	leader_class = { commander scientist official }
+	initial = no
+	randomized = no
+}
+
+leader_trait_eci_legendary_leader = {
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_legendary_leader"
+		RARITY = paragon
+		COUNCIL = no
+		TIER = none
+	}
+	self_modifier = {
+		leader_lifespan_add = 100
+	}
+	leader_class = { official commander scientist }
+	initial = no
+	randomized = no
+}
+
+####################
+#     君主制        #
+####################
+leader_trait_eci_king = {
+	force_councilor_trait = yes
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_imperial_heir"
+		RARITY = paragon
+		COUNCIL = triggered
+		TIER = none
+	}
+	self_modifier = {
+		leader_trait_selection_options_add = 2
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		faction_approval = 0.10
+		divided_patrongage_max_subjects = 5
+		planet_stability_add = 10
+	}
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = commander
+		}
+		ship_fire_rate_mult = 0.15
+	}
+	triggered_army_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = commander
+		}
+		army_morale = 0.3
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = commander
+		}
+		country_naval_cap_mult = 0.20
+	}
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = scientist
+		}
+		ship_astral_rift_clues_add = 2
+		ship_archaeological_site_clues_add = 2
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = scientist
+		}
+		all_technology_research_speed = 0.1
+	}
+	triggered_federation_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = official
+		}
+		resolutions_cost_mult = -0.20
+		federation_experience_add = 2
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = official
+		}
+		planet_stability_add = 10
+		pop_government_ethic_attraction = 0.5
+	}
+
+	on_gained_effect = {
+		change_background_job = royalty
+	}
+
+	leader_class = { scientist official commander }
+	initial = no
+	randomized = no
+}
+
+leader_trait_eci_heir = { #Origin trait - offspring
+	force_councilor_trait = yes
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_legendary_offspring"
+		RARITY = paragon
+		COUNCIL = triggered
+		TIER = none
+	}
+	self_modifier = {
+		leader_trait_selection_options_add = 1
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		faction_approval = 0.05
+		divided_patrongage_max_subjects = 2
+		planet_stability_add = 5
+	}
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = commander
+		}
+		ship_fire_rate_mult = 0.1
+	}
+	triggered_army_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = commander
+		}
+		army_morale = 0.15
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = commander
+		}
+		country_naval_cap_mult = 0.10
+	}
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = scientist
+		}
+		ship_astral_rift_clues_add = 1
+		ship_archaeological_site_clues_add = 1
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = scientist
+		}
+		all_technology_research_speed = 0.05
+	}
+	triggered_federation_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = official
+		}
+		resolutions_cost_mult = -0.10
+		federation_experience_add = 1.5
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = official
+		}
+		planet_stability_add = 5
+		pop_government_ethic_attraction = 0.25
+	}
+
+	on_gained_effect = {
+		change_background_job = royalty
+	}
+
+	leader_class = { official commander scientist }
+
+	initial = no
+	randomized = no
+}
+
+leader_trait_eci_royalty = { #Origin trait - offspring
+	inline_script = {
+		script = trait/icon
+		CLASS = leader
+		ICON = "GFX_leader_trait_enclave_trader"
+		RARITY = paragon
+		COUNCIL = no
+		TIER = none
+	}
+	leader_class = { official commander scientist }
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = yes
+		}
+		planet_stability_add = 5
+	}
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = commander
+		}
+		ship_fire_rate_mult = 0.05
+	}
+	triggered_army_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = commander
+		}
+		army_morale = 0.1
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = commander
+		}
+		country_naval_cap_mult = 0.05
+	}
+	triggered_fleet_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = scientist
+		}
+		science_ship_survey_speed = 0.10
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = scientist
+		}
+		planet_researchers_produces_mult = 0.05
+	}
+	triggered_federation_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = no
+			leader_class = official
+		}
+		federation_experience_add = 1
+	}
+	triggered_councilor_modifier = {
+		potential = {
+			is_ruler = no
+			is_councilor = yes
+			leader_class = official
+		}
+		pop_government_ethic_attraction = 0.15
+	}
+
+	on_gained_effect = {
+		change_background_job = royalty
+	}
+
+	initial = no
+	randomized = no
+}

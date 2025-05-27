@@ -1,0 +1,262 @@
+#Defensive armies can't transport of the planet
+#maintenance is directly scripted here. 0.25 translates to 0.25 monthly cost (excluding other upkeep modifiers)
+#morale_damage = 1		# average morale damage of the army, default: auto (calculated from morale * MORALE_DAMAGE_MULT)
+#building spawned armies can't be built normally, but only created from pops working buildings
+
+#spawn_chance: only works on defensive armies; pop scope check that lets you give weights for what sort of army should be spawned
+#		Calculation is health * spawn_chance (default: 1), and it always picks the best one
+
+# Defense Armies
+defense_army = {
+	defensive = yes
+	is_pop_spawned = yes
+	health = 1.25
+	damage = 1.50
+	morale = 1.25
+	collateral_damage = 0.0
+	war_exhaustion = 0.0 # No WE from defense armies
+	icon = GFX_army_type_defensive
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_army_production" }
+			}
+			unity = 0.1
+			mult = value:councilor_level|TYPE|councilor_army_production|
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_army_production_corporate" }
+			}
+			unity = 0.1
+			mult = value:councilor_level|TYPE|councilor_army_production_corporate|
+		}
+	}
+
+	potential = {
+		from = {
+			NOR = {
+				has_trait = "trait_mechanical"
+				has_trait = "trait_machine_unit"
+				is_sapient = no
+			}
+		}
+		owner = {
+			is_primitive = no
+			OR = {
+				NOT = { has_authority = auth_machine_intelligence }
+				has_valid_civic = civic_machine_assimilator
+			}
+		}
+	}
+}
+
+# Undead Armies
+undead_defense_army = {
+	defensive = yes
+	is_pop_spawned = yes
+	health = 1.75
+	damage = 1.50
+	collateral_damage = 0.0
+	has_morale = no
+	morale_damage = 1.75
+	war_exhaustion = 0.0
+	icon = GFX_army_type_undead
+	use_armynames_from = undead_army
+
+	potential = {
+		from = {
+			NOR = {
+				has_trait = "trait_mechanical"
+				has_trait = "trait_machine_unit"
+				is_sapient = no
+			}
+		}
+		planet = {
+			OR = {
+				AND = {
+					has_active_building = building_dread_encampment
+					num_assigned_jobs = {
+						job = necromancer
+						value >= 1
+					}
+				}
+				has_planet_flag = active_dread_outpost
+			}
+		}
+	}
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_army_production" }
+			}
+			unity = 0.1
+			mult = value:councilor_level|TYPE|councilor_army_production|
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_army_production_corporate" }
+			}
+			unity = 0.1
+			mult = value:councilor_level|TYPE|councilor_army_production_corporate|
+		}
+	}
+
+	spawn_chance = {
+		factor = 100
+	}
+}
+
+# Robotic Armies
+robotic_defense_army = {
+	defensive = yes
+	is_pop_spawned = yes
+	damage = 1.00
+	health = 1.25
+	morale_damage = 1.00
+	collateral_damage = 0.0
+	war_exhaustion = 0.0 # No WE from defense armies
+	has_morale = no
+	icon = GFX_army_type_robot
+	has_species = yes
+
+	potential = {
+		from = {
+			OR = {
+				has_trait = "trait_mechanical"
+				has_trait = "trait_machine_unit"
+			}
+		}
+		owner = {
+			NOT = { has_authority = auth_machine_intelligence }
+		}
+	}
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_army_production" }
+			}
+			unity = 0.1
+			mult = value:councilor_level|TYPE|councilor_army_production|
+		}
+		produces = {
+			trigger = {
+				has_councilor = { COUNCILOR = "councilor_army_production_corporate" }
+			}
+			unity = 0.1
+			mult = value:councilor_level|TYPE|councilor_army_production_corporate|
+		}
+	}
+
+	allow = {
+		owner = { NOT = { has_policy_flag = robots_outlawed } }
+	}
+}
+
+### Machine Empire Armies
+machine_defense = {
+	defensive = yes
+	is_pop_spawned = yes
+	health = 1.10
+	damage = 1.10
+	has_morale = no
+	morale_damage = 1.00
+	collateral_damage = 0.0
+	war_exhaustion = 0.0 # No WE from defense armies
+	icon = GFX_army_type_machine_defensive
+	has_species = yes
+
+	potential = {
+		owner = { has_authority = auth_machine_intelligence }
+		from = {
+			has_trait = "trait_machine_unit"
+		}
+	}
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+	}
+}
+
+offspring_defense = {
+	defensive = yes
+	is_pop_spawned = yes
+	health = 2
+	damage = 1.75
+	has_morale = no
+	morale_damage = 1.30
+	collateral_damage = 0.0
+	war_exhaustion = 0.0
+	icon = GFX_army_type_xenomorph
+	has_species = yes
+
+	potential = {
+		OR = {
+			AND = {
+				exists = planet.owner.overlord
+				has_holding = {
+					holding = holding_offspring_nest
+					owner = planet.owner.overlord
+				}
+			}
+			AND = {
+				planet.owner = { has_origin = origin_progenitor_hive }
+				OR = {
+					AND = {
+						has_building = building_offspring_nest
+						num_assigned_jobs = {
+							job = offspring_drone
+							value >= 1
+						}
+					}
+					has_deposit = d_progenitor
+				}
+			}
+		}
+	}
+
+	resources = {
+		category = armies
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_active_tradition = tr_unyielding_resistance_is_frugal }
+			}
+			unity = 0.5
+		}
+	}
+}

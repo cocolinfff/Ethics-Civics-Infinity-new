@@ -1,0 +1,113 @@
+#### 委员会和领导人问题相关派系诉求 ####
+
+demand = { # 我方领导人
+	# Ruler = FANTASTIC
+	title = faction_demand_HAPPY_WE_RULE
+	unfulfilled_title = LABEL_NA
+	desc = faction_demand_HAPPY_WE_RULE_desc
+
+	fulfilled_effect = 15
+	unfulfilled_effect = 0
+
+	potential = {
+		has_paragon_dlc = yes
+		exists = ruler
+		ruler = { has_ethic = $ETHIC$ }
+	}
+
+	council_demand = yes
+	trigger = { always = yes }	# Always happy if Potential fulfilled.
+}
+
+
+demand = { # 敌方领导人
+	# Ruler = HATE (Opposing Ethic)
+	title = LABEL_NA
+	unfulfilled_title = faction_demand_HATE_RULER_ETHICS
+	desc = faction_demand_HATE_RULER_ETHICS_desc
+
+	fulfilled_effect = 0
+	unfulfilled_effect = -15
+
+	potential = {
+		has_paragon_dlc = yes
+		exists = ruler
+		ruler = { has_ethic = $ETHIC_OPPOSED$ }
+	}
+
+	council_demand = yes
+	trigger = {	always = no }	# Always unhappy if POTENTIAL fulfilled.
+}
+
+
+demand = {
+	# Ruler = OK (of Empire Ethics)
+	# Ruler = WRONG (non Empire Ethics)
+	title = faction_demand_ACCEPTABLE_RULER_ETHICS
+	unfulfilled_title = faction_demand_ACCEPTABLE_RULER_ETHICS
+	desc = faction_demand_ACCEPTABLE_RULER_ETHICS_desc
+
+	fulfilled_effect = 5
+	unfulfilled_effect = -5
+
+	potential = {
+		has_paragon_dlc = yes
+		exists = ruler
+		ruler = {
+			NOT = { has_ethic = $ETHIC$ }	# Overriden by HAPPE_WE_RULE demand.
+			NOT = { has_ethic = $ETHIC_OPPOSED$ }	# Overriden by HATE_RULER demand.
+		}
+	}
+
+	council_demand = yes
+	trigger = {
+		# Does Ruler Ethic diverge from Empire ethics.
+		# Potential has ruled out ruler having $ETHIC$ or $ETHIC_OPPOSED$ ethic.
+		exists = ruler
+		ruler = {
+			switch = {
+				trigger = has_ethic
+				ethic_pacifist = { owner = { is_pacifist = yes } }
+				ethic_militarist = { owner = { is_militarist = yes } }
+				ethic_spiritualist = { owner = { is_spiritualist = yes } }
+				ethic_materialist = { owner = { is_materialist = yes } }
+				ethic_egalitarian = { owner = { is_egalitarian = yes } }
+				ethic_authoritarian = { owner = { is_authoritarian = yes } }
+				ethic_xenophile = { owner = { is_xenophile = yes } }
+				ethic_xenophobe = { owner = { is_xenophobe = yes } }
+				ethic_egalitarian = { owner = { is_egalitarian = yes } }
+				ethic_authoritarian = { owner = { is_authoritarian = yes } }
+			}
+		}
+	}
+}
+
+
+demand = {
+	title = faction_demand_REPRESENTED_ON_COUNCIL
+	unfulfilled_title = faction_demand_REPRESENTED_ON_COUNCIL
+	desc = faction_demand_REPRESENTED_ON_COUNCIL_desc
+
+	fulfilled_effect = 10
+	unfulfilled_effect = -10
+
+	potential = {
+		has_paragon_dlc = yes
+		exists = owner
+	}
+
+	council_demand = yes
+
+	# Check for any leader on the Council with Faction's Ethic.
+	trigger = {
+		owner = {
+			any_owned_leader = {
+				OR = {
+					is_ruler = yes
+					is_councilor = yes
+				}
+				has_ethic = $ETHIC$
+			}
+		}
+	}
+}

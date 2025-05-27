@@ -1,0 +1,76 @@
+cb_despoliation = {
+	show_in_diplomacy = yes
+	show_notification = no
+	potential = {
+		is_country_type = default
+		OR = {
+			has_valid_civic = civic_barbaric_despoilers
+			has_valid_civic = civic_triple_the_profit
+		}
+	}
+	is_valid = {
+		has_total_war_cb = no
+		NOT = { is_overlord_to = FROM }
+		OR = {
+			is_subject = no
+			overlord = { NOT = { is_same_value = from } }
+		}
+	}
+}
+
+cb_invasion_of_indigenous_peoples = {
+	show_in_diplomacy = yes
+	show_notification = no
+	potential = {
+		NOT = { is_country_type = primitive }
+		from = { has_origin = origin_galaxy_iron_curtain }
+	}
+	is_valid = {
+		has_total_war_cb = yes
+		from = { has_origin = origin_galaxy_iron_curtain }
+	}
+}
+
+cb_unrestricted_wars_eci = {
+	show_in_diplomacy = yes
+	show_notification = no
+	potential = {
+		has_policy_flag = unrestricted_wars_eci
+	}
+	is_valid = {
+		NOT = { is_in_federation_with = from }
+		NOT = { from = { is_overlord_to = root } }
+		NOT = { root = { is_overlord_to = from } }
+		if = {
+			limit = {
+				exists = from.overlord
+			}
+			NOT = { from.overlord = { is_same_value = root.overlord } }
+		}
+	}
+}
+
+cb_expel_corp = {
+	show_in_diplomacy = yes
+	show_notification = yes
+	potential = {
+		is_country_type = default
+		from = { can_build_branch_offices_trigger = yes }
+		can_support_branch_offices_trigger = yes
+	}
+	is_valid = {
+		NOT = { has_commercial_pact = from }
+		NOT = { is_in_federation_with = from }
+		NOT = { from = { is_overlord_to = root } }
+		NOT = { root = { is_overlord_to = from } }
+		if = {
+			limit = {
+				exists = from.overlord
+			}
+			NOT = { from.overlord = { is_same_value = root.overlord } }
+		}
+		any_owned_planet = {
+			has_branch_office = from
+		}
+	}
+}

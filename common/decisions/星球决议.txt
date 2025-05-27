@@ -1,0 +1,831 @@
+#星神启动
+decision_xinshin_impact = {
+    owned_planets_only = yes
+    enactment_time = 720
+    icon = decision_divine_algorithm
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 648
+            unity = 648
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_valid_civic = civic_xinshin_impact
+        }
+    }
+
+    allow = {
+        planet = {
+            num_assigned_jobs = {
+                job = professional_star_fans
+                value >= 1000
+            }
+        }
+    }
+
+    effect = {
+        hidden_effect = {
+            custom_tooltip = decision_xinshin_impact_effects
+            planet = {
+                while = {
+                    count = 1000
+                    random_owned_pop_group = {
+                        limit = {
+                            has_job = professional_star_fans
+                        }
+                        kill_single_pop = yes
+                    }
+                }
+            }
+            planet.owner = {
+                random_list = {
+                    30 = { country_event = { id = ethic_xinshin_impact.1 } }
+                    30 = { country_event = { id = ethic_xinshin_impact.2 } }
+                    30 = { country_event = { id = ethic_xinshin_impact.3 } }
+                    5 = { country_event = { id = ethic_xinshin_impact.4 } }
+                    5 = { country_event = { id = ethic_xinshin_impact.5 } }
+                }
+            }
+        }
+    }
+
+    ai_weight = {
+        weight = 999
+    }
+}
+
+#修建圣墓
+decision_build_holy_tomb = {
+    owned_planets_only = yes
+    enactment_time = 720
+    icon = decision_art_monument
+
+    resources = {
+        category = decisions
+        cost = {
+            minerals = 1000
+            unity = 1000
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_valid_civic = civic_imperial_cult
+            has_modifier = imperial_cult_modifier
+        }
+    }
+
+    allow = {
+    }
+
+    effect = {
+        add_deposit = d_imperial_cult
+        from = { remove_modifier = imperial_cult_modifier }
+        hidden_effect = {
+            from = { set_country_flag = builded_holy_tomb }
+        }
+    }
+
+    ai_weight = {
+        weight = 0
+    }
+}
+
+#连接魔网
+decision_connect_to_the_magic_net = {
+    owned_planets_only = yes
+    enactment_time = 720
+    icon = decision_wormhole
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 1000
+            unity = 1000
+            astral_threads = 100
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_origin = origin_wizarding_world
+        }
+    }
+
+    allow = {
+        exists = planet
+        planet = {
+            NOT = {
+                has_modifier = "ley_rift"
+            }
+        }
+    }
+
+    effect = {
+        add_modifier = { modifier = "ley_rift" days = -1 }
+    }
+
+    ai_weight = {
+        weight = 99999
+    }
+}
+
+#种植菌子
+decision_fungal_reproduction = {
+    owned_planets_only = yes
+    enactment_time = 720
+    icon = decision_psi_inoculate_pops
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 1000
+            sr_zro = 500
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_valid_civic = civic_yunnanese
+        }
+    }
+
+    allow = {
+        exists = planet
+        planet = {
+            NOT = {
+                has_deposit = d_mushroom
+            }
+        }
+    }
+
+    effect = {
+        add_deposit = d_mushroom
+    }
+
+    ai_weight = {
+        weight = 99999
+    }
+}
+
+#宣传基础产业模范
+decision_promote_basic_industry_models = {
+    owned_planets_only = yes
+    enactment_time = 180
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 1000
+            unity = 500
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_valid_civic = civic_industry_pacesetter
+        }
+        NOT = {
+            has_modifier = "promote_basic_industry_models"
+        }
+    }
+
+    allow = {
+        OR = {
+            AND = {
+                num_assigned_jobs = {
+                    job = technician
+                    value >= 400
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = miner
+                    value >= 400
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = farmer
+                    value >= 400
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = scrap_miner
+                    value >= 400
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = angler
+                    value >= 400
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = labour_hero
+                    value >= 200
+                }
+            }
+        }
+    }
+
+    effect = {
+        custom_tooltip = decision_promote_research_models_effects
+        add_modifier = { modifier = "promote_basic_industry_models" days = -1 }
+        if = {
+            limit = {
+                has_modifier = "promote_worker_models"
+            }
+            remove_modifier = "promote_worker_models"
+        }
+        if = {
+            limit = {
+                has_modifier = "promote_research_models"
+            }
+            remove_modifier = "promote_research_models"
+        }
+    }
+
+    ai_weight = {
+        weight = 1
+        modifier = {
+            factor = 0
+            OR = {
+                has_modifier = promote_worker_models
+                has_modifier = promote_basic_industry_models
+                has_modifier = promote_research_models
+            }
+        }
+    }
+}
+
+#宣传工业模范
+decision_promote_worker_models = {
+    owned_planets_only = yes
+    enactment_time = 180
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 1000
+            unity = 500
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_valid_civic = civic_industry_pacesetter
+        }
+        NOT = {
+            has_modifier = "promote_worker_models"
+        }
+    }
+
+    allow = {
+        OR = {
+            AND = {
+                num_assigned_jobs = {
+                    job = foundry_specialist
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = artisan_specialist
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = artisan
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = foundry
+                    value >= 200
+                }
+            }
+        }
+    }
+
+    effect = {
+        custom_tooltip = decision_promote_research_models_effects
+        add_modifier = { modifier = "promote_worker_models" days = -1 }
+        if = {
+            limit = {
+                has_modifier = "promote_basic_industry_models"
+            }
+            remove_modifier = "promote_basic_industry_models"
+        }
+        if = {
+            limit = {
+                has_modifier = "promote_research_models"
+            }
+            remove_modifier = "promote_research_models"
+        }
+    }
+
+    ai_weight = {
+        weight = 1
+        modifier = {
+            factor = 0
+            OR = {
+                has_modifier = promote_worker_models
+                has_modifier = promote_basic_industry_models
+                has_modifier = promote_research_models
+            }
+        }
+    }
+}
+
+#宣传科研模范
+decision_promote_research_models = {
+    owned_planets_only = yes
+    enactment_time = 180
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 1000
+            unity = 500
+        }
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            has_valid_civic = civic_industry_pacesetter
+        }
+        NOT = {
+            has_modifier = "promote_research_models"
+        }
+    }
+
+    allow = {
+        OR = {
+            AND = {
+                num_assigned_jobs = {
+                    job = physicist
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = biologist
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = engineer
+                    value >= 200
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = magician
+                    value >= 200
+                }
+            }
+            AND = {
+                exists = owner
+                owner = {
+                    politician_is_science_director = yes
+                }
+                num_assigned_jobs = {
+                    job = politician
+                    value >= 100
+                }
+            }
+            AND = {
+                num_assigned_jobs = {
+                    job = legendary_mage
+                    value >= 1
+                }
+            }
+            AND = {
+                exists = owner
+                owner = {
+                    OR = {
+                        has_valid_civic = civic_knowledge_seeker
+                        has_tradition = tr_piety_nature_and_humanity
+                    }
+                }
+                num_assigned_jobs = {
+                    job = bureaucrat
+                    value >= 200
+                }
+            }
+        }
+    }
+
+    effect = {
+        custom_tooltip = decision_promote_research_models_effects
+        add_modifier = { modifier = "promote_research_models" days = -1 }
+        if = {
+            limit = {
+                has_modifier = "promote_basic_industry_models"
+            }
+            remove_modifier = "promote_basic_industry_models"
+        }
+        if = {
+            limit = {
+                has_modifier = "promote_worker_models"
+            }
+            remove_modifier = "promote_worker_models"
+        }
+    }
+
+    ai_weight = {
+        weight = 1
+        modifier = {
+            factor = 0
+            OR = {
+                has_modifier = promote_worker_models
+                has_modifier = promote_basic_industry_models
+                has_modifier = promote_research_models
+            }
+        }
+    }
+}
+
+#镇压叛乱者
+decision_suppress_insurgents = {
+    enactment_time = 540
+    owned_planets_only = yes
+    icon = decision_martial_law
+
+    resources = {
+        category = decisions
+        cost = {
+            energy = 6000
+            alloys = 300
+        }
+    }
+
+    potential = {
+        exists = planet
+        planet = { has_deposit = d_guerrilla_warzone }
+    }
+
+    allow = {
+    }
+
+    effect = {
+        planet = {
+            remove_deposit = d_guerrilla_warzone
+            add_planet_devastation = 30
+        }
+        hidden_effect = {
+            add_modifier = { modifier = "egalitarian_unrest" days = 3600 }
+            add_modifier = { modifier = "socialism_unrest" days = 3600 }
+            set_timed_planet_flag = { flag = flag_suppress_insurgents days = 720 }
+        }
+    }
+
+    ai_weight = {
+        weight = 3
+        modifier = {
+            factor = 33333
+            planet = {
+                OR = {
+                    has_designation = col_capital
+                    has_designation = col_bureau
+                    has_designation = col_fortress
+                    has_designation = col_habitat_fortress
+                    has_designation = col_city_fortress
+                }
+            }
+        }
+        modifier = {
+            factor = 0
+            planet = {
+                OR = {
+                    has_designation = col_rural
+                }
+            }
+        }
+    }
+}
+
+#解散游击队
+decision_reorganize_the_guerrilla = {
+    enactment_time = 60
+    owned_planets_only = yes
+    icon = decision_martial_law
+
+    resources = {
+        category = decisions
+        cost = {
+            trigger = {
+                owner = { is_ai = no }
+            }
+            energy = 1000
+        }
+    }
+
+    potential = {
+        exists = planet
+        planet = {
+            owner = { has_active_tradition = tr_revolution_adopt }
+            has_deposit = d_guerrilla_warzone
+        }
+    }
+
+    allow = {
+        owner = { has_active_tradition = tr_revolution_adopt }
+    }
+
+    effect = {
+        planet = {
+            remove_deposit = d_guerrilla_warzone
+        }
+    }
+
+    ai_weight = {
+        weight = 99999
+    }
+}
+
+#创建经济特区
+decision_economic_zone = {
+    owned_planets_only = yes
+    icon = decision_economic_zone
+    prerequisites = {
+        "tech_colonial_centralization"
+    }
+
+    resources = {
+        category = decisions
+        cost = {
+            influence = 50
+            mult = value:ethic_economic_zone_num
+        }
+    }
+
+    potential = {
+        is_capital = no
+        NOT = { has_modifier = resort_colony }
+        NOT = { has_modifier = slave_colony }
+        NOT = { has_modifier = penal_colony }
+        NOT = { has_modifier = economic_colony }
+        owner = {
+            has_policy_flag = reform_and_opening_up
+        }
+    }
+
+    allow = {}
+
+    effect = {
+        add_modifier = {
+            modifier = economic_colony
+            days = -1
+        }
+    }
+
+    ai_weight = {
+        weight = 10
+        modifier = {
+            factor = 0
+            num_pops < 30
+        }
+        modifier = {
+            factor = 0
+            check_modifier_value = {
+                modifier = trade_value_mult
+                value <= 3.00
+            }
+        }
+        modifier = {
+            factor = 0
+            check_modifier_value = {
+                modifier = trade_value_add
+                value <= 200
+            }
+        }
+    }
+}
+
+#撤销经济特区
+decision_abolish_economic_zone = {
+    owned_planets_only = yes
+    icon = decision_economic_zone
+
+
+    resources = {
+        category = decisions
+        cost = {
+            influence = 200
+        }
+    }
+
+    potential = {
+        has_modifier = economic_colony
+    }
+
+    allow = {}
+
+    effect = {
+        remove_modifier = economic_colony
+    }
+
+    ai_weight = {
+        weight = 10
+        modifier = {
+            factor = 0
+            check_modifier_value = {
+                modifier = trade_value_mult
+                value >= 2.00
+            }
+        }
+        modifier = {
+            factor = 0
+            check_modifier_value = {
+                modifier = trade_value_add
+                value >= 100
+            }
+        }
+    }
+}
+
+#建造卫星城市
+decision_build_satellite_city = {
+    owned_planets_only = yes
+    enactment_time = 360
+    icon = decision_satellite_in_orbit
+
+    resources = {
+        category = decisions
+        cost = {
+            alloys = 300
+            minerals = 500
+        }
+        cost = {
+            trigger = {
+                exists = owner
+                owner = { has_technology = tech_assembly_pattern }
+            }
+            alloys = 100
+            minerals = 200
+        }
+        cost = {
+            trigger = {
+                exists = owner
+                owner = { has_technology = tech_construction_templates }
+            }
+            alloys = 100
+            minerals = 300
+        }
+    }
+
+    potential = {
+        planet = {
+            OR = {
+                is_habitable_for_wilderness = yes
+                is_planet_class = pc_habitat
+            }
+        }
+        exists = owner
+        owner = {
+            OR = {
+                is_regular_empire = yes
+                is_gestalt = yes
+            }
+        }
+    }
+
+    allow = {
+    }
+
+    effect = {
+        add_deposit = d_satellite_city
+    }
+
+    ai_weight = {
+        weight = 0
+    }
+}
+
+#建设太空产业园区
+decision_build_space_industry_cluster = {
+    owned_planets_only = yes
+    enactment_time = 360
+    icon = decision_satellite_in_orbit
+
+    resources = {
+        category = decisions
+        cost = {
+            alloys = 300
+            minerals = 500
+        }
+    }
+
+    potential = {
+        planet = {
+            has_deposit = d_satellite_city
+        }
+        owner = {
+            has_technology = tech_assembly_pattern
+        }
+    }
+
+    allow = {
+        planet = {
+            free_district_slots > 0
+        }
+    }
+
+    effect = {
+        add_deposit = d_ethic_space_industry_cluster
+    }
+
+    ai_weight = {
+        weight = 0
+    }
+}
+decision_build_space_industry_cluster_industrial = {
+    owned_planets_only = yes
+    enactment_time = 360
+    icon = decision_satellite_in_orbit
+
+    resources = {
+        category = decisions
+        cost = {
+            alloys = 300
+            minerals = 500
+        }
+    }
+
+    potential = {
+        planet = {
+            has_deposit = d_satellite_city
+        }
+        owner = {
+            has_technology = tech_assembly_pattern
+        }
+    }
+
+    allow = {
+        planet = {
+            free_district_slots > 0
+        }
+    }
+
+    effect = {
+        add_deposit = d_ethic_space_industry_cluster_industrial
+    }
+
+    ai_weight = {
+        weight = 0
+    }
+}
+decision_build_space_industry_cluster_research = {
+    owned_planets_only = yes
+    enactment_time = 360
+    icon = decision_satellite_in_orbit
+
+    resources = {
+        category = decisions
+        cost = {
+            alloys = 300
+            minerals = 500
+        }
+    }
+
+    potential = {
+        planet = {
+            has_deposit = d_satellite_city
+        }
+        owner = {
+            has_technology = tech_assembly_pattern
+        }
+    }
+
+    allow = {
+        planet = {
+            free_district_slots > 0
+        }
+    }
+
+    effect = {
+        add_deposit = d_ethic_space_industry_cluster_research
+    }
+
+    ai_weight = {
+        weight = 0
+    }
+}

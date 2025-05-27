@@ -1,0 +1,209 @@
+
+
+# 给AI送殖民卫星
+namespace = ethic_random_deposit
+country_event = {
+    id = ethic_random_deposit.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        owner = {
+           is_ai = yes
+           has_technology = tech_space_construction
+        }
+    }
+
+   immediate = {
+       every_owned_planet = {
+           limit = { is_colony = yes }
+           random_list = {
+               20 = {
+                   modifier = {
+                       factor = 0
+                       free_district_slots < 0
+                   }
+               }
+               1 = {
+                   add_deposit = d_satellite_city
+                   random_list = {
+                       3 = {
+                           add_deposit = d_ethic_space_industry_cluster
+                           modifier = {
+                               factor = 0
+                               free_district_slots < 0
+                           }
+                       }
+                       3 = {
+                           add_deposit = d_ethic_space_industry_cluster_industrial
+                           modifier = {
+                               factor = 0
+                               free_district_slots < 0
+                           }
+                       }
+                       3 = {
+                           add_deposit = d_ethic_space_industry_cluster_research
+                           modifier = {
+                               factor = 0
+                               free_district_slots < 0
+                           }
+                       }
+                   }
+                   modifier = {
+                       add = 10
+                       free_housing <= 0
+                   }
+                   modifier = {
+                       add = 10
+                       free_district_slots = 0
+                   }
+               }
+           }
+       }
+   }
+}
+
+# AI科研船BUG修复
+namespace = ethic_ai_science_patch
+country_event = {
+    id = ethic_ai_science_patch.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        is_ai = yes
+    }
+
+   immediate = {
+       every_owned_fleet = {
+           limit = {
+               OR = {
+                   is_ship_size = science
+                   is_ship_size = explorer_vessel
+               }
+               NOT = { exists = leader }
+           }
+           owner = {
+               if = {
+                   limit = {
+                       any_owned_leader = {
+                           leader_class = scientist
+                           is_councilor = no
+                           is_ruler = no
+                       }
+                   }
+                   random_owned_leader = {
+                       limit = {
+                           leader_class = scientist
+                           is_councilor = no
+                           is_ruler = no
+                       }
+                       save_event_target_as = ai_scientist
+                   }
+               }
+               else = {
+                   create_leader = {
+                       class = scientist
+                       name = random
+                       species = owner_main_species
+                   }
+                   last_created_leader = {
+                       save_event_target_as = ai_scientist
+                       if = {
+                           limit = {
+                               has_skill > 1
+                               num_traits = 0
+                           }
+                           add_trait_no_notify = random_common
+                       }
+                   }
+               }
+           }
+           set_leader = event_target:ai_scientist
+       }
+   }
+}
+
+# 狗开的AI专精
+namespace = origin
+country_event = {
+    id = origin.5711
+    title = TRANSMISSION
+    desc = {
+        trigger = {
+            has_country_flag = imperial_fiefdom_harsh_response
+        }
+        text = origin.5705.desc.harsh
+    }
+    desc = {
+        trigger = {
+            has_country_flag = imperial_fiefdom_grateful_response
+        }
+        text = origin.5705.desc.grateful
+    }
+    desc = {
+        trigger = {
+            has_country_flag = imperial_fiefdom_reconsider_response
+        }
+        text = origin.5705.desc.reconsider
+    }
+    desc = {
+        trigger = {
+            NOR = {
+                has_country_flag = imperial_fiefdom_harsh_response
+                has_country_flag = imperial_fiefdom_grateful_response
+                has_country_flag = imperial_fiefdom_reconsider_response
+            }
+        }
+        text = origin.5705.desc
+    }
+
+    diplomatic = yes
+
+    is_triggered_only = yes
+
+    picture_event_data = {
+        portrait = event_target:overlord_empire
+        planet_background = event_target:overlord_empire
+        graphical_culture = event_target:overlord_empire
+        city_level = event_target:overlord_empire
+        room = event_target:overlord_empire.ruler
+    }
+
+    trigger = {
+        has_origin = origin_imperial_vassal
+        is_ai = no
+    }
+
+    option = {
+        trigger = {
+            has_valid_civic = civic_warrior_culture
+        }
+        name = origin.5705.a
+        origin_imperial_fiefdom_bulwark_specialization_effect = yes
+    }
+    option = {
+        trigger = {
+            has_valid_civic = civic_cyber_dictatorship
+        }
+        name = origin.5705.c
+        default_hide_option = yes
+        origin_imperial_fiefdom_scholarium_specialization_effect = yes
+    }
+    option = {
+        trigger = {
+            OR = {
+                has_authority = auth_corporate
+                has_valid_civic = civic_philosopher_king
+            }
+        }
+        name = origin.5705.e
+        origin_imperial_fiefdom_prospectorium_specialization_effect = yes
+    }
+
+
+    after = {
+        remove_country_flag = imperial_fiefdom_harsh_response
+        remove_country_flag = imperial_fiefdom_grateful_response
+    }
+}

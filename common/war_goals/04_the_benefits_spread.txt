@@ -1,0 +1,225 @@
+wg_the_benefits_spread ={
+	# wg_megacorp_subjugate
+	# wg_plunder
+	
+    casus_belli = cb_the_benefits_spread
+	
+	hide_if_no_cb = no
+	total_war = no
+	release_occupied_systems_on_status_quo = yes
+
+	galactic_empire_joins_defender = {
+		from = { is_galactic_emperor = yes }
+		imperial_authority >= 100
+	}
+	
+	allowed_peace_offers = {
+		status_quo
+		surrender
+		demand_surrender
+	}
+	
+	surrender_acceptance = -100 # wg_megacorp_subjugate
+	
+	potential = {
+		OR = {
+			has_valid_civic = civic_merchant_guilds
+			has_authority = auth_corporate
+		}
+		NOT = { has_ethic = ethic_fanatic_pacifist }
+		has_total_war_cb = no
+		from = { is_country_type = default }
+		NOT = { is_in_federation_with = from }
+		NOT = { has_ascension_perk = ap_become_the_crisis }
+		NAND = {
+			is_galactic_emperor = yes
+			from = { is_galactic_community_member = yes }
+		}
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = cannot_subjugate_empire_member
+			NAND = {
+				has_galactic_emperor = yes
+				is_galactic_community_member = no
+				from = { is_galactic_community_member = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_custodian"
+			from = { is_galactic_custodian = no }
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_emperor"
+			from = { is_galactic_emperor = no }
+		}
+		custom_tooltip = {
+			fail_text = "cannot_use_against_btc"
+			from = { has_been_declared_crisis = no }
+		}
+		custom_tooltip = {
+			fail_text = pax_galactica_active
+			NAND = {
+				is_active_resolution = resolution_emperor_pax_galactica
+				is_galactic_community_member = yes
+				from = { is_galactic_community_member = yes }
+			}
+		}
+	}
+	on_status_quo = {
+		if = {
+			limit = {
+				exists = last_created_country
+				last_created_country = {
+					has_country_flag = released_empire
+				}
+			}
+
+			last_created_country = {
+				set_origin_effect = yes
+				ROOT = {
+					switch = {
+						trigger = has_policy_flag
+						oppressive_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_oppressive
+								}
+							}
+						}
+						balanced_terms = {
+							PREV = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_balanced
+								}
+							}
+						}
+						benevolent_terms = {
+							PREV = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_benevolent
+								}
+							}
+						}
+					}
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+
+			if = {
+				limit = {
+					root = { has_authority = auth_corporate }
+					last_created_country = { has_authority = auth_corporate }
+				}
+				last_created_country = {
+					set_merchant_government_effect = yes
+				}
+			}
+		}
+		
+		custom_tooltip = wg_plunder_accept_them
+		add_resource = {
+			energy = 150
+			minerals = 150
+			mult = from.trigger:num_owned_planets
+		}
+		hidden_effect = { from = { add_modifier = { modifier = raided days = 3600 } } }
+	}
+	on_accept = {
+		FROM = {
+			if = {
+				limit = { has_been_declared_crisis = no }
+				ROOT = {
+					switch = {
+						trigger = has_policy_flag
+						oppressive_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_oppressive
+								}
+							}
+						}
+						balanced_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_balanced
+								}
+							}
+						}
+						benevolent_terms = {
+							FROM = {
+								set_subject_of = {
+									who = ROOT
+									preset = preset_subsidiary_benevolent
+								}
+							}
+						}
+					}
+				}
+				add_modifier = {
+					modifier = newly_subjugated_loyalty
+					years = 5
+				}
+			}
+		}
+
+		custom_tooltip = wg_plunder_accept_them
+		add_resource = {
+			energy = 150
+			minerals = 150
+			mult = from.trigger:num_owned_planets
+		}
+		hidden_effect = { from = { add_modifier = { modifier = raided days = 3600 } } }
+		
+		# add threat
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
+			every_country = {
+				limit = {
+					NOT = { is_country_type = fallen_empire }
+				}
+				add_threat = {
+					who = root
+					amount = 0.1
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = 10
+			NOT = { has_ethic = ethic_pacifist }
+		}
+		modifier = {
+			factor = 0.50
+			has_ethic = ethic_pacifist
+		}
+	}
+	
+}

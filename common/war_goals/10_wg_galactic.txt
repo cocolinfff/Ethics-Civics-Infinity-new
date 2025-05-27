@@ -1,0 +1,363 @@
+wg_liberation_from_the_empire = {
+	casus_belli = cb_io_liberation
+
+	hide_if_no_cb = yes
+	release_occupied_systems_on_status_quo = yes
+
+	allowed_peace_offers = {
+		status_quo
+		surrender
+		demand_surrender
+	}
+
+	surrender_acceptance = -100
+
+	potential = {
+		has_total_war_cb = no
+		NOT = { has_policy_flag = continuous_revolution }
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+	}
+	on_accept = {
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
+		}
+		from = {
+			copy_ethos_and_authority = root
+			remove_from_galactic_community = yes
+			join_alliance = { who = root override_requirements = yes }
+		}
+	}
+
+	on_status_quo = {
+		from = {
+			if = {
+				limit = {
+					has_civic = civic_galactic_sovereign
+				}
+				force_remove_civic = civic_galactic_sovereign
+			}
+			else_if = {
+				limit = {
+					has_civic = civic_galactic_sovereign_megacorp
+				}
+				force_remove_civic = civic_galactic_sovereign_megacorp
+			}
+			else_if = {
+				limit = {
+					has_civic = civic_galactic_sovereign_people
+				}
+				force_remove_civic = civic_galactic_sovereign_people
+			}
+		}
+		if = {
+			limit = {
+				exists = last_created_country
+				last_created_country = {
+					has_country_flag = released_empire
+				}
+			}
+
+			last_created_country = {
+				join_alliance = { who = root override_requirements = yes }
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 90
+	}
+}
+
+wg_galactic_revolution_liberation_from_the_empire = {
+	casus_belli = cb_galactic_revolution_liberation_from_the_empire
+
+	hide_if_no_cb = yes
+	release_occupied_systems_on_status_quo = yes
+
+	allowed_peace_offers = {
+		status_quo
+		surrender
+		demand_surrender
+	}
+
+	surrender_acceptance = -100
+
+	potential = {
+		has_total_war_cb = no
+		has_policy_flag = continuous_revolution
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+	}
+	on_accept = {
+		hidden_effect = {
+			from = {
+				if = {
+					limit = {
+						is_gestalt = no
+					}
+					impose_ideology_effect = yes
+				}
+	
+				every_subject = {
+					limit = {
+						is_gestalt = no
+					}
+					impose_ideology_effect = yes
+				}
+			}
+		    from = { add_modifier = { modifier = revolutionary_propaganda days = 18000 } }
+			end_rivalry = from
+			from = { end_rivalry = root }
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
+			every_system_within_border = {
+				limit = {
+					from = { has_claim = prev }
+				}
+				remove_claims = { who = from }
+			}
+			every_country = {
+				limit = {
+					OR = {
+						is_in_federation_with = root
+						AND = {
+							is_subject = yes
+							exists = overlord
+							overlord = { is_same_value = root }
+						}
+					}
+				}
+				end_rivalry = from
+				from = { end_rivalry = prev }
+				add_opinion_modifier = { modifier = opinion_we_liberated who = from }
+				from = { add_opinion_modifier = { modifier = opinion_liberated_us who = prev } }
+				every_system_within_border = {
+					limit = {
+						from = { has_claim = prev }
+					}
+					remove_claims = { who = from }
+				}
+			}
+			every_country = {
+				limit = {
+					is_subject = yes
+					exists = overlord
+					overlord = { is_same_value = from }
+				}
+				set_subject_of = {
+					who = none
+				}
+			}
+			from = { 
+				every_owned_pop_group = {
+					random_list = {
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_egalitarian
+						}
+						1 = {
+							wipe_pop_ethos = yes
+							pop_change_ethic = ethic_egalitarian
+						}
+						3 = { }
+					}
+					set_timed_pop_flag = { flag = changed_pop days = 2 }
+				}
+				capital_scope = {
+					every_owned_pop_group = {
+						random_list = {
+							2 = {
+								wipe_pop_ethos = yes
+								pop_change_ethic = ethic_egalitarian
+							}
+							1 = {
+								wipe_pop_ethos = yes
+								pop_change_ethic = ethic_egalitarian
+							}
+							2 = { }
+						}
+						set_timed_pop_flag = { flag = changed_pop days = 2 }
+					}
+				}
+			}
+			if = {
+				limit = {
+					root = {
+						OR = {
+							has_civic = civic_shared_burden
+							has_civic = civic_advanced_socialism
+						}
+					}
+					from = {
+						NOR = {
+							has_civic = civic_shared_burden
+							has_civic = civic_advanced_socialism
+						}
+					}
+				}
+				from = {
+					change_government = {
+						civics = { civic = civic_shared_burden civic = random }
+					}
+				}
+			}
+			if = {
+				limit = {
+					root = { has_civic = civic_socialistic }
+					from = { NOT = { has_civic = civic_socialistic } }
+				}
+				from = {
+					change_government = {
+						civics = { civic = civic_socialistic civic = random }
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				from = { is_galactic_community_member = no }
+			}
+			from = {
+				leave_alliance = { override_requirements = yes }
+				join_alliance = { who = root override_requirements = yes }
+			}
+		}
+		else_if = {
+			limit = {
+				from = { is_galactic_community_member = yes }
+			}
+			from = {
+				remove_from_galactic_community = yes
+				join_alliance = { who = root override_requirements = yes }
+			}
+		}
+	}
+
+	on_status_quo = {
+		if = {
+			limit = {
+				exists = last_created_country
+				last_created_country = {
+					has_country_flag = released_empire
+				}
+			}
+
+			last_created_country = {
+				join_alliance = { who = root override_requirements = yes }
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 90
+	}
+}
+
+wg_destroy_illegal_organizations = {
+	casus_belli = cb_io_dio
+
+	hide_if_no_cb = yes
+	release_occupied_systems_on_status_quo = yes
+
+	allowed_peace_offers = {
+		status_quo
+		surrender
+		demand_surrender
+	}
+
+	surrender_acceptance = -1000
+
+	potential = {
+		has_total_war_cb = no
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = has_claimed_all_systems
+			from = {
+				is_country_type = default
+				any_owned_planet = {
+					is_colony = yes
+					root = {
+						NOT = { has_claim = prev.solar_system }
+					}
+				}
+			}
+		}
+	}
+	on_accept = {
+		hidden_effect = {
+			from = {
+				add_threat = {
+					who = root
+					amount = 0.5
+				}
+			}
+		}
+		every_playable_country = {
+			limit = { is_in_federation_with = from }
+			leave_alliance = {
+				override_requirements = yes
+			}
+			add_to_galactic_community = yes
+		}
+		from = {
+			leave_alliance = {
+				override_requirements = yes
+			}
+			add_to_galactic_community = yes
+		}
+	}
+
+	on_status_quo = {
+		if = {
+			limit = {
+				exists = last_created_country
+				last_created_country = {
+					has_country_flag = released_empire
+				}
+			}
+			leave_alliance = {
+				override_requirements = yes
+			}
+			add_to_galactic_community = yes
+		}
+	}
+
+	ai_weight = {
+		weight = 90
+	}
+}

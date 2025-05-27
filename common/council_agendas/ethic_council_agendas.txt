@@ -1,0 +1,298 @@
+@base_agenda_cost = 7000
+@base_tradition_agenda_cost = 7000
+@short_agenda_cost = 3500
+
+agenda_reorganize_council = {
+    agenda_cost = @base_agenda_cost
+    potential = {
+        NOT = { has_ethic = ethic_gestalt_consciousness }
+        NOT = { has_origin =  origin_galaxy_iron_curtain }
+        has_paragon_dlc = yes
+        has_unlocked_council_positions >= 1
+    }
+    allow = {
+        always = yes
+    }
+    effect = {
+        unlock_council_selection = yes
+    }
+    ai_weight = {
+        base = 0
+    }
+}
+
+# 孤立传统
+agenda_tr_isolated = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        has_tradition = tr_isolated_adopt
+    }
+    potential = {
+        has_paragon_dlc = yes
+        is_regular_empire = yes		# Copied from Tradition potential.
+    }
+    modifier = {
+        country_starbase_influence_cost_distance_mult = -0.15
+        ship_home_territory_fire_rate_mult = 0.1
+    }
+    finish_modifier = agenda_tr_isolated_finish
+}
+
+# 崇高传统
+agenda_tr_noble = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        has_tradition = tr_noble_adopt
+    }
+    potential = {
+        has_paragon_dlc = yes
+        is_regular_empire = yes		# Copied from Tradition potential.
+    }
+    modifier = {
+        diplo_action_acceptance_add = 5
+    }
+    finish_modifier = agenda_tr_noble_finish
+}
+
+# 权利传统
+agenda_tr_right = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        has_tradition = tr_right_adopt
+    }
+    potential = {
+        has_paragon_dlc = yes
+        is_regular_empire = yes		# Copied from Tradition potential.
+    }
+    modifier = {
+        pop_factions_unity_produces_add = 0.15
+    }
+    finish_modifier = agenda_tr_right_finish
+}
+
+# 虔诚传统
+agenda_tr_piety = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        has_tradition = tr_piety_adopt
+    }
+    potential = {
+        has_paragon_dlc = yes
+        is_regular_empire = yes		# Copied from Tradition potential.
+    }
+    modifier = {
+        category_psionics_research_speed_mult = 0.15
+        category_psionics_draw_chance_mult = 0.25
+    }
+    finish_modifier = agenda_tr_piety_finish
+}
+
+# 未来传统
+agenda_tr_future = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        has_tradition = tr_future_adopt
+    }
+    potential = {
+        has_paragon_dlc = yes
+    }
+    modifier = {
+        planet_decision_enact_speed_mult = 0.15
+        pop_government_ethic_attraction = 0.25
+    }
+    finish_modifier = agenda_tr_future_finish
+}
+
+# 耦合传统
+agenda_tr_couplingyg = {
+    agenda_cost = 1080
+    allow = {
+        has_tradition = tr_couplingyg_adopt
+    }
+    potential = {
+        NAND = {
+            has_technology = tech_gargantuan_evolution
+            has_technology = tech_neuroregeneration
+            has_technology = tech_nanite_repair_system
+        }
+    }
+    effect = {
+        inverted_switch = {
+            trigger = has_technology
+            tech_gargantuan_evolution = {
+                add_tech_progress = {
+                    tech = tech_gargantuan_evolution
+                    progress = @agenda_award_tech_progress
+                }
+            }
+            tech_neuroregeneration = {
+                add_tech_progress = {
+                    tech = tech_neuroregeneration
+                    progress = @agenda_award_tech_progress
+                }
+            }
+            tech_nanite_repair_system = {
+                add_tech_progress = {
+                    tech = tech_nanite_repair_system
+                    progress = @agenda_award_tech_progress
+                }
+            }
+            default = {
+                add_monthly_resource_mult = {
+                    resource = society_research
+                    value = @tier3researchreward
+                    min = @tier3researchmin
+                    max = @tier3researchmax
+                }
+            }
+        }
+    }
+}
+
+
+
+
+# 经济计划
+agenda_comprehensive_development_plan = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        NOR = {
+            has_modifier = mod_agenda_basic_resource_planning
+            has_modifier = mod_agenda_manufacturing_transformation_plan
+            has_modifier = mod_agenda_cultural_development_programme
+            has_modifier = mod_agenda_advanced_research_projects
+            has_modifier = mod_agenda_foreign_trade_development_plan_plus
+        }
+    }
+    potential = {
+        is_planned_type = yes
+    }
+    modifier = {
+        planet_jobs_produces_mult = 0.05
+        all_technology_research_speed = 0.05
+        planet_building_build_speed_mult = 0.05
+        planet_pops_trade_produces_mult = 0.05
+        planet_jobs_upkeep_mult = 0.05
+    }
+    finish_modifier = mod_agenda_comprehensive_development_plan
+}
+agenda_basic_resource_planning = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        NOR = {
+            has_modifier = mod_agenda_comprehensive_development_plan
+            has_modifier = mod_agenda_manufacturing_transformation_plan
+            has_modifier = mod_agenda_cultural_development_programme
+            has_modifier = mod_agenda_advanced_research_projects
+            has_modifier = mod_agenda_foreign_trade_development_plan_plus
+        }
+    }
+    potential = {
+        is_planned_type = yes
+    }
+    modifier = {
+        planet_jobs_worker_produces_mult = 0.15
+        planet_districts_cost_mult = -0.1
+        planet_building_build_speed_mult = 0.1
+        station_gatherers_produces_mult = 0.1
+        planet_buildings_produces_mult = 0.1
+        pop_category_workers_energy_upkeep_add = 0.25
+        planet_buildings_upkeep_mult = 0.1
+    }
+    finish_modifier = mod_agenda_basic_resource_planning
+}
+agenda_manufacturing_transformation_plan = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        NOR = {
+            has_modifier = mod_agenda_comprehensive_development_plan
+            has_modifier = mod_agenda_basic_resource_planning
+            has_modifier = mod_agenda_cultural_development_programme
+            has_modifier = mod_agenda_advanced_research_projects
+            has_modifier = mod_agenda_foreign_trade_development_plan_plus
+        }
+    }
+    potential = {
+        is_planned_type = yes
+    }
+    modifier = {
+        planet_jobs_alloys_produces_mult = 0.15
+        planet_jobs_consumer_goods_produces_mult = 0.1
+        planet_district_industrial_build_speed_mult = 0.25
+        planet_refiners_upkeep_mult = -0.1
+        planet_translucers_upkeep_mult = -0.1
+        planet_chemists_upkeep_mult = -0.1
+        planet_jobs_productive_produces_mult = -0.1
+    }
+    finish_modifier = mod_agenda_manufacturing_transformation_plan
+}
+agenda_cultural_development_programme = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        NOR = {
+            has_modifier = mod_agenda_comprehensive_development_plan
+            has_modifier = mod_agenda_basic_resource_planning
+            has_modifier = mod_agenda_manufacturing_transformation_plan
+            has_modifier = mod_agenda_advanced_research_projects
+            has_modifier = mod_agenda_foreign_trade_development_plan_plus
+        }
+    }
+    potential = {
+        is_planned_type = yes
+    }
+    modifier = {
+        planet_jobs_unity_produces_mult = 0.15
+        country_unity_produces_mult = 0.1
+        pop_citizen_happiness = 0.05
+        planet_amenities_mult = 0.15
+        planet_pops_consumer_goods_upkeep_mult = 0.1
+    }
+    finish_modifier = mod_agenda_cultural_development_programme
+}
+agenda_advanced_research_projects = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        NOR = {
+            has_modifier = mod_agenda_comprehensive_development_plan
+            has_modifier = mod_agenda_basic_resource_planning
+            has_modifier = mod_agenda_manufacturing_transformation_plan
+            has_modifier = mod_agenda_cultural_development_programme
+            has_modifier = mod_agenda_foreign_trade_development_plan_plus
+        }
+    }
+    potential = {
+        is_planned_type = yes
+    }
+    modifier = {
+        all_technology_research_speed = 0.1
+        planet_researchers_produces_mult = 0.1
+        planet_jobs_physics_research_produces_mult = 0.05
+        planet_jobs_society_research_produces_mult = 0.05
+        planet_jobs_engineering_research_produces_mult = 0.05
+        planet_researchers_upkeep_mult = 0.1
+    }
+    finish_modifier = mod_agenda_advanced_research_projects
+}
+agenda_foreign_trade_development_plan = {
+    agenda_cost = @base_tradition_agenda_cost
+    allow = {
+        NOR = {
+            has_modifier = mod_agenda_comprehensive_development_plan
+            has_modifier = mod_agenda_basic_resource_planning
+            has_modifier = mod_agenda_manufacturing_transformation_plan
+            has_modifier = mod_agenda_cultural_development_programme
+            has_modifier = mod_agenda_advanced_research_projects
+        }
+    }
+    potential = {
+        is_planned_type = yes
+    }
+    modifier = {
+        commercial_pact_mult = 0.15
+        planet_jobs_trade_produces_mult = 0.15
+        diplomacy_upkeep_mult = -0.15
+        country_trust_cap_add = 25
+        pop_government_ethic_attraction = -0.33
+    }
+    finish_modifier = mod_agenda_foreign_trade_development_plan_plus
+}

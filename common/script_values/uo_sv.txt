@@ -1,0 +1,189 @@
+
+#To use one of them, refer to them elsewhere in script via "value:<value>" e.g. value:example_value
+#IMPORTANT NOTE: Be mindful of performance when using these in triggers that are checked often!
+
+# example_value = {
+# 	base = 10 #default: 0
+
+# 	# List of valid mathematical operations:
+# 	# 	Numerical (modifying by a number):
+# 	# 	- set/weight (both do the same, replaces the current result with this value)
+# 	# 	- add
+# 	# 	- subtract
+# 	# 	- factor/mult/multiply ("multiply" fits the name scheme of the rest better, but the other two were kept for historical reasons)
+# 	# 	- divide
+# 	# 	- modulo
+# 	# 	- round_to (rounds to nearest of that value, e.g. 10.7 round_to 5 gives you 10)
+# 	# 	- max (sets to specified value if currently above it)
+# 	# 	- min (sets to specified value if currently below it)
+# 	# 	- pow (value is multiplied by itself to the power of x; be careful, you can get overflows if you are not careful)
+# 	# 	Simple (do not need a number, but just "yes", e.g. "round = yes")
+# 	# 	- round (sets to nearest full number)
+# 	# 	- ceiling (rounds up)
+# 	# 	- floor (rounds down)
+# 	# 	- abs (multiply by -1 if negative)
+# 	# 	- square (multiply by itself)
+# 	# 	- square_root
+
+# 	#All mathematical operations except weight and factor can be used inline e.g.
+# 	add = 100
+# 	multiply = value:some_other_script_value
+# 	round = yes
+# 	#(Note: weight and factor will instead overwrite the base value - use set, mult or multiply instead)
+
+# 	#They can also be used in modifier = {} fields, which lets you only apply them if triggers are true
+# 	modifier = {
+# 		max = owner.max_example_variable 					#Variable set by set_variable
+# 		owner = { is_variable_set = max_example_variable }	#Only applied if this trigger is true
+# 	}
+# 	# What works for right hand side values of mathematical operations? See events/00_how_to_use_variables for full list.
+
+# 	complex_trigger_modifier = { 	#This lets you get the value of a trigger that you can't use in one-liners because it uses {}
+# 		trigger = count_owned_planet
+# 		trigger_scope = owner 		#Lets you get the result of the trigger on a different scope. Default is "this"
+# 		parameters = { 				#Stick any further information necessary in here, like you'd do within the {} of the trigger normally
+# 			limit = { num_pops > 10 }
+# 		}
+# 		mode = add 					#Allows all numerical operations
+# 		mult = 5 					#Multiplies the outcome by this. In this example, this means adding 5 for each planet with more than 10 pops
+# 	}
+# }
+
+# Final note: script_values use the same metascript system as scripted_triggers and scripted_effects
+# This means that you can input parameters into them, in a similar fashion as described in scripted_effects/99_advanced_documentation.txt
+# For format for doing so is value:my_value|PARAM1|value1|PARAM2|value2|.
+# Then you can use $PARAM1$ in the script value and it will replace it with value1
+
+uo_sv_gt_obj_unity_value = { #凝聚力花费
+	base = 0
+	modifier = { set = this.uo_gt_obj_price is_variable_set = uo_gt_obj_price }
+	mult = 2
+	round = yes
+	min = 0
+	max = 99999999
+}
+
+uo_sv_gt_obj_value_fleet = { #舰队的价值
+	base = 1
+	modifier = { add = trigger:fleet_power }
+	modifier = { mult = 0.001 }
+	modifier = { add = trigger:fleet_size }
+	modifier = { add = 2 any_owned_ship = { is_ship_class = shipclass_colonizer } }
+	modifier = { add = 1 any_owned_ship = { is_ship_class = shipclass_constructor } }
+	modifier = { add = 1 any_owned_ship = { is_ship_class = shipclass_science_ship } }
+	modifier = { add = 1000 any_owned_ship = { is_ship_size = juggernaut } }
+	modifier = { add = 1000 any_owned_ship = { is_ship_size = colossus } }
+	abs = yes
+	round = yes
+	min = 1
+	max = 99999999
+}
+uo_sv_gt_obj_value_planet = { #星球的价值
+	base = 1
+	modifier = { add = 10 is_colonizable = yes }
+	modifier = { add = 50 has_owner = yes owner = { is_primitive = no } }
+	modifier = { add = trigger:planet_size can_colonize = { who = event_target:uo_une status = yes } }
+	modifier = { add = trigger:planet_size is_colonizable = yes }
+	modifier = { add = trigger:planet_size has_owner = yes owner = { is_primitive = no } }
+	modifier = { add = trigger:num_pops has_owner = yes }
+	modifier = { add = trigger:num_pops has_owner = yes owner = { is_primitive = no } }
+	modifier = { add = trigger:num_armies has_owner = yes owner = { is_primitive = no } }
+	modifier = { add = 1 has_strategic_resource = yes }
+	modifier = { add = 30 is_terraformed = yes }
+	modifier = { add = 10 has_mining_station = yes }
+	modifier = { add = 10 has_research_station = yes }
+	modifier = { add = 20 has_anomaly = yes }
+	add = trigger:num_minerals
+	add = trigger:num_physics
+	add = trigger:num_society
+	add = trigger:num_engineering
+	add = trigger:num_energy
+	complex_trigger_modifier = { trigger = num_buildings parameters = { type = any } mode = add mult = 1 }
+	complex_trigger_modifier = { trigger = num_districts parameters = { type = any } mode = add mult = 1 }
+	abs = yes
+	round = yes
+	min = 1
+	max = 99999
+}
+uo_sv_obj_value_megastructure = { #巨构的价值
+	base = 300
+	modifier = { set = 100 is_megastructure_type = spy_orb_ruined }
+	modifier = { set = 100 is_megastructure_type = spy_orb_1 }
+	modifier = { set = 200 is_megastructure_type = spy_orb_2 }
+	modifier = { set = 300 is_megastructure_type = spy_orb_3 }
+	modifier = { set = 400 is_megastructure_type = spy_orb_4 }
+	modifier = { set = 400 is_megastructure_type = spy_orb_restored }
+
+	modifier = { set = 100 is_megastructure_type = think_tank_ruined }
+	modifier = { set = 100 is_megastructure_type = think_tank_1 }
+	modifier = { set = 200 is_megastructure_type = think_tank_2 }
+	modifier = { set = 300 is_megastructure_type = think_tank_3 }
+	modifier = { set = 400 is_megastructure_type = think_tank_4 }
+	modifier = { set = 100 is_megastructure_type = think_tank_restored }
+
+	modifier = { set = 100 is_megastructure_type = dyson_sphere_ruined }
+	modifier = { set = 100 is_megastructure_type = dyson_sphere_1 }
+	modifier = { set = 200 is_megastructure_type = dyson_sphere_2 }
+	modifier = { set = 300 is_megastructure_type = dyson_sphere_3 }
+	modifier = { set = 400 is_megastructure_type = dyson_sphere_4 }
+	modifier = { set = 500 is_megastructure_type = dyson_sphere_5 }
+	modifier = { set = 500 is_megastructure_type = dyson_sphere_restored }
+
+	modifier = { set = 100 is_megastructure_type = ring_world_2_intermediate }
+	modifier = { set = 200 is_megastructure_type = ring_world_ruined }
+	modifier = { set = 300 is_megastructure_type = ring_world_restored }
+
+	modifier = { set = 100 is_megastructure_type = matter_decompressor_ruined }
+	modifier = { set = 100 is_megastructure_type = matter_decompressor_1 }
+	modifier = { set = 100 is_megastructure_type = matter_decompressor_2 }
+	modifier = { set = 200 is_megastructure_type = matter_decompressor_3 }
+	modifier = { set = 300 is_megastructure_type = matter_decompressor_4 }
+	modifier = { set = 300 is_megastructure_type = matter_decompressor_restored }
+
+	modifier = { set = 100 is_megastructure_type = strategic_coordination_center_ruined }
+	modifier = { set = 100 is_megastructure_type = strategic_coordination_center_1 }
+	modifier = { set = 200 is_megastructure_type = strategic_coordination_center_2 }
+	modifier = { set = 300 is_megastructure_type = strategic_coordination_center_3 }
+	modifier = { set = 300 is_megastructure_type = strategic_coordination_center_restored }
+
+	modifier = { set = 100 is_megastructure_type = mega_art_installation_ruined }
+	modifier = { set = 100 is_megastructure_type = mega_art_installation_1 }
+	modifier = { set = 200 is_megastructure_type = mega_art_installation_2 }
+	modifier = { set = 300 is_megastructure_type = mega_art_installation_3 }
+	modifier = { set = 400 is_megastructure_type = mega_art_installation_restored }
+	modifier = { set = 400 is_megastructure_type = mega_art_installation_restored_2 }
+
+	modifier = { set = 100 is_megastructure_type = interstellar_assembly_ruined }
+	modifier = { set = 100 is_megastructure_type = interstellar_assembly_1 }
+	modifier = { set = 200 is_megastructure_type = interstellar_assembly_2 }
+	modifier = { set = 300 is_megastructure_type = interstellar_assembly_3 }
+	modifier = { set = 400 is_megastructure_type = interstellar_assembly_4 }
+	modifier = { set = 500 is_megastructure_type = interstellar_assembly_restored }
+
+	modifier = { set = 100 is_megastructure_type = mega_shipyard_ruined }
+	modifier = { set = 100 is_megastructure_type = mega_shipyard_1 }
+	modifier = { set = 200 is_megastructure_type = mega_shipyard_2 }
+	modifier = { set = 300 is_megastructure_type = mega_shipyard_3 }
+	modifier = { set = 300 is_megastructure_type = mega_shipyard_restored }
+
+	modifier = { set = 100 is_megastructure_type = crisis_sphere_0 }
+	modifier = { set = 200 is_megastructure_type = crisis_sphere_1 }
+	modifier = { set = 300 is_megastructure_type = crisis_sphere_2 }
+	modifier = { set = 400 is_megastructure_type = crisis_sphere_3 }
+	modifier = { set = 500 is_megastructure_type = crisis_sphere_4 }
+
+	modifier = { set = 100 is_megastructure_type = quantum_catapult_ruined }
+	modifier = { set = 100 is_megastructure_type = quantum_catapult_0 }
+	modifier = { set = 200 is_megastructure_type = quantum_catapult_1 }
+	modifier = { set = 300 is_megastructure_type = quantum_catapult_2 }
+	modifier = { set = 400 is_megastructure_type = quantum_catapult_3 }
+	modifier = { set = 400 is_megastructure_type = quantum_catapult_restored }
+
+	modifier = { set = 100 is_megastructure_type = quantum_catapult_ruined_slingshot }
+	modifier = { set = 200 is_megastructure_type = quantum_catapult_restored_slingshot }
+
+	abs = yes
+	round = yes
+	min = 1
+	max = 99999
+}

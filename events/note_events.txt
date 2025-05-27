@@ -1,0 +1,276 @@
+namespace = ethic_notice
+
+event = {
+	id = ethic_notice.0
+	hide_window = yes
+	is_triggered_only = yes
+	immediate = {
+		#set_global_flag = ethic_notice_20250106
+		every_country = {
+			limit = {
+				is_ai = no
+			}
+			country_event = { id = ethic_notice.4 }
+		}
+
+		every_country = {
+			limit = { is_ai = no }
+			country_event = { id = ethic_notice.1 }
+		}
+
+		if = {
+			limit = {
+				OR = {
+					has_global_flag = cultural_overhaul_funefork_active
+					has_global_flag = ethic_civic_classic_active
+					has_global_flag = bug_branch_active
+				}
+			}
+			every_country = {
+				limit = { is_ai = no }
+				country_event = { id = ethic_notice.5 }
+			}
+		}
+	}
+}
+
+
+country_event = {
+	id = ethic_notice.1
+	title = "ethic_notice.1.name"
+	desc = "ethic_notice.1.desc"
+	picture = GFX_evt_MSI
+	location = ROOT
+	is_triggered_only = yes
+	option = {
+		name = ethic_economic_setting_complete_option
+		hidden_effect = {
+			every_country = {
+				add_resource = { energy = 100	}
+				add_resource = { minerals = 100 }
+				add_resource = { alloys = 100	}
+				if = {
+					limit = {
+						OR = {
+							is_gestalt = no
+							has_valid_civic = civic_machine_servitor
+							has_valid_civic = civic_hive_capital_creates_gods
+							has_valid_civic = civic_machine_financial_investment
+						}
+					}
+					add_resource = { consumer_goods = 100 }
+				}
+				give_starting_resources_effect = yes
+				remove_modifier = cm_industrial_boom_energy
+				remove_modifier = cm_industrial_boom_food
+				remove_modifier = cm_industrial_boom_mineral
+				remove_modifier = cm_industrial_boom_light
+				remove_modifier = cm_industrial_boom_heavy
+			}
+			if = {
+				limit = { NOT = { has_global_flag = eci_star } }
+				set_global_flag = eci_star
+			}
+			if = {
+				limit = { has_valid_civic = civic_constitutional_monarchy }
+				if = {
+					limit = {
+						any_owned_leader = {
+							NOR = {
+								is_ruler = yes
+								has_trait = leader_trait_eci_king
+								has_trait = leader_trait_eci_heir
+								has_trait = leader_trait_eci_royalty
+							}
+						}
+					}
+					random_owned_leader = {
+						limit = {
+							NOT = { has_trait = leader_trait_eci_king }
+						}
+						add_trait = leader_trait_eci_king
+					}
+				}
+				if = {
+					limit = {
+						any_owned_leader = {
+							NOT = { has_trait = leader_trait_eci_heir }
+						}
+					}
+					random_owned_leader = {
+						limit = {
+							NOR = {
+								is_ruler = yes
+								has_trait = leader_trait_eci_king
+								has_trait = leader_trait_eci_heir
+								has_trait = leader_trait_eci_royalty
+							}
+						}
+						add_trait = leader_trait_eci_heir
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_global_flag = eci_star } }
+		name = "ethic_notice.1.auto_base"
+		custom_tooltip = ethic_notice.1.auto_base.tooltip
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_global_flag = eci_auto_base_yes } }
+				set_global_flag = eci_auto_base_yes
+				country_event = { id = ethic_notice.1 }
+			}
+			else_if = {
+				limit = { has_global_flag = eci_auto_base_yes }
+				remove_global_flag = eci_auto_base_yes
+				country_event = { id = ethic_notice.1 }
+			}
+		}
+	}
+	option = {
+		trigger = { has_global_flag = eci_star }
+		name = "ethic_notice.1.auto_base"
+		custom_tooltip = ethic_notice.1.auto_base_notice.tooltip
+		hidden_effect = {
+			country_event = { id = ethic_notice.1 }
+		}
+	}
+
+	option = {
+		name = ethic_economic_setting_admin_cap_option
+		trigger = {
+			has_global_flag = eci_star
+			NOT = { has_valid_civic = civic_anarchism }
+			is_community_country = no
+		}
+		hidden_effect = {
+			custom_tooltip = edict_ethic_admin_cap_effect
+			country_event = { id = ethic_admin_cap.1 }
+		}
+	}
+
+	option = {
+		name = "ethic_notice.1.news"
+		custom_tooltip = ethic_notice.1.news.tooltip
+		hidden_effect = {
+			country_event = { id = ethic_notice.2 }
+		}
+	}
+}
+
+country_event = {
+	id = ethic_notice.2
+	title = ethic_notice.2.name
+	desc = ethic_notice.2.desc
+	picture = GFX_evt_stardust
+	is_triggered_only = yes
+	option = {
+		name = ethic_notice.2.a
+		hidden_effect = {
+			country_event = { id = ethic_notice.1 }
+		}
+	}
+}
+
+event = {
+	id = ethic_notice.3
+	hide_window = yes
+	is_triggered_only = yes
+	trigger = {
+		has_global_flag = eci_star
+		NOT = { has_global_flag = ethic_notice_20250106 }
+	}
+	immediate = {
+		every_country = {
+			limit = {
+				is_ai = no
+			}
+			country_event = { id = ethic_notice.4 }
+		}
+		every_country = {
+			every_owned_planet = {
+				eci_primitive_trade = yes
+				if = {
+					limit = { NOT = { has_deposit = d_ethic_primitive_trade } }
+					add_deposit = d_ethic_primitive_trade
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = ethic_notice.4
+	title = ethic_notice.4.name
+	desc = ethic_notice.4.desc
+	picture = GFX_evt_MSI
+	is_triggered_only = yes
+	immediate = {
+		if = {
+			limit = { NOT = { has_global_flag = ethic_notice_20250106 } }
+			set_global_flag = ethic_notice_20250106
+		}
+		every_galaxy_planet = {
+			limit = { has_building = building_private_commercial_megaplex }
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+			remove_building = building_private_commercial_megaplex
+		}
+	}
+	option = {
+		name = ethic_notice.4.a
+	}
+}
+
+country_event = {
+	id = ethic_notice.5
+	title = ethic_notice.5.name
+	desc = ethic_notice.5.desc
+	picture = GFX_evt_MSI
+	is_triggered_only = yes
+	option = {
+		name = ethic_notice.4.a
+	}
+}

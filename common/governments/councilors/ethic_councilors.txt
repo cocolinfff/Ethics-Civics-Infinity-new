@@ -1,0 +1,3543 @@
+# Councilor Documentation
+#
+# councilor_name_key = {
+#    civic = civic_imperial_cult		Civic that is required for this council position. Also used by UI. Default = none.
+#    leader_class = { }					Which leader classes can have this council position. Currently only used for the Recruit new Leader buttons. Default = none.
+#    is_leader_possible = { }			Can a leader have this council position. Used to filter leaders. Scope: THIS = Leader.
+#    modifier = { }						Country Modifier, that is multiplied by assigned Leader's level.
+#	 custom_tooltip = "LOC_KEY"			Custom tooltip text shown for the modifier of the council position.
+#	 conditional_tooltip = "LOC_KEY"	Custom tooltip text shown for the requirements of the council position.
+# }
+
+################################
+## 统治者
+################################
+#直接民主
+councilor_ruler_direct_democratic = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		diplomacy_influence_upkeep_mult = -0.02
+		diplo_action_acceptance_add = 2
+		country_trust_growth = 0.02
+	}
+	icon = "GFX_icon_councilor_research"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#间接民主
+councilor_ruler_democratic = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		pop_factions_unity_produces_mult = 0.02
+		edicts_upkeep_mult = -0.025
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#寡头制
+councilor_ruler_oligarchic = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		councilor_exp_gain = 0.1
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#专制
+councilor_ruler_dictatorial = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		council_agenda_progress_speed = 0.025
+		council_agenda_finishing_effect_duration_mult = 0.025
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#君主制
+councilor_ruler_imperial = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		planet_stability_add = 1.5
+		country_base_influence_produces_add = 0.1
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#蜂巢
+councilor_ruler_hive_mind = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		country_unity_produces_mult = 0.02
+		country_leader_cap_add = 1
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#智械
+councilor_ruler_machine_intelligence = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		empire_size_pops_mult = -0.03
+		country_leader_cap_add = 1
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#企业政府
+councilor_ruler_corporate = {
+	leader_class = { official commander scientist }
+	possible = { always = no }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	modifier = {
+		branch_office_value_mult = 0.02
+		trade_value_reduction = -0.02
+	}
+	icon = "GFX_icon_councilor_ruler"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席科学家
+councilor_research = {
+	leader_class = { scientist }
+
+	possible = {
+		is_gestalt = no
+		OR = {
+			NOT = { has_origin =  origin_galaxy_iron_curtain }
+			is_egalitarian = yes
+		}
+	}
+
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	modifier = {
+		physics_tech_cost_mult = -0.01
+		society_tech_cost_mult = -0.01
+		engineering_tech_cost_mult = -0.01
+	}
+	icon = "GFX_icon_councilor_research"
+	optional = {
+		has_paragon_dlc = yes
+	}
+	ai_hiring_weight = {
+		base = 99999
+	}
+}
+
+#国防部长
+councilor_defense = {
+	leader_class = { commander }
+
+	possible = {
+		is_gestalt = no
+		OR = {
+			NOT = { has_origin =  origin_galaxy_iron_curtain }
+			is_egalitarian = yes
+		}
+	}
+
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = commander
+		}
+	}
+	modifier = {
+		ships_upkeep_mult = -0.02
+		armies_upkeep_mult = -0.02
+		starbases_upkeep_mult = -0.02
+	}
+	icon = "GFX_icon_councilor_defense"
+	optional = {
+		has_paragon_dlc = yes
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#国务卿
+councilor_state = {
+	leader_class = { official }
+
+	possible = {
+		blocks_minister_of_state = no
+		OR = {
+			NOT = { has_origin =  origin_galaxy_iron_curtain }
+			is_egalitarian = yes
+		}
+	}
+
+	is_leader_possible = {
+		leader_class = official
+	}
+	modifier = {
+		diplo_action_acceptance_add = 0.5
+		envoy_improve_relations_mult = 0.02
+		envoy_harm_relations_mult = 0.02
+		spy_network_daily_value_mult = 0.02
+	}
+	icon = "GFX_icon_councilor_state"
+	optional = {
+		has_paragon_dlc = yes
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#君主-大宪章
+councilor_king = {
+	leader_class = { official commander scientist }
+	possible = {
+		has_valid_civic =  civic_constitutional_monarchy
+	}
+	is_leader_possible = {
+		has_trait = leader_trait_eci_king
+	}
+	modifier = {
+		planet_stability_add = 1.5
+		country_base_influence_produces_add = 0.1
+		pop_factions_produces_mult = 0.015
+	}
+	icon = "GFX_icon_councilor_ruler"
+	civic = civic_constitutional_monarchy
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#议会长-新民主（效果变更）
+councilor_parliamentary_system = {
+	possible = {
+		has_valid_civic =  civic_parliamentary_system
+	}
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_parliamentary_system
+	modifier = {
+		faction_approval = 0.015
+	}
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+################################
+## 原始文明的寡头
+################################
+councilor_prime_oligarch_1 = {
+	leader_class = { official }
+	possible = {
+		has_origin =  origin_galaxy_iron_curtain
+		is_egalitarian = no
+	}
+	is_leader_possible = {
+		leader_class = official
+	}
+	modifier = {
+		planet_pops_trade_produces_mult = 0.15
+		pop_cat_worker_political_power = -0.1
+	}
+	icon = "GFX_icon_councilor_state"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+councilor_prime_oligarch_2 = {
+	leader_class = { scientist official }
+
+	possible = {
+		has_origin =  origin_galaxy_iron_curtain
+		is_egalitarian = no
+	}
+
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	modifier = {
+		category_statecraft_research_speed_mult = 0.1
+		category_good_trading_research_speed_mult = 0.1
+		category_propulsion_research_speed_mult = -0.1
+	}
+	icon = "GFX_icon_councilor_research"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+councilor_prime_oligarch_3 = {
+	possible = {
+		has_origin =  origin_galaxy_iron_curtain
+		NOT = { has_valid_civic =  civic_constitutional_monarchy }
+		is_egalitarian = no
+	}
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	modifier = {
+		pop_cat_ruler_political_power = 0.5
+		country_pop_enslaved_mult = 0.05
+		pop_cat_slave_happiness = -0.05
+	}
+	icon = "GFX_icon_councilor_state"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+councilor_prime_oligarch_4 = {
+	possible = {
+		has_origin =  origin_galaxy_iron_curtain
+		is_egalitarian = no
+	}
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	modifier = {
+		planet_criminal_produces_mult = 0.1
+		pop_cat_ruler_happiness = 0.1
+		planet_crime_mult = 0.1
+	}
+	icon = "GFX_icon_councilor_state"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+councilor_prime_oligarch_5 = {
+	leader_class = { commander }
+	possible = {
+		has_origin =  origin_galaxy_iron_curtain
+		is_egalitarian = no
+	}
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	modifier = {
+		planet_army_build_speed_mult = 0.1
+		country_power_projection_influence_produces_add = 0.25
+		planet_jobs_unity_produces_mult = -0.1
+	}
+	icon = "GFX_icon_councilor_defense"
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+
+
+################################
+## 国策
+################################
+###超主题理念###
+#万军之主-大撕裂
+councilor_atomic_society = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_atomic_society
+	modifier = {
+		country_commander_cap_add = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+		modifier = { add = 99999 }
+	}
+}
+
+#净化专员-种族洁癖
+councilor_fanatic_purifiers = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_fanatic_purifiers
+	modifier = {
+		pop_category_purge_produces_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#外务部长-利他主义
+councilor_altruism = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_altruism
+	modifier = {
+		diplo_action_acceptance_add = 5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#经济学顾问-三倍利润
+councilor_triple_the_profit = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_triple_the_profit
+	modifier = {
+		trade_value_reduction = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#青年教官-拥国之军
+councilor_having_a_national_army = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_having_a_national_army
+	modifier = {
+		armies_cost_mult = -0.10
+		starbase_shipyard_build_cost_mult = -0.10
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#友谊部书记-先验共产主义
+councilor_transcendental_utopia = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_transcendental_utopia
+	modifier = {
+		pop_cat_worker_happiness = 0.03
+		planet_amenities_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#时空管理局局长-量子社会学
+councilor_quantum_sociology = {
+	leader_class = { official scientist commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+			leader_class = commander
+		}
+	}
+	civic = civic_quantum_sociology
+	modifier = {
+		ship_ftl_jumpdrive_range_mult = 0.05
+		ship_jumpdrive_cooldown_mult = -0.05
+		shroud_delve_cooldown = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#飞升部长-超凡入圣
+councilor_transcendence = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_transcendence
+	modifier = {
+		country_unity_produces_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+
+###主题理念###
+#供销社总经理-工团主义
+councilor_state_owned_enterprises = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_worker_coop
+	modifier = {
+		planet_jobs_consumer_goods_produces_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#冠军战士-尚武部落
+councilor_martial_tribes = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_martial_tribes
+	modifier = {
+		army_attack_morale_mult = 0.15
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#卫队统帅-战争领主
+councilor_military_dictatorship = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_military_dictatorship
+	modifier = {
+		ship_fire_rate_mult = 0.01
+		ship_home_territory_fire_rate_mult = 0.01
+	}
+	custom_tooltip = "councilor_military_dictatorship_custom_modifier_desc"
+}
+
+#和平仲裁官-和平乌托邦
+councilor_peaceful_republic = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_peaceful_republic
+	modifier = {
+		planet_stability_add = 1
+		pop_happiness = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#总架构师-网络民主
+councilor_cyber_demos_cratos = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_cyber_demos_cratos
+	modifier = {
+		pop_happiness = 0.02
+		category_computing_research_speed_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#神圣庭长-众神议会
+councilor_divine_council = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_exalted_priesthood
+	modifier = {
+		edicts_upkeep_mult = -0.03
+		edicts_cost_mult = -0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#执行理事长-科学理事会
+councilor_technocracy = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_technocracy
+	custom_tooltip = "councilor_technocracy_custom_modifier_desc"
+}
+
+#风纪委员-学园都市
+councilor_head_of_education = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_civil_education
+	modifier = {
+		species_leader_exp_gain = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#杰出青年骑士-科研骑士
+councilor_science_knight = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_cyber_dictatorship
+	modifier = {
+		planet_knights_physics_research_produces_add = 0.5
+		planet_knights_engineering_research_produces_add = 0.5
+		planet_knights_society_research_produces_add = 0.5
+		pop_cat_worker_happiness = -0.075
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#君王之手-世袭贵族
+councilor_eternal_kingship = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_aristocratic_elite
+	modifier = {
+		country_influence_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#巡回宣教使-圣灵议会
+councilor_spiritual_democracy = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_spiritual_democracy
+	modifier = {
+		pop_citizen_happiness = 0.02
+		pop_ethic_spiritualist_attraction_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#人民代表-劳动民主（效果变更）
+councilor_shared_burden = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_shared_burden
+	modifier = {
+		planet_jobs_worker_produces_mult = 0.02
+		pop_cat_worker_happiness = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#计划委员会主席-革命先锋队
+councilor_socialistic = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_socialistic
+	modifier = {
+		planet_jobs_worker_produces_mult = 0.02
+		planet_building_build_speed_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#总设计师-工人贵族
+councilor_labor_aristocracy = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_labor_aristocracy
+	modifier = {
+		planet_jobs_worker_produces_mult = 0.015
+		planet_jobs_ruler_produces_mult = 0.01
+		pop_cat_worker_happiness = -0.015
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#光明会会监-全息之眼
+councilor_ultimate_collective = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_ultimate_collective
+	modifier = {
+		pop_government_ethic_attraction = 0.1
+		pop_cat_ruler_political_power = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#中央银行行长-大康采恩
+councilor_state_monopoly = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_merchant_guilds
+	modifier = {
+		planet_buildings_cost_mult = -0.03
+		planet_districts_cost_mult = -0.03
+		planet_buildings_upkeep_mult = 0.01
+		planet_districts_upkeep_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#帝国元帅-光荣与梦想
+councilor_glory_and_dream = {
+	leader_class = { commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	civic = civic_glory_and_dream
+	modifier = {
+		weapon_type_strike_craft_weapon_damage_mult = 0.05
+		army_morale = 0.05
+		ships_upkeep_mult = 0.01
+		armies_upkeep_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#社会改造导师-民族与阶级
+councilor_nazbol = {
+	leader_class = { scientist commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+		}
+	}
+	civic = civic_nazbol
+	modifier = {
+		pop_citizen_happiness = 0.02
+		planet_jobs_unity_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#部长会议主席-主权邦联
+councilor_coalition_government = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_coalition_government
+	modifier = {
+		empire_size_systems_mult = -0.05
+		empire_size_colonies_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+#部长会议主席-联合政府
+councilor_coalition_government_overlord = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_coalition_government_overlord
+	modifier = {
+		empire_size_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#总参谋长-秩序军政
+councilor_stratocracy = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_citizen_service
+	modifier = {
+		commander_exp_gain = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#真部-思想设计师
+councilor_glorious_pioneer = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_glorious_pioneer
+	modifier = {
+		planet_stability_add = 2
+		planet_jobs_slave_produces_mult = 0.05
+
+	}
+}
+
+#礼部大臣-家国同构
+councilor_home_country_isomorphism = {
+	leader_class = { official}
+	is_leader_possible = {
+		leader_class = official
+	}
+	modifier = {
+		planet_stability_add = 2
+		monthly_loyalty_from_subjects = 0.2
+	}
+	civic = civic_home_country_isomorphism
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#殖民总督-殖民政府
+councilor_colonial_government = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	modifier = {
+		job_soldier_stability_add = 5
+		job_soldier_add = 1
+		pop_happiness = -0.1
+	}
+	civic = civic_colonial_government
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+
+###国民文化###
+#机械牧首-受控人仆
+councilor_machine_soul_servant = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	civic = civic_machine_soul_servant
+	modifier = {
+		planet_jobs_robotic_unity_produces_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#智识先知-知识崇拜
+councilor_knowledge_seeker = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_knowledge_seeker
+	modifier = {
+		planet_researchers_unity_produces_add = 0.25
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#繁衍圣徒-生殖崇拜
+councilor_Fertility_worship = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_Fertility_worship
+	modifier = {
+		logistic_growth_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#大德鲁伊-德鲁伊之道
+councilor_The_Druid_Way = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_The_Druid_Way
+	modifier = {
+		pop_environment_tolerance = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#修会首领-精神探寻者
+councilor_spiritual_seekers = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_spiritual_seekers
+	modifier = {
+		category_psionics_research_speed_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#叔叔-无休之季
+councilor_eternal_jihad = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_eternal_jihad
+	modifier = {
+		pop_amenities_usage_mult = 0.02
+		pop_citizenry_happiness = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#人民教宗-解放神学
+councilor_liberation_theology = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_liberation_theology
+	modifier = {
+		pop_ethic_egalitarian_attraction_mult = 0.1
+		pop_ethic_spiritualist_attraction_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#贵血王公-种姓制度
+councilor_divine_order = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_divine_order
+	modifier = {
+		pop_cat_ruler_political_power = 1
+		pop_cat_worker_political_power = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#大教育家-苦难回响
+councilor_echoes_of_suffering = {
+	leader_class = { official scientist commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+			leader_class = commander
+		}
+	}
+	civic = civic_echoes_of_suffering
+	modifier = {
+		pop_cat_worker_happiness = -0.05
+		planet_stability_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#未来设计师-后发先至
+councilor_procrastination = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_procrastination
+	modifier = {
+		country_government_civic_points_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#全国劳动模范-行业标兵
+councilor_industry_pacesetter = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	civic = civic_industry_pacesetter
+	modifier = {
+		planet_jobs_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#大奴隶主-奴役暴君
+councilor_reeducated_labor = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_reeducated_labor
+	custom_tooltip = "councilor_slaver_guilds_custom_modifier_desc"
+}
+
+#荣誉大使-普世主义
+councilor_peacekeepers = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_peacekeepers
+	modifier = {
+		country_trust_cap_add = 5
+		envoy_improve_relations_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#探索委员会主席-寻星者
+councilor_exploration = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_exploration
+	modifier = {
+		ship_anomaly_research_speed_mult = 0.05
+		ship_archaeological_site_excavation_speed_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席开拓者-星之开拓者
+councilor_star_settlers = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_star_settlers
+	modifier = {
+		planet_colony_development_speed_mult = 0.075
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#星际商会会长-全球主义
+councilor_globalism = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_globalism
+	modifier = {
+		commercial_pact_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#和平基金会大使-调停者
+councilor_xeno_militarist = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_xeno_militarist
+	modifier = {
+		country_power_projection_influence_produces_add = 0.2
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#红军总政委-解放者
+councilor_liberator = {
+	leader_class = { commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	civic = civic_liberator
+	modifier = {
+		country_war_exhaustion_mult = -0.05
+		army_morale = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#无产阶级理论家-星星之火
+councilor_firing_torch = {
+	leader_class = { commander official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_firing_torch
+	modifier = {
+		pop_category_workers_unity_produces_add = 0.2
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#性处理委员-欲望自由
+councilor_liberty_of_libido = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_liberty_of_libido
+	modifier = {
+		biological_pop_happiness = 0.01
+		lithoid_pop_happiness = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#黑暗组织干部-欲望器械
+councilor_libido_equipment = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	civic = civic_libido_equipment
+	modifier = {
+		logistic_growth_mult = 0.2
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#品牌形象代言人-奢侈消费主义
+councilor_consumerism = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_consumerism
+	modifier = {
+		planet_pops_trade_produces_mult = 0.1
+		planet_pops_consumer_goods_upkeep_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#劳动监察部长-超节奏生活
+councilor_super_fast_paced_life = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_super_fast_paced_life
+	modifier = {
+		planet_jobs_trade_produces_mult = 0.1
+		planet_amenities_mult = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席环境工程师-环境工程师
+councilor_terraforming = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_terraforming
+	modifier = {
+		terraform_speed_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席催化师-催化加工（效果变更）
+councilor_catalytic_processing = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_catalytic_processing
+	modifier = {
+		planet_metallurgists_upkeep_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#光荣领路人-远视主义
+councilor_ultravisionary_socialism = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_ultravisionary_socialism
+	modifier = {
+		num_tech_alternatives_add = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#武装社团领袖-武斗
+councilor_civil_rights_gun_grant = {
+	leader_class = { commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	civic = civic_civil_rights_gun_grant
+	modifier = {
+		army_damage_mult = 0.05
+		planet_crime_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#先锋艺术家-未来派艺术
+councilor_futuristic_art = {
+	leader_class = { scientist official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_futuristic_art
+	modifier = {
+		planet_researchers_unity_produces_add = 0.25
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#人民艺术家-劳动与文化
+councilor_proletarian_culture = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	civic = civic_proletarian_culture
+	modifier = {
+		country_unity_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#娱乐基金会理事-商业化娱乐
+councilor_commercial_entertainment = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_commercial_entertainment
+	modifier = {
+		planet_jobs_trade_produces_mult = 0.1
+		pop_job_amenities_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#岁月史官-千夫所指
+councilor_vilified = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_vilified
+	modifier = {
+		country_unity_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#历史发明家-上周古国
+councilor_cultural_thief = {
+	leader_class = { scientist official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_cultural_thief
+	modifier = {
+		country_claim_influence_cost_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席艺术生-艺术国度
+councilor_art_country = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_art_country
+	modifier = {
+		pop_government_ethic_attraction = 0.075
+		aesthetic_wonder_specimens_produces_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#劳工检查长-理想奴隶制
+councilor_ideal_slavery = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_ideal_slavery
+	modifier = {
+		pop_cat_slave_happiness = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#衍圣公-父父子子
+councilor_parental_authoritarianism = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_parental_authoritarianism
+	modifier = {
+		country_pop_enslaved_mult = 0.01
+		planet_jobs_slave_produces_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#求道者-朝闻道
+councilor_zhaowen_dao = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_zhaowen_dao
+	modifier = {
+		planet_researchers_produces_mult = 0.33
+		scientist_lifespan_add = -5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席曲速领航员-超越光芒
+councilor_warpdrive_start = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_warpdrive_start
+	modifier = {
+		ship_ftl_jumpdrive_range_mult = 0.025
+		ship_jumpdrive_cooldown_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#架构工程师-齿轮之歌
+councilor_the_song_of_gears = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_the_song_of_gears
+	modifier = {
+		planet_researchers_engineering_research_produces_add = 0.1
+		country_engineering_tech_research_speed = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#信息化委员会主席-自动化乌托邦
+councilor_OGAS = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_OGAS
+	modifier = {
+		empire_size_districts_mult = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席调酒师-欢宴之主
+councilor_lord_of_feast = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_lord_of_feast
+	modifier = {
+		planet_farmers_sr_dark_matter_produces_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#幼小的哲学家-幼崽文化
+councilor_juvenile_culture = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { leader_age < 16 }
+	civic = civic_juvenile_culture
+	modifier = {
+		species_leader_exp_gain = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#沉思者-答案
+councilor_answer = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_answer
+	modifier = {
+		planet_researchers_society_research_produces_mult = 0.042
+		planet_researchers_engineering_research_produces_mult = 0.042
+		planet_researchers_physics_research_produces_mult = 0.042
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#菇勇者-菌食菇力者
+councilor_yunnanese = {
+	leader_class = { scientist commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_yunnanese
+	modifier = {
+		shroud_delve_cooldown = -0.02
+		pop_decline_speed = -0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#老前辈-恶之花
+councilor_flower_of_evil = {
+	leader_class = { scientist commander official }
+	is_leader_possible = { leader_age > 60 }
+	civic = civic_flower_of_evil
+	modifier = {
+		planet_crime_add = 5
+		logistic_growth_mult = 0.01
+		country_pop_enslaved_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#半神巫妖-逝者军势（效果变更）
+councilor_reanimated_armies = {
+	leader_class = { commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = scientist
+		}
+	}
+	civic = civic_reanimated_armies
+	custom_tooltip = "councilor_reanimated_armies_custom_modifier_desc"
+	modifier = {
+		job_necromancer_add = 0.34
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#四神共选-魔法之风
+councilor_wind_of_magic = {
+	leader_class = { scientist commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_wind_of_magic
+	modifier = {
+		planet_storm_devastation_mult = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#再分配专家-破车文化
+councilor_netori_culture = {
+	leader_class = { scientist commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_netori_culture
+	modifier = {
+		logistic_growth_mult = 0.01
+		planet_amenities_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#纯爱勇者-爱之战士
+councilor_warrior_of_love = {
+	leader_class = { scientist commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_warrior_of_love
+	modifier = {
+		pop_happiness = 0.01
+		planet_amenities_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+###普通理念###
+#环境委员会主席-环保政策（效果变更）
+councilor_environmentalist = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_environmentalist
+	modifier = {
+		job_environmental_pollution_caused_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#移民局长-自由庇护所（效果变更）
+councilor_free_haven = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_free_haven
+	modifier = {
+		operation_smuggle_pops_difficulty_add = -1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#奴隶监工-贩奴公会（效果变更）
+councilor_slaver_guilds = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_slaver_guilds
+	custom_tooltip = "councilor_slaver_guilds_custom_modifier_desc"
+}
+
+#检察院院长-高效官僚（效果变更）
+councilor_efficient_bureaucracy = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_efficient_bureaucracy
+	modifier = {
+		country_admin_cap_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席提炼官-冷酷实业家（效果变更）
+councilor_relentless_industrialists = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_relentless_industrialists
+	modifier = {
+		planet_jobs_alloys_produces_mult = 0.05
+		planet_jobs_consumer_goods_produces_mult = 0.05
+		planet_miners_minerals_produces_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#全能者-超人经济
+councilor_superhuman_economy = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	civic = civic_superhuman_economy
+	modifier = {
+		species_leader_exp_gain = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#生化研究主管-免疫战术
+councilor_biochemical_warrior = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_biochemical_warrior
+	modifier = {
+		ship_orbital_bombardment_pop_damage_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#社会工程师-真名实姓
+councilor_information_warrior = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_information_warrior
+	modifier = {
+		intel_decryption_add = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#后勤部元帅-耕战一体
+councilor_army_production = {
+	leader_class = { commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	civic = civic_army_production
+	custom_tooltip = "councilor_army_production_custom_modifier_desc"
+}
+
+#炊事班指战员-人民军队
+councilor_martial_brotherhood = {
+	leader_class = { commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	civic = civic_martial_brotherhood
+	modifier = {
+		army_health = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#教育委员会主席-学习型社会
+councilor_learning_society = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_learning_society
+	modifier = {
+		planet_jobs_specialist_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#改革先锋-特色社会主义
+councilor_characteristic_socialism = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_characteristic_socialism
+	modifier = {
+		planet_jobs_trade_produces_mult = 0.15
+		logistic_growth_mult = -0.075
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#教父-黑社会
+councilor_underworld_society = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_underworld_society
+	custom_tooltip = councilor_criminal_heritage_custom_modifier_desc
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#三权分立-首席大法官
+councilor_separation_of_powers = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_separation_of_powers
+	modifier = {
+		planet_stability_add = 1.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#文化部长-文化审查部门
+councilor_cultural_review_department = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_cultural_review_department
+	modifier = {
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#人事协调部长-和谐集体
+councilor_heart_of_the_unity = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_heart_of_the_unity
+	modifier = {
+		pop_government_ethic_attraction = 0.02
+		empire_size_pops_mult = -0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#财产净化专员-分产主义
+councilor_distributism = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_distributism
+	modifier = {
+		planet_pops_consumer_goods_upkeep_mult = -0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#廉政专员-民主廉政
+councilor_democracy_and_clean_government = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_democracy_and_clean_government
+	modifier = {
+		country_admin_cap_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#算法总监-苍生国手
+councilor_cybercap = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_cybercap
+	modifier = {
+		empire_size_pops_mult = -0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#总政治部主任-平等独立
+councilor_independent = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_independent
+	modifier = {
+		army_defense_damage_mult = 0.025
+		planet_orbital_bombardment_damage = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#时代楷模-英雄本色
+councilor_true_hero = {
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+			leader_class = scientist
+		}
+	}
+	civic = civic_true_hero
+	modifier = {
+		planet_labour_hero_produces_mult = 0.05
+		country_unity_produces_mult = 0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#和平大使-和平国度
+councilor_enlightment = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_enlightment
+	modifier = {
+		country_trust_growth = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席评委-荣誉评委
+councilor_honorary_curator = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_honorary_curator
+	modifier = {
+		country_exhibit_unlocking_cost_mult = -0.05
+		commercial_pact_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#佣兵总监-私人军队
+councilor_private_militaries = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_private_militaries
+	modifier = {
+		country_enclave_capacity_add = 0.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席调解员-政治多元化
+councilor_political_pluralism = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_political_pluralism
+	modifier = {
+		pop_factions_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#厚生大臣-福利国家
+councilor_welfare_state = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_welfare_state
+	modifier = {
+		pop_happiness = 0.02
+		planet_pops_consumer_goods_upkeep_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#大国工匠-战争工匠
+councilor_military_industry = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_military_industry
+	modifier = {
+		ship_armor_hardening_add = 0.025
+		ship_shield_hardening_add = 0.025
+		starbase_shipyard_build_cost_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#战略宣传部长-帕拉贝卢姆
+councilor_presence_fleet = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_presence_fleet
+	modifier = {
+		country_naval_coverage_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#学部委员长-研究合作社
+councilor_innovative_economy = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_innovative_economy
+	modifier = {
+		planet_researchers_produces_mult = 0.01
+		planet_researchers_upkeep_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#新农业专家-大工业农作
+councilor_big_industrial_farming = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_big_industrial_farming
+	modifier = {
+		planet_farmers_food_produces_add = 0.3
+		planet_farmers_energy_upkeep_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#资源管理局长-极效仓储
+councilor_extremely_efficient_storage = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_extremely_efficient_storage
+	modifier = {
+		country_resource_max_add = 5000
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#沙门上师-禁欲主义
+councilor_asceticism = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_asceticism
+	modifier = {
+		planet_pops_consumer_goods_upkeep_mult = -0.02
+		logistic_growth_mult = -0.015
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#第一总局长-间谍机关
+councilor_spy_agency = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_spy_agency
+	modifier = {
+		espionage_operation_skill_add = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#计划生育学家-英雄家庭
+councilor_hero_family = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_hero_family
+	modifier = {
+		logistic_growth_mult = 0.03
+		pop_category_workers_food_upkeep_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#人民产业巨头-银河子宫
+councilor_galactic_uterus = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_galactic_uterus
+	modifier = {
+		logistic_growth_mult = 0.02
+		planet_emigration_push_add = 5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#创新投资人-创新型经济
+councilor_industrial_automatation = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_industrial_automatation
+	modifier = {
+		planet_researchers_physics_research_produces_add = 0.1
+		planet_researchers_society_research_produces_add = 0.1
+		planet_researchers_engineering_research_produces_add = 0.1
+		planet_researchers_unity_produces_add = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#大长老-部落文化
+councilor_in_perfect = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_in_perfect
+	modifier = {
+		planet_jobs_unity_produces_mult = 0.01
+		pop_government_ethic_attraction = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席教改师-福音传道
+councilor_evangelism = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_evangelism
+	modifier = {
+		pop_ethic_spiritualist_attraction_mult = 0.1
+		pop_government_ethic_attraction = 0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#政治小丑-笑话
+councilor_Joker = {
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_Joker
+	modifier = {
+		planet_stability_add = 5
+		negative_traits_country = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#高媒体-正义之怒
+councilor_righteous_fury = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_righteous_fury
+	modifier = {
+		planet_media_workers_unity_produces_add = 0.25
+		pop_cat_worker_happiness = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#论坛管理员-论坛水友
+councilor_forum_friends = {
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_forum_friends
+	modifier = {
+		diplo_weight_delegate_mult = 0.1
+		diplo_weight_council_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#防卫军司令-和平防卫军
+councilor_peace_defense_forces = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_peace_defense_forces
+	modifier = {
+		starbase_defensive_war_ship_build_speed_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#战略恐吓局长-保守军备
+councilor_conservative_armament = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_conservative_armament
+	modifier = {
+		country_naval_cap_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#住建部经理-房产市场
+councilor_real_estate_market = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_real_estate_market
+	modifier = {
+		pop_housing_usage_mult = 0.5
+		pop_category_specialists_energy_produces_add = 0.35
+		pop_category_workers_energy_produces_add = 0.15
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席调解员-人治精神
+councilor_spirit_of_rule_by_man = {
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_spirit_of_rule_by_man
+	modifier = {
+		planet_crime_add = -5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#科学专员-走近科学
+councilor_approaching_science = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_approaching_science
+	modifier = {
+		ship_anomaly_generation_chance_mult = 0.05
+		ship_anomaly_research_speed_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#市场调研专员-滤波回声
+councilor_echo = {
+	leader_class = { scientist official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_echo
+	modifier = {
+		planet_bureaucrats_unity_produces_add = 0.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#异常研究主管-帷幕之下
+councilor_heritage_foundation = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_heritage_foundation
+	modifier = {
+		relics_physics_research_produces_add = 30
+		relics_society_research_produces_add = 30
+		relics_engineering_research_produces_add = 30
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#灵能网络总服务器-物胜于心
+councilor_machine_materialism = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_machine_materialism
+	modifier = {
+		planet_psionic_jobs_produces_mult = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#国家安全总政委-无限恐怖
+councilor_revolutionary_terrorism = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		has_ethic = ethic_egalitarian
+	}
+	civic = civic_revolutionary_terrorism
+	modifier = {
+		planet_stability_add = 5
+		pop_bonus_workforce_mult = 0.1
+		pop_decline_speed = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席饭桶-饭桌政治
+councilor_banquet_politics = {
+	leader_class = { scientist official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_banquet_politics
+	modifier = {
+		planet_pops_organics_food_upkeep_mult = -0.02
+		planet_pops_organics_minerals_upkeep_mult = -0.02
+		planet_pops_organics_energy_upkeep_mult = -0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#信访办公室主任-按闹分配
+councilor_distribution_according_to_opinion = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_distribution_according_to_opinion
+	modifier = {
+		pop_cat_ruler_political_power = 0.1
+		pop_cat_specialist_happiness = 0.01
+		pop_cat_worker_happiness = -0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#渔业部长-深空渔业
+councilor_ocean_fishing = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_ocean_fishing
+	modifier = {
+		gravity_snare_cooldown_mult = -0.05
+		on_fauna_capture_scientist_exp_gain = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#成功学院士-物竞人择
+councilor_competitive_selection = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_competitive_selection
+	modifier = {
+		founder_species_growth_mult = 0.1
+		planet_crime_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#胎儿代表-民主胎儿
+councilor_fetal_democracy = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { leader_age <= 3 }
+	civic = civic_fetal_democracy
+	modifier = {
+		pop_factions_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+###企业理念###
+#首席提炼官-冷酷实业家（效果变更）
+councilor_corporate_relentless_industrialists = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_corporate_relentless_industrialists
+	modifier = {
+		planet_jobs_alloys_produces_mult = 0.05
+		planet_jobs_consumer_goods_produces_mult = 0.05
+		planet_miners_minerals_produces_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#风控组长-法务部
+councilor_legal_department = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_legal_department
+	modifier = {
+		intel_encryption_add = 1
+		planet_crime_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席战略官-创新基金
+councilor_industrial_automatation_corporate = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_industrial_automatation_corporate
+	modifier = {
+		planet_researchers_physics_research_produces_add = 0.1
+		planet_researchers_society_research_produces_add = 0.1
+		planet_researchers_engineering_research_produces_add = 0.1
+		planet_researchers_unity_produces_add = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#展销会总监理-银河展销会
+councilor_corporate_honorary_curator = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_corporate_honorary_curator
+	modifier = {
+		country_specimen_selling_cost_mult = -0.05
+		commercial_pact_mult = 0.01
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席审计官-商业报告行政
+councilor_business_reporting_administration = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_business_reporting_administration
+	modifier = {
+		country_admin_cap_mult = 0.025
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#算法总监-天罗地网
+councilor_corporate_cybercap = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_corporate_cybercap
+	modifier = {
+		empire_size_pops_mult = -0.03
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席教育家-社会化抚养
+councilor_socialized_support = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_socialized_support
+	modifier = {
+		logistic_growth_mult = 0.03
+		pop_category_workers_consumer_goods_upkeep_add = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#基因管理总监-基因银行
+councilor_galactic_uterus_corp = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_galactic_uterus_corp
+	modifier = {
+		logistic_growth_mult = 0.03
+		planet_emigration_push_add = 5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#工会主席-企业工会
+councilor_labour_unions = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_labour_unions
+	modifier = {
+		pop_job_amenities_mult = 0.03
+		pop_cat_worker_political_power = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#造舰仙人-战争工匠
+councilor_military_industry_corporate = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_military_industry_corporate
+	modifier = {
+		ship_armor_hardening_add = 0.025
+		ship_shield_hardening_add = 0.025
+		starbase_shipyard_build_cost_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#建筑设计总监-建筑公司
+councilor_master_engineer = {
+	leader_class = { scientist commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+		}
+	}
+	civic = civic_master_engineer
+	modifier = {
+		planet_structures_cost_mult = -0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#环境监察总监-环保企业
+councilor_environmentalist_corporate = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_environmentalist_corporate
+	modifier = {
+		job_environmental_pollution_caused_mult = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#议会长-民主制
+councilor_parliamentary_system_corporate = {
+	possible = {
+		has_valid_civic =  civic_parliamentary_system_corporate
+	}
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_parliamentary_system_corporate
+	modifier = {
+		faction_approval = 0.015
+	}
+	optional = { always = no }
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#企业安防调度官-帕拉贝卢姆
+councilor_presence_fleet_corporate = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_presence_fleet_corporate
+	modifier = {
+		country_naval_coverage_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#情报总监-商业情报
+councilor_spy_agency_corporate = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_spy_agency_corporate
+	modifier = {
+		espionage_operation_skill_add = 1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#矿业总监-矿业公司
+councilor_mining_company = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_mining_company
+	modifier = {
+		planet_miners_minerals_produces_add = 0.2
+		planet_miners_energy_upkeep_add = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#信托基金总监-金融投资
+councilor_financial_investment = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = commander
+		}
+	}
+	civic = civic_financial_investment
+	modifier = {
+		trade_routes_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#明星投资人-投资之神
+councilor_superhuman_economy_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { NOT = { leader_class = envoy } }
+	civic = civic_superhuman_economy_corporate
+	modifier = {
+		leader_officials_trade_produces_add = 10
+		leader_commanders_trade_produces_add = 10
+		leader_scientists_trade_produces_add = 10
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#企业武装部长-生产训练
+councilor_army_production_corporate = {
+	leader_class = { commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+		}
+	}
+	civic = civic_army_production_corporate
+	custom_tooltip = "councilor_army_production_custom_modifier_desc"
+}
+
+#企业文化官-企业文化
+councilor_idealistic_foundation_corporate = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_idealistic_foundation_corporate
+	modifier = {
+		pop_government_ethic_attraction = 0.03
+		planet_stability_add = 0.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#资产安保总监-公正执法
+councilor_police_state_corporate = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_police_state_corporate
+	modifier = {
+		planet_enforcers_unity_produces_add = 0.2
+		planet_enforcers_upkeep_mult = 0.015
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#资源协调总监-极效仓储
+councilor_extremely_efficient_storage_corporate = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_extremely_efficient_storage_corporate
+	modifier = {
+		country_resource_max_add = 5000
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#论坛管理员-论坛水友
+councilor_forum_friends_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_forum_friends_corporate
+	modifier = {
+		diplo_weight_delegate_mult = 0.1
+		diplo_weight_council_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#防卫军司令-和平防卫军
+councilor_peace_defense_forces_corporate = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_peace_defense_forces_corporate
+	modifier = {
+		starbase_defensive_war_ship_build_speed_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#产品研发部总监-科研激励制度
+councilor_learning_society_corporate = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_learning_society_corporate
+	modifier = {
+		planet_jobs_specialist_produces_mult = 0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#市场调查专员-热爱生活
+councilor_better_future = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_better_future
+	modifier = {
+		planet_pops_trade_produces_mult = 0.1
+		planet_amenities_mult = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#股东会主席-有限责任公司
+councilor_shadow_council_corporate = {
+	leader_class = { commander scientist official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_shadow_council_corporate
+	modifier = {
+		pop_category_rulers_upkeep_mult = -0.04
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#人事部总监-绩效考核
+councilor_performance_appraisal = {
+	leader_class = { scientist official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_performance_appraisal
+	modifier = {
+		pop_demotion_time_mult = -0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席心理学顾问-微笑企业
+councilor_the_land_of_smiles = {
+	leader_class = { scientist official }
+	is_leader_possible = {
+		OR = {
+			leader_class = scientist
+			leader_class = official
+		}
+	}
+	civic = civic_the_land_of_smiles
+	modifier = {
+		country_trust_growth = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#员工模范-逐火之蛾
+councilor_moth_chasing_flames = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_moth_chasing_flames
+	modifier = {
+		leaders_upkeep_mult = -0.02
+		leaders_cost_mult = -0.02
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#住建部经理-房产企业
+councilor_real_estate_market_corporate = {
+	leader_class = { official commander }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_real_estate_market_corporate
+	modifier = {
+		pop_housing_usage_mult = 0.1
+		planet_pops_trade_produces_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#舆情监控专员-流量密码
+councilor_traffic_password = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_traffic_password
+	modifier = {
+		planet_media_workers_unity_produces_add = 0.25
+		pop_cat_worker_happiness = -0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#税务总监-包税公司
+councilor_tax_inclusive_company = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_tax_inclusive_company
+	modifier = {
+		planet_criminal_energy_produces_add = 0.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#异常执行官-混沌遗产
+councilor_heritage_foundation_corporate = {
+	leader_class = { commander scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = scientist
+		}
+	}
+	civic = civic_heritage_foundation_corporate
+	modifier = {
+		relics_consumer_goods_produces_add = 25
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#社区管理员-星神启动
+councilor_xinshin_impact = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_xinshin_impact
+	modifier = {
+		planet_professional_star_fans_produces_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#军队议员-星光魔镜
+councilor_magic_mirror = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	civic = civic_magic_mirror
+	modifier = {
+		planet_metallurgists_produces_mult = 0.25
+		planet_metallurgists_energy_upkeep_add = 0.5
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#股票风水师-股票市场
+councilor_stock_market = {
+	leader_class = { official scientist }
+	is_leader_possible = {
+		OR = {
+			leader_class = official
+			leader_class = scientist
+		}
+	}
+	civic = civic_stock_market
+	modifier = {
+		category_good_trading_research_speed_mult = 0.01
+		category_psionics_draw_chance_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#渔业总监-远星网捕公司
+councilor_ocean_fishing_corporate = {
+	leader_class = { scientist }
+	is_leader_possible = {
+		leader_class = scientist
+	}
+	civic = civic_ocean_fishing_corporate
+	modifier = {
+		gravity_snare_cost_mult = -0.05
+		on_fauna_capture_scientist_exp_gain = 0.05
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#成功部总监-物竞人择
+councilor_competitive_selection_corporate = {
+	leader_class = { commander official }
+	is_leader_possible = {
+		OR = {
+			leader_class = commander
+			leader_class = official
+		}
+	}
+	civic = civic_competitive_selection_corporate
+	modifier = {
+		planet_jobs_produces_mult = 0.1
+		planet_crime_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#母婴保健经理-婴儿企业
+councilor_fetal_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { leader_age <= 3 }
+	civic = civic_fetal_corporate
+	modifier = {
+		planet_pops_trade_produces_mult = 0.1
+	}
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+###特殊理念###
+#帝国守望者-星海霸业
+councilor_galactic_sovereign = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	modifier = {
+		diplo_weight_mult = 0.1
+		spy_network_daily_value_mult = 0.1
+		country_subject_acceptance_add = 5
+	}
+	civic = civic_galactic_sovereign
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#首席财政官-商贾霸权
+councilor_galactic_sovereign_megacorp = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	modifier = {
+		diplo_weight_mult = 0.1
+		spy_network_daily_value_mult = 0.1
+		planet_branch_offices_cost_mult = -0.1
+	}
+	civic = civic_galactic_sovereign_megacorp
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#星际执行委员-共产星际
+councilor_galactic_sovereign_people = {
+	leader_class = { commander }
+	is_leader_possible = {
+		leader_class = commander
+	}
+	modifier = {
+		diplo_weight_mult = 0.1
+		spy_network_daily_value_mult = 0.1
+		country_power_projection_influence_produces_add = 0.5
+	}
+	civic = civic_galactic_sovereign_people
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+#工会常务秘书长-修正资本主义
+councilor_worker_coop = {
+	leader_class = { official }
+	is_leader_possible = {
+		leader_class = official
+	}
+	civic = civic_world_cooperative
+	custom_tooltip = "councilor_worker_coop_custom_modifier_desc"
+	ai_hiring_weight = {
+		inline_script = councilor_leader_weights
+	}
+}
+
+
+
+###已移除国策###
+councilor_ascensionists = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_anglers = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_ascensionists = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_catalytic_processing = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_crafters = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_scavengers = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_relentless_industrialists = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_death_cult_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_dystopian_society = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_toxic_baths = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_worker_coop = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_hyperspace_specialty_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_dimensional_worship_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_dark_consortium_corporate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_civic_guided_sapience_corperate = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_machine_anglers = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_toxic_baths_individual_machine = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_astrometeorology_megacorp = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_storm_callers_megacorp = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_environmental_architects_megacorp = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}
+
+councilor_corporate_beastmasters = {
+	leader_class = { official commander scientist }
+	is_leader_possible = { always = no }
+	possible = { always = no }
+}

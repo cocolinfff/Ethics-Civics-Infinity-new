@@ -1,0 +1,1462 @@
+edict_size_faction_effect = {
+	base = 1
+	mult = value:edict_faction_effect
+	mult = value:edict_size_effect
+}
+edict_faction_effect = {
+	base = -1
+	modifier = {
+		add = -0.3
+		exists = owner.leader.pop_faction
+	}
+	modifier = {
+		add = owner.leader.pop_faction.trigger:support
+		exists = owner.leader.pop_faction
+	}
+	mult = -1
+}
+
+tech_weight_likelihood = {
+	base = 1.25
+	modifier = {
+		add = 1.25
+		has_valid_civic = civic_technocracy
+	}
+}
+
+ethic_planet_pops = {
+	base = 1
+	mult = trigger:count_pops
+	#add = 1
+}
+
+RELATIVE_POWER_FLEET_OVERLORD = {
+	base = 2
+	mult = owner.trigger:fleet_power
+	divide = owner.overlord.trigger:fleet_power
+	mult = owner.trigger:fleet_power
+	divide = owner.overlord.trigger:fleet_power
+}
+
+RELATIVE_POWER_TECHNOLOGY_OVERLORD = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = tech_unlocked_ratio
+		trigger_scope = owner
+		parameters = {
+			who = owner.overlord 
+		}
+		mode = mult
+		mult = 1
+	}
+	complex_trigger_modifier = {
+		trigger = tech_unlocked_ratio
+		trigger_scope = owner
+		parameters = {
+			who = owner.overlord 
+		}
+		mode = mult
+		mult = 1
+	}
+}
+
+RELATIVE_POWER_ECONOMY_OVERLORD_base = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = energy
+		}
+		mode = add
+		mult = 1
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = minerals
+		}
+		mode = add
+		mult = 1
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = food
+		}
+		mode = add
+		mult = 1
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = consumer_goods
+		}
+		mode = add
+		mult = 2
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = alloys
+		}
+		mode = add
+		mult = 4
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = volatile_motes
+		}
+		mode = add
+		mult = 10
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = exotic_gases
+		}
+		mode = add
+		mult = 10
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = rare_crystals
+		}
+		mode = add
+		mult = 10
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = sr_living_metal
+		}
+		mode = add
+		mult = 20
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = sr_zro
+		}
+		mode = add
+		mult = 20
+	}
+	complex_trigger_modifier = {
+		trigger = resource_income_compare
+		trigger_scope = owner
+		parameters = {
+			resource = sr_dark_matter
+		}
+		mode = add
+		mult = 20
+	}
+}
+
+RELATIVE_POWER_ECONOMY_OVERLORD = {
+	base = 3
+	mult = owner.value:RELATIVE_POWER_ECONOMY_OVERLORD_base
+	divide = owner.overlord.value:RELATIVE_POWER_ECONOMY_OVERLORD_base
+	mult = owner.value:RELATIVE_POWER_ECONOMY_OVERLORD_base
+	divide = owner.overlord.value:RELATIVE_POWER_ECONOMY_OVERLORD_base
+}
+
+count_job = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = { is_pop_category = $JOB$ }
+		}
+		mode = add
+	}
+}
+
+count_pop_category = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = { is_pop_category = $CATEGORY$ }
+		}
+		mode = add
+	}
+}
+
+gaiaseeder_upkeep_machine = {
+	base = 1.50
+	modifier = {
+		add = -0.50
+		any_galaxy_species = {
+			has_species_flag = original_organic_species_of_@prev.owner
+			prev = {
+				is_ideal_planet_class = {
+					who = prev
+					status = yes
+				}
+			}
+		}
+	}
+	modifier = {
+		add = -0.25
+		OR = {
+			AND = {
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner
+					ideal_planet_is_wet = yes
+				}
+				planet = {
+					is_wet = yes
+					any_galaxy_species = {
+						has_species_flag = original_organic_species_of_@prev.owner
+						prev = {
+							is_ideal_planet_class = {
+								who = prev
+								status = no
+							}
+						}
+					}
+				}
+			}
+			AND = {
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner
+					ideal_planet_is_dry = yes
+				}
+				planet = {
+					is_dry = yes
+					any_galaxy_species = {
+						has_species_flag = original_organic_species_of_@prev.owner
+						prev = {
+							is_ideal_planet_class = {
+								who = prev
+								status = no
+							}
+						}
+					}
+				}
+			}
+			AND = {
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner
+					ideal_planet_is_cold = yes
+				}
+				planet = {
+					is_cold = yes
+					any_galaxy_species = {
+						has_species_flag = original_organic_species_of_@prev.owner
+						prev = {
+							is_ideal_planet_class = {
+								who = prev
+								status = no
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	modifier = {
+		add = 0.25
+		planet = { is_planet_class = pc_nuked }
+	}
+}
+
+overlord_gaiaseeder_upkeep_machine = {
+	base = 1.50
+	modifier = {
+		add = -0.50
+		any_galaxy_species = {
+			has_species_flag = original_organic_species_of_@prev.owner.overlord
+			prev.planet = {
+				is_ideal_planet_class = {
+					who = prev
+					status = yes
+				}
+			}
+		}
+	}
+	modifier = {
+		add = -0.25
+		OR = {
+			AND = {
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner.overlord
+					ideal_planet_is_wet = yes
+				}
+				planet = {
+					is_wet = yes
+					any_galaxy_species = {
+						has_species_flag = original_organic_species_of_@prev.owner.overlord
+						prev = {
+							is_ideal_planet_class = {
+								who = prev
+								status = no
+							}
+						}
+					}
+				}
+			}
+			AND = {
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner.overlord
+					ideal_planet_is_dry = yes
+				}
+				planet = {
+					is_dry = yes
+					any_galaxy_species = {
+						has_species_flag = original_organic_species_of_@prev.owner.overlord
+						prev = {
+							is_ideal_planet_class = {
+								who = prev
+								status = no
+							}
+						}
+					}
+				}
+			}
+			AND = {
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner.overlord
+					ideal_planet_is_cold = yes
+				}
+				planet = {
+					is_cold = yes
+					any_galaxy_species = {
+						has_species_flag = original_organic_species_of_@prev.owner.overlord
+						prev = {
+							is_ideal_planet_class = {
+								who = prev
+								status = no
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	modifier = {
+		add = 0.25
+		planet = { is_planet_class = pc_nuked }
+	}
+}
+
+society_num_pops = {
+	base = 0
+	add = trigger:num_pops
+}
+society_factor_pops = {
+	base = 1
+	divide = society_num_pops
+}
+
+society_stability_sub = {
+	base = 1
+	subtract = trigger:planet_stability
+}
+
+society_crime_factor = {
+	base = 1
+	add = modifier:planet_crime_mult
+	mult = trigger:num_pops
+	mult = 0.02
+}
+society_crime_rate_changer = {
+	base = 0
+	add = trigger:planet_crime
+	subtract = society_crime_rate
+	modifier = {
+		divide = society_crime_factor
+		check_variable = { which = society_crime_factor value > 1 }
+	}
+	divide = 2
+}
+society_crime_rate = {
+	base = 0
+	add = society_crime_rate
+	add = society_crime_rate_changer
+}
+society_crime_rate_sub = {
+	base = 0.02
+	mult = trigger:num_pops
+	mult = society_crime_rate
+}
+
+society_amenities_original = {
+	base = 0
+	add = modifier:planet_amenities_add
+	add = society_amenities_sub
+}
+society_amenities_target = {
+	base = 1
+	subtract = modifier:planet_amenities_reduction
+	mult = society_amenities_original
+}
+society_amenities_sub = {
+	base = 0
+	add = society_amenities_original
+	subtract = society_amenities_target
+}
+society_amenities_usage = {
+	base = 0
+	add = modifier:pop_amenities_usage_mult
+}
+
+living_standard_trade_value = {
+	base = 0
+	modifier = {
+		is_pop_category = ruler
+		add = modifier:living_standard_trade_value_rulers_add
+	}
+	modifier = {
+		is_pop_category = specialist
+		add = modifier:living_standard_trade_value_specialists_add
+	}
+	modifier = {
+		is_pop_category = worker
+		add = modifier:living_standard_trade_value_workers_add
+	}
+	modifier = {
+		is_pop_category = slave
+		add = modifier:living_standard_trade_value_slaves_add
+	}
+	modifier = {
+		is_pop_category = criminal
+		add = modifier:living_standard_trade_value_criminals_add
+	}
+	modifier = {
+		is_pop_category = complex_drone
+		add = modifier:living_standard_trade_value_complex_drone_add
+	}
+	modifier = {
+		is_pop_category = simple_drone
+		add = modifier:living_standard_trade_value_simple_drone_add
+	}
+	modifier = {
+		is_pop_category = rentier
+		add = modifier:living_standard_trade_value_rentier_add
+	}
+	modifier = {
+		is_pop_category = postpartum_workers
+		add = modifier:living_standard_trade_value_postpartum_workers_add
+	}
+	add = modifier:pop_lifestyle_trade_value_add
+	multiplier = triger:planet_pops_trade_produces_mult
+}
+
+society_trade_value_original = {
+	base = 0
+	add = modifier:trade_value_add
+	add = society_trade_value_sub
+}
+society_trade_value_target = {
+	base = 1
+	subtract = modifier:trade_value_reduction
+	mult = society_trade_value_original
+}
+society_trade_value_sub = {
+	base = 0
+	add = society_trade_value_original
+	subtract = society_trade_value_target
+}
+society_trade_value_reduction = {
+	base = 0
+	add = modifier:trade_value_reduction
+}
+
+society_branch_value_original = {
+	base = 0
+	add = modifier:branch_office_value_mult
+	add = society_branch_value_sub
+}
+society_branch_value_target = {
+	base = 0
+	#subtract = modifier:trade_value_reduction
+	#mult = society_trade_value_original
+}
+society_branch_value_sub = {
+	base = 0
+	add = society_branch_value_original
+	subtract = society_branch_value_target
+}
+
+society_family_structure = {
+	base = 0
+	add = modifier:pop_family_structure_growth_mult
+}
+
+count_type_mult = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = { is_pop_category = $JOB$ }
+		}
+		mode = add
+		mult = 0.25
+	}
+}
+
+count_building = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = num_buildings
+		parameters = {
+			type = $BUILDING$
+		}
+		mode = add
+	}
+}
+
+count_empire_size = {
+	base = 0
+	add = trigger:empire_size
+	mult = 0.1
+}
+
+num_ethic_commandante_to_knight_commander_variable_1 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_commandante_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+num_ethic_commandante_to_knight_commander_variable_2 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_commandante_per_pop
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+num_ethic_enforcer_to_media_worker_variable_1 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_enforcer_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+num_ethic_enforcer_to_media_worker_variable_2 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_enforcer_per_pop
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+num_ethic_manager_to_steward_variable_1 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_manager_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+num_ethic_manager_to_steward_variable_2 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_manager_per_pop
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+num_ethic_wizarding_world_legendary_mage_variable_1 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_head_researcher_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+num_ethic_wizarding_world_legendary_mage_variable_2 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_head_researcher_per_pop
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+num_ethic_wizarding_world_magician_variable_1 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_researcher_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+num_ethic_wizarding_world_magician_variable_2 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_researcher_per_pop
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+num_ethic_not_rulers_society_researcher_variable_1 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_head_researcher_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+num_ethic_not_rulers_society_researcher_variable_2 = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = job_head_researcher_per_pop
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+negative_support = {
+	base = 1
+	complex_trigger_modifier = {
+		mode = subtract
+		trigger = pop_percentage
+		parameters = {
+			limit = {
+				OR = {
+					AND = {
+						has_ethic = ethic_egalitarian
+						root = {
+							OR = {
+								is_pop_faction_type = progressive
+								is_pop_faction_type = entrepreneurs
+								is_pop_faction_type = manifesti
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_authoritarian
+						root = {
+							OR = {
+								is_pop_faction_type = totalitarian
+								is_pop_faction_type = civil_official
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_egalitarian
+						root = {
+							OR = {
+								is_pop_faction_type = socialists
+								is_pop_faction_type = pioneer
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_authoritarian
+						root = {
+							OR = {
+								is_pop_faction_type = industrialist
+								is_pop_faction_type = bankers
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_materialist
+						root = {
+							OR = {
+								is_pop_faction_type = secular
+								is_pop_faction_type = traditionalist
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_spiritualist
+						root = {
+							OR = {
+								is_pop_faction_type = secular
+								is_pop_faction_type = traditionalist
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_xenophile
+						root = {
+							OR = {
+								is_pop_faction_type = proletarians
+								is_pop_faction_type = xenoist
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_pacifist
+						root = {
+							OR = {
+								is_pop_faction_type = prosperity
+								is_pop_faction_type = philosopher
+							}
+						}
+					}
+					AND = {
+						has_ethic = ethic_militarist
+						root = {
+							OR = {
+								is_pop_faction_type = revolutionary
+								is_pop_faction_type = imperialist
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+num_ethic_planetary_ascension_tier = {
+	base = 0
+	add = trigger:has_planetary_ascension_tier
+}
+num_planetary_ascension_effect_mult = {
+	base = 1
+	add = modifier:planetary_ascension_effect_mult
+}
+ethic_planetary_ascension_tier = {
+	base = 0
+	add = num_ethic_planetary_ascension_tier
+	mult = num_planetary_ascension_effect_mult
+}
+
+num_districts_value = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = num_districts
+		parameters = {
+			type = $DISTRICT$
+		}
+		mode = add
+	}
+}
+
+empire_size_councilor_slaver_guilds = {
+	base = 1
+	mult = value:councilor_level|TYPE|councilor_slaver_guilds|
+	mult = -0.02
+}
+
+leader_cap_add = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = country_leader_cap_add
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+learder_cap_nums = {
+	base = 10
+	modifier = {
+		add = value:leader_cap_add
+	}
+	min = 0
+}
+
+num_species_leader_exp_gain = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = check_modifier_value
+		parameters = {
+			modifier = species_leader_exp_gain
+		}
+		multiplier = 1
+		mode = add
+	}
+}
+
+enrollment_rate = {
+	base = 0
+
+	modifier = {
+		add = 5
+		receiving_good_education = yes
+	}
+	modifier = {
+		add = 1
+		receiving_general_education = yes
+	}
+	modifier = {
+		add = 0.1
+		almost_no_education_received = yes
+	}
+
+	mult = value:num_species_leader_exp_gain
+
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				has_research_job = yes
+			}
+		}
+		mode = add
+		mult = 1.15
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_industrious
+	}
+	modifier = {
+		mult = 0.75
+		has_trait = trait_indolent
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_quick_learners
+	}
+	modifier = {
+		mult = 0.75
+		has_trait = trait_slow_learners
+	}
+
+	modifier = {
+		mult = 2
+		has_trait = trait_intelligent
+	}
+	modifier = {
+		mult = 0.5
+		has_trait = trait_unsophisticated
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_natural_engineers
+	}
+	modifier = {
+		mult = 1.25
+		has_trait = trait_natural_physicists
+	}
+	modifier = {
+		mult = 1.25
+		has_trait = trait_natural_sociologists
+	}
+
+	modifier = {
+		mult = 1.5
+		has_trait = trait_talented
+	}
+
+	modifier = {
+		mult = 1.5
+		has_trait = trait_enigmatic_intelligence
+	}
+	modifier = {
+		mult = 1.15
+		has_trait = trait_enigmatic_intelligence_poor
+	}
+	modifier = {
+		mult = 0.75
+		has_trait = trait_enigmatic_intelligence_failed
+	}
+
+	min = 0
+}
+
+highly_enrollment_rate = {
+	base = 0
+
+	modifier = {
+		add = 5
+		receiving_good_education = yes
+	}
+	modifier = {
+		add = 1
+		receiving_general_education = yes
+	}
+	modifier = {
+		add = 0.01
+		almost_no_education_received = yes
+	}
+
+	mult = value:num_species_leader_exp_gain
+
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_researcher = yes
+			}
+		}
+		mode = add
+		mult = 1.1
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_industrious
+	}
+	modifier = {
+		mult = 0.33
+		has_trait = trait_indolent
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_quick_learners
+	}
+	modifier = {
+		mult = 0.33
+		has_trait = trait_slow_learners
+	}
+
+	modifier = {
+		mult = 1.5
+		has_trait = trait_intelligent
+	}
+	modifier = {
+		mult = 0.1
+		has_trait = trait_unsophisticated
+	}
+
+	modifier = {
+		mult = 1.15
+		has_trait = trait_natural_engineers
+	}
+	modifier = {
+		mult = 1.15
+		has_trait = trait_natural_physicists
+	}
+	modifier = {
+		mult = 1.15
+		has_trait = trait_natural_sociologists
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_talented
+	}
+
+	modifier = {
+		mult = 1.25
+		has_trait = trait_enigmatic_intelligence
+	}
+	modifier = {
+		mult = 1.05
+		has_trait = trait_enigmatic_intelligence_poor
+	}
+	modifier = {
+		mult = 0.5
+		has_trait = trait_enigmatic_intelligence_failed
+	}
+
+	min = 0
+}
+
+mogul_produces_value = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = { is_pop_category = merchant }
+		}
+		mode = add
+	}
+	multiply = 2
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = { is_pop_category = manager }
+		}
+		mode = add
+	}
+	mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+}
+
+
+num_planet_cat_rulers = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_pop_category = ruler
+				is_robot_pop = no
+			}
+		}
+		mode = add
+	}
+}
+
+planet_ruler_family_structure = {
+	base = 0
+	add = value:num_planet_cat_rulers
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_planet_robot_rulers = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_pop_category = ruler
+				is_robot_pop = yes
+			}
+		}
+		mode = add
+	}
+}
+
+planet_ruler_family_structure_robot = {
+	base = 0
+	add = value:num_planet_robot_rulers
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_planet_cat_not_robot_specialist = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_pop_category = specialist
+				is_robot_pop = no
+			}
+		}
+		mode = add
+	}
+}
+
+planet_specialist_family_structure = {
+	base = 0
+	add = value:num_planet_cat_not_robot_specialist
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_planet_robot_specialist = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_pop_category = specialist
+				is_robot_pop = yes
+			}
+		}
+		mode = add
+	}
+}
+
+planet_specialist_family_structure_robot = {
+	base = 0
+	add = value:num_planet_robot_specialist
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_planet_cat_not_robot_worker = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_pop_category = worker
+				is_robot_pop = no
+			}
+		}
+		mode = add
+	}
+}
+
+planet_worker_family_structure = {
+	base = 0
+	add = value:num_planet_cat_not_robot_worker
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_planet_robot_worker = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_pop_category = worker
+				is_robot_pop = yes
+			}
+		}
+		mode = add
+	}
+}
+
+planet_worker_family_structure_robot = {
+	base = 0
+	add = value:num_planet_robot_worker
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_planet_cat_slave = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				is_enslaved = yes
+			}
+		}
+		mode = add
+	}
+}
+
+planet_slave_family_structure = {
+	base = 0
+	add = value:num_planet_cat_slave
+	mult = value:scripted_modifier_mult|MODIFIER|pop_family_structure_growth_mult|
+}
+
+num_mobilization_pop = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				NOR = {
+					is_pop_category = knight_commander
+					is_pop_category = commandante
+					is_pop_category = soldier
+					is_pop_category = mercenary
+					is_pop_category = enforcer
+					is_pop_category = duelist
+					is_pop_category = necromancer
+					is_pop_category = knight
+					is_pop_category = legendary_mage
+					is_pop_category = magician
+					is_pop_category = magical_apprentice
+					is_pop_category = gladiator
+					is_pop_category = conscript_uncapped
+					is_pop_category = colonist
+					is_pop_category = primitive_warrior
+					AND = {
+						is_enslaved = yes
+						has_slavery_type = { type = slavery_military }
+					}
+				}
+			}
+		}
+		mode = add
+	}
+	modifier = {
+		divide = 4
+		owner = {
+			has_policy_flag = volunteer_military_service
+		}
+	}
+	modifier = {
+		divide = 3
+		owner = {
+			has_policy_flag = extensive_conscription
+		}
+	}
+	modifier = {
+		divide = 2
+		owner = {
+			has_policy_flag = limited_conscription
+		}
+	}
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		parameters = {
+			limit = {
+				OR = {
+					has_military_service_type = { type = military_service_full }
+					has_military_service_type = { type = military_service_limited }
+				}
+				OR = {
+					is_pop_category = knight_commander
+					is_pop_category = commandante
+					is_pop_category = soldier
+					is_pop_category = mercenary
+					is_pop_category = enforcer
+					is_pop_category = duelist
+					is_pop_category = necromancer
+					is_pop_category = knight
+					is_pop_category = legendary_mage
+					is_pop_category = magician
+					is_pop_category = magical_apprentice
+					is_pop_category = gladiator
+					is_pop_category = conscript_uncapped
+					is_pop_category = colonist
+					is_pop_category = primitive_warrior
+					AND = {
+						is_enslaved = yes
+						has_slavery_type = { type = slavery_military }
+					}
+				}
+			}
+		}
+		mode = add
+	}
+	ceiling = yes
+}
+
+Joker_planet_worker_happiness = {
+	base = 1
+	subtract = modifier:pop_cat_worker_happiness
+}
+
+planet_leader_num_negative_traits = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = num_leader_traits
+		parameters = {
+			negative = yes
+			count_tiers = yes
+		}
+		mode = add
+	}
+}
+
+country_fervor_growth = {
+	base = 0
+	add = owner.trigger:num_owned_planets
+	square_root = yes
+}
+
+country_fervor_growth_2 = {
+	base = 0
+	add = owner.trigger:num_owned_planets
+	square_root = yes
+	mult = 2
+}
+
+country_fervor_growth_4 = {
+	base = 0
+	add = owner.trigger:num_owned_planets
+	square_root = yes
+	mult = 4
+}
+
+country_fervor_reduce = {
+	base = 0
+	add = owner.trigger:subjects
+	mult = 0.2
+}
+
+transcendence_technology_empire_size_effect = {
+	base = -1
+	mult = owner.trigger:empire_size
+}
+
+num_country_admin_cap_mult = {
+	base = 1
+	add = modifier:country_admin_cap_mult
+}
+
+country_admin_cap = {
+	base = 50
+	add = modifier:country_admin_cap_add
+	mult = value:num_country_admin_cap_mult
+}
+
+telepath_trade_value = {
+	base = 0
+	add = owner.modifier:job_telepath_trade_value_add
+	# We want to inherit the bonuses from the branch office owner if they exist as well.
+	modifier = {
+		planet = {
+			has_branch_office = yes
+		}
+		add = planet.branch_office_owner.modifier:job_telepath_trade_value_add
+	}
+	mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+}
+
+num_rival_country = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = any_rival_country
+		mode = add
+	}
+}
+
+job_rentier_add_variable = {
+	base = 0
+	add = planet.modifier:job_rentier_per_ruler
+	mult = planet.value:count_pop_category|CATEGORY|ruler|
+}
+job_postpartum_workers_add_variable = {
+	base = 0
+	add = planet.modifier:job_rentier_per_specialist
+	mult = planet.value:count_pop_category|CATEGORY|specialist|
+}
+
+storm_resistant_production_multiplier = {
+	base = 1
+
+	modifier = {
+		mult = 0.75
+		has_building = building_storm_resistant_production
+		NOT = {
+			has_modifier = storm_hunkered_down_modifier
+		}
+	}
+
+	modifier = {
+		mult = 0.5
+		has_building = building_storm_resistant_production
+		has_modifier = storm_hunkered_down_modifier
+	}
+
+	modifier = {
+		mult = 0.6
+		has_building = building_advanced_storm_resistant_production
+		NOT = {
+			has_modifier = storm_hunkered_down_modifier
+		}
+	}
+
+	modifier = {
+		mult = 0.2
+		has_building = building_advanced_storm_resistant_production
+		has_modifier = storm_hunkered_down_modifier
+	}
+
+	modifier = {
+		mult = 0.9
+		has_modifier = cultivated_worldscaping_modifier
+	}
+
+	modifier = {
+		mult = 0.9
+		has_modifier = storm_trap_insight_modifier
+	}
+
+	modifier = {
+		mult = 0.5
+		owner = {
+			has_origin = origin_stormborn
+			is_scientific_socialism = yes
+		}
+	}
+}
+
+food_building_produce_value = {
+	base = 1
+	add = modifier:planet_farmers_food_produces_add
+	mult = modifier:planet_farmers_food_produces_mult
+	mult = modifier:planet_farmers_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+food_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_farmers_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+minerals_building_produce_value = {
+	base = 1
+	add = modifier:planet_miners_minerals_produces_add
+	mult = modifier:planet_miners_minerals_produces_mult
+	mult = modifier:planet_miners_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+minerals_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_miners_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+energy_building_produce_value = {
+	base = 1
+	add = modifier:planet_technician_energy_produces_add
+	mult = modifier:planet_technician_energy_produces_mult
+	mult = modifier:planet_technician_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+energy_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_technician_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+alloys_building_produce_value = {
+	base = 1
+	add = modifier:planet_metallurgists_alloys_produces_add
+	mult = modifier:planet_metallurgists_alloys_produces_mult
+	mult = modifier:planet_metallurgists_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+alloys_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_metallurgists_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+consumer_goods_building_produce_value = {
+	base = 1
+	add = modifier:planet_artisans_consumer_goods_produces_add
+	mult = modifier:planet_artisans_consumer_goods_produces_mult
+	mult = modifier:planet_artisans_produces_mult
+	mult = modifier:planet_jobs_produces_mult
+}
+
+consumer_goods_building_uokeep_value = {
+	base = 1
+	mult = modifier:planet_artisans_upkeep_mult
+	mult = modifier:planet_jobs_produces_mult
+}

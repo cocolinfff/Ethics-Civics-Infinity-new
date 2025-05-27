@@ -1,0 +1,136 @@
+# 活体陈设
+bio_trophy = {
+	rank = 0
+	clothes_texture_index = 1
+
+	change_job_threshold = 1.25
+
+	assign_to_pop = {
+		exists = owner
+		has_citizenship_type = { type = citizenship_organic_trophy country = owner }
+	}
+	weight = {
+		weight = 5
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = yes
+	}
+
+	resettlement_cost = {
+		energy = 100
+		unity = 25
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			NOT = { has_trait = trait_noxious }
+		}
+		key = trait_noxious
+		pop_happiness = 1
+		mult = modifier:pop_non_noxious_happiness
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_trait = trait_noxious
+		}
+		key = trait_noxious
+		pop_non_noxious_happiness = @noxious_happiness_penalty
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		logistic_growth_mult = @tiyanki_budding_rate
+	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers"
+
+	pop_group_modifier = {
+		pop_political_power = 10
+		pop_housing_usage_base = 1
+		pop_amenities_usage_no_happiness_base = 1
+		species_empire_size_mult = -0.4 # 顺便兼容失控女仆
+	}
+
+	triggered_pop_group_modifier = { # 失控女仆兼容
+		potential = {
+			has_global_flag = flag_rogue_maid_mod_activated
+			exists = owner
+			owner = { has_edict = expanded_breeding_program_servitor }
+		}
+		species_empire_size_mult = 0.025
+	}
+	
+	resources = {
+		category = pop_category_bio_trophy
+
+		# Regular food, mineral and energy upkeep.
+		inline_script = "pop_categories/regular_upkeep"
+
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		inline_script = "pop_categories/ethic_trait_upkeep"
+
+		# Exotic Metabolism Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_exotic_metabolism
+			}
+			exotic_gases = @exotic_metabolism
+		}
+
+		# Resource Production
+
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_inorganic_breath
+			}
+			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				has_trait = trait_drake_scaled
+			}
+			alloys = @drake_scaled_trait_resource_production
+		}
+	}
+
+	unemployment_penalties = {
+		pop_happiness = -0.80
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
+			is_unemployed = yes
+			NOR = {
+				has_very_high_living_standard_type = yes
+				has_high_living_standard_type = yes
+				has_shared_burden_living_standard_type = yes
+			}
+			owner = {
+				is_galactic_community_member = yes
+			}
+		}
+
+		pop_happiness = 0.10
+	}
+}

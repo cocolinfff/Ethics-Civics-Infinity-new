@@ -1,0 +1,287 @@
+##############################
+# 奴隶(ECI+)-激进民主/亲外-奴隶利益集团
+##############################
+slaves = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = "ethic_egalitarian"
+	visual_ethic = "slaves_visual_ethic"
+	use_guiding_ethic_as_pop_filter = no
+	unique = yes
+	support_multiplier = 0.75 # Not Mainstream
+	resources = {
+		category = pop_factions
+		produces = {
+			unity = 0.25
+		}
+	}
+	is_potential = {
+		days_passed > 360 # 受压迫者需要一年时间准备
+		is_faction_allowed = yes
+		NOR = {
+			has_valid_civic = civic_all_slave
+			has_valid_civic = civic_slave_tradition
+			has_valid_civic = civic_du_contrat_social
+		}
+		any_owned_pop = {
+			is_enslaved = yes
+		}
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_pre_triggers = {
+		is_being_purged = no
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		NOT = { has_ethic = ethic_authoritarian }
+		OR = { # Only Same Ideology or Job
+			can_join_faction_slaves_i = yes
+			can_join_faction_slaves_c = yes
+			#can_join_faction_slaves_j = yes
+		}
+	}
+	attraction = {
+		base = 75 # Not Common
+		modifier = {
+			factor = 1.25
+			exists = root
+			root = {
+				exists = leader
+				leader = {
+					is_ruler = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = root
+			root = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_egalitarian
+		}
+		# Actions
+		modifier = {
+			factor = @factionattractionpromote
+			has_pop_faction_flag = promote_faction
+		}
+		#modifier = { # You Can't Do THIS
+		#	factor = @factionattractionsuppress
+		#	has_pop_faction_flag = suppress_faction
+		#}
+		# Angry
+		modifier = {
+			factor = @factionattractionhigh
+			exists = root
+			root = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = { # Just So Simple
+			factor = @factionattractionhighvery
+			happiness < 0.65
+			is_enslaved = yes
+		}
+		# 万众一心
+		modifier = {
+			factor = 0.1
+			exists = root
+			root = { faction_approval < 0.5 }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
+		}
+	}
+	leader = {
+		base = 1
+		modifier = {
+			factor = 0.1
+			is_ruler = yes
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				is_same_species = owner_species
+			}
+		}
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+	
+	# 诉求
+		# Faction Outraged
+		inline_script = {
+			script = pop_faction_types/demand_faction_outraged
+			FLAG = galcom_resolution_passed_anti_xenoist
+		}
+		# Faction Pleased
+		inline_script = {
+			script = pop_faction_types/demand_faction_pleased
+			FLAG = galcom_resolution_passed_pro_xenoist
+		}
+		
+		demand = { # 低工时
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+						has_policy_flag = standard_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10 
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+						has_policy_flag = standard_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = short_working_hours
+				}
+			}
+		}
+
+		demand = { # 废奴
+			title = "DEMAND_SLAVERY_BAN"
+			unfulfilled_title = "DEMAND_SLAVERY_BAN"
+			desc = "DEMAND_SLAVERY_BAN_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -35
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = slavery_not_allowed
+				}
+			}
+		}
+
+		demand = { # 反对净化
+			title = "DEMAND_PURGE_NO"
+			unfulfilled_title = "DEMAND_PURGE_NO"
+			desc = "DEMAND_PURGE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -15
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = purge_not_allowed
+				}
+			}
+		}
+
+	on_create = {
+		pop_faction_event = {
+			id = factions.1
+		}
+	}
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_xenophile
+			}
+			remove_modifier = promoted_xenophile
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_xenophile
+			}
+			remove_modifier = suppressed_xenophile
+		}
+	}
+	actions = {
+		embrace_faction = { # Abolishment
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+			cost = { influence = 100 }
+			
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
+					}
+					has_policy_flag = slavery_allowed
+				}
+			}
+			valid = {
+				support > 0.10
+			}
+			effect = {
+				owner = { set_policy = { policy = slavery option = slavery_not_allowed cooldown = yes } }
+			}
+			ai_weight = { # AI will never try to do so
+				base = 0
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+			potential = {
+				NOR = {
+					has_pop_faction_flag = promote_faction
+					has_pop_faction_flag = suppress_faction
+				}
+			}
+			effect = {
+				set_pop_faction_flag = promote_faction
+			}
+			ai_weight = { base = 0 }
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+			potential = {
+				has_pop_faction_flag = promote_faction
+			}
+			effect = {
+				remove_pop_faction_flag = promote_faction
+			}
+			ai_weight = { base = 0 }
+		}
+		# Suppress An Ilegal Faction is Impossible
+	}
+}

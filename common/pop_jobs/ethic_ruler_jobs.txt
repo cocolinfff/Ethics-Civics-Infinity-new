@@ -1,0 +1,1335 @@
+#企业家
+merchant_msi = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_commercial_megaplex
+	clothes_texture_index = 3
+	can_set_priority = no
+
+	tags = { trade amenities }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+	}
+	resources = {
+		category = planet_merchants
+		produces = {
+			trade = 12
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_corporate_dominion
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_tradition = tr_mercantile_marketplace_of_better_ideas
+				}
+			}
+			unity = 1
+		}
+
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_consumerism
+				}
+			}
+			consumer_goods = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_industrial_automatation
+						has_valid_civic = civic_industrial_automatation_corporate
+					}
+				}
+			}
+			physics_research = 0.5
+			engineering_research = 0.5
+			society_research = 0.5
+		}
+		upkeep = {
+			consumer_goods = 1
+		}
+	}
+	country_modifier = {
+		trade_value_reduction = 0.05
+	}
+	planet_modifier = {
+		planet_jobs_produces_mult = 0.02
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = market_operation
+			}
+		}
+		modifier = {
+			pop_cat_ruler_political_power = 0.5
+		}
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_triple_the_profit
+			}
+		}
+		modifier = {
+			pop_cat_ruler_political_power = 3
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_real_estate_market_country = yes
+			}
+		}
+		modifier = {
+			pop_housing_usage_mult = 0.05
+			pop_category_specialists_energy_produces_add = 0.15
+			pop_category_workers_energy_produces_add = 0.05
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_tradition = tr_mercantile_marketplace_of_better_ideas
+			}
+		}
+		modifier = {
+			planet_jobs_trade_produces_mult_mult = 0.02
+		}
+	}
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 300
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_augmentation_bazaars
+			}
+		}
+		country_trade_produces_mult = 0.005
+		logistic_growth_mult = 0.01
+		mult = value:num_cyborg_traits_species
+	}
+
+	inline_script = "jobs/automodding_priority_trade"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = ruler
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
+#核心党员
+core_party_members = {
+	category = ruler
+	icon = evaluator
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+	
+	resources = {
+		category = planet_enforcers
+		produces = {
+			unity = 3
+		}
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+	planet_modifier = {
+		planet_crime_add = -15
+		planet_stability_add = 5
+		planet_jobs_slave_produces_mult = 0.05
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		species_empire_size_mult = -0.05
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				OR = {
+					has_policy_flag = full_decentralization
+					has_policy_flag = high_decentralization
+				}
+			}
+		}
+		species_empire_size_mult = -0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				OR = {
+					has_policy_flag = partial_decentralization
+					has_policy_flag = concentration_of_power
+				}
+			}
+		}
+		species_empire_size_mult = -0.05
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_councilor = { COUNCILOR = "councilor_glorious_pioneer" } 
+		}
+		modifier = {
+			planet_bureaucrats_upkeep_mult = -0.01
+		}
+		mult = value:councilor_level|TYPE|councilor_glorious_pioneer|
+	}
+	weight = {
+		weight = @ruler_job_weight
+		modifier = {
+			factor = 10
+			exists = owner
+			owner = {
+				is_authoritarian = yes
+			}
+		}
+	}
+	inline_script = "jobs/automodding_priority_unity"
+}
+
+#工人干部
+grassroot_cadre = {
+	category = specialist
+
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_autochthon_monument
+		}
+	}
+	possible = { always = no }
+
+	resources = {
+		category = planet_bureaucrats
+		produces = {
+			trigger = {
+				owner = { is_planned_type = yes }
+			}
+			unity = 4
+			consumer_goods = 2
+			alloys = 1
+		}
+		produces = {
+			trigger = {
+				owner = { is_planned_type = yes }
+				planet = { has_factory_designation = yes }
+			}
+			consumer_goods = 2
+			alloys = -1
+		}
+		produces = {
+			trigger = {
+				owner = { is_planned_type = yes }
+				planet = { has_foundry_designation = yes }
+			}
+			consumer_goods = -2
+			alloys = 1
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					is_catalytic_empire = no
+					is_planned_type = yes
+				}
+			}
+			minerals = 4
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					is_catalytic_empire = yes
+					is_planned_type = yes
+				}
+				planet = { has_foundry_designation = no }
+			}
+			minerals = 2
+			food = 2
+		}
+		upkeep = {
+			trigger = {
+				owner = {
+					is_catalytic_empire = yes
+					is_planned_type = yes
+				}
+				planet = { has_foundry_designation = yes }
+			}
+			food = 4
+		}
+
+		#余货征集
+		produces = {
+			trigger = {
+				owner = { is_planned_type = yes }
+				planet = { has_foundry_designation = yes }
+			}
+			unity = 3
+			alloys = 1
+		}
+	}
+
+	#固定加成
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 4
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = concentration_of_power
+					has_policy_flag = partial_decentralization
+				}
+			}
+		}
+		country_edict_fund_add = 5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = concentration_of_power
+					has_policy_flag = partial_decentralization
+				}
+			}
+		}
+		species_empire_size_mult = -0.02
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = centralized_state
+					has_policy_flag = excessive_centralization
+				}
+			}
+		}
+		country_edict_fund_add = 10
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = full_decentralization
+					has_policy_flag = high_decentralization
+				}
+			}
+		}
+		species_empire_size_mult = -0.04
+	}
+
+	#浮动加成
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_any_generator_district_or_building = yes }
+		}
+		planet_technician_energy_produces_add = 0.2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_any_mining_district_or_building = yes }
+		}
+		planet_miners_minerals_produces_add = 0.3
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_any_farming_district_or_buildings = yes }
+		}
+		planet_farmers_food_produces_add = 0.2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_industrial_districts = yes
+				has_factory_designation = no
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_foundry_designation = yes }
+		}
+		planet_metallurgists_alloys_produces_add = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			planet = {
+				has_industrial_districts = yes
+				has_foundry_designation = no
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 0.1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			planet = { has_factory_designation = yes }
+		}
+		planet_artisans_consumer_goods_produces_add = 0.1
+	}
+
+	#计划经济加成
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_planned_type = yes }
+		}
+		pop_government_ethic_attraction = 0.05
+	}
+
+	#余货征集
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = yes
+			exists = owner
+			owner = {
+				has_edict = the_industrial_constitution
+			}
+		}
+		job_labour_hero_add = 0.34
+		planet_labour_hero_produces_mult = 0.05
+		planet_jobs_worker_produces_mult = 0.025
+	}
+
+	#市场经济加成
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_market_type = yes }
+		}
+		trade_value_add = 6
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_market_type = yes }
+		}
+		pop_government_ethic_attraction = -0.05
+	}
+
+	# 共产主义社会
+	triggered_planet_modifier = {
+		potential = { owner = { is_community_society = yes } }
+		planet_crime_add = -5
+	}
+	triggered_country_modifier = {
+		potential = { owner = { is_community_society = yes } }
+		modifier = {
+			country_admin_cap_add = 0.5
+		}
+	}
+
+	#污染
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_planned_type = yes
+				OR = {
+					NOT = {
+						is_no_planet_country = yes
+					}
+					has_origin = origin_ev_both_choosen
+					has_valid_civic = civic_ev_planet_and_fleet
+					has_ascension_perk = ev_land_planets
+				}
+			}
+			planet = { is_artificial = no }
+		}
+		pop_environment_tolerance = -0.01
+		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
+	}
+
+	weight = {
+		weight = 50
+	}
+	inline_script = "jobs/ethic_worker_economic"
+}
+
+#指挥官
+commandante = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+	
+	country_modifier = {
+		country_naval_cap_add = 5
+	}
+	resources = {
+		category = planet_soldiers
+		produces = {
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				owner = {
+					has_valid_civic = civic_citizen_service
+				}
+			}
+			unity = 1
+		}
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+	planet_modifier = {
+		planet_stability_add = 2.5
+		army_starting_experience_add = 100
+	}
+	pop_group_modifier = {
+		pop_defense_armies_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_stability_add = 1
+		mult = planet.modifier:job_soldier_stability_add
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			planet_amenities_add = -1
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_citizen_service
+			}
+		}
+		modifier = {
+			planet_amenities_add = 3
+		}
+	}
+	triggered_country_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_sparta_spirit }
+		}
+		ship_weapon_range_mult = 0.01
+	}
+	weight = {
+		weight = @ruler_job_weight
+		modifier = {
+			factor = 10
+			exists = owner
+			owner = {
+				is_militarist = yes
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_very_strong
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_strong
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			factor = 5
+			has_job_type = commandante
+		}
+	}
+}
+
+#哲学家
+supervisor = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+	
+	resources = {
+		category = planet_politicians
+		produces = {
+			unity = 3
+		}
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+	country_modifier = {
+		leader_lifespan_add = 1
+	}
+	planet_modifier = {
+		planet_jobs_society_research_produces_mult = 0.05
+		planet_jobs_unity_produces_mult = 0.05
+	}
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+	triggered_planet_modifier = {
+		potential = {
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			planet_amenities_add = -1
+		}
+	}
+	weight = {
+		weight = @ruler_job_weight
+		modifier = {
+			factor = 10
+			exists = owner
+			owner = {
+				is_pacifist = yes
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_talented
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_charismatic
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			factor = 5
+			has_job_type = supervisor
+		}
+	}
+	inline_script = "jobs/automodding_priority_unity"
+}
+
+#大亨
+mogul = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+	
+	resources = {
+		category = planet_merchants
+		produces = {
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_tradition = tr_mercantile_marketplace_of_better_ideas
+				}
+			}
+			unity = 1
+		}
+		#资本主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_authoritarian
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_authoritarian
+				}
+			}
+			unity = 0.5
+		}
+
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			owner = {
+				has_policy_flag = market_operation
+			}
+		}
+		modifier = {
+			pop_cat_ruler_political_power = 1
+		}
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			owner = {
+				has_valid_civic = civic_triple_the_profit
+			}
+		}
+		modifier = {
+			pop_cat_ruler_political_power = 3
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		trade_value_add = 1
+		mult = planet.value:mogul_produces_value
+	}
+	
+	planet_modifier = {
+		planet_jobs_trade_produces_mult = 0.02
+	}
+	country_modifier = {
+		trade_value_reduction = 0.05
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_augmentation_bazaars
+			}
+		}
+		planet_pops_trade_produces_mult = 0.01
+		logistic_growth_mult = 0.005
+		mult = value:num_cyborg_traits_species
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_tradition = tr_mercantile_marketplace_of_better_ideas
+			}
+		}
+		modifier = {
+			planet_jobs_trade_produces_mult = 0.02
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_real_estate_market_country = yes
+			}
+		}
+		modifier = {
+			pop_housing_usage_mult = 0.05
+			pop_category_specialists_energy_produces_add = 0.15
+			pop_category_workers_energy_produces_add = 0.05
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = { has_valid_civic = civic_merchant_guilds }
+		}
+		planet_jobs_energy_produces_mult = 0.03
+	}
+	weight = {
+		weight = @ruler_job_weight
+		modifier = {
+			factor = 10
+			exists = owner
+			owner = {
+				is_authoritarian = yes
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				has_trait = trait_thrifty
+				has_trait = trait_nuumismatic_administration
+			}
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				has_trait = trait_robot_domestic_protocols
+				has_trait = trait_charismatic
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_trait = trait_repugnant
+		}
+		modifier = {
+			factor = 5
+			has_job_type = mogul
+		}
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_authoritarian
+		}
+	}
+	inline_script = "jobs/automodding_priority_trade"
+}
+
+#议员
+sovereign_representative = {
+	category = ruler
+	icon = overlord_propagandist
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+
+	resources = {
+		category = planet_politicians
+		upkeep = {
+			consumer_goods = @ruler_upkeep_consumer_goods_base
+		}
+	}
+	country_modifier = {
+		pop_factions_unity_produces_mult = 0.025
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_coalition_government
+			}
+		}
+		modifier = {
+			diplo_weight_mult = 0.01
+		}
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_constitutional_parliament }
+		}
+		planet_stability_add = 2.5
+	}
+	planet_modifier = {
+		job_clerk_add = -1
+		job_media_worker_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_welfare_state
+			}
+		}
+		planet_amenities_add = 2
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		modifier = {
+			factor = 10
+			exists = owner
+			owner = {
+				is_egalitarian = yes
+			}
+		}
+		modifier = {
+			mult = value:job_weights_modifier|JOB|politician|RESOURCE|unity|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.1
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 5
+			has_job_type = sovereign_representative
+		}
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			is_crisis_purged_ruler_check = yes
+		}
+	}
+}
+
+#传奇法师
+legendary_mage = {
+	category = ruler
+	condition_string = RULER_JOB_TRIGGER
+	building_icon = building_school_of_magic
+	clothes_texture_index = 1
+	can_set_priority = no
+
+	possible_pre_triggers = {
+		has_owner = yes
+		# is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+	}
+
+	resources = {
+		category = planet_researchers
+		produces = {
+			trigger = {
+				exists = planet
+				planet = { has_modifier = ley_rift }
+				exists = owner
+				owner = {
+					has_origin = origin_wizarding_world
+					NOT = { has_valid_civic = civic_cyber_dictatorship }
+				}
+			}
+			physics_research = 8
+			engineering_research = 8
+			society_research = 8
+		}
+		produces = {
+			trigger = {
+				exists = planet
+				exists = owner
+				OR = {
+					planet = { NOT = { has_modifier = ley_rift } }
+					owner = { has_valid_civic = civic_cyber_dictatorship }
+				}
+				owner = { has_origin = origin_wizarding_world }
+			}
+			physics_research = 4
+			engineering_research = 4
+			society_research = 4
+			mult = planet.value:count_job|JOB|researcher|
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_dark_consortium
+					NOT = { has_valid_civic = civic_cyber_dictatorship }
+				}
+			}
+			physics_research = 8
+			engineering_research = 8
+			society_research = 8
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_dark_consortium
+					has_valid_civic = civic_cyber_dictatorship
+				}
+			}
+			physics_research = 4
+			engineering_research = 4
+			society_research = 4
+			mult = planet.value:count_job|JOB|researcher|
+		}
+		produces = {
+			unity = 2
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_futuristic_art
+				}
+			}
+			unity = 1
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
+			}
+			unity = 3
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					NOT = { has_valid_civic = civic_the_song_of_gears }
+				}
+			}
+			consumer_goods = 3
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_the_song_of_gears
+				}
+			}
+			alloys = 1.5
+		}
+		upkeep = {
+			trigger = {
+				exists = planet
+				planet = { NOT = { has_modifier = ley_rift } }
+				exists = owner
+				owner = {
+					has_origin = origin_wizarding_world
+				}
+			}
+			astral_threads = 1
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_civic = civic_dark_consortium
+				}
+			}
+			sr_dark_matter = 1
+		}
+		upkeep = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			consumer_goods = 1
+		}
+	}
+
+	overlord_resources = {
+		category = planet_requisitioned_research
+		produces = {
+			trigger = {
+				planet = {
+					has_planet_flag = has_science_ministry
+				}
+			}
+			physics_research = 3
+			engineering_research = 3
+			society_research = 3
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				NOT = { has_valid_civic = civic_cyber_dictatorship }
+			}
+		}
+		planet_researchers_produces_mult = 0.05
+		planet_jobs_physics_research_produces_mult = 0.05
+		planet_jobs_society_research_produces_mult = 0.05
+		planet_jobs_engineering_research_produces_mult = 0.05
+	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_amenities_add = 5
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_cyber_dictatorship
+			}
+		}
+		pop_cat_ruler_political_power = 5
+	}
+	triggered_country_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_technocracy
+			}
+		}
+		country_edict_fund_add = 5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_mechanists
+			}
+		}
+		planet_pops_robotics_upkeep_mult = -0.05
+		planet_jobs_engineering_research_produces_mult = 0.05
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_futuristic_art
+			}
+		}
+		planet_amenities_add = 3
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_cyber_dictatorship
+			}
+		}
+		job_researcher_add = 2
+	}
+
+	weight = {
+		weight = @ruler_job_weight
+		modifier = {
+			mult = value:job_weights_research_modifier|JOB|legendary_mage|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:job_weights_modifier|JOB|legendary_mage|RESOURCE|unity|FACTOR|0.25|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+			exists = owner
+			owner = { has_edict = dynamic_weight }
+		}
+		modifier = {
+			factor = 0.2
+			has_citizenship_rights = no
+			NOT = { has_trait = trait_mechanical }
+		}
+		modifier = {
+			factor = 2
+			has_living_standard = { type = living_standard_academic_privilege }
+		}
+		modifier = {
+			factor = 5
+			has_job_type = legendary_mage
+		}
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+		}
+	}
+	inline_script = "jobs/automodding_priority_research"
+}
+
+# 天子门生
+overlord_emperors_apprentice = {
+	category = ruler
+    icon = culture_worker
+	can_set_priority = no
+	is_capped_by_modifier = yes
+	building_icon = building_ministry_of_rites_dispatch_office
+	clothes_texture_index = 1
+
+	possible_pre_triggers = {
+		has_owner = yes
+		# is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+	}
+
+	resources = {
+		category = planet_overlord_propagandists
+		upkeep = {
+			influence = 1
+		}
+	}
+
+	country_modifier = {
+		monthly_loyalty = 0.5
+	}
+
+	weight = {
+		weight = @overlord_job_weight
+	}
+}
+overlord_emperors_apprentice_drone = {
+	category = complex_drone
+	icon = culture_worker
+	can_set_priority = no
+	is_capped_by_modifier = yes
+	building_icon = building_ministry_of_rites_dispatch_office
+	clothes_texture_index = 1
+	icon = overlord_propagandist
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_drone_job
+	possible = {
+		can_think = yes
+	}
+
+	resources = {
+		category = planet_overlord_propagandists
+		upkeep = {
+			influence = 1
+		}
+	}
+
+	country_modifier = {
+		monthly_loyalty = 0.5
+	}
+
+	weight = {
+		weight = @overlord_job_weight
+	}
+}
+
+# 殖民地官员
+colonial_officials = {
+	category = ruler
+	icon = overlord_beholder
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_institute
+			icon = researcher
+		}
+	}
+	possible = {
+		always = no
+	}
+
+	resources = {
+		category = planet_overlord_propagandists
+		upkeep = {
+			unity = 2
+			influence = 0.25
+		}
+	}
+
+	triggered_planet_modifier = {
+		planet_stability_add = 2.5
+	}
+
+	weight = {
+		weight = @overlord_job_weight
+		modifier = {
+			factor = 100
+			NOT = { is_same_species = planet_owner }
+		}
+	}
+}

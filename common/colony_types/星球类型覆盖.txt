@@ -1,0 +1,1393 @@
+#root = planet
+
+@stickiness = 10
+@stickiness_low = 5
+@zone_urban = 25
+@zone_rural = 10
+@rural_max_size = 15
+@rural_over_max_size = -20
+
+####################################################
+###		CAPITAL WORLD DESIGNATIONS		    	 ###
+####################################################
+# 帝国首都
+col_capital = {
+	icon = GFX_colony_type_capital
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+					has_technology = tech_adaptive_bureaucracy
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				is_country_type = primitive
+			}
+		}
+	}
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet
+			planet = { has_designation = col_capital }
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_produces_mult = 0.2
+		#planet_labour_hero_produces_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_produces_mult = 0.1
+		#planet_labour_hero_produces_mult = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 10000
+	}
+}
+
+# 蜂巢首都
+col_capital_hive = {
+	icon = GFX_colony_type_capital
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		is_capital = yes
+		exists = owner
+		owner = {
+			is_country_type = default
+			is_hive_empire = yes
+		}
+	}
+
+	custom_tooltip = col_capital_gestalt_effect
+
+	planet_modifier = {
+		planet_amenities_no_happiness_add = 10
+		planet_crime_no_happiness_add = -20
+		planet_resettlement_unemployed_destination_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+		planet_administrators_admin_cap_produces_add = 10
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_produces_mult = 0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_produces_mult = 0.1
+	}
+
+	weight_modifier = {
+		base = 10000
+	}
+}
+
+# 机械首都
+col_capital_machine = {
+	icon = GFX_colony_type_capital
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		is_capital = yes
+		exists = owner
+		owner = {
+			is_country_type = default
+			is_machine_empire = yes
+		}
+	}
+
+	custom_tooltip = col_capital_gestalt_effect
+
+	planet_modifier = {
+		planet_amenities_no_happiness_add = 10
+		planet_crime_no_happiness_add = -20
+		planet_resettlement_unemployed_destination_mult = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_administrators_admin_cap_produces_add = 10
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_produces_mult = 0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_produces_mult = 0.1
+	}
+
+	weight_modifier = {
+		base = 10000
+	}
+}
+
+# 行政首都
+col_capital_administrators = {
+	icon = GFX_colony_type_capital_administrators
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = {
+			has_technology = tech_adaptive_bureaucracy
+			NOR = {
+				has_government = gov_anarchic_society
+				has_government = gov_anarchocommunism
+				has_government = gov_anarchocapitalism
+				has_government = gov_communist_society
+			}
+		}
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				is_country_type = primitive
+			}
+		}
+	}
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 10
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_bureaucrats_upkeep_mult = -0.15
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_bureaucrats_upkeep_mult = -0.15
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_bureaucrats_produces_mult = 0.2
+		#planet_labour_hero_produces_mult = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_bureaucrats_produces_mult = 0.1
+		#planet_labour_hero_produces_mult = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = 1000
+			owner = { is_admin_decenter = yes }
+			is_capital = yes
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		inline_script = {
+			script = colony_types/shared_weights_adm_ethic
+		}
+	}
+}
+
+# 铸造首都
+col_capital_foundry = {
+	icon = GFX_colony_type_capital_foundry
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+					is_ai = yes
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				is_country_type = primitive
+			}
+		}
+	}
+
+	custom_tooltip = col_foundry_custom
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_metallurgists_produces_mult = 0.15
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_metallurgists_produces_mult = 0.25
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 1
+		planet_metallurgists_energy_upkeep_add = 0.5
+		#planet_labour_hero_alloys_produces_add = 3.5
+		#planet_labour_hero_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_metallurgists_alloys_produces_add = 0.5
+		planet_metallurgists_energy_upkeep_add = 0.25
+		#planet_labour_hero_alloys_produces_add = 1.5
+		#planet_labour_hero_energy_upkeep_add = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	# used by AI to estimate what will happen when we change the designation
+	ai_resource_conversion = {
+		consumer_goods = 0
+		alloys = 2
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	ai_resource_current_conversion = {
+		alloys = 0.5
+		consumer_goods = -2
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = 0
+			owner = { is_admin_decenter = yes }
+			is_capital = yes
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		modifier = {
+			factor = @stickiness
+			has_designation = col_capital_foundry
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_industrial
+			}
+			mode = add
+			mult = 3
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_hab_industrial
+			}
+			mode = add
+			mult = 3
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_arms_industry
+			}
+			mode = add
+			mult = 8
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_civilian_industry
+			}
+			mode = add
+			mult = -3
+		}
+		modifier = {
+			add = 10
+			OR = {
+				has_building = building_foundry_1
+				has_building = building_foundry_2
+				has_building = building_foundry_3
+			}
+		}
+		modifier = {
+			add = -5
+			OR = {
+				has_building = building_factory_1
+				has_building = building_factory_2
+				has_building = building_factory_3
+			}
+		}
+		modifier = {
+			add = 10
+			num_districts = { type = district_industrial value >= 1 }
+			exists = owner
+			owner = {
+				OR = {
+					country_uses_consumer_goods = no
+					has_monthly_income = { resource = consumer_goods value >= 0 }
+				}
+				resource_revenue_compare = {
+					resource = alloys
+					value < trigger:years_passed
+				}
+			}
+		}
+	}
+}
+
+# 工业首都
+col_capital_factory = {
+	icon = GFX_colony_type_capital_factory
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+					is_ai = yes
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				is_country_type = primitive
+			}
+		}
+	}
+
+	custom_tooltip = col_factory_custom
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_artisans_produces_mult = 0.15
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_artisans_produces_mult = 0.25
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 1.5
+		planet_artisans_energy_upkeep_add = 0.5
+		#planet_labour_hero_consumer_goods_produces_add = 3
+		#planet_labour_hero_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_artisans_consumer_goods_produces_add = 0.5
+		planet_artisans_energy_upkeep_add = 0.25
+		#planet_labour_hero_consumer_goods_produces_add = 2
+		#planet_labour_hero_energy_upkeep_add = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	# used by AI to estimate what will happen when we change the designation
+	ai_resource_conversion = {
+		consumer_goods = 2
+		alloys = 0
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	# Used by AI to estimate the current effects of this designation
+	ai_resource_current_conversion = {
+		consumer_goods = 0.5
+		alloys = -0.5
+
+		trigger = {
+			owner = {
+				is_gestalt = no
+			}
+		}
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = 0
+			owner = { is_admin_decenter = yes }
+			is_capital = yes
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		modifier = {
+			factor = @stickiness
+			has_designation = col_capital_factory
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_industrial
+			}
+			mode = add
+			mult = 3
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_hab_industrial
+			}
+			mode = add
+			mult = 3
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_civilian_industry
+			}
+			mode = add
+			mult = 8
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_arms_industry
+			}
+			mode = add
+			mult = -3
+		}
+		modifier = {
+			add = 10
+			OR = {
+				has_building = building_factory_1
+				has_building = building_factory_2
+				has_building = building_factory_3
+			}
+		}
+		modifier = {
+			add = -5
+			OR = {
+				has_building = building_foundry_1
+				has_building = building_foundry_2
+				has_building = building_foundry_3
+			}
+		}
+		modifier = {
+			add = 10
+			num_districts = { type = district_industrial value >= 1 }
+			exists = owner
+			owner = {
+				resource_revenue_compare = {
+					resource = alloys
+					value >= trigger:years_passed
+				}
+				has_monthly_income = { resource = consumer_goods value < 0 }
+			}
+		}
+	}
+}
+
+# 贸易首都
+col_capital_trade = {
+	icon = GFX_colony_type_capital_trade
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				is_country_type = primitive
+			}
+		}
+	}
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_economic_stance_planned = no
+				NOT = { has_policy_flag = economic_stance_emotional_economy }
+			}
+		}
+		job_trader_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					is_economic_stance_planned = yes
+					has_policy_flag = economic_stance_emotional_economy
+				}
+			}
+		}
+		job_steward_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		trade_value_mult = 0.15
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		trade_value_mult = 0.25
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_amenities_mult = 0.2
+		#planet_labour_hero_produces_mult = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_amenities_mult = 0.1
+		#planet_labour_hero_produces_mult = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = 0
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		modifier = {
+			add = @stickiness
+			has_designation = col_capital_trade
+		}
+		modifier = {
+			factor = @stickiness
+			owner = { is_capitalism = yes }
+		}
+		complex_trigger_modifier = {
+			trigger = num_assigned_jobs
+			parameters = {
+				job = mogul
+			}
+			mode = add
+			mult = 2
+		}
+		complex_trigger_modifier = {
+			trigger = num_assigned_jobs
+			parameters = {
+				job = merchant
+			}
+			mode = add
+			mult = 2
+		}
+		complex_trigger_modifier = {
+			trigger = num_assigned_jobs
+			parameters = {
+				job = trader
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_assigned_jobs
+			parameters = {
+				job = numistic_priest
+			}
+			mode = add
+		}
+	}
+}
+
+# 资源首都
+col_capital_extraction = {
+	icon = GFX_colony_type_capital_extraction
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_buildings_produces_mult = 0.1
+		planet_jobs_worker_produces_mult = 0.1
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_buildings_produces_mult = 0.15
+		planet_jobs_worker_produces_mult = 0.15
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_technician_energy_produces_add = 1
+		planet_miners_minerals_produces_add = 1
+		planet_farmers_food_produces_add = 1
+		planet_labour_hero_produces_mult = 0.3
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_technician_energy_produces_add = 0.5
+		planet_miners_minerals_produces_add = 0.5
+		planet_farmers_food_produces_add = 0.5
+		planet_labour_hero_produces_mult = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = 0
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		modifier = {
+			add = @stickiness
+			has_designation = col_capital_extraction
+		}
+		modifier = {
+			factor = @stickiness
+			owner = { is_socialism = yes }
+		}
+		inline_script = {
+			script = colony_types/shared_weights_capital_extraction
+		}
+	}
+}
+
+# 科研首都
+col_capital_research = {
+	icon = GFX_colony_type_capital_research
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_researchers_produces_mult = 0.15
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_researchers_produces_mult = 0.25
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_researchers_physics_research_produces_add = 1
+		planet_researchers_society_research_produces_add = 1
+		planet_researchers_engineering_research_produces_add = 1
+		planet_researchers_energy_upkeep_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_researchers_physics_research_produces_add = 0.5
+		planet_researchers_society_research_produces_add = 0.5
+		planet_researchers_engineering_research_produces_add = 0.5
+		planet_researchers_energy_upkeep_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = 0
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		modifier = {
+			factor = @stickiness
+			has_designation = col_capital_research
+		}
+		modifier = {
+			factor = @stickiness
+			owner = { is_materialist = yes }
+		}
+		inline_script = {
+			script = colony_types/shared_weights_research
+		}
+	}
+}
+
+# 堡垒首都
+col_capital_fortress = {
+	icon = GFX_colony_type_capital_fortress
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		planet_stability_add = 5
+		planet_orbital_bombardment_damage = -0.25
+		pop_defense_armies_add = 1
+		pop_government_ethic_attraction = 1
+		job_conscript_per_pop = 0.03
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		pop_growth_speed = 0.1
+		planet_pop_assembly_mult = 0.1
+		planet_pop_assembly_organic_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 500
+		modifier = {
+			add = 2500
+			owner = {
+				is_at_war = yes
+				num_owned_planets = 1
+			}
+		}
+		modifier = {
+			factor = @stickiness
+			has_designation = col_fortress
+		}
+		modifier = {
+			factor = 20
+			owner = { is_militarist = yes }
+		}
+		complex_trigger_modifier = {
+			trigger = num_buildings
+			parameters = {
+				type = building_stronghold
+			}
+			mode = add
+			mult = 2
+		}
+		complex_trigger_modifier = {
+			trigger = num_buildings
+			parameters = {
+				type = building_fortress
+			}
+			mode = add
+			mult = 4
+		}
+	}
+}

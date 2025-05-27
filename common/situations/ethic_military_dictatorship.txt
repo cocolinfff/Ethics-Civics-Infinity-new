@@ -1,0 +1,134 @@
+building_super_battleships = {
+    picture = GFX_evt_juggernaut
+    complete_icon_frame = GFX_situation_outcome_frame_blue
+    complete_icon = GFX_situation_outcome_positive
+    modifier = {
+    }
+    stages = {
+        building_super_battleships_1 = {
+            icon = GFX_situation_stage_1
+            icon_background = GFX_situation_stage_frame_blue
+            end = 100
+        }
+    }
+    start_value = 1
+    monthly_progress = {
+        base = 1
+        modifier = {
+            desc = string_current_approach
+            add = -0.66
+            current_situation_approach = conquer_building_super_battleships_1
+        }
+        modifier = {
+            desc = string_current_approach
+            add = 1
+            current_situation_approach = conquer_building_super_battleships_3
+        }
+        modifier = {
+            desc = ethic_military_dictatorship.2.a_effects_2
+            factor = 0.75
+            OR = {
+                current_situation_approach = conquer_building_super_battleships_2
+                current_situation_approach = conquer_building_super_battleships_3
+            }
+            owner = {
+                any_owned_starbase = {
+                    NOT = { has_starbase_building = colossus_yards }
+                }
+            }
+        }
+        modifier = {
+            desc = alert_resource_shortage_title
+            factor = 0
+            owner = {
+                has_resource = { type = alloys amount < 0 }
+                has_monthly_income = { resource = alloys value = 0 }
+            }
+        }
+    }
+    on_progress_complete = {
+        custom_tooltip = ethic_military_dictatorship.2.a_effects
+        hidden_effect = {
+            create_fleet = {
+                name = random
+                effect = {
+                    set_owner = root
+                    set_name = {
+                        key = NAME_Royal_Fleet
+                        variable_string = "[Root.GetRulerName]"
+                    }
+                    create_ship = {
+                        name = random
+                        random_existing_design = juggernaut
+                    }
+                    set_location = root.capital_scope.star
+                }
+            }
+            last_created_fleet = {
+                every_owned_ship = {
+                    set_name = {
+                        key = NAME_Royal_Ship
+                        variable_string = "[Root.GetRulerTitle]"
+                        variable_string = "[Root.GetRulerName]"
+                    }
+                }
+            }
+            destroy_situation = this
+        }
+    }
+    on_fail = {
+        custom_tooltip = ethic_military_dictatorship.2.b_effects
+        hidden_effect = {
+            owner = { add_modifier = { modifier = military_dictatorship_modifier days = -1 } }
+            destroy_situation = this
+        }
+    }
+    approach = {
+        name = conquer_building_super_battleships_1
+        icon = GFX_situation_approach_fleet
+        icon_background = GFX_situation_approach_bg_red
+        default = yes
+        on_select = {
+            custom_tooltip = conquer_building_super_battleships_1_tooltip
+        }
+        resources = {
+            category = situations
+            upkeep = { alloys = 10 }
+        }
+        ai_weight = {
+            factor = 999
+        }
+    }
+    approach = {
+        name = conquer_building_super_battleships_2
+        icon = GFX_situation_approach_fleet
+        icon_background = GFX_situation_approach_bg_yellow
+        default = yes
+        on_select = {
+            custom_tooltip = conquer_building_super_battleships_2_tooltip
+        }
+        resources = {
+            category = situations
+            upkeep = { alloys = 20 }
+        }
+        modifier = {
+            starbase_shipyard_build_speed_mult = -0.33
+        }
+    }
+    approach = {
+        name = conquer_building_super_battleships_3
+        icon = GFX_situation_approach_fleet
+        icon_background = GFX_situation_approach_bg_green
+        default = yes
+        on_select = {
+            custom_tooltip = conquer_building_super_battleships_3_tooltip
+        }
+        resources = {
+            category = situations
+            upkeep = { alloys = 40 }
+        }
+        modifier = {
+            starbase_shipyard_build_speed_mult = -0.66
+        }
+    }
+}

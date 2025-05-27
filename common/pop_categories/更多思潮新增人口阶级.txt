@@ -1,0 +1,1714 @@
+machine_soul = {
+	rank = 0
+	clothes_texture_index = 1
+
+	change_job_threshold = 1.25
+
+	assign_to_pop = {
+		exists = owner
+		owner = {
+			has_origin = origin_machine_cult
+		}
+		has_trait = "trait_mechanical"
+	}
+	weight = {
+		weight = 5
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = yes
+	}
+
+	resettlement_cost = {
+		energy = 100
+		unity = 50
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		logistic_growth_mult = @tiyanki_budding_rate
+	}
+	pop_group_modifier = {
+		pop_political_power = 10
+		pop_housing_usage_base = 1
+		pop_amenities_usage_no_happiness_base = 1
+	}
+	resources = {
+		category = pop_category_bio_trophy
+
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_tax_inclusive_company }
+			}
+			energy = 2.5
+		}
+
+		#人口凝聚力消耗
+		upkeep = {
+			unity = 0.25
+		}
+		
+		upkeep = {
+			trigger = {
+				has_trait = "trait_mechanical"
+			}
+			energy = @living_standard_phototrophic_normal
+			consumer_goods = @living_standard_luxuries_very_high
+		}
+	}
+}
+
+vanguard_unit = {
+	rank = 10
+	clothes_texture_index = 1
+	change_job_threshold = 3
+	assign_to_pop = {
+		has_trait = trait_unnatural
+	}
+	weight = {
+		weight = 10000
+	}
+	allow_resettlement = {
+		always = yes
+	}
+
+	resettlement_cost = {
+		unity = 1000
+	}
+	
+	triggered_planet_modifier = {
+		potential = {
+			has_trait = trait_unnatural
+			planet = {
+				OR = {
+					NOT = { exists = assembling_species }
+					AND = {
+						exists = assembling_species
+						assembling_species = {
+							OR = {
+								has_trait = trait_unnatural
+								is_robotic = yes
+							}
+						}
+					}
+				}
+			}
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+	}
+
+	pop_group_modifier = {
+		pop_political_power = 1
+		pop_housing_usage_base = 1
+		pop_amenities_usage_no_happiness_base = 1
+	}
+	resources = {
+		category = pop_category_vanguard_unit
+
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_tax_inclusive_company }
+			}
+			energy = 2.5
+		}
+
+		upkeep = {
+			energy = 1
+		}
+	}
+}
+
+rentier = {
+	rank = 3
+	clothes_texture_index = 1
+	change_job_threshold = 2
+
+	demotion_time = 1
+
+	should_apply_unemployment_penalties = {
+		always = no
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
+			is_unemployed = yes
+			NOR = {
+				has_very_high_living_standard_type = yes
+				has_high_living_standard_type = yes
+				has_shared_burden_living_standard_type = yes
+			}
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+		}
+
+		pop_happiness = 0.10
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			is_enslaved = yes
+			owner = {
+				has_valid_civic = civic_ideal_slavery
+			}
+		}
+
+		pop_housing_usage_base = 0.5
+	}
+
+	weight = {
+		weight = 3
+	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_crime_add = 1
+		mult = modifier:planet_rulers_crime_add
+	}
+
+	pop_group_modifier = {
+		pop_housing_usage_base = 1
+		pop_amenities_usage_base = 1
+	}
+	triggered_pop_group_modifier = {
+		potential = { always = yes }
+		pop_housing_usage_base = 1
+		mult = modifier:pop_rulers_housing_usage_base
+	}
+	triggered_pop_group_modifier = {
+		potential = { always = yes }
+		pop_amenities_usage_base = 1
+		mult = modifier:pop_rulers_amenities_usage_base
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = no
+	}
+
+	#灵飞高级政体
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_direct_democratic
+				has_country_flag = psionics_country
+			}
+		}
+		planetary_ascension_effect_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_corporate
+				has_country_flag = psionics_country
+			}
+		}
+		planet_pops_trade_produces_mult = 0.02
+	}
+
+	#先验乌托邦
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+			has_citizenship_type = {
+				country = root.owner
+				type = citizenship_limited
+			}
+		}
+		planet_crime_add = 10
+	}
+
+	#饭桌政治
+	triggered_planet_modifier = {
+		potential = {
+			is_lithoid = no
+			is_robot_pop_group = no
+			exists = owner
+			owner = {
+				has_valid_civic = civic_banquet_politics
+				has_monthly_income = { resource = food value > 0 }
+				has_resource = { type = food amount > 0 }
+			}
+		}
+		planet_crime_add = -2.5
+		pop_amenities_usage_mult = -0.025
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_lithoid = yes
+			exists = owner
+			owner = {
+				has_valid_civic = civic_banquet_politics
+				has_monthly_income = { resource = minerals value > 0 }
+				has_resource = { type = minerals amount > 0 }
+			}
+		}
+		planet_crime_add = -2.5
+		pop_amenities_usage_mult = -0.025
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_robot_pop_group = yes
+			exists = owner
+			owner = {
+				has_valid_civic = civic_banquet_politics
+				has_monthly_income = { resource = food value > 0 }
+				has_resource = { type = food amount > 0 }
+			}
+		}
+		planet_crime_add = -2.5
+		pop_amenities_usage_mult = -0.025
+	}
+
+	#恶之花
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = no
+			exists = owner
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+		planet_crime_mult = 0.01
+		pop_decline_speed = 0.01
+	}
+
+	#错误复制者
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
+		}
+		planet_pop_assembly_add = 0.5
+	}
+
+	#人治精神
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_spirit_of_rule_by_man }
+		}
+		pop_cat_specialist_happiness = -0.02
+	}
+
+	#精神自由
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_beacon_of_liberty }
+		}
+		planet_pops_trade_produces_mult = 0.01
+	}
+
+	#光荣与梦想
+	triggered_planet_modifier = {
+		potential = {
+			is_same_species = root
+			is_enslaved = no
+			exists = owner
+			owner = { has_valid_civic = civic_glory_and_dream }
+		}
+		planet_jobs_slave_produces_mult = 0.005
+	}
+
+	#共识算法
+	triggered_planet_modifier = {
+		potential = {
+			happiness > 0.5
+			exists = owner
+			owner = { has_valid_civic = civic_cyber_demos_cratos }
+		}
+		planet_stability_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			happiness < 0.5
+			exists = owner
+			owner = { has_valid_civic = civic_cyber_demos_cratos }
+		}
+		planet_stability_add = -1
+	}
+
+	#苦难回响
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_echoes_of_suffering }
+		}
+		pop_category_workers_consumer_goods_upkeep_mult = -0.025
+		pop_category_workers_food_upkeep_mult = -0.025
+	}
+
+	#笑话
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_Joker }
+		}
+		planet_amenities_add = 2
+		mult = value:Joker_planet_worker_happiness
+	}
+
+	#银河子宫
+	triggered_planet_modifier = {
+		potential = {
+			is_galactic_uterus_country = yes
+		}
+		pop_cat_worker_happiness = -0.02
+		pop_cat_specialist_happiness = -0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_galactic_uterus_country = yes
+		}
+		pop_decline_speed = -0.01
+		mult = value:num_planet_cat_not_robot_specialist
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_galactic_uterus_country = yes
+		}
+		logistic_growth_mult = -0.01
+		mult = value:num_planet_cat_not_robot_worker
+	}
+
+	#机械嬗变
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mechanical_transmutation
+			}
+		}
+		planet_pop_assembly_mult = 0.01
+	}
+
+	# 私人医疗
+	triggered_planet_modifier = {
+		potential = {
+			AND = { exists = owner exists = planet }
+			owner = { has_policy_flag = private_healthcare }
+			planet = { has_clinic = yes }
+		}
+		job_healthcare_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+		mult = value:budding_multiplier
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		logistic_growth_mult = @tiyanki_budding_rate
+	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers"
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
+
+	resources = {
+		category = unemployment_resources
+
+		#利他主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_altruism
+				}
+			}
+			unity = 2
+		}
+
+		#反乌托邦
+		produces = {
+			trigger = {
+				has_standard_dystopian_society_living_standard_type = yes
+				is_lithoid = no
+				is_robot_pop_group = no
+			}
+			energy = 5
+			minerals = 3
+			food = 5
+		}
+		produces = {
+			trigger = {
+				has_standard_dystopian_society_living_standard_type = yes
+				OR = {
+					is_lithoid = yes
+					is_robot_pop_group = yes
+				}
+			}
+			energy = 5
+			minerals = 6
+		}
+
+		# Unemployment Benefits Crime event
+		upkeep = {
+			trigger = {
+				planet = {
+					has_modifier = unemployment_benefits
+				}
+			}
+			consumer_goods = 2
+		}
+
+		#包税公司
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_tax_inclusive_company }
+			}
+			energy = 5
+		}
+
+		#求道协议
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_policy_flag = dao_seeking_protocol }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+
+		#民族经济
+		produces = {
+			trigger = {
+				is_enslaved = no
+				exists = owner
+				owner = {
+					has_active_tradition = tr_isolated_ethnic_purity
+					is_egalitarian = yes
+				}
+			}
+			energy = 0.5
+			minerals = 0.5
+			food = 0.5
+		}
+		#朝闻道
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
+			}
+			physics_research = 2
+			engineering_research = 2
+			society_research = 2
+		}
+		#滤波回声
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+				}
+				exists = owner
+				owner = { has_valid_civic = civic_echo }
+			}
+			unity = 1
+			trade = 1
+		}
+		#利他主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_altruism
+				}
+			}
+			unity = 0.5
+		}
+		#国教崇拜
+		produces = {
+			trigger = {
+				has_ethic = ethic_spiritualist
+				exists = planet
+				planet = {
+					has_deposit = d_imperial_cult
+				}
+				exists = owner
+				owner = {
+					has_valid_civic = civic_imperial_cult
+				}
+			}
+			unity = 3
+		}
+		#全息社会主义
+		produces = {
+			trigger = {
+				is_enslaved = no
+				exists = owner
+				owner = {
+					has_valid_civic = civic_ultimate_collective
+				}
+			}
+			physics_research = 0.25
+			engineering_research = 0.25
+			society_research = 0.25
+		}
+		#思想设计师
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_glorious_pioneer
+				}
+			}
+			unity = 2
+		}
+		# 唯心飞升
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_psychic_power
+				}
+			}
+			society_research = 4
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_psychic_power
+					NOT = { has_ascension_perk = ap_mind_over_matter }
+				}
+			}
+			unity = 0.5
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_psychic_power
+					has_ascension_perk = ap_mind_over_matter
+				}
+			}
+			unity = 0.25
+		}
+		#单一主义
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_fanatic_xenophobe
+				}
+			}
+			unity = 0.15
+		}
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_xenophobe
+				}
+			}
+			unity = 0.1
+		}
+		#崇外主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.25
+		}
+
+		#人口凝聚力消耗
+		upkeep = {
+			trigger = {
+				exists = owner
+				exists = planet
+				NOR = {
+					owner = {
+						OR = {
+							has_valid_civic = civic_atomic_society
+							any_neighbor_country = { has_valid_civic = civic_atomic_society }
+							any_rival_country = { has_valid_civic = civic_atomic_society }
+						}
+					}
+					planet = {
+						exists = branch_office_owner
+						branch_office_owner = { has_valid_civic = civic_atomic_society }
+					}
+				}
+			}
+			unity = 0.5
+		}
+
+		# Regular food, mineral and energy upkeep.
+		inline_script = pop_categories/regular_upkeep
+
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/trait_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/ethic_trait_upkeep"
+
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
+
+		# Exotic Metabolism Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_exotic_metabolism
+			}
+			exotic_gases = @exotic_metabolism
+		}
+
+		# Resource Production
+
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_inorganic_breath
+			}
+			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_drake_scaled
+					has_trait = trait_drake_scaled_yg
+				}
+			}
+			alloys = @drake_scaled_trait_resource_production
+		}
+
+		upkeep = {
+			trigger = {
+				is_organic_machine = yes
+			}
+			food = 1
+			mult = modifier:planet_pops_food_upkeep_add
+		}
+		upkeep = {
+			trigger = {
+				has_trait = trait_lithoid_yg
+			}
+			minerals = 1
+			mult = modifier:planet_pops_minerals_upkeep_add
+		}
+	}
+}
+
+postpartum_workers = {
+	rank = 2
+	clothes_texture_index = 1
+	change_job_threshold = 1.25
+
+	demotion_time = 1
+
+	should_apply_unemployment_penalties = {
+		always = no
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+	}
+
+	triggered_pop_group_modifier = {
+		potential = {
+			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
+			is_unemployed = yes
+			NOR = {
+				has_very_high_living_standard_type = yes
+				has_high_living_standard_type = yes
+				has_shared_burden_living_standard_type = yes
+			}
+			exists = owner
+			owner = {
+				is_galactic_community_member = yes
+			}
+		}
+
+		pop_happiness = 0.10
+	}
+	triggered_pop_group_modifier = {
+		potential = {
+			is_enslaved = yes
+			owner = {
+				has_valid_civic = civic_ideal_slavery
+			}
+		}
+
+		pop_housing_usage_base = 0.5
+	}
+
+	weight = {
+		weight = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_crime_add = 1
+		mult = modifier:planet_specialists_crime_add
+	}
+
+	pop_group_modifier = {
+		pop_housing_usage_base = 1
+		pop_amenities_usage_base = 1
+	}
+	triggered_pop_group_modifier = {
+		potential = { always = yes }
+		pop_housing_usage_base = 1
+		mult = modifier:pop_specialists_housing_usage_base
+	}
+	triggered_pop_group_modifier = {
+		potential = { always = yes }
+		pop_amenities_usage_base = 1
+		mult = modifier:pop_specialists_amenities_usage_base
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = yes
+	}
+
+	resettlement_cost = {
+		energy = 250
+	}
+
+	resettlement_cost = {
+		trigger = {
+			owner = {
+				NOT = { has_valid_civic = civic_corvee_system }
+			}
+		}
+		unity = 25
+	}
+
+	#灵飞高级政体
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_direct_democratic
+				has_country_flag = psionics_country
+			}
+		}
+		planetary_ascension_effect_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_corporate
+				has_country_flag = psionics_country
+			}
+		}
+		planet_pops_trade_produces_mult = 0.02
+	}
+
+	#先验乌托邦
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+			has_citizenship_type = {
+				country = root.owner
+				type = citizenship_limited
+			}
+		}
+		planet_crime_add = 5
+	}
+
+	#饭桌政治
+	triggered_planet_modifier = {
+		potential = {
+			is_lithoid = no
+			is_robot_pop_group = no
+			exists = owner
+			owner = {
+				has_valid_civic = civic_banquet_politics
+				has_monthly_income = { resource = food value > 0 }
+				has_resource = { type = food amount > 0 }
+			}
+		}
+		planet_crime_add = -5
+		pop_amenities_usage_mult = -0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_lithoid = yes
+			exists = owner
+			owner = {
+				has_valid_civic = civic_banquet_politics
+				has_monthly_income = { resource = minerals value > 0 }
+				has_resource = { type = minerals amount > 0 }
+			}
+		}
+		planet_crime_add = -5
+		pop_amenities_usage_mult = -0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			is_robot_pop_group = yes
+			exists = owner
+			owner = {
+				has_valid_civic = civic_banquet_politics
+				has_monthly_income = { resource = food value > 0 }
+				has_resource = { type = food amount > 0 }
+			}
+		}
+		planet_crime_add = -5
+		pop_amenities_usage_mult = -0.01
+	}
+
+	#恶之花
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = no
+			exists = owner
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+		planet_crime_mult = 0.01
+		pop_decline_speed = 0.01
+	}
+
+	#错误复制者
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
+		}
+		planet_pop_assembly_add = 0.5
+	}
+
+	#精神自由
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_beacon_of_liberty }
+		}
+		planet_pops_trade_produces_mult = 0.01
+	}
+
+	#光荣与梦想
+	triggered_planet_modifier = {
+		potential = {
+			is_same_species = root
+			is_enslaved = no
+			exists = owner
+			owner = { has_valid_civic = civic_glory_and_dream }
+		}
+		planet_jobs_slave_produces_mult = 0.005
+	}
+
+	#共识算法
+	triggered_planet_modifier = {
+		potential = {
+			happiness > 0.5
+			exists = owner
+			owner = { has_valid_civic = civic_cyber_demos_cratos }
+		}
+		planet_stability_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			happiness < 0.5
+			exists = owner
+			owner = { has_valid_civic = civic_cyber_demos_cratos }
+		}
+		planet_stability_add = -1
+	}
+
+	#苦难回响
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_echoes_of_suffering }
+		}
+		pop_category_workers_consumer_goods_upkeep_mult = -0.015
+		pop_category_workers_food_upkeep_mult = -0.015
+	}
+
+	#人治精神
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_spirit_of_rule_by_man }
+		}
+		planet_administrators_admin_cap_produces_add = 1
+		mult = planet.value:count_pop_category|CATEGORY|ruler|
+	}
+
+	#笑话
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_Joker }
+		}
+		planet_amenities_add = 1
+		mult = value:Joker_planet_worker_happiness
+	}
+
+	#银河子宫
+	triggered_planet_modifier = {
+		potential = {
+			is_galactic_uterus_country = yes
+		}
+		trade_value_add = 1
+		multiplier = triger:planet_pops_trade_produces_mult
+	}
+
+	#机械嬗变
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mechanical_transmutation
+			}
+		}
+		planet_pop_assembly_mult = 0.01
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+		mult = value:budding_multiplier
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		logistic_growth_mult = @tiyanki_budding_rate
+	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers"
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
+
+	resources = {
+		category = unemployment_resources
+
+		#利他主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_altruism
+				}
+			}
+			unity = 2
+		}
+
+		#反乌托邦
+		produces = {
+			trigger = {
+				has_standard_dystopian_society_living_standard_type = yes
+				is_lithoid = no
+				is_robot_pop_group = no
+			}
+			energy = 5
+			minerals = 3
+			food = 5
+		}
+		produces = {
+			trigger = {
+				has_standard_dystopian_society_living_standard_type = yes
+				OR = {
+					is_lithoid = yes
+					is_robot_pop_group = yes
+				}
+			}
+			energy = 5
+			minerals = 6
+		}
+
+		# Unemployment Benefits Crime event
+		upkeep = {
+			trigger = {
+				planet = {
+					has_modifier = unemployment_benefits
+				}
+			}
+			consumer_goods = 2
+		}
+
+		#包税公司
+		produces = {
+			trigger = {
+				owner = { has_valid_civic = civic_tax_inclusive_company }
+			}
+			energy = 2.5
+		}
+
+		#求道协议
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_policy_flag = dao_seeking_protocol }
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+
+		#民族经济
+		produces = {
+			trigger = {
+				is_enslaved = no
+				exists = owner
+				owner = {
+					has_active_tradition = tr_isolated_ethnic_purity
+					is_egalitarian = yes
+				}
+			}
+			energy = 0.5
+			minerals = 0.5
+			food = 0.5
+		}
+		#利他主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_altruism
+				}
+			}
+			unity = 0.5
+		}
+		#滤波回声
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_mechanical
+					has_trait = trait_machine_unit
+				}
+				exists = owner
+				owner = { has_valid_civic = civic_echo }
+			}
+			unity = 1
+			trade = 1
+		}
+
+		#国教崇拜
+		produces = {
+			trigger = {
+				has_ethic = ethic_spiritualist
+				exists = planet
+				planet = {
+					has_deposit = d_imperial_cult
+				}
+				exists = owner
+				owner = {
+					has_valid_civic = civic_imperial_cult
+				}
+			}
+			unity = 1
+		}
+		#朝闻道
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_zhaowen_dao
+				}
+			}
+			physics_research = 1
+			engineering_research = 1
+			society_research = 1
+		}
+		# 唯心飞升
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_psychic_power
+				}
+			}
+			physics_research = 2
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_psychic_power
+					NOT = { has_ascension_perk = ap_mind_over_matter }
+				}
+			}
+			unity = 0.5
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ascension_perk = ap_psychic_power
+					has_ascension_perk = ap_mind_over_matter
+				}
+			}
+			unity = 0.25
+		}
+		#单一主义
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_fanatic_xenophobe
+				}
+			}
+			unity = 0.15
+		}
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_xenophobe
+				}
+			}
+			unity = 0.1
+		}
+		#崇外主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.25
+		}
+
+		#人口凝聚力消耗
+		upkeep = {
+			trigger = {
+				exists = owner
+				exists = planet
+				NOR = {
+					owner = {
+						OR = {
+							has_valid_civic = civic_atomic_society
+							any_neighbor_country = { has_valid_civic = civic_atomic_society }
+							any_rival_country = { has_valid_civic = civic_atomic_society }
+						}
+					}
+					planet = {
+						exists = branch_office_owner
+						branch_office_owner = { has_valid_civic = civic_atomic_society }
+					}
+				}
+			}
+			unity = 0.5
+		}
+
+		# Regular food, mineral and energy upkeep.
+		inline_script = pop_categories/regular_upkeep
+
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/trait_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/ethic_trait_upkeep"
+
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
+
+		# Exotic Metabolism Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_exotic_metabolism
+			}
+			exotic_gases = @exotic_metabolism
+		}
+
+		# Resource Production
+
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_inorganic_breath
+			}
+			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_drake_scaled
+					has_trait = trait_drake_scaled_yg
+				}
+			}
+			alloys = @drake_scaled_trait_resource_production
+		}
+
+		upkeep = {
+			trigger = {
+				is_organic_machine = yes
+			}
+			food = 1
+			mult = modifier:planet_pops_food_upkeep_add
+		}
+		upkeep = {
+			trigger = {
+				has_trait = trait_lithoid_yg
+			}
+			minerals = 1
+			mult = modifier:planet_pops_minerals_upkeep_add
+		}
+	}
+}
+
+striker = {
+	rank = 1
+	clothes_texture_index = 2
+
+	change_job_threshold = 1.15
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+	}
+
+	#灵飞高级政体
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_direct_democratic
+				has_country_flag = psionics_country
+			}
+		}
+		planetary_ascension_effect_mult = 0.01
+	}
+	triggered_planet_modifier = {
+		potential = {
+			OR = {
+				has_trait = trait_psionic
+				has_trait = trait_latent_psionic
+			}
+			exists = owner
+			owner = {
+				has_authority = auth_corporate
+				has_country_flag = psionics_country
+			}
+		}
+		planet_pops_trade_produces_mult = 0.02
+	}
+
+	#先验乌托邦
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+			has_citizenship_type = {
+				country = root.owner
+				type = citizenship_limited
+			}
+		}
+		planet_crime_add = 2
+	}
+
+	#错误复制者
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
+		}
+		planet_pop_assembly_add = 0.5
+	}
+
+	should_apply_unemployment_penalties = {
+		always = no
+	}
+	unemployment_resources = {
+		category = unemployment_resources
+
+		# Unemployment Benefits Crime event
+		upkeep = {
+			trigger = {
+				planet = {
+					has_modifier = unemployment_benefits
+				}
+			}
+			consumer_goods = 2
+		}
+	}
+
+	# This is called whenever a Pop is created, moved to a different planet, or gets a new owner
+	assign_to_pop = {
+		exists = owner
+		owner = {
+			is_gestalt = no
+		}
+	}
+	weight = {
+		weight = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = { always = yes }
+		planet_crime_add = 1
+		mult = modifier:planet_workers_crime_add
+	}
+
+	pop_group_modifier = {
+		pop_housing_usage_base = 1
+		pop_amenities_usage_base = 1
+	}
+	triggered_pop_group_modifier = {
+		potential = { always = yes }
+		pop_housing_usage_base = 1
+		mult = modifier:pop_workers_housing_usage_base
+	}
+	triggered_pop_group_modifier = {
+		potential = { always = yes }
+		pop_amenities_usage_base = 1
+		mult = modifier:pop_workers_amenities_usage_base
+	}
+
+	# scope: pop to be resettled
+	allow_resettlement = {
+		always = no
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_budding_pop = yes
+		}
+		logistic_growth_mult = @plantoid_budding_rate
+		mult = value:budding_multiplier
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			can_assemble_tiyanki_pop = yes
+		}
+		logistic_growth_mult = @tiyanki_budding_rate
+	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers"
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
+
+	resources = {
+		category = unemployment_resources
+
+		# 社会主义理念
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_transcendental_utopia
+						has_valid_civic = civic_shared_burden
+						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_worker_coop
+						has_valid_civic = civic_world_cooperative
+					}
+				}
+			}
+			unity = 0.25
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_transcendental_utopia
+						is_community_country = yes
+					}
+				}
+			}
+			unity = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					OR = {
+						has_valid_civic = civic_transcendental_utopia
+						has_valid_civic = civic_shared_burden
+						has_valid_civic = civic_socialistic
+						has_valid_civic = civic_worker_coop
+						has_valid_civic = civic_world_cooperative
+					}
+				}
+			}
+			consumer_goods = 0.15
+		}
+
+		# 民族与阶级
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_nazbol
+				}
+				OR = {
+					has_citizenship_type = { country = from type = citizenship_full }
+					has_citizenship_type = { country = from type = citizenship_full_machine }
+				}
+			}
+			unity = 0.25
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_nazbol
+				}
+			}
+			consumer_goods = 0.5
+		}
+		#单一主义
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_fanatic_xenophobe
+				}
+			}
+			unity = 0.15
+		}
+		produces = {
+			trigger = {
+				is_same_species = root
+				is_enslaved = no
+				owner = {
+					exists = owner
+					has_ethic = ethic_xenophobe
+				}
+			}
+			unity = 0.1
+		}
+		#崇外主义
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.5
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_ethic = ethic_fanatic_xenophile
+					NOT = {
+						any_enslaved_species = {
+							NOT = { is_same_species = root }
+						}
+					}
+				}
+			}
+			unity = 0.25
+		}
+		#人口凝聚力消耗
+		upkeep = {
+			trigger = {
+				exists = owner
+				exists = planet
+				NOR = {
+					owner = {
+						OR = {
+							has_valid_civic = civic_atomic_society
+							any_neighbor_country = { has_valid_civic = civic_atomic_society }
+							any_rival_country = { has_valid_civic = civic_atomic_society }
+						}
+					}
+					planet = {
+						exists = branch_office_owner
+						branch_office_owner = { has_valid_civic = civic_atomic_society }
+					}
+				}
+			}
+			unity = 0.5
+		}
+		#监工凝聚力消耗
+		upkeep = {
+			unity = 0.25
+			mult = planet.value:count_job|JOB|slave_overseer|
+		}
+
+		# Regular food, mineral and energy upkeep.
+		inline_script = pop_categories/regular_upkeep
+
+		# Additional energy upkeep for cyborgs.
+		inline_script = "pop_categories/cyborg_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/trait_upkeep"
+
+		# Additional energy upkeep for robot traits.
+		inline_script = "pop_categories/ethic_trait_upkeep"
+
+		# Instrument of Desire Upkeep
+		inline_script = "pop_categories/instrument_upkeep"
+
+		# Exotic Metabolism Upkeep
+		upkeep = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_exotic_metabolism
+			}
+			exotic_gases = @exotic_metabolism
+		}
+
+		# Resource Production
+
+		# Lithoid Trait Output
+		inline_script = "pop_categories/trait_production"
+
+		produces = {
+			trigger = {
+				is_organic_species = yes
+				has_trait = trait_inorganic_breath
+			}
+			exotic_gases = @inorganic_breath
+		}
+
+		produces = {
+			trigger = {
+				OR = {
+					has_trait = trait_drake_scaled
+					has_trait = trait_drake_scaled_yg
+				}
+			}
+			alloys = @drake_scaled_trait_resource_production
+		}
+
+		upkeep = {
+			trigger = {
+				is_organic_machine = yes
+			}
+			food = 1
+			mult = modifier:planet_pops_food_upkeep_add
+		}
+		upkeep = {
+			trigger = {
+				has_trait = trait_lithoid_yg
+			}
+			minerals = 1
+			mult = modifier:planet_pops_minerals_upkeep_add
+		}
+	}
+}

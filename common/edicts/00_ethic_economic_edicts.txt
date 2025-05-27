@@ -1,0 +1,276 @@
+# 帝国法令
+# 扩大印钞-通胀
+# 打击通胀-通缩
+# 扶持中小企业-提高经济改善
+# 发放消费券-减少危机积累
+# 财富分享计划(分产主义)-百分比减少危机积累
+# 开拓者私有化协议/塔菲协议-移民吸引力/殖民减危机
+# 广场协议-附庸立刻危机，宗主减危机
+# 星球决议
+# 以工代赈计划-建筑速度
+
+@Edict1Cost = 10
+@Edict2Cost = 20
+@Edict3Cost = 30
+@Edict4Cost = 40
+
+@campaignCost = 15
+
+@ambitionDuration = -1
+@ambitionCost = 75
+@ambitionUpkeep = 75
+
+@EdictPerpetual = -1
+
+# 扩大印钞 - 扩大通胀
+economic_inflaction = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = 0.5
+			multiplier = trigger:count_owned_pop_amount
+		}
+	}
+
+	effect = {
+		custom_tooltip = edict_economic_inflaction_tooltip
+	}
+	modifier = {
+		trade_value_reduction = 0.15
+        planet_jobs_produces_mult = 0.15
+        pop_happiness = -0.05
+	}
+
+	potential = {
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+	allow = {
+		NOT = { has_edict = economic_deinflaction }
+		# any_situation = {
+		# 	limit = { is_situation_type = situation_economic_circle }
+		# 	NOT = { has_situation_flag = economic_crisis }
+		# }
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 2
+			check_variable = { which = rec_crisis_percentage value > 0.7 }
+		}
+		modifier = {
+			factor = 2
+			rec_approach_is_inflaction = yes
+			check_variable = { which = rec_crisis_percentage value < 0.7 }
+		}
+		modifier = {
+			factor = 0
+			has_situation_flag = economic_crisis
+		}
+	}
+}
+# 抑制通胀 - 抑制通胀
+economic_deinflaction = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = 0.2
+			multiplier = trigger:count_owned_pop_amount
+		}
+	}
+
+	effect = {
+		custom_tooltip = edict_economic_deinflaction_tooltip
+	}
+	modifier = {
+		trade_value_reduction = -0.10
+        planet_jobs_produces_mult = -0.05
+        pop_happiness = 0.05
+	}
+
+	potential = {
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+	allow = {
+		NOT = { has_edict = economic_inflaction }
+		# any_situation = {
+		# 	limit = { is_situation_type = situation_economic_circle }
+		# 	NOT = { has_situation_flag = economic_crisis }
+		# }
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 1.5
+			has_ethic = ethic_fanatic_authoritarian
+		}
+		modifier = {
+			factor = 0
+			has_situation_flag = economic_crisis
+		}
+	}
+}
+
+# 发放消费券
+economic_consumer_coupon = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			energy = 0.4
+			multiplier = trigger:count_owned_pop_amount
+		}
+	}
+
+	effect = {
+		custom_tooltip = edict_economic_consumer_coupon_tooltip
+	}
+	modifier = {
+		planet_pops_consumer_goods_upkeep_mult = 0.5
+        pop_happiness = 0.10
+	}
+
+	potential = {
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+
+	ai_weight = {
+		weight = 0
+	}
+}
+
+explorer_privatization = { # 开拓者私有化协议
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		upkeep = {
+			unity = @Edict1Cost
+			multiplier = value:edict_size_effect
+		}
+	}
+
+	effect = {
+		custom_tooltip = edict_explorer_privatization_tooltip
+	}
+	modifier = {
+		first_contact_speed_mult = 0.2
+        planet_colony_development_speed_mult = 0.2
+	}
+
+	potential = {
+		has_country_flag = ETHIC_MARKET_ECONOMY
+		NOT = { has_ethic = ethic_fanatic_socialism }
+	}
+	allow = {
+		always = yes
+	}
+
+	ai_weight = {
+		weight = 1
+		modifier = {
+			factor = 2
+			years_passed < 50
+		}
+	}
+}
+
+# 战争债券
+war_bonds = {
+	length = 900
+	icon = "GFX_edict_type_policy"
+	
+	resources = {
+		category = edicts
+		cost = {
+			influence = 25
+			mult = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+		}
+	}
+	
+	effect = {
+		custom_tooltip = edict_economic_war_bonds_tooltip
+		hidden_effect = {
+			add_modifier = {
+				modifier = economic_war_bonds_num
+				multiplier = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+				clear_on_owner_change = yes
+			}
+			#add_modifier = {
+			#	modifier = economic_war_bonds_num
+			#	multiplier = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+			#	clear_on_owner_change = yes
+			#}
+		}
+	}
+	modifier = {
+		country_alloys_produces_mult = 0.40
+		planet_jobs_produces_mult = -0.20
+		planet_pops_consumer_goods_upkeep_mult = -0.25
+	}
+	
+	potential = {
+		is_at_war = yes
+		has_country_flag = ETHIC_MARKET_ECONOMY
+	}
+	
+	ai_weight = {
+		weight = 0
+	}
+}
+
+
+# 清除债券
+clean_war_bonds = {
+	length = 1800
+	icon = "GFX_edict_type_policy"
+	
+	resources = {
+		category = edicts
+		cost = {
+			unity = 1000
+			mult = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+		}
+	}
+	
+	effect = {
+		custom_tooltip = clean_war_bonds_tooltip
+		hidden_effect = {
+			add_modifier = {
+				modifier = economic_war_bonds_num
+				multiplier = 0
+				clear_on_owner_change = yes
+			}
+			#add_modifier = {
+			#	modifier = economic_war_bonds_num
+			#	multiplier = value:scripted_modifier_mult|MODIFIER|economic_war_bonds_num_temp|
+			#	clear_on_owner_change = yes
+			#}
+		}
+	}
+	modifier = {
+		country_cost_mult = 0.25
+		planet_jobs_produces_mult = 0.05
+		planet_pops_consumer_goods_upkeep_mult = 0.75
+	}
+	
+	potential = {
+		is_at_war = no
+		has_country_flag = ETHIC_MARKET_ECONOMY
+		check_modifier_value = { which = economic_war_bonds_num value > 0 }
+	}
+	
+	ai_weight = {
+		weight = 0
+	}
+}

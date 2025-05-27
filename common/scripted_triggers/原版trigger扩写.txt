@@ -1,0 +1,1203 @@
+#是极端思潮
+is_fanatic = {
+	OR = {
+		has_ethic = ethic_fanatic_authoritarian
+		has_ethic = ethic_fanatic_egalitarian
+		has_ethic = ethic_fanatic_materialist
+		has_ethic = ethic_fanatic_militarist
+		has_ethic = ethic_fanatic_pacifist
+		has_ethic = ethic_fanatic_spiritualist
+		has_ethic = ethic_fanatic_xenophile
+		has_ethic = ethic_fanatic_xenophobe
+		has_ethic = ethic_fanatic_socialism
+		has_ethic = ethic_fanatic_authoritarian
+	}
+}
+is_fanatical = {
+	OR = {
+		has_ethic = ethic_fanatic_xenophobe
+		has_ethic = ethic_fanatic_xenophile
+		has_ethic = ethic_fanatic_materialist
+		has_ethic = ethic_fanatic_spiritualist
+		has_ethic = ethic_fanatic_authoritarian
+		has_ethic = ethic_fanatic_egalitarian
+		has_ethic = ethic_fanatic_militarist
+		has_ethic = ethic_fanatic_pacifist
+		has_ethic = ethic_fanatic_socialism
+		has_ethic = ethic_fanatic_authoritarian
+	}
+}
+
+#人口属于哪个派系
+is_owner_ethic_pop_faction = {
+	switch = {
+		trigger = is_pop_faction_type
+		socialists = {
+			owner = { is_egalitarian = yes }
+		}
+		bankers = {
+			owner = { is_capitalism = yes }
+		}
+		industrialist = {
+			owner = { is_capitalism = yes }
+		}
+		prosperity = {
+			owner = { is_pacifist = yes }
+		}
+		philosopher = {
+			owner = { is_pacifist = yes }
+		}
+		entrepreneurs = {
+			owner = { is_egalitarian = yes }
+		}
+		imperialist = {
+			owner = { is_militarist = yes }
+		}
+		revolutionary = {
+			owner = { is_militarist = yes }
+		}
+		isolationist = {
+			owner = { is_xenophobe = yes }
+		}
+		supremacist = {
+			owner = { is_xenophobe = yes }
+		}
+		technologist = {
+			owner = { is_materialist = yes }
+		}
+		competitors = {
+			owner = { is_materialist = yes }
+		}
+		totalitarian = {
+			owner = { is_authoritarian = yes }
+		}
+		civil_official = {
+			owner = { is_authoritarian = yes }
+		}
+		traditionalist = {
+			owner = { is_spiritualist = yes }
+		}
+		secular = {
+			owner = { is_spiritualist = yes }
+		}
+		xenoist = {
+			owner = { is_xenophile = yes }
+		}
+		proletarians = {
+			owner = { is_xenophile = yes }
+		}
+		compradors = {
+			owner = { is_xenophile = yes }
+		}
+		default = {
+			always = yes
+		}
+	}
+}
+
+#专家岗位判定
+can_fill_specialist_job_trigger = {
+	if = {
+		limit = {
+			has_global_flag = eci_educated
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_moth_chasing_flames
+					has_valid_civic = civic_ruthless_competition
+				}
+			}
+		}
+		custom_tooltip = {
+			text = POP_EDUCATED_LOW
+			has_modifier = pop_highly_educated
+		}
+	}
+	else = {
+		custom_tooltip = SPECIALIST_JOB_TRIGGER
+		hidden_trigger = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			exists = owner
+			OR = {
+				is_enslaved = no
+				has_slavery_type = { type = slavery_indentured }
+				owner = { has_valid_civic = civic_du_contrat_social }
+				owner = { has_valid_civic = civic_sparta_spirit }
+			}
+			is_being_purged = no
+			is_being_assimilated = no
+			NOT = { has_trait = trait_syncretic_proles }
+			NOT = { has_trait = trait_nerve_stapled }
+			NOT = { has_trait = trait_zombie }
+			NOT = { has_trait = trait_fallen_god }
+			OR = {
+				NOT = { has_trait = trait_mechanical }
+				AND = {
+					NOT = { has_trait = trait_thl_doll }
+					owner = {
+						has_technology = tech_droid_workers
+					}
+				}
+				AND = {
+					has_trait = trait_thl_doll
+					owner = {
+						has_technology = tech_automatic_dolls
+					}
+				}
+			}
+			NOT = { has_citizenship_type = { type = citizenship_organic_trophy } }
+			if = {
+				limit = {
+					divinity_right_to_work_job_check_trigger_exempt = no
+				}
+				divinity_right_to_work_job_check_trigger_specialist = yes
+			}
+		}
+	}
+}
+
+can_build_gaiaseeder_machine = {
+	# Can always build on ideal worlds
+	if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				prev = {
+					is_ideal_planet_class = {
+						who = prev
+						status = yes
+					}
+				}
+			}
+		}
+		always = yes
+	}
+	# Requires Climate Restoration for Tomb Worlds
+	else_if = {
+		limit = {
+			planet = { is_planet_class = pc_nuked }
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_tomb_world
+			owner = { has_technology = tech_climate_restoration }
+		}
+	}
+	# Requires Terrestrial Sculpting for same climate as homeworld
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_wet = yes
+			}
+			planet = {
+				is_wet = yes
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner
+					prev = {
+						is_ideal_planet_class = {
+							who = prev
+							status = no
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_same_climate_wet
+			owner = { has_technology = tech_terrestrial_sculpting }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_dry = yes
+			}
+			planet = {
+				is_dry = yes
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner
+					prev = {
+						is_ideal_planet_class = {
+							who = prev
+							status = no
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_same_climate_dry
+			owner = { has_technology = tech_terrestrial_sculpting }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_cold = yes
+			}
+			planet = {
+				is_cold = yes
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner
+					prev = {
+						is_ideal_planet_class = {
+							who = prev
+							status = no
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_same_climate_cold
+			owner = { has_technology = tech_terrestrial_sculpting }
+		}
+	}
+	# Requires Ecological Adaptation for other climates
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_wet = yes
+			}
+			planet = {
+				OR = {
+					is_dry = yes
+					is_cold = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_different_climate_wet
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_dry = yes
+			}
+			planet = {
+				OR = {
+					is_wet = yes
+					is_cold = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_different_climate_dry
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_cold = yes
+			}
+			planet = {
+				OR = {
+					is_wet = yes
+					is_dry = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_different_climate_cold
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner
+				ideal_planet_is_special = yes
+			}
+			planet = {
+				OR = {
+					is_wet = yes
+					is_dry = yes
+					is_cold = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_special_habitability_preference
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+}
+
+can_build_overlord_gaiaseeder_machine = {
+	# Can always build on ideal worlds
+	if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				prev.planet = {
+					is_ideal_planet_class = {
+						who = prev
+						status = yes
+					}
+				}
+			}
+		}
+		always = yes
+	}
+	# Requires Climate Restoration for Tomb Worlds
+	else_if = {
+		limit = {
+			planet = { is_planet_class = pc_nuked }
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_tomb_world
+			owner = { has_technology = tech_climate_restoration }
+		}
+	}
+	# Requires Terrestrial Sculpting for same climate as homeworld
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_wet = yes
+			}
+			planet = {
+				is_wet = yes
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner.overlord
+					prev = {
+						is_ideal_planet_class = {
+							who = prev
+							status = no
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_same_climate_wet
+			owner = { has_technology = tech_terrestrial_sculpting }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_dry = yes
+			}
+			planet = {
+				is_dry = yes
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner.overlord
+					prev = {
+						is_ideal_planet_class = {
+							who = prev
+							status = no
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_same_climate_dry
+			owner = { has_technology = tech_terrestrial_sculpting }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_cold = yes
+			}
+			planet = {
+				is_cold = yes
+				any_galaxy_species = {
+					has_species_flag = original_organic_species_of_@prev.owner.overlord
+					prev = {
+						is_ideal_planet_class = {
+							who = prev
+							status = no
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_same_climate_cold
+			owner = { has_technology = tech_terrestrial_sculpting }
+		}
+	}
+	# Requires Ecological Adaptation for other climates
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_wet = yes
+			}
+			planet = {
+				OR = {
+					is_dry = yes
+					is_cold = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_different_climate_wet
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_dry = yes
+			}
+			planet = {
+				OR = {
+					is_wet = yes
+					is_cold = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_different_climate_dry
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_cold = yes
+			}
+			planet = {
+				OR = {
+					is_wet = yes
+					is_dry = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_different_climate_cold
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+	else_if = {
+		limit = {
+			any_galaxy_species = {
+				has_species_flag = original_organic_species_of_@prev.owner.overlord
+				ideal_planet_is_special = yes
+			}
+			planet = {
+				OR = {
+					is_wet = yes
+					is_dry = yes
+					is_cold = yes
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = gaiaseeders_special_habitability_preference
+			owner = { has_technology = tech_ecological_adaptation }
+		}
+	}
+}
+
+#低技术开局
+is_low_tech_start = {
+	OR = {
+		is_primitive = yes
+		has_origin = origin_broken_shackles
+		has_origin = origin_payback
+		has_origin = origin_taking_care_of_god
+		has_origin = origin_galaxy_iron_curtain
+		has_origin = origin_sprout
+		has_civic = civic_eager_explorers
+		has_civic = civic_privatized_exploration
+		has_civic = civic_hive_stargazers
+		has_civic = civic_machine_exploration_protocol
+		has_civic = civic_hifuu
+		has_origin = origin_wandering_planet
+	}
+}
+
+is_eager_explorer_empire = {
+	OR = {
+		has_civic = civic_eager_explorers
+		has_civic = civic_privatized_exploration
+		has_civic = civic_hive_stargazers
+		has_civic = civic_machine_exploration_protocol
+		has_civic = civic_hifuu
+		has_origin = origin_advanced_start
+	}
+}
+
+is_relentless_industrialist_empire = {
+	OR = {
+		has_valid_civic = civic_relentless_industrialists
+		has_valid_civic = civic_corporate_relentless_industrialists
+	}
+}
+
+is_subterranean_empire = {
+	OR = {
+		has_origin = origin_subterranean
+		has_origin = origin_subterranean_machines
+	}
+}
+
+has_functional_civic = {
+	OR = {
+		has_valid_civic = civic_functional_architecture
+		has_valid_civic = civic_master_engineer
+		has_valid_civic = civic_machine_builder
+	}
+}
+
+is_pleasure_seeker = {
+	OR = {
+		has_valid_civic = civic_lord_of_feast
+		has_valid_civic = civic_pleasure_seekers
+		has_valid_civic = civic_corporate_hedonism
+	}
+}
+
+is_nuked_planet = {
+	is_planet_class = pc_nuked
+}
+
+is_toxic_planet = {
+	is_planet_class = pc_toxic
+}
+
+is_barren_planet = {
+	is_planet_class = pc_barren
+}
+
+is_crossbreeding_possible = {
+	is_sapient = yes
+	NOR = {
+		has_trait = trait_machine_unit
+		has_trait = trait_mechanical
+		has_trait = trait_hive_mind
+		has_trait = trait_self_modified
+		has_trait = trait_clone_soldier_infertile
+		has_trait = trait_clone_soldier_infertile_full_potential
+		has_trait = trait_fallen_god
+		is_half_species = any
+	}
+}
+
+has_encountered_other_species = {
+	OR = {
+		has_origin = origin_syncretic_evolution
+		is_servitor_empire = yes
+		has_origin = origin_symbiotic_race
+		num_communications > 0
+		any_owned_pop_group = {
+			NOT = {
+				has_trait = "trait_mechanical"
+			}
+			NOT = {
+				is_same_species = prev
+			}
+		}
+	}
+}
+
+ruler_job_check_trigger = {
+	custom_tooltip = RULER_JOB_TRIGGER
+	hidden_trigger = {
+		exists = owner
+		is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		NOT = {
+			has_trait = trait_syncretic_proles
+		}
+		NOT = {
+			has_trait = trait_slave_gene
+		}
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+			has_trait = trait_flesh_components
+		}
+		OR = {
+			NOT = {
+				has_trait = trait_mechanical
+			}
+			AND = {
+				owner = {
+					has_technology = tech_synthetic_workers
+				}
+				owner = {
+					has_policy_flag = ai_full_rights
+				}
+			}
+		}
+		NOT = {
+			has_citizenship_type = {
+				type = citizenship_organic_trophy
+			}
+		}
+	}
+}
+
+specialist_job_check_trigger = {
+	custom_tooltip = SPECIALIST_JOB_TRIGGER
+	hidden_trigger = {
+		exists = owner
+		OR = {
+			is_enslaved = no
+			has_slavery_type = {
+				type = slavery_indentured
+			}
+		}
+		is_being_purged = no
+		is_being_assimilated = no
+		NOT = {
+			has_trait = trait_syncretic_proles
+		}
+		NOT = {
+			has_trait = trait_slave_gene
+		}
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+			has_trait = trait_flesh_components
+		}
+		OR = {
+			NOT = {
+				has_trait = trait_mechanical
+			}
+			owner = {
+				has_technology = tech_droid_workers
+			}
+		}
+		NOT = {
+			has_citizenship_type = {
+				type = citizenship_organic_trophy
+			}
+		}
+	}
+}
+
+entertainer_job_check_trigger = {
+	custom_tooltip = SPECIALIST_JOB_TRIGGER
+	hidden_trigger = {
+		exists = owner
+		OR = {
+			is_enslaved = no
+			has_slavery_type = {
+				type = slavery_domestic
+			}
+		}
+		is_being_purged = no
+		is_being_assimilated = no
+		NOT = {
+			has_trait = trait_syncretic_proles
+		}
+		NOT = {
+			has_trait = trait_slave_gene
+		}
+		NOR = { 
+			has_trait = trait_nerve_stapled
+			has_trait = trait_zombie
+			has_trait = trait_flesh_components
+		}
+		OR = {
+			NOT = {
+				has_trait = trait_mechanical
+			}
+			owner = {
+				has_technology = tech_droid_workers
+			}
+		}
+		NOT = {
+			has_citizenship_type = {
+				type = citizenship_organic_trophy
+			}
+		}
+	}
+}
+
+is_pacifist = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_pacifist
+				has_ethic = ethic_pacifist
+				has_ethic = ethic_defensivism
+			}
+		}
+		custom_tooltip = st_is_pacifist_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_pacifist_any"
+			always = no
+		}
+	}
+}
+is_militarist = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_militarist
+				has_ethic = ethic_militarist
+				has_ethic = ethic_defensivism
+			}
+		}
+		custom_tooltip = st_is_militarist_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_militarist_any"
+			always = no
+		}
+	}
+}
+
+is_materialist = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_materialist
+				has_ethic = ethic_materialist
+				has_ethic = ethic_pragmatism
+			}
+		}
+		custom_tooltip = st_is_materialist_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_materialist_any"
+			always = no
+		}
+	}
+}
+is_spiritualist = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_spiritualist
+				has_ethic = ethic_spiritualist
+				has_ethic = ethic_pragmatism
+			}
+		}
+		custom_tooltip = st_is_spiritualist_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_spiritualist_any"
+			always = no
+		}
+	}
+}
+
+is_egalitarian = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_egalitarian
+				has_ethic = ethic_egalitarian
+				has_ethic = ethic_conciliationsm
+			}
+		}
+		custom_tooltip = st_is_egalitarian_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_egalitarian_any"
+			always = no
+		}
+	}
+}
+is_authoritarian = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_authoritarian
+				has_ethic = ethic_authoritarian
+				has_ethic = ethic_conciliationsm
+			}
+		}
+		custom_tooltip = st_is_authoritarian_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_authoritarian_any"
+			always = no
+		}
+	}
+}
+
+is_xenophile = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_xenophile
+				has_ethic = ethic_xenophile
+				has_ethic = ethic_nationalism
+			}
+		}
+		custom_tooltip = st_is_xenophile_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_xenophile_any"
+			always = no
+		}
+	}
+}
+is_xenophobe = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_xenophobe
+				has_ethic = ethic_xenophobe
+				has_ethic = ethic_nationalism
+			}
+		}
+		custom_tooltip = st_is_xenophobe_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_xenophobe_any"
+			always = no
+		}
+	}
+}
+
+is_egalitarian = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_socialism
+				has_ethic = ethic_egalitarian
+			}
+		}
+		custom_tooltip = st_is_socialism_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_socialism_any"
+			always = no
+		}
+	}
+}
+is_authoritarian = {
+	if = {
+		limit = {
+			OR = {
+				has_ethic = ethic_fanatic_authoritarian
+				has_ethic = ethic_authoritarian
+				has_valid_civic = civic_characteristic_socialism_pioneer
+			}
+		}
+		custom_tooltip = st_is_capitalism_any
+	}
+	else = {
+		custom_tooltip = {
+			fail_text = "st_is_capitalism_any"
+			always = no
+		}
+	}
+}
+
+has_any_ethic = {
+	OR = {
+		has_ethic = ethic_authoritarian
+		has_ethic = ethic_egalitarian
+		has_ethic = ethic_xenophile
+		has_ethic = ethic_xenophobe
+		has_ethic = ethic_materialist
+		has_ethic = ethic_spiritualist
+		has_ethic = ethic_militarist
+		has_ethic = ethic_pacifist
+		has_ethic = ethic_egalitarian
+		has_ethic = ethic_authoritarian
+	}
+}
+
+leader_has_empire_ethic = {
+	OR = {
+		AND = {
+			has_ethic = ethic_pacifist
+			owner = { is_pacifist = yes }
+		}
+		AND = {
+			has_ethic = ethic_militarist
+			owner = { is_militarist = yes }
+		}
+		AND = {
+			has_ethic = ethic_xenophile
+			owner = { is_xenophile = yes }
+		}
+		AND = {
+			has_ethic = ethic_xenophobe
+			owner = { is_xenophobe = yes }
+		}
+		AND = {
+			has_ethic = ethic_egalitarian
+			owner = { is_egalitarian = yes }
+		}
+		AND = {
+			has_ethic = ethic_authoritarian
+			owner = { is_authoritarian = yes }
+		}
+		AND = {
+			has_ethic = ethic_spiritualist
+			owner = { is_spiritualist = yes }
+		}
+		AND = {
+			has_ethic = ethic_materialist
+			owner = { is_materialist = yes }
+		}z
+		AND = {
+			has_ethic = ethic_egalitarian
+			owner = { is_egalitarian = yes }
+		}
+		AND = {
+			has_ethic = ethic_authoritarian
+			owner = { is_authoritarian = yes }
+		}
+	}
+}
+
+has_miltary_background_job = {
+	OR = {
+		has_background_job = commandante
+		has_background_job = noble
+		has_background_job = knight_commander
+		has_background_job = death_priest
+		has_background_job = duelist
+		has_background_job = knight
+		has_background_job = templar
+		has_background_job = death_knight
+		has_background_job = soldier
+		has_background_job = mercenary
+		has_background_job = enforcer
+		has_background_job = telepath
+		has_background_job = necromancer
+		has_background_job = magician
+		has_background_job = squire
+		has_background_job = conscript_uncapped
+		has_background_job = gladiator
+		has_background_job = conscript
+	}
+}
+
+is_duelist_country = {
+	OR = {
+		has_valid_civic = civic_warrior_culture
+		has_valid_civic = civic_sparta_spirit
+	}
+}
+
+##允许开分公司的国家
+can_build_branch_offices_trigger = {
+	OR = {
+		has_authority = auth_corporate
+		has_civic = civic_galactic_sovereign_megacorp
+
+		#	ETCPM
+		has_authority = auth_private
+		#	hiveDLC
+		has_valid_civic = civic_mutualistic_behavior
+		has_valid_civic = civic_machine_trading
+		#	MCA
+		has_authority = auth_corporate_fiefdom
+		has_authority = auth_cooperative
+		#	驴岛
+		has_civic = civic_business_union
+		#	wsg
+		has_authority = auth_warshipgirls
+		AND = {
+			has_authority = auth_shenhai
+			OR = {
+				has_country_flag = pantsu_shop_origin
+				has_civic = civic_sh_criminal_syndicate
+			}
+		}
+		#	GF
+		has_civic = GF_civic_GK
+		#	azl
+		has_authority = auth_azur_lane_0
+		has_authority = auth_azur_lane_1
+		has_authority = auth_azur_lane_2
+		has_authority = auth_azur_lane_K
+		#	azlr
+		AND = {
+			exists = event_target:elizabeth_leader
+			has_country_flag = azur_lane_leader_elizabeth
+		}
+		#	精灵
+		is_ELF_can_build_branch_offices = yes
+		#	莉莉
+		has_authority = auth_AL_democratic
+		has_authority = auth_AL_arsenal
+		#	久远
+		KZ_VOY_can_build_branch_offices = yes
+		#	星海帝皇	|义军同盟|
+		is_country_type = rebel_allience
+		#	ARP
+		has_authority = auth_Arp_0
+		#	rmaid		|外派服务飞升|
+		Maid_trigger_0_can_build_branch_offices = yes
+
+		#	ECI
+		has_valid_civic = civic_merchant_guilds
+	}
+}
+
+##支持企业建筑的国家
+can_support_branch_offices_trigger = {
+	##_|禁止_国家类型|
+	NOR = {
+		is_country_type = fallen_empire
+		is_country_type = awakened_fallen_empire
+
+		## 禁止所有|堕落帝国|	############
+		# ev
+		is_country_type = fallen_empire_ev
+		# 阿夸
+		is_country_type = kuat_fallen_empire
+		is_country_type = kuat_awakened_fallen_empire
+		is_country_type = awakened_return_kuat_empire
+		# HFE	hfe_civic_egypt_fury|国策|决定是否是afe
+		is_country_type = human_fallen_empire
+		# 致命风暴	|afe|
+		is_country_type = awakened_gate_builders
+		# ZOFE
+		is_country_type = ascended_empire
+		is_country_type = lost_empire
+		# SOFE
+		is_progenitor_empires = yes
+		is_country_type = sofe_light_seeker
+		# EE
+		is_country_type = eternal_empire
+		# 莉莉
+		is_country_type = al_fallen_empire
+
+		## 禁止其他|特殊国家|	############
+		# azlr
+		has_authority = auth_azur_dictatorial
+	}
+	##_|禁止_巨企| +AAR		/ETCPM/hiveDLC/MCA/驴岛/wsg		/GF/azl/SOFE	/ECI
+	OR = {
+		##	特殊允许|企业政府|	############
+		#	AAR
+		is_subject_with_preset = { PRESET = AAR_SBJ_subsidiary }
+		#	ECI	|巨企|
+		has_global_flag = ideological_revolution	# |ECI激活|
+		#	rmaid
+		Maid_trigger_1_can_support_branch_offices = yes
+
+		## 禁止所有|企业政府|	############
+		NOR = {
+			has_authority = auth_corporate
+			has_civic = civic_galactic_sovereign_megacorp
+
+			#_|巨企国家|	ETCPM/hiveDLC/MCA/驴岛/wsg
+			#	ETCPM
+			has_authority = auth_private
+			#	hiveDLC
+			has_valid_civic = civic_mutualistic_behavior
+			has_valid_civic = civic_machine_trading
+			#	MCA
+			has_authority = auth_corporate_fiefdom
+			has_authority = auth_cooperative
+			#	驴岛
+			has_civic = civic_business_union
+			#	wsg
+			has_authority = auth_warshipgirls
+			AND = {
+				has_authority = auth_shenhai
+				OR = {
+					has_country_flag = pantsu_shop_origin
+					has_civic = civic_sh_criminal_syndicate
+				}
+			}
+			#	GF
+			has_civic = GF_civic_GK
+			#	azl
+			has_authority = auth_azur_lane_1
+			#	SOFE
+			has_valid_civic = civic_sofe_inner_strength
+		}
+	}
+
+	##_|必要国家类型|
+	is_gestalt = no
+}
+
+#是研究者岗位
+has_research_job = {
+	has_job_type = researcher
+	has_job_type = brain_drone
+	has_job_type = calculator
+	has_job_type = dimensional_portal_researcher
+	has_job_type = dimensional_portal_researcher_gestalt
+	has_job_type = space_time_anomaly_researcher
+	has_job_type = space_time_anomaly_researcher_gestalt
+	has_job_type = magician
+	has_job_type = legendary_mage
+	has_job_type = necromancer
+	has_job_type = xeno_zoo_keeper
+	has_job_type = head_researcher
+}
+
+#母星总督是科学家
+prefers_scientist_governors = {
+	OR = {
+		has_ethic = ethic_fanatic_materialist
+		has_valid_civic = civic_cyber_demos_cratos
+		has_valid_civic = civic_technocracy
+		has_valid_civic = civic_cyber_dictatorship
+	}
+}
+
+#母星总督是指挥官
+prefers_commander_governors = {
+	OR = {
+		has_valid_civic = civic_sparta_spirit
+		has_valid_civic = civic_barbaric_despoilers
+		has_valid_civic = civic_feudal_realm
+		has_valid_civic = civic_military_dictatorship
+		has_valid_civic = civic_citizen_service
+	}
+}
+
+#有义体飞升效果
+has_cybernetic_ascension = {
+	OR = {
+		has_ascension_perk = ap_the_flesh_is_weak						# Regular
+		has_ascension_perk = ap_organo_machine_interfacing				# Hive-Mind
+		has_ascension_perk = ap_organo_machine_interfacing_assimilator	# Driven Assimilator
+		has_origin = origin_cybernetic_creed							# Early Access Origin
+		has_origin = origin_metal_cornerstone
+		has_valid_civic = civic_augmentation_bazaars					# Restricted Civic
+	}
+}
+
+#有灵能飞升效果
+has_psionic_ascension = {
+	OR = {
+		has_ascension_perk = ap_mind_over_matter						# Regular
+		has_origin = origin_shroudwalker_apprentice						# Early Access Origin
+		has_valid_civic = civic_xinshin_impact
+	}
+}
+
+#管务员国家
+is_worker_coop_empire = {
+	OR = {
+		has_valid_civic = civic_world_cooperative
+		has_valid_civic = civic_worker_coop
+	}
+}

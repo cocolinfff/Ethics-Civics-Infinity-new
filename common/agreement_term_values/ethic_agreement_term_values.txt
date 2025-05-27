@@ -1,0 +1,1586 @@
+# Defines the different values available for given Agreement terms. The terms are defined in agreement_terms scripts.
+# The term values contain the main logic of Agreement terms, including the modifiers and effects.
+# For Subject Agreements, the owner is the overlord and the target is the subject.
+
+# Example:
+#
+# name_of_term_value = {
+# 	term = name_of_term 					# References the term in agreement_terms that this value applies to
+#
+# 	owner_modifier = {						# A modifier that applies to the Agreement owner country. Can stack multiple times.
+# 		my_owner_modifier = 1
+# 	}
+# 	target_modifier = {						# A modifier that applies to the Agreement target country. Can stack multiple times.
+# 		my_target_modifier = 1
+# 	}
+# 	unique_owner_modifier = {				# A modifier that applies to the Agreement owner country. Only applies once.
+# 		my_unique_owner_modifier = 1
+# 	}
+# 	unique_target_modifier = {				# A modifier that applies to the Agreement target country. Only applies once.
+# 		my_unique_target_modifier = 1
+# 	}
+# 	loyalty_change = value					# How much the subject's loyalty will change when a new agreement with this term starts
+# 	triggered_loyalty_change = {			# How much the subject's loyalty will additionally change when a new agreement with this term starts, if "trigger" is true
+# 		trigger = {
+# 			agreement_scope_trigger
+# 		}
+# 		loyalty_change = value
+# 	}
+# 	extra_term_text_subject = <LOC_KEY> 	# What should be shown in the "extra terms" panel for the subject if this term value is active (default is to not show it)
+# 											# This loc key can use $SUBJECT$ and $OVERLORD$ to show the name of the relevant empire, and $MODIFIER$ to show the modifiers applying to the subject
+# 	extra_term_text_overlord = <LOC_KEY>	# What should be shown in the "extra terms" panel for the overlord if this term value is active (default is to not show it)
+# 											# Loc key can use $SUBJECT$ and $OVERLORD$ to show the name of the relevant empire, $MODIFIER$ for the overlord's modifiers, and $RESOURCES$ for the net resources it gains
+# }
+#
+# name_of_resource_term_value = {
+# 	term = name_of_resource_term
+#	resource = <resource> (food/alloys/...)
+# }
+
+#######################
+# SPECIALIST SUBJECTS #
+#######################
+
+specialist_none = {
+	term = specialist_type
+	activate_effect = {
+		convert_to_specialist = none
+	}
+}
+
+specialist_bulwark = {
+	term = specialist_type
+	triggered_loyalty_change = {
+		trigger = {
+			target = { is_militarist = yes }
+		}
+		loyalty_change = 5
+		ai_acceptance = {
+			subject = 25
+		}
+	}
+	triggered_loyalty_change = {
+		trigger = {
+			target = { is_pacifist = yes }
+		}
+		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
+	}
+	activate_effect = {
+		convert_to_specialist = specialist_bulwark
+		target = {
+			if = {
+				limit = {
+					is_galactic_community_member = yes
+					is_active_resolution = resolution_intergalacticdirective_a_voice_for_all
+				}
+				add_modifier = {
+					modifier = resolution_galcom_bulwark_modifier
+					days = -1
+				}
+			}
+		}
+	}
+
+	deactivate_effect = {
+		target = {
+			if = {
+				limit = {
+					has_modifier = resolution_galcom_bulwark_modifier
+				}
+				remove_modifier = resolution_galcom_bulwark_modifier
+			}
+		}
+	}
+
+	potential = {
+		agreement_preset = preset_bulwark
+	}
+}
+
+specialist_scholarium = {
+	term = specialist_type
+	triggered_loyalty_change = {
+		trigger = {
+			target = { is_materialist = yes }
+		}
+		loyalty_change = 5
+		ai_acceptance = {
+			subject = 25
+		}
+	}
+	triggered_loyalty_change = {
+		trigger = {
+			target = { is_spiritualist = yes }
+		}
+		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
+	}
+	activate_effect = {
+		convert_to_specialist = specialist_scholarium
+	}
+	potential = {
+		agreement_preset = preset_scholarium
+	}
+}
+
+specialist_prospectorium = {
+	term = specialist_type
+	triggered_loyalty_change = {
+		trigger = {
+			target = { is_pacifist = yes }
+		}
+		loyalty_change = 5
+		ai_acceptance = {
+			subject = 25
+		}
+	}
+	triggered_loyalty_change = {
+		trigger = {
+			target = { is_militarist = yes }
+		}
+		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
+	}
+	activate_effect = {
+		convert_to_specialist = specialist_prospectorium
+	}
+	potential = {
+		agreement_preset = preset_prospectorium
+	}
+}
+
+#########################
+# RESOURCE CONTRIBUTION #
+#########################
+
+@subsidy_multiplier_basic = 0.5
+@subsidy_multiplier_advanced = 0.5
+@subsidy_multiplier_research = 1
+@subsidy_multiplier_strategic = 1.5
+
+@subsidy_monthly_multiplier_basic = 5
+@subsidy_monthly_multiplier_advanced = 5
+@subsidy_monthly_multiplier_research = 5
+@subsidy_monthly_multiplier_strategic = 5
+
+# When changing the maximum and minimum values here the following should also be updated:
+# In agreement_negotiation_view.gui
+#	maxValue =
+#	minValue =
+#	stepSize =
+# In 00_defines.txt:
+#	AGREEMENT_RESOURCE_SUBSIDIES_MIN
+#	AGREEMENT_RESOURCE_SUBSIDIES_MAX
+@subsidy_minimum = -0.75
+@subsidy_maximum = 0.75
+
+@set_factor_0 = 0.15
+@set_factor_0_neg = -0.15
+@set_factor_1 = 0.30
+@set_factor_1_neg = -0.30
+@set_factor_2 = 0.45
+@set_factor_2_neg = -0.45
+@set_factor_3 = 0.60
+@set_factor_3_neg = -0.60
+
+resource_subsidies_basic = {
+	term = resource_subsidies
+	resources = {
+		energy
+		minerals
+		food
+	}
+
+	subsidy_multiplier = @subsidy_multiplier_basic
+	subsidy_monthly_multiplier = @subsidy_monthly_multiplier_basic
+
+	resource_min = {
+		base = @subsidy_minimum
+
+		modifier = {
+			set = 0.05
+			overlord = { has_valid_civic = civic_tax_inclusive_company }
+		}
+
+		modifier = {
+			set = @set_factor_1
+			OR = {
+				agreement_preset = preset_prospectorium
+				agreement_preset = preset_tributary
+				agreement_preset = preset_subsidiary
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+
+		modifier = {
+			set = @set_factor_2_neg
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_scholarium
+			}
+		}
+	}
+
+	resource_max = {
+		base = @subsidy_maximum
+
+		modifier = {
+			set = @set_factor_1_neg
+			agreement_preset = preset_bulwark
+		}
+
+		modifier = {
+			set = @set_factor_2_neg
+			agreement_preset = preset_bulwark
+			has_active_specialization = specialist_bulwark
+			specialist_tier = 2
+		}
+
+		modifier = {
+			set = @set_factor_3_neg
+			agreement_preset = preset_bulwark
+			has_active_specialization = specialist_bulwark
+			specialist_tier = 3
+		}
+
+		modifier = {
+			set = @set_factor_2
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_scholarium
+				agreement_preset = preset_protectorate
+			}
+		}
+
+	}
+}
+
+resource_subsidies_advanced = {
+	term = resource_subsidies
+
+	resources = {
+		alloys
+		consumer_goods
+	}
+
+	subsidy_multiplier = @subsidy_multiplier_advanced
+	subsidy_monthly_multiplier = @subsidy_monthly_multiplier_advanced
+
+	resource_min = {
+		base = @subsidy_minimum
+
+		modifier = {
+			set = 0.05
+			overlord = { has_valid_civic = civic_tax_inclusive_company }
+		}
+
+		modifier = {
+			set = @set_factor_0
+			agreement_preset = preset_prospectorium
+		}
+
+		modifier = {
+			set = 0.0
+			OR = {
+				agreement_preset = preset_subsidiary
+				AND = {
+					agreement_preset = preset_tributary
+					overlord = { NOT = { has_valid_civic = civic_home_country_isomorphism } }
+				}
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+
+		modifier = {
+			set = @set_factor_2_neg
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_scholarium
+			}
+		}
+	}
+
+	resource_max = {
+		base = @subsidy_maximum
+
+		modifier = {
+			set = 0.0
+			OR = {
+				agreement_preset = preset_protectorate
+				agreement_preset = preset_bulwark
+			}
+		}
+
+		modifier = {
+			set = @set_factor_2
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_scholarium
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+	}
+}
+
+resource_subsidies_research = {
+	term = resource_subsidies
+
+	resources = {
+		physics_research
+		society_research
+		engineering_research
+	}
+
+	subsidy_multiplier = @subsidy_multiplier_research
+	subsidy_monthly_multiplier = @subsidy_monthly_multiplier_research
+
+	resource_min = {
+		base = @subsidy_minimum
+
+		modifier = {
+			set = 0.05
+			overlord = { has_valid_civic = civic_tax_inclusive_company }
+		}
+
+		modifier = {
+			set = 0.0
+			OR = {
+				agreement_preset = preset_subsidiary
+				AND = {
+					agreement_preset = preset_tributary
+					overlord = { NOT = { has_valid_civic = civic_home_country_isomorphism } }
+				}
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+
+		modifier = {
+			set = @set_factor_1
+			agreement_preset = preset_scholarium
+		}
+
+		modifier = {
+			set = @set_factor_2_neg
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_bulwark
+			}
+		}
+	}
+
+	resource_max = {
+		base = @subsidy_maximum
+
+		modifier = {
+			set = 0.0
+			OR = {
+				agreement_preset = preset_protectorate
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+
+		modifier = {
+			set = @set_factor_1_neg
+			agreement_preset = preset_prospectorium
+		}
+
+		modifier = {
+			set = @set_factor_2_neg
+			agreement_preset = preset_prospectorium
+			has_active_specialization = specialist_prospectorium
+			specialist_tier = 2
+		}
+
+		modifier = {
+			set = @set_factor_3_neg
+			agreement_preset = preset_prospectorium
+			has_active_specialization = specialist_prospectorium
+			specialist_tier = 3
+		}
+
+		modifier = {
+			set = @set_factor_2
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_bulwark
+			}
+		}
+	}
+}
+
+resource_subsidies_strategic = {
+	term = resource_subsidies
+	resources = {
+		volatile_motes
+		exotic_gases
+		rare_crystals
+	}
+	subsidy_multiplier = @subsidy_multiplier_strategic
+	subsidy_monthly_multiplier = @subsidy_monthly_multiplier_strategic
+
+	resource_min = {
+		base = @subsidy_minimum
+
+		modifier = {
+			set = 0.05
+			overlord = { has_valid_civic = civic_tax_inclusive_company }
+		}
+
+		modifier = {
+			set = 0.0
+			OR = {
+				agreement_preset = preset_subsidiary
+				AND = {
+					agreement_preset = preset_tributary
+					overlord = { NOT = { has_valid_civic = civic_home_country_isomorphism } }
+				}
+				agreement_preset = preset_prospectorium
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+
+		modifier = {
+			set = @set_factor_1
+			agreement_preset = preset_prospectorium
+			has_active_specialization = specialist_prospectorium
+			OR = {
+				specialist_tier = 2
+				specialist_tier = 3
+			}
+
+		}
+
+		modifier = {
+			set = @set_factor_2_neg
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_scholarium
+				agreement_preset = preset_bulwark
+			}
+		}
+	}
+	resource_max = {
+		base = @subsidy_maximum
+
+		modifier = {
+			set = 0.0
+			agreement_preset = preset_protectorate
+		}
+
+		modifier = {
+			set = @set_factor_1
+			agreement_preset = preset_relic_satrapy
+		}
+
+		modifier = {
+			set = @set_factor_2
+			OR = {
+				agreement_preset = preset_vassal
+				agreement_preset = preset_scholarium
+				agreement_preset = preset_bulwark
+			}
+		}
+	}
+}
+
+##########
+# OTHERS #
+##########
+
+joins_overlord_wars_none = {
+	term = joins_overlord_wars
+	activate_effect = {
+		set_rule_join_overlord_wars = none
+	}
+	deactivate_effect = {
+		set_rule_join_overlord_wars = none
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_bulwark
+			NOT = {
+				agreement_preset = preset_bulwark
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_subsidiary
+			NOT = {
+				agreement_preset = preset_subsidiary
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+joins_overlord_wars_defensive = {
+	term = joins_overlord_wars
+	loyalty_change = -10
+	triggered_loyalty_change = {
+		trigger = {
+			target = {
+				OR = {
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+		}
+		loyalty_change = -10
+	}
+	activate_effect = {
+		set_rule_join_overlord_wars = defensive
+	}
+	deactivate_effect = {
+		set_rule_join_overlord_wars = none
+	}
+	target_modifier = {
+		monthly_loyalty = -1
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+joins_overlord_wars_offensive = {
+	term = joins_overlord_wars
+	loyalty_change = -20
+	ai_acceptance = {
+		overlord = 120
+		subject = -100
+	}
+	triggered_loyalty_change = {
+		trigger = {
+			target = {
+				OR = {
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+		}
+		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
+	}
+	activate_effect = {
+		set_rule_join_overlord_wars = offensive
+	}
+	deactivate_effect = {
+		set_rule_join_overlord_wars = none
+	}
+	target_modifier = {
+		monthly_loyalty = -2
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+joins_overlord_wars_all = {
+	term = joins_overlord_wars
+	loyalty_change = -30
+	ai_acceptance = {
+		overlord = 180
+		subject = -150
+	}
+	triggered_loyalty_change = {
+		trigger = {
+			target = {
+				OR = {
+					has_ethic = ethic_pacifist
+					has_ethic = ethic_fanatic_pacifist
+				}
+			}
+		}
+		loyalty_change = -30
+		ai_acceptance = {
+			subject = -150
+		}
+	}
+	activate_effect = {
+		set_rule_join_overlord_wars = all
+	}
+	deactivate_effect = {
+		set_rule_join_overlord_wars = none
+	}
+	target_modifier = {
+		monthly_loyalty = -3
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+	}
+}
+
+
+joins_subject_wars_none = {
+	term = joins_subject_wars
+	loyalty_change = -10
+	ai_acceptance = {
+		overlord = 60
+		subject = -50
+	}
+	activate_effect = {
+		set_rule_join_subject_wars = none
+	}
+	deactivate_effect = {
+		set_rule_join_subject_wars = none
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_scholarium
+			NOT = {
+				agreement_preset = preset_scholarium
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_protectorate
+			NOT = {
+				agreement_preset = preset_protectorate
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_feudal_society
+			NOT = {
+				owner = { has_civic = civic_feudal_realm }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_coalition_government
+			owner = {
+				is_coalition_government = no
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_subsidiary
+			NOT = {
+				agreement_preset = preset_subsidiary
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+joins_subject_wars_defensive = {
+	term = joins_subject_wars
+	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
+	activate_effect = {
+		set_rule_join_subject_wars = defensive
+	}
+	deactivate_effect = {
+		set_rule_join_subject_wars = none
+	}
+	target_modifier = {
+		monthly_loyalty = 0.5
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+joins_subject_wars_offensive = {
+	term = joins_subject_wars
+	loyalty_change = 10
+	ai_acceptance = {
+		overlord = -60
+		subject = 50
+	}
+	activate_effect = {
+		set_rule_join_subject_wars = offensive
+	}
+	deactivate_effect = {
+		set_rule_join_subject_wars = none
+	}
+	target_modifier = {
+		monthly_loyalty = 1
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_scholarium
+			NOT = {
+				agreement_preset = preset_scholarium
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_protectorate
+			NOT = {
+				agreement_preset = preset_protectorate
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_imperial_fiefdom
+			NOT = { owner = { has_ai_personality = imperial_origin_overlord_ai } }
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_red_satellite
+			NOT = { owner = { has_origin = origin_red_satellite_overlord } }
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+joins_subject_wars_all = {
+	term = joins_subject_wars
+	loyalty_change = 15
+	ai_acceptance = {
+		overlord = -90
+		subject = 75
+	}
+	activate_effect = {
+		set_rule_join_subject_wars = all
+	}
+	deactivate_effect = {
+		set_rule_join_subject_wars = none
+	}
+	target_modifier = {
+		monthly_loyalty = 1.5
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_imperial_fiefdom
+			NOT = { owner = { has_ai_personality = imperial_origin_overlord_ai } }
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_red_satellite
+			NOT = { owner = { has_origin = origin_red_satellite_overlord } }
+		}
+	}
+}
+
+subject_can_be_integrated = {
+	term = subject_integration
+	loyalty_change = -50
+	ai_acceptance = {
+		overlord = 300
+		subject = -250
+	}
+	activate_effect = {
+		set_rule_can_subject_be_integrated = yes
+	}
+	target_modifier = {
+		monthly_loyalty = -4
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_bulwark
+			NOT = {
+				agreement_preset = preset_bulwark
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_scholarium
+			NOT = {
+				agreement_preset = preset_scholarium
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_prospectorium
+			NOT = {
+				agreement_preset = preset_prospectorium
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_subsidiary
+			NOT = {
+				agreement_preset = preset_subsidiary
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_intergalacticdirective_ensured_sovereignty }
+		}
+	}
+}
+
+subject_can_not_be_integrated = {
+	term = subject_integration
+	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
+	activate_effect = {
+		set_rule_can_subject_be_integrated = no
+	}
+	target_modifier = {
+		monthly_loyalty = 0.5
+	}
+}
+
+subject_can_not_do_diplomacy = {
+	term = subject_diplomacy
+	loyalty_change = -15
+	ai_acceptance = {
+		overlord = 90
+		subject = -75
+	}
+	activate_effect = {
+		set_rule_can_subject_vote = no
+		set_rule_can_subject_do_diplomacy = no
+	}
+	target_modifier = {
+		monthly_loyalty = -1
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_feudal_society
+			NOT = {
+				owner = { has_civic = civic_feudal_realm }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_coalition_government
+			NOT = {
+				owner = { is_coalition_government = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_franchising
+			NOT = {
+				owner = { has_civic = civic_franchising }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_subsidiary
+			NOT = {
+				agreement_preset = preset_subsidiary
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_intergalacticdirective_a_voice_for_all }
+		}
+	}
+}
+
+subject_can_do_diplomacy_but_not_vote = {
+	term = subject_diplomacy
+	loyalty_change = 0
+	ai_acceptance = {
+		overlord = 30
+		subject = -25
+	}
+	activate_effect = {
+		set_rule_can_subject_vote = no
+		set_rule_can_subject_do_diplomacy = yes
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			if = {
+				limit = {
+					NOR = {
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_bureaucraticsurveillance_personal_oversight
+						}
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_intergalacticdirective_a_voice_for_all
+						}
+					}
+				}
+				OR = {
+					NOT = { agreement_preset = preset_tributary }
+					owner = { has_valid_civic = civic_home_country_isomorphism }
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_fanatic_purifiers
+			if = {
+				limit = {
+					NOR = {
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_bureaucraticsurveillance_personal_oversight
+						}
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_intergalacticdirective_a_voice_for_all
+						}
+					}
+				}
+				NOT = { target = { has_civic = civic_fanatic_purifiers } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_devouring_swarm
+			if = {
+				limit = {
+					NOR = {
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_bureaucraticsurveillance_personal_oversight
+						}
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_intergalacticdirective_a_voice_for_all
+						}
+					}
+				}
+				NOT = { target = { has_civic = civic_hive_devouring_swarm } }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_machine_terminator
+			if = {
+				limit = {
+					NOR = {
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_bureaucraticsurveillance_personal_oversight
+						}
+						AND = {
+							owner = { is_galactic_community_member = yes }
+							target = { is_galactic_community_member = yes }
+							is_active_resolution = resolution_intergalacticdirective_a_voice_for_all
+						}
+					}
+				}
+				NOT = { target = { has_civic = civic_machine_terminator } }
+			}
+			custom_tooltip = {
+				fail_text = not_allowed_for_luminarium
+				NOT = {
+					agreement_preset = preset_luminarium
+				}
+			}
+		}
+	}
+}
+
+subject_can_do_diplomacy = {
+	term = subject_diplomacy
+	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
+	activate_effect = {
+		set_rule_can_subject_vote = yes
+		set_rule_can_subject_do_diplomacy = yes
+	}
+	target_modifier = {
+		monthly_loyalty = 0.5
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_bureaucraticsurveillance_personal_oversight }
+		}
+	}
+}
+
+subject_cannot_expand = {
+	term = subject_expand
+	loyalty_change = -15
+	ai_acceptance = {
+		overlord = 90
+		subject = -75
+	}
+	activate_effect = {
+		set_rule_can_subject_expand = cannot_expand
+	}
+	target_modifier = {
+		monthly_loyalty = -1
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_bulwark
+			NOT = {
+				agreement_preset = preset_bulwark
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_scholarium
+			NOT = {
+				agreement_preset = preset_scholarium
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_prospectorium
+			NOT = {
+				agreement_preset = preset_prospectorium
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_subsidiary
+			NOT = {
+				agreement_preset = preset_subsidiary
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_satrapy
+			NOT = {
+				agreement_preset = preset_relic_satrapy
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_feudal_society
+			NOT = {
+				owner = { has_civic = civic_feudal_realm }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_coalition_government
+			NOT = {
+				owner = { is_coalition_government = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_franchising
+			NOT = {
+				owner = { has_civic = civic_franchising }
+			}
+		}
+	}
+}
+
+subject_can_expand_with_tithe = {
+	loyalty_change = -5
+	ai_acceptance = {
+		overlord = 30
+		subject = -25
+	}
+	term = subject_expand
+	activate_effect = {
+		set_rule_can_subject_expand = can_expand_with_tithe
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_intergalacticdirective_a_voice_for_all }
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+subject_can_expand = {
+	term = subject_expand
+	loyalty_change = 5
+	ai_acceptance = {
+		overlord = -30
+		subject = 25
+	}
+	activate_effect = {
+		set_rule_can_subject_expand = can_expand
+	}
+	target_modifier = {
+		monthly_loyalty = 0.5
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_imperial_fiefdom
+			if = {
+				limit = {
+					NAND = {
+						owner = { is_galactic_community_member = yes }
+						target = { is_galactic_community_member = yes }
+						is_active_resolution = resolution_intergalacticdirective_a_voice_for_all
+					}
+				}
+				NOT = { owner = { has_ai_personality = imperial_origin_overlord_ai } }
+			}
+			custom_tooltip = {
+				fail_text = not_allowed_for_luminarium
+				NOT = {
+					agreement_preset = preset_luminarium
+				}
+			}
+		}
+	}
+}
+
+subject_holdings_limit_0 = {
+	term = subject_holdings_limit
+	target_modifier = {
+		planet_max_subject_holding_buildings_add = 0
+	}
+}
+
+subject_holdings_limit_1 = {
+	term = subject_holdings_limit
+	loyalty_change = -5
+	ai_acceptance = {
+		overlord = 30
+		subject = -25
+	}
+	target_modifier = {
+		monthly_loyalty = -0.4
+		planet_max_subject_holding_buildings_add = 1
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+subject_holdings_limit_2 = {
+	term = subject_holdings_limit
+	loyalty_change = -15
+	ai_acceptance = {
+		overlord = 90
+		subject = -75
+	}
+	target_modifier = {
+		monthly_loyalty = -1
+		planet_max_subject_holding_buildings_add = 2
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+	potential = {
+		has_overlord_dlc = yes
+	}
+}
+
+subject_holdings_limit_3 = {
+	term = subject_holdings_limit
+	loyalty_change = -30
+	ai_acceptance = {
+		overlord = 180
+		subject = -150
+	}
+	target_modifier = {
+		monthly_loyalty = -2
+		planet_max_subject_holding_buildings_add = 3
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			OR = {
+				NOT = { owner = { is_galactic_community_member = yes } }
+				NOT = { is_active_resolution = resolution_bureaucraticsurveillance_personal_oversight }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+	potential = {
+		has_overlord_dlc = yes
+	}
+}
+
+subject_holdings_limit_4 = {
+	term = subject_holdings_limit
+	loyalty_change = -50
+	ai_acceptance = {
+		overlord = 300
+		subject = -250
+	}
+	target_modifier = {
+		monthly_loyalty = -4
+		planet_max_subject_holding_buildings_add = 4
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			OR = {
+				NOT = { agreement_preset = preset_tributary }
+				owner = { has_valid_civic = civic_home_country_isomorphism }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			OR = {
+				NOT = { owner = { is_galactic_community_member = yes } }
+				NOT = { is_active_resolution = resolution_bureaucraticsurveillance_borderless_authority }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+	potential = {
+		has_overlord_dlc = yes
+	}
+}
+
+subject_does_not_get_sensors = {
+	term = subject_sensors
+	loyalty_change = -5
+	ai_acceptance = {
+		overlord = 10
+		subject = -5
+	}
+	activate_effect = {
+		set_rule_subject_has_sensors = no
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_franchising
+			NOT = {
+				owner = { has_civic = civic_franchising }
+			}
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_galcom_resolution
+			not_allowed_for_galcom_resolution_trigger = { RESOLUTION = resolution_bureaucraticsurveillance_borderless_authority }
+		}
+		custom_tooltip = {
+			fail_text = not_allowed_for_luminarium
+			NOT = {
+				agreement_preset = preset_luminarium
+			}
+		}
+	}
+}
+
+subject_gets_sensors = {
+	term = subject_sensors
+	loyalty_change = 0
+	ai_acceptance = {
+		overlord = -10
+		subject = 5
+	}
+	activate_effect = {
+		set_rule_subject_has_sensors = yes
+	}
+	target_modifier = {
+		monthly_loyalty = 0.25
+	}
+	possible = {
+		custom_tooltip = {
+			fail_text = not_allowed_for_tributary
+			if = {
+				limit = {
+					NAND = {
+						owner = { is_galactic_community_member = yes }
+						target = { is_galactic_community_member = yes }
+						is_active_resolution = resolution_bureaucraticsurveillance_borderless_authority
+					}
+				}
+				OR = {
+					NOT = { agreement_preset = preset_tributary }
+					owner = { has_valid_civic = civic_home_country_isomorphism }
+				}
+			}
+		}
+	}
+}
+
+################
+# HIDDEN TERMS #
+################
+
+subject_is_not_protectorate = {
+	term = protectorate
+
+	potential = {
+		NOT = {
+			agreement_preset = preset_protectorate
+		}
+	}
+}
+
+subject_is_protectorate = {
+	term = protectorate
+	overlord_resources = {
+		category = subjects
+		produces = {
+			influence = 0.25
+		}
+	}
+	target_modifier = {
+		subject_tech_cost_mult = -0.80
+	}
+
+	potential = {
+		agreement_preset = preset_protectorate
+	}
+
+	extra_term_text_subject = protectorate_extra_subject
+	extra_term_text_overlord = protectorate_extra_overlord
+}
+
+subject_is_xenophobe = {
+	term = subject_xenophobe
+
+	triggered_loyalty_change = {
+		trigger = {
+			target = {
+				NOR = {
+					is_same_species = ROOT.owner
+					has_overlord = ROOT.owner
+					ROOT.owner = { has_overlord = ROOT.target }
+				}
+				has_ethic = ethic_xenophobe
+			}
+		}
+		loyalty_change = -20
+		ai_acceptance = {
+			subject = -100
+		}
+	}
+}
+
+subject_is_fanatic_xenophobe = {
+	term = subject_xenophobe
+
+	triggered_loyalty_change = {
+		trigger = {
+			target = {
+				NOR = {
+					is_same_species = ROOT.owner
+					has_overlord = ROOT.owner
+					ROOT.owner = { has_overlord = ROOT.target }
+				}
+				has_ethic = ethic_fanatic_xenophobe
+			}
+		}
+		loyalty_change = -40
+		ai_acceptance = {
+			subject = -200
+		}
+	}
+}
+
+subject_is_pompous = {
+	term = subject_pompous
+
+	triggered_loyalty_change = {
+		trigger = {
+			target = {
+				has_civic = civic_pompous_purists
+			}
+		}
+		loyalty_change = -25
+		ai_acceptance = {
+			subject = -125
+		}
+	}
+}
+
+yes_access = {
+	term = has_access
+	activate_effect = {
+		set_rule_subject_has_access = yes
+	}
+}
+
+no_access = {
+	term = has_access
+	activate_effect = {
+		set_rule_subject_has_access = no
+	}
+	extra_term_text_subject = no_access_extra_subject
+}
+
+naval_cap_unmodified = {
+	term = naval_capacity
+	possible = {
+		NOR = {
+			agreement_preset = preset_satrapy
+			agreement_preset = preset_relic_satrapy
+			agreement_preset = preset_luminarium
+		}
+	}
+
+	target_modifier = {
+		diplo_weight_mult = -0.5
+	}
+
+	extra_term_text_subject = loyalty_effects_subject
+}
+
+naval_cap_satrapy = {
+	term = naval_capacity
+	target_modifier = {
+		country_naval_cap_mult = -0.3
+	}
+	possible = {
+		agreement_preset = preset_satrapy
+	}
+	extra_term_text_subject = satrapy_naval_cap
+}

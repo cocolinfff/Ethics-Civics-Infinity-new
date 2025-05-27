@@ -1,0 +1,263 @@
+# 经济周期，非危机平衡线
+economy_stage_rebalance_1 = { # 0-10 10.0~0.0
+	base = 0
+	subtract = trigger:situation_progress
+	add = 10.0
+}
+economy_stage_rebalance_2 = { # 10-70 0.5~-3.5
+	base = 0
+	subtract = trigger:situation_progress
+	divide = 20
+	add = 1.5
+}
+economy_stage_rebalance_3 = { # 70-90 -3.0~-5.0
+	base = 0
+	subtract = trigger:situation_progress
+	divide = 10
+	add = 4.0
+}
+economy_stage_rebalance_4 = { # 90-100 -4.5~
+	base = 0
+	subtract = trigger:situation_progress
+	divide = 3
+	add = 25.5
+}
+# 经济周期，危机平衡线
+economy_stage_rebalance_5 = { # 0-15 9.5~0.5
+	base = 0
+	subtract = trigger:situation_progress
+	mult = 0.6
+	add = 9.5
+}
+economy_stage_rebalance_6 = { # 15-35 0.5~0.0
+	base = 0
+	subtract = trigger:situation_progress
+	divide = 40
+	add = 0.875
+}
+
+crisis_percentage = {
+	base = 100
+	mult = rec_crisis_accumulated
+	divide = rec_crisis_threshold
+}
+
+crisis_situation_decline = {
+	base = -0.02
+	mult = root.rec_crisis_percentage
+}
+crisis_crisis_decline = {
+	base = -0.04
+	mult = root.rec_crisis_percentage
+}
+crisis_decline_market_revolution = {
+	base = -0.02
+	mult = rec_crisis_accumulated
+}
+
+rec_bonds_pay = {
+	base = 1.15
+	mult = rec_bond_value
+	divide = owner.trigger:num_pops
+}
+rec_bonds_value = {
+	base = 0
+	add = rec_crisis_accumulated
+	mult = owner.trigger:num_pops
+}
+rec_bonds_decline = {
+	base = -0.01
+	mult = rec_crisis_accumulated
+}
+
+crisis_breakout = {
+	base = -0.6
+	mult = trigger:situation_progress
+}
+
+effect_exploited_subject = {
+	base = -0.1
+	mult = rec_economic_improve
+}
+effect_exploited_resource = {
+	base = 0.1
+	mult = trigger:num_pops
+	mult = rec_economic_improve
+}
+effect_expand_pop = {
+	base = 0
+	subtract = rec_crisis_accumulated
+	mult = owner.rec_expand_pop_0
+	divide = owner.trigger:num_pops
+}
+effect_expand_resource = {
+	base = 0
+	subtract = owner.rec_expand_resource_0
+	divide = owner.trigger:num_pops
+}
+
+ratio_threshold_common_self = {
+	base = 0
+	add = rec_market_common_threshold
+	divide = rec_crisis_threshold_self
+}
+rec_market_common_accumulate_initial = {
+	base = 0
+	add = rec_crisis_add_self
+	divide = rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_accumulate_spread = {
+	base = 0
+	add = rec_crisis_add_self
+	divide = PREV.rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_accumulate_spread_simple = {
+	base = 1
+	modifier = {
+		add = -0.25
+		is_socialism = yes
+	}
+	modifier = {
+		add = -0.15
+		is_authoritarian = yes
+	}
+	modifier = {
+		add = 2.5
+		has_valid_civic = civic_triple_the_profit
+	}
+	modifier = {
+		subtract = 3
+		has_modifier = rec_economic_crisis_ai
+	}
+	modifier = {
+		subtract = 4
+		has_modifier = rec_economic_crisis_severe
+	}
+	divide = PREV.rec_market_common_size
+	mult = trigger:num_pops
+}
+rec_crisis_add_change = {
+	base = 0
+	add = owner.rec_market_common_accumulate
+	subtract = rec_crisis_add_self
+}
+rec_market_common_threshold_initial = {
+	base = 0
+	add = rec_crisis_threshold_self
+	divide = rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_threshold_spread = {
+	base = 0
+	add = rec_crisis_threshold_self
+	divide = PREV.rec_market_common_size
+	mult = rec_market_self_size
+}
+rec_market_common_threshold_spread_simple = {
+	base = 240
+	modifier = {
+		divide = 2
+		has_modifier = rec_economic_crisis_ai
+	}
+	modifier = {
+		divide = 1.5
+		has_modifier = rec_economic_crisis_severe
+	}
+	divide = PREV.rec_market_common_size
+	mult = trigger:num_pops
+}
+rec_crisis_threshold_change = {
+	base = 0
+	add = rec_crisis_threshold
+	subtract = rec_crisis_threshold_self
+}
+
+rec_commercial_pact = {
+	base = 0
+	add = root.from.trigger:num_pops
+	divide = root.this.trigger:num_pops
+}
+rec_commercial_pact_d = {
+	base = 0
+	add = root.this.trigger:num_pops
+	divide = root.from.trigger:num_pops
+}
+
+market_revolution_pop = {
+	base = 0.01
+	mult = market_revolution_size
+}
+market_revolution_resource = {
+	base = 0.1
+	mult = market_revolution_size
+}
+
+ethic_economic_zone_num = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_owned_planet
+		trigger_scope = owner
+		parameters = {
+			limit = {
+				has_modifier = economic_colony
+			}
+		}
+		mode = add
+		mult = 1
+	}
+}
+
+ECI_var_trade_add_value = {
+	base = 0
+	add = modifier:trade_value_add
+}
+ECI_var_trade_mult_value = {
+	base = 1
+	add = modifier:planet_pops_trade_produces_mult
+}
+ECI_var_trade_value_modifier = {
+	base = 0
+	add = value:percent_monthly_resource_income|RESOURCE|trade|PERCENT|1|
+}
+
+ethic_var_invest_cost= {
+	base = 1
+	modifier = {
+		add = owner.modifier:trade_invest_cost
+		check_modifier_value = {
+			modifier = trade_invest_cost
+			value > 0
+		} 
+	}
+}
+
+ethic_var_invest_produces= {
+	base = 1
+	modifier = {
+		add = owner.modifier:trade_invest_produces
+		check_modifier_value = {
+			modifier = trade_invest_produces
+			value > 0
+		}
+	}
+}
+
+ethic_var_trade_value_reducted = {
+	base = 0
+	add = ECI_var_trade_value
+	mult = value:ethic_var_invest_cost
+}
+
+ethic_var_planet_pops_trade_produces_mult = {
+	base = 0
+	add = ECI_var_trade_value
+	mult = value:ethic_var_invest_produces
+}
+
+Eci_resource_max = {
+	base = 0
+	add = modifier:country_resource_max_add
+	add = modifier:country_resource_max_$resource$_add
+}
