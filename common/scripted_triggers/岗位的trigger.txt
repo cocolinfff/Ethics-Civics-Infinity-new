@@ -263,8 +263,83 @@ bureaucrat_is_spiritualist = {
 
 #兵役公民
 civilian_is_conscript_uncapped = {
-    exists = planet
-    planet = { is_capital = yes }
     exists = owner
-    owner = { has_valid_civic = civic_having_a_national_army }
+    owner = { has_ethic = ethic_fanatic_militarist }
+}
+
+#这个岗位仅能由那些当前没有在被净化的自由人口从事
+entertainer_job_check_trigger = {
+    custom_tooltip = SPECIALIST_JOB_TRIGGER
+    hidden_trigger = {
+        exists = owner
+        OR = {
+            is_enslaved = no
+            owner = { has_valid_civic = civic_du_contrat_social }
+            owner = { has_valid_civic = civic_flower_of_evil }
+            has_slavery_type = { type = slavery_domestic }
+        }
+        is_being_purged = no
+        is_being_assimilated = no
+        # Rule out Traits for servitude & lack of free will
+        can_think = yes
+        # Rule out Disconnected Drones
+        has_disconnected_drone_citizenship_type = no
+        OR = {
+            NOT = { has_trait = trait_mechanical }
+            owner = { has_technology = tech_droid_workers }
+        }
+        NOT = {
+            has_citizenship_type = {
+                type = citizenship_organic_trophy
+                country = owner
+            }
+        }
+        if = {
+            limit = {
+                divinity_right_to_work_job_check_trigger_exempt = no
+            }
+            divinity_right_to_work_job_check_trigger_specialist = yes
+        }
+    }
+}
+
+#这个岗位仅能由自由人口或是被允许参军的奴隶兵人口从事
+battle_thrall_job_check_trigger = {
+    custom_tooltip = BATTLE_THRALL_JOB_TRIGGER
+    hidden_trigger = {
+        exists = owner
+        OR = {
+            is_enslaved = no
+            owner = { has_valid_civic = civic_du_contrat_social }
+            owner = { has_valid_civic = civic_flower_of_evil }
+            has_slavery_type = { type = slavery_military }
+        }
+        is_being_purged = no
+        is_being_assimilated = no
+        # Rule out Traits for servitude & lack of free will
+        can_think = yes
+        # Rule out Disconnected Drones
+        has_disconnected_drone_citizenship_type = no
+        NOT = {
+            has_military_service_type = {
+                type = military_service_none
+            }
+        }
+        OR = {
+            NOT = { has_trait = trait_mechanical }
+            owner = { has_technology = tech_droid_workers }
+        }
+        NOT = {
+            has_citizenship_type = {
+                type = citizenship_organic_trophy
+                country = owner
+            }
+        }
+        if = {
+            limit = {
+                divinity_right_to_work_job_check_trigger_exempt = no
+            }
+            divinity_right_to_work_job_check_trigger_specialist = yes
+        }
+    }
 }

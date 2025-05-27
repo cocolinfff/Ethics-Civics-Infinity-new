@@ -157,6 +157,105 @@ merchant_msi = {
 	}
 }
 
+#骑士领主
+knight_commander_msi = {
+	category = ruler
+
+	swappable_data = {
+		default = {
+			condition_string = RULER_JOB_TRIGGER
+			building_icon = building_order_keep
+			icon = knight_commander
+		}
+	}
+
+	tags = { unity research amenities soldier }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		#is_enslaved = no
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_ruler_job
+	possible = {
+		hidden_trigger = { exists = owner }
+		owner = {
+			is_gestalt = no
+		}
+		OR = {
+			is_enslaved = no
+			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+	}
+
+	resources = {
+		category = planet_knights
+		produces = {
+			unity = 4
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_valid_civic = civic_cyber_dictatorship
+				}
+			}
+			physics_research = 0.01
+			engineering_research = 0.01
+			society_research = 0.01
+			mult = planet.value:count_job|JOB|knight|
+		}
+		upkeep = {
+			consumer_goods = 3
+			alloys = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 500
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	country_modifier = {
+		country_naval_cap_add = 6
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_valid_civic = civic_cyber_dictatorship
+			}
+		}
+		job_knight_add = 200
+	}
+
+	weight = {
+		weight = @high_prio_specialist_job_weight
+		mult = value:job_weights_modifier|JOB|knight_commander|RESOURCE|unity|
+		mult = value:job_weights_research_modifier|JOB|knight_commander|
+	}
+
+	inline_script = "jobs/automodding_priority_unity"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = ruler
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
+}
+
 #核心党员
 core_party_members = {
 	category = ruler
