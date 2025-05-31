@@ -3012,39 +3012,73 @@ country_event = {
     immediate = {
         if = {
             limit = {
-                #你至少得有一个活着的星基来刷船
-                any_owned_starbase = {
-                    controller = {
-                        is_same_value = root
-                    }
-                    OR = {
-                        has_starbase_module = shipyard
-                        has_starbase_module = hatchery
-                        has_starbase_module = beastport
+                NOT = {
+                    any_owned_fleet = {
+                        has_fleet_flag = having_a_national_army_fleet
                     }
                 }
-                used_naval_capacity_percent < 1
             }
-            every_owned_starbase = {
+            create_fleet = {
+                name = "NAME_having_a_national_army"
+                settings = {
+                    can_disband = no
+                    can_change_composition = no
+                    uses_naval_capacity = no
+                }
+                effect = {
+                    set_owner = root
+                    if = {
+                        limit = {
+                            OR = {
+                                root = {
+                                    has_existing_ship_design = cosmo_crisis_titan
+                                    has_existing_ship_design = bio_titan
+                                    has_existing_ship_design = titan
+                                }
+                            }
+                        }
+                        create_having_a_national_army_titan = yes
+                    }
+                    else = {
+                        create_having_a_national_army_ship = yes
+                    }
+                    set_fleet_flag = having_a_national_army_fleet
+                    set_location = root.capital_scope
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                any_owned_fleet = {
+                    has_fleet_flag = having_a_national_army_fleet
+                    exists = solar_system
+                    is_in_combat = no
+                }
+            }
+            random_owned_fleet = {
                 limit = {
-                    controller = {
-                        is_same_value = root
-                    }
-                    OR = {
-                        has_starbase_module = shipyard
-                        has_starbase_module = hatchery
-                        has_starbase_module = beastport
-                    }
+                    has_fleet_flag = having_a_national_army_fleet
+                    exists = solar_system
+                    is_in_combat = no
                 }
-                owner = {
-                    create_fleet_from_naval_cap = 0.1
-                }
-                last_created_fleet = {
-                    set_fleet_settings = {
-                        can_change_composition = yes
-                        can_disband = no
+                if = {
+                    limit = {
+                        OR = {
+                            root = {
+                                has_existing_ship_design = cosmo_crisis_titan
+                                has_existing_ship_design = bio_titan
+                                has_existing_ship_design = titan
+                            }
+                        }
+                        check_variable_arithmetic = {
+                            which = value:having_a_nation_army_titan_value
+                            value < 0
+                        }
                     }
-                    set_location = prev
+                    create_having_a_national_army_titan = yes
+                }
+                else = {
+                    create_having_a_national_army_ship = yes
                 }
             }
         }
