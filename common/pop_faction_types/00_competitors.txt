@@ -1,0 +1,695 @@
+##############################
+# 技师(ECI)-温和唯物-生产类专家/部分工人利益集团
+##############################
+competitors = {
+	election_header = "GFX_faction_header_yellow"
+	guiding_ethic = "ethic_pragmatism"
+	visual_ethic = "competitors_visual_ethic"
+	use_guiding_ethic_as_pop_filter = no
+	unique = yes
+	support_multiplier = 1
+
+	resources = {
+		category = pop_factions
+		produces = {
+			trigger = {
+				owner = {
+					NOR = {
+						has_civic = civic_crowdsourcing
+						has_civic = civic_corporate_crowdsourcing
+					}
+				}
+			}
+			unity = @faction_base_output
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_civic = civic_crowdsourcing
+						has_civic = civic_corporate_crowdsourcing
+					}
+				}
+			}
+			engineering_research = 0.05
+			society_research = 0.05
+			physics_research = 0.05
+			mult = @crowdsourcing_multiplier
+		}
+	}
+	is_potential = {
+		is_faction_allowed = yes
+	}
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
+	can_join_pre_triggers = {
+		is_being_purged = no
+	}
+	can_join_faction = {
+		can_join_faction_mentally = yes
+		has_ethic = ethic_materialist
+	}
+	attraction = {
+		base = 100
+		modifier = {
+			factor = 1.25
+			exists = root
+			root = {
+				exists = leader
+				leader = {
+					is_ruler = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = root
+			root = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_materialist
+		}
+		modifier = {
+			factor = 2
+			is_robot_pop = yes
+		}
+		# Actions
+		modifier = {
+			factor = @factionattractionpromote
+			has_pop_faction_flag = promote_faction
+		}
+		modifier = {
+			factor = @factionattractionsuppress
+			has_pop_faction_flag = suppress_faction
+		}
+		# Angry
+		modifier = {
+			factor = @factionattractionmedium
+			exists = root
+			root = { faction_approval < 0.5 }
+			happiness < 0.5
+		}
+		# Stance from Job
+		modifier = {
+			factor = @factionattractionhighvery
+			OR = {
+				AND = {
+					exists = owner
+					owner = { is_materialist = yes }
+				}
+				OR = {
+					has_ethic = ethic_materialist
+				}
+			}
+			OR = {
+				has_job = foundry_specialist
+				has_job = artisan_specialist
+			}
+		}
+		# 万众一心
+		modifier = {
+			factor = 0.1
+			exists = root
+			root = { faction_approval < 0.5 }
+			exists = owner
+			owner = { has_ascension_perk = ap_one_vision }
+		}
+	}
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
+	}
+	
+	# 诉求
+		# Faction Outraged
+		inline_script = {
+			script = pop_faction_types/demand_faction_outraged
+			FLAG = galcom_resolution_passed_anti_xenoist
+		}
+		# Faction Pleased
+		inline_script = {
+			script = pop_faction_types/demand_faction_pleased
+			FLAG = galcom_resolution_passed_pro_xenoist
+		}
+		
+		demand = { # 投资创新
+			title = "DEMAND_INVEST_RESEARCH"
+			unfulfilled_title = "DEMAND_INVEST_RESEARCH"
+			desc = "DEMAND_INVEST_RESEARCH_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = trade_conversion_innovation
+				}
+			}
+		}
+		
+		demand = { # 低工时
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+						has_policy_flag = standard_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					OR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+					}
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_WORKHOUR_SOCIALISM"
+			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10 
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = future_working_hours_liberal
+						has_policy_flag = free_working_hours
+						has_policy_flag = standard_working_hours
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = short_working_hours
+				}
+			}
+		}
+
+		demand = { # 学术优待
+			title = "DEMAND_LIVING_ACADEMY"
+			unfulfilled_title = "DEMAND_LIVING_ACADEMY"
+			desc = "DEMAND_LIVING_ACADEMY_DESC"
+			fulfilled_effect = 10
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					is_ai = no # 仅玩家，减少卡顿
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						has_living_standard = { type = living_standard_academic_privilege }
+					}
+				}
+			}
+		}
+		demand = { # 学术优待
+			title = "DEMAND_LIVING_ACADEMY"
+			unfulfilled_title = "DEMAND_LIVING_ACADEMY"
+			desc = "DEMAND_LIVING_ACADEMY_DESC"
+			fulfilled_effect = 5
+			unfulfilled_effect = -10
+			potential = {
+				exists = owner
+				owner = {
+					is_ai = no # 仅玩家，减少卡顿
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						OR = {
+							has_living_standard = { type = living_standard_utopian }
+							has_living_standard = { type = living_standard_stratified }
+						}
+					}
+				}
+			}
+		}
+		
+		demand = { # 科研道德
+			title = "DEMAND_RESEARCH_TOLERANCE"
+			unfulfilled_title = "DEMAND_RESEARCH_TOLERANCE"
+			desc = "DEMAND_RESEARCH_TOLERANCE_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+				owner = {
+					NOR = {
+						has_policy_flag = dogma_bottom_line
+						has_policy_flag = moral_bottom_line
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = rational_bottom_line
+				}
+			}
+		}
+		demand = {
+			title = "DEMAND_RESEARCH_TOLERANCE"
+			unfulfilled_title = "DEMAND_RESEARCH_TOLERANCE"
+			desc = "DEMAND_RESEARCH_TOLERANCE_NO_DESC"
+			#fulfilled_effect = 0 # Yellow
+			unfulfilled_effect = -10
+			potential = {
+				owner = {
+					OR = {
+						has_policy_flag = dogma_bottom_line
+						has_policy_flag = moral_bottom_line
+					}
+				}
+			}
+			trigger = {
+				always = no
+			}
+		}
+
+		demand = { # 机器劳工
+			title = "DEMAND_ROBOT_WORK"
+			unfulfilled_title = "DEMAND_ROBOT_WORK"
+			desc = "DEMAND_ROBOT_WORK_DESC"
+			fulfilled_effect = 5
+			#unfulfilled_effect = 0 # Yellow
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_policy_flag = robots_allowed
+					NOT = { has_policy_flag = ai_servitude }
+				}
+			}
+		}
+
+		demand = { # 时代尖兵
+			title = "TECHNOLOGIST_TECH_LEAP"
+			unfulfilled_title = "TECHNOLOGIST_TECH_LAG"
+			desc = "TECHNOLOGIST_TECH_LEAP_DESC"
+			fulfilled_effect = 10
+			unfulfilled_effect = -20
+			potential = {
+				exists = owner
+				owner = {
+					any_relation = {
+						has_communications = root.owner
+						is_country_type = default
+						NOT = {
+							has_government = gov_successor_khanate
+						}
+					}
+					NOR = {
+						has_country_flag = primitives_can_into_space
+						is_subject = yes
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					NOT = {
+						any_relation = {
+							has_communications = root.owner
+							is_country_type = default
+							NOT = {
+								has_government = gov_successor_khanate
+							}
+							relative_power = {
+								who = root.owner
+								category = technology
+								value > equivalent
+							}
+						}
+					}
+				}
+			}
+		}
+
+		#基因工程
+		demand = {
+			title = "GENETIC_SUPERIORITY"
+			unfulfilled_title = "NO_GENETIC_SUPERIORITY"
+			desc = "GENETIC_SUPERIORITY_DESC"
+			fulfilled_effect = 15
+			unfulfilled_effect = -2
+			potential = {
+				exists = owner
+				owner = {
+					has_origin = origin_symbiotic_race
+				}
+			}
+			trigger = {
+				owner = {
+					has_ascension_perk = ap_engineered_evolution
+				}
+			}
+		}
+		#血肉苦弱
+		demand = {
+			title = "TRADITIONALIST_FLESH_IS_WEAK"
+			unfulfilled_title = "NO_TRADITIONALIST_FLESH_IS_WEAK"
+			desc = "TRADITIONALIST_FLESH_IS_WEAK_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+			}
+			trigger = {
+				owner = {
+					has_country_flag = flesh_weakened
+				}
+			}
+		}
+		#嫉妒合成人技术
+		demand = {
+			title = "TECHNOLOGIST_NO_SYNTH_ENVY"
+			unfulfilled_title = "TECHNOLOGIST_SYNTH_ENVY"
+			desc = "TECHNOLOGIST_NO_SYNTH_ENVY_DESC"
+			unfulfilled_effect = -10
+			fulfilled_effect = 0.001
+			potential = {
+				exists = owner
+				owner = {
+					NOT = {
+						has_ascension_perk = ap_synthetic_evolution
+					}
+					any_relation = {
+						has_communications = root.owner
+						any_owned_pop = {
+							OR = {
+								pop_has_trait = trait_mechanical
+								pop_has_trait = trait_cybernetic
+							}
+						}
+					}
+				}
+			}
+			trigger = {
+				owner = {
+					any_owned_pop = {
+						OR = {
+							pop_has_trait = trait_mechanical
+							pop_has_trait = trait_cybernetic
+						}
+					}
+				}
+			}
+		}
+		#秘密知识
+		demand = {
+			title = "TECHNOLOGIST_SECRET_KNOWLEDGE"
+			unfulfilled_title = "TECHNOLOGIST_NO_SECRET_KNOWLEDGE"
+			desc = "TECHNOLOGIST_SECRET_KNOWLEDGE_DESC"
+			fulfilled_effect = 10
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_modifier = fallen_empire_gift_databanks
+						has_modifier = curator_insight
+					}
+				}
+			}
+			trigger = {
+				always = yes
+			}
+		}
+		#过往智识
+		demand = {
+			title = "TECHNOLOGIST_ARCANA"
+			unfulfilled_title = "TECHNOLOGIST_NO_ARCANA"
+			desc = "TECHNOLOGIST_ARCANA_DESC"
+			fulfilled_effect = 5
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_modifier = arcane_deciphering_cooldown
+						has_modifier = arcane_insight
+					}
+				}
+			}
+			trigger = {
+				always = yes
+			}
+		}
+		#先驱秘辛
+		demand = {
+			title = "TECHNOLOGIST_PRECURSOR_SECRETS"
+			unfulfilled_title = "TECHNOLOGIST_NO_PRECURSOR_SECRETS"
+			desc = "TECHNOLOGIST_PRECURSOR_SECRETS_DESC"
+			fulfilled_effect = 5
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						has_modifier = artifact_cybrex_research_completed
+						has_modifier = artifact_irassian_research_completed
+						has_modifier = artifact_league_research_completed
+						has_modifier = artifact_vultaum_research_completed_suppressed
+						has_modifier = artifact_vultaum_research_completed_public
+						has_country_flag = artifact_yuht_research_completed
+					}
+				}
+			}
+			trigger = {
+				always = yes
+			}
+		}
+	
+		# 派系的委员会和领导人诉求
+		inline_script = {
+			script = "paragon/global_faction_demands"
+			ETHIC = ethic_materialist
+			ETHIC_FANATIC = ethic_fanatic_materialist
+			ETHIC_OPPOSED = ethic_spiritualist
+		}
+
+	on_create = {
+		# pop_faction_event = {
+		# 	id = factions.1
+		# }
+	}
+	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_materialist
+			}
+			remove_modifier = promoted_materialist
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_materialist
+			}
+			remove_modifier = suppressed_materialist
+		}
+	}
+
+	actions = {
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+
+			cost = {
+				unity = 5000
+			}
+
+			potential = {
+				exists = owner
+				owner = {
+					OR = {
+						is_subject = no
+						NOT = { any_agreement = { agreement_preset = preset_dominion } }
+					}
+				}
+			}
+
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = { has_modifier = embraced_faction_timer }
+					}
+				}
+				support > 0.15
+				parameter:empire = {
+					NOT = { has_ethic = "ethic_fanatic_materialist" }
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				parameter:empire = {
+					shift_ethic = ethic_materialist
+					hidden_effect = {
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
+						every_pop_faction = {
+							limit = { NOT = { is_same_value = root } }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default
+								has_communications = prev
+								has_intel_level = {
+									who = prev
+									category = government
+									level >= 1
+								}
+							}
+							country_event = { id = factions.2000 }
+						}
+					}
+				}
+			}
+
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.50
+					owner = {
+						has_ethic = ethic_materialist
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_fanatic_purifiers }
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}
+					}
+				}
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_materialist
+						has_modifier = promoted_materialist
+					}
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					add_modifier = { modifier = promoted_materialist days = -1 }
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = promoted_materialist
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_materialist
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_materialist
+						has_modifier = promoted_materialist
+					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_materialist days = -1 }
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = suppressed_materialist
+				}
+			}
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_materialist
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+	}
+}
