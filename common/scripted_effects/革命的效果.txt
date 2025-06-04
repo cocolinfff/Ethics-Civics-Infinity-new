@@ -1,0 +1,687 @@
+galactic_revolution_effect = {
+	hidden_effect = {
+		from = {
+			if = {
+				limit = { has_civic = civic_underworld_society }
+				force_remove_civic = civic_underworld_society
+			}
+			if = {
+				limit = { has_civic = civic_criminal_heritage }
+				force_remove_civic = civic_criminal_heritage
+			}
+			every_owned_pop = {
+				random_list = {
+					1 = {
+						wipe_pop_ethos = yes
+						pop_change_ethic = ethic_socialism
+					}
+					1 = {
+						wipe_pop_ethos = yes
+						pop_change_ethic = ethic_egalitarian
+					}
+					2 = { }
+				}
+				set_timed_pop_flag = { flag = changed_pop days = 2 }
+			}
+			add_modifier = { modifier = revolutionary_propaganda days = 3650 }
+		}
+	}
+}
+
+galactic_revolution_status_quo_threat_effect = {
+	hidden_effect = {
+		from = {
+			add_threat = {
+				who = root
+				amount = 0.10
+			}
+		}
+		every_country = {
+			limit = {
+				is_galactic_revolution_target = yes
+			}
+			add_threat = {
+				who = root
+				amount = 0.05
+			}
+		}
+	}
+}
+
+galactic_revolution_accept_threat_effect = {
+	# add threat
+	hidden_effect = {
+		every_country = {
+			limit = {
+				is_galactic_revolution_target = yes
+			}
+			add_threat = {
+				who = root
+				amount = 0.1
+			}
+		}
+	}
+}
+
+revolution_operation_merge = {
+	every_owned_planet = {
+		limit = { has_deposit = d_guerrilla_warzone }
+		save_event_target_as = branch_planet
+		set_owner = event_target:revolution_empire
+		hidden_effect = {
+			remove_deposit = d_guerrilla_warzone
+			add_planet_devastation = 100
+			solar_system = {
+				if = {
+					limit = { exists = starbase }
+					starbase = {
+						if = {
+							limit = { is_owned_by = event_target:revolution_target_empire }
+							set_owner = event_target:rebel_empire
+							if = {
+								limit = { has_starbase_size = starbase_outpost }
+								set_starbase_size = starbase_starport
+								set_starbase_module = {
+									slot = 1
+									module = shipyard
+								}
+								set_starbase_module = {
+									slot = 2
+									module = shipyard
+								}
+							}
+							else_if = {
+								limit = {
+									NOT = { has_starbase_module = shipyard }
+								}
+								set_starbase_module = {
+									slot = 1
+									module = shipyard
+								}
+								set_starbase_module = {
+									slot = 2
+									module = shipyard
+								}
+							}
+						}
+					}
+				}
+				add_claims = {
+					who = event_target:revolution_target_empire
+					show_notification = no
+				}
+				every_system_planet = {
+					limit = {
+						is_colony = yes
+						NOT = { is_same_value = event_target:branch_planet }
+						is_owned_by = event_target:revolution_target_empire
+					}
+					set_owner = event_target:revolution_empire
+				}
+				every_fleet_in_system = {
+					limit = { is_owned_by = event_target:revolution_target_empire }
+					set_mia = mia_return_home
+				}
+			}
+		}
+	}
+	every_system_within_border = {
+		if = {
+			limit = { exists = starbase }
+			starbase = {
+				if = {
+					limit = { is_owned_by = event_target:revolution_target_empire }
+					set_owner = event_target:revolution_empire
+				}
+			}
+		}
+		add_claims = {
+			who = event_target:revolution_target_empire
+			show_notification = no
+		}
+		every_system_planet = {
+			limit = {
+				is_colony = yes
+				NOT = { is_same_value = event_target:branch_planet }
+				is_owned_by = event_target:revolution_target_empire
+			}
+			set_owner = event_target:revolution_empire
+		}
+		every_fleet_in_system = {
+			limit = { is_owned_by = event_target:revolution_target_empire }
+			set_mia = mia_return_home
+		}
+	}
+}
+
+revolution_operation_civil_war = {
+	if = {
+		limit = {
+			any_system_within_border = {
+				any_system_colony = { has_deposit = d_guerrilla_warzone }
+			}
+		}
+		random_system_within_border = {
+			limit = {
+				any_system_colony = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+			}
+			every_system_colony = {
+				limit = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+				remove_deposit = d_guerrilla_warzone
+				add_planet_devastation = 65
+				create_rebels = {
+					name = random
+					authority = auth_democratic
+					civics = {
+						civic = civic_liberator
+						civic = civic_idealistic_foundation
+						civic = civic_martial_brotherhood
+					}
+					species = root
+					ethos = {
+						ethic = ethic_fanatic_egalitarian
+						ethic = ethic_militarist
+					}
+					origin = "origin_liberated"
+					flag = random
+					effect = {
+						set_country_flag = rebel_empire_@root
+						set_country_flag = origin_rebel_empire
+						add_modifier = {
+							modifier = paragon_origin_rebel_player
+							days = -1
+						}
+						add_modifier = {
+							modifier = "revolutionary_propaganda"
+							days = -1
+						}
+						set_country_type = default
+						save_event_target_as = rebel_empire
+						add_resource = {
+							minerals = 7500
+							energy = 7500
+							food = 7500
+							consumer_goods = 5000
+							alloys = 5000
+							rare_crystals = 500
+							volatile_motes = 500
+							exotic_gases = 500
+							influence = 500
+							unity = 5000
+						}
+						establish_communications_no_message = root
+						establish_communications_no_message = event_target:revolution_empire
+						add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:revolution_empire }
+						declare_war = {
+							target = root
+							attacker_war_goal = wg_galactic_revolution
+							name = casus_belli_cb_galactic_revolution
+						}
+						create_fleet_from_naval_cap = 0.4
+					}
+				}
+				set_owner = event_target:rebel_empire
+				hidden_effect = {
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								if = {
+									limit = { is_owned_by = event_target:revolution_target_empire }
+									set_owner = event_target:rebel_empire
+									if = {
+										limit = { has_starbase_size = starbase_outpost }
+										set_starbase_size = starbase_starport
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+									else_if = {
+										limit = {
+											NOT = { has_starbase_module = shipyard }
+										}
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+								}
+							}
+						}
+						add_claims = {
+							who = event_target:revolution_target_empire
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+								NOT = { is_same_value = event_target:branch_planet }
+								is_owned_by = event_target:revolution_target_empire
+							}
+							set_owner = event_target:rebel_empire
+						}
+						every_fleet_in_system = {
+							limit = { is_owned_by = event_target:revolution_target_empire }
+							set_mia = mia_return_home
+						}
+					}
+				}
+			}
+		}
+		every_system_within_border = {
+			limit = {
+				has_owner = yes
+				is_owned_by = root
+				any_system_colony = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+			}
+			every_system_colony = {
+				limit = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+				remove_deposit = d_guerrilla_warzone
+				add_planet_devastation = 50
+				set_owner = event_target:rebel_empire
+				hidden_effect = {
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								if = {
+									limit = { is_owned_by = event_target:revolution_target_empire }
+									set_owner = event_target:rebel_empire
+								}
+							}
+						}
+						add_claims = {
+							who = event_target:revolution_target_empire
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+								NOT = { is_same_value = event_target:branch_planet }
+								is_owned_by = event_target:revolution_target_empire
+							}
+							set_owner = event_target:rebel_empire
+						}
+						every_fleet_in_system = {
+							limit = { is_owned_by = event_target:revolution_target_empire }
+							set_mia = mia_return_home
+						}
+					}
+				}
+			}
+		}
+		event_target:rebel_empire = {
+			create_leader = {
+				class = commander
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_militarist
+				}
+			}
+			create_leader = {
+				class = official
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_egalitarian
+				}
+			}
+			create_leader = {
+				class = commander
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_socialism
+				}
+			}
+			create_leader = {
+				class = scientist
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_egalitarian
+				}
+			}
+			every_owned_pop = {
+				random_list = {
+					1 = {
+						pop_change_ethic = ethic_egalitarian
+					}
+					1 = {
+						pop_change_ethic = ethic_socialism
+					}
+					1 = {
+						pop_change_ethic = ethic_militarist
+					}
+				}
+			}
+		}
+	}
+}
+
+revolution_operation_declare_war = {
+	if = {
+		limit = {
+			any_system_within_border = {
+				any_system_colony = { has_deposit = d_guerrilla_warzone }
+			}
+		}
+		random_system_within_border = {
+			limit = {
+				any_system_colony = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+			}
+			every_system_colony = {
+				limit = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+				remove_deposit = d_guerrilla_warzone
+				add_planet_devastation = 65
+				create_country = {
+					name = random
+					authority = auth_democratic
+					civics = {
+						civic = civic_liberator
+						civic = civic_idealistic_foundation
+						civic = civic_martial_brotherhood
+					}
+					species = root
+					ethos = {
+						ethic = ethic_fanatic_egalitarian
+						ethic = ethic_militarist
+					}
+					origin = "origin_liberated"
+					flag = random
+					effect = {
+						set_country_flag = rebel_empire_@root
+						set_country_flag = origin_rebel_empire
+						add_modifier = {
+							modifier = paragon_origin_rebel_player
+							days = -1
+						}
+						add_modifier = {
+							modifier = "revolutionary_propaganda"
+							days = -1
+						}
+						set_country_type = default
+						save_event_target_as = rebel_empire
+						add_resource = {
+							minerals = 7500
+							energy = 7500
+							food = 7500
+							consumer_goods = 5000
+							alloys = 5000
+							rare_crystals = 500
+							volatile_motes = 500
+							exotic_gases = 500
+							influence = 500
+							unity = 5000
+						}
+						establish_communications_no_message = root
+						establish_communications_no_message = event_target:revolution_empire
+						add_opinion_modifier = { modifier = opinion_liberated_us who = event_target:revolution_empire }
+						create_fleet_from_naval_cap = 0.4
+					}
+				}
+				set_owner = event_target:rebel_empire
+				hidden_effect = {
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								if = {
+									limit = { is_owned_by = event_target:revolution_target_empire }
+									set_owner = event_target:rebel_empire
+									if = {
+										limit = { has_starbase_size = starbase_outpost }
+										set_starbase_size = starbase_starport
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+									else_if = {
+										limit = {
+											NOT = { has_starbase_module = shipyard }
+										}
+										set_starbase_module = {
+											slot = 1
+											module = shipyard
+										}
+										set_starbase_module = {
+											slot = 2
+											module = shipyard
+										}
+									}
+								}
+							}
+						}
+						add_claims = {
+							who = event_target:revolution_target_empire
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+								NOT = { is_same_value = event_target:branch_planet }
+								is_owned_by = event_target:revolution_target_empire
+							}
+							set_owner = event_target:rebel_empire
+						}
+						every_fleet_in_system = {
+							limit = { is_owned_by = event_target:revolution_target_empire }
+							set_mia = mia_return_home
+						}
+					}
+				}
+			}
+		}
+		every_system_within_border = {
+			limit = {
+				has_owner = yes
+				is_owned_by = root
+				any_system_colony = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+			}
+			every_system_colony = {
+				limit = {
+					has_deposit = d_guerrilla_warzone
+					has_owner = yes
+					is_owned_by = root
+				}
+				remove_deposit = d_guerrilla_warzone
+				add_planet_devastation = 50
+				set_owner = event_target:rebel_empire
+				hidden_effect = {
+					solar_system = {
+						if = {
+							limit = { exists = starbase }
+							starbase = {
+								if = {
+									limit = { is_owned_by = event_target:revolution_target_empire }
+									set_owner = event_target:rebel_empire
+								}
+							}
+						}
+						add_claims = {
+							who = event_target:revolution_target_empire
+							show_notification = no
+						}
+						every_system_planet = {
+							limit = {
+								is_colony = yes
+								NOT = { is_same_value = event_target:branch_planet }
+								is_owned_by = event_target:revolution_target_empire
+							}
+							set_owner = event_target:rebel_empire
+						}
+						every_fleet_in_system = {
+							limit = { is_owned_by = event_target:revolution_target_empire }
+							set_mia = mia_return_home
+						}
+					}
+				}
+			}
+		}
+		event_target:rebel_empire = {
+			create_leader = {
+				class = commander
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_militarist
+				}
+			}
+			create_leader = {
+				class = official
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_egalitarian
+				}
+			}
+			create_leader = {
+				class = commander
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_socialism
+				}
+			}
+			create_leader = {
+				class = scientist
+				species = owner_main_species
+				name = random
+				skill = 5
+				effect = {
+					change_background_ethic = ethic_egalitarian
+				}
+			}
+			every_owned_pop = {
+				random_list = {
+					1 = {
+						pop_change_ethic = ethic_egalitarian
+					}
+					1 = {
+						pop_change_ethic = ethic_socialism
+					}
+					1 = {
+						pop_change_ethic = ethic_militarist
+					}
+				}
+			}
+		}
+	}
+}
+
+red_satellite_death = {
+	set_timed_country_flag = { flag = Broken_Red_Alliance years = 50 }
+	add_modifier = { modifier = unity_deficit days = 3600 }
+	add_modifier = { modifier = embraced_hostile_faction days = 3600 }
+	add_modifier = { modifier = recently_human_right_implemented days = 3600 }
+	random_list = {
+		60 = {
+			modifier = {
+				factor = 0
+				is_socialism = yes
+				is_authoritarian = no
+			}
+		}
+		40 = { add_modifier = { modifier = patent_protection years = 99 } }
+	}
+	random_list = {
+		60 = {
+			modifier = {
+				factor = 0
+				is_socialism = yes
+				is_authoritarian = no
+			}
+		}
+		40 = { add_modifier = { modifier = energy_revolution years = 99 } }
+	}
+	random_list = {
+		60 = {
+			modifier = {
+				factor = 0
+				is_socialism = yes
+				is_authoritarian = no
+			}
+		}
+		40 = { add_modifier = { modifier = agriculturala_monopoly years = 99 } }
+	}
+	random_list = {
+		60 = {
+			modifier = {
+				factor = 0
+				is_socialism = yes
+				is_authoritarian = no
+			}
+		}
+		40 = { add_modifier = { modifier = mineral_finance years = 99 } }
+	}
+	random_list = {
+		60 = {
+			modifier = {
+				factor = 0
+				is_socialism = yes
+				is_authoritarian = no
+			}
+		}
+		40 = { add_modifier = { modifier = consumer_oligarch years = 99 } }
+	}
+	random_list = {
+		60 = {
+			modifier = {
+				factor = 0
+				is_socialism = yes
+				is_authoritarian = no
+			}
+		}
+		40 = { add_modifier = { modifier = steel_tycoon years = 99 } }
+	}
+}
