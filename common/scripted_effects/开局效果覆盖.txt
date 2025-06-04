@@ -35,6 +35,7 @@ generate_start_pops = {
                 owner = {
                     OR = {
                         has_origin = origin_syncretic_evolution
+                        has_origin = origin_symbiotic_race
                         has_origin = origin_necrophage
                     }
                 }
@@ -91,35 +92,12 @@ generate_start_pops = {
         }
         generate_civic_secondary_pops = yes
         make_nascent_starting_pops = yes
-        if = {
-            limit = {
-                owner = {
-                    has_origin = origin_symbiotic_race
-                }
-            }
-            modify_species = {
-                species = last_created_species
-                add_trait = trait_symbiotic
-                add_traits_at_start_of_list = yes
-            }
-            last_created_species = {
-                set_species_flag = syncretic_species@root.owner
-            }
-            create_pop_group = {
-                size = 1200
-                species = last_created_species
-            }
-        }
-        generate_civic_secondary_pops = yes
-        make_nascent_starting_pops = yes
     }
 
     # Mechanist: spawn robot Pops; add Job-specific Traits; spawn Robot Assembly Plant
     if = {
         limit = {
-            owner = {
-                has_origin = origin_mechanists
-            }
+            owner = { has_origin = origin_mechanists }
         }
         owner = {
             create_built_robot_species = yes
@@ -189,7 +167,7 @@ generate_start_pops = {
     if = {
         limit = { owner = { is_machine_empire = yes } }
         while = {
-            limit = { pop_amount < 2900 }
+            limit = { pop_amount < 2800 }
             create_pop_group = {
                 species = owner_main_species
             }
@@ -213,13 +191,12 @@ generate_start_pops = {
         limit = {
             owner = {
                 has_origin = origin_true_yuht
-                NOT = { has_valid_civic = civic_machine_servitor }
             }
         }
         create_pop_group = {
             species = owner_main_species
             ethos = random
-            size = 4800
+            size = 28000
         }
     }
     if = {
@@ -236,21 +213,20 @@ generate_start_pops = {
             owner = { has_origin = origin_taking_care_of_god }
         }
         create_pop_group = {
-			species = owner_main_species
+            species = owner_main_species
             size = 1000
-		    effect = {
-				save_event_target_as = last_created_pop_group
-			}
-		}
-		event_target:last_created_pop_group = {
-			modify_species = {
-				modify_species = {
-                    species = this
-                    add_trait = trait_fallen_god
-                    add_traits_at_start_of_list = yes
-                }
-			}
-		}
+            effect = {
+                save_event_target_as = last_created_pop_group
+            }
+        }
+        event_target:last_created_pop_group = {
+            modify_species = {
+                species = this
+                name = "trait_fallen_god"
+                add_trait = trait_fallen_god
+                add_traits_at_start_of_list = yes
+            }
+        }
     }
     if = {
         limit = {
@@ -368,8 +344,8 @@ generate_start_pops = {
             random_owned_pop_group = { kill_single_pop = yes }
         }
         create_zombie_pop_group = {
-			SIZE = 400
-		}
+            SIZE = 400
+        }
     }
 
     # Civilians
@@ -454,7 +430,6 @@ generate_start_pops = {
     }
 }
 
-#生成第二种族
 generate_civic_secondary_pops = {
     # Ensuring that this country flag has been set by this point
     if = {
@@ -603,9 +578,12 @@ generate_civic_secondary_pops = {
                 type = living_standard_organic_trophy
             }
         }
-        create_pop_group = {
-            size = 500
-            species = last_created_species
+        while = {
+            count = @civilians_counter
+            create_pop_group = {
+                size = @civilians_gamestart
+                species = last_created_species
+            }
         }
     }
     if = {

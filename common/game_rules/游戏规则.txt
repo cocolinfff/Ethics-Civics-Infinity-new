@@ -81,3 +81,158 @@ is_criminal_syndicate_rule = {
         is_ELF_criminal_syndicate_rule = yes
     }
 }
+
+#统治者阶级的工作判定
+#this/root = pop
+#checked if job's possible_precalc = can_fill_ruler_job
+can_fill_ruler_job = {
+    if = {
+        limit = {
+            exists = owner
+            owner = {
+                has_origin = origin_necrophage
+                has_trait = trait_necrophage
+            }
+        }
+        custom_tooltip = {
+            text = RULER_JOB_NECROPHAGE_TRIGGER
+            has_trait = trait_necrophage
+            is_enslaved = no
+            is_being_purged = no
+            is_being_assimilated = no
+        }
+    }
+    else_if = {
+        limit = {
+            has_global_flag = eci_educated
+            exists = owner
+            owner = {
+                OR = {
+                    has_valid_civic = civic_moth_chasing_flames
+                    has_valid_civic = civic_ruthless_competition
+                }
+            }
+        }
+        custom_tooltip = {
+            text = POP_EDUCATED_LOW
+            has_modifier = pop_highly_educated
+        }
+    }
+    else_if = {
+        custom_tooltip = RULER_JOB_TRIGGER
+        hidden_trigger = {
+            NOT = { has_ethic = ethic_gestalt_consciousness }
+            exists = owner
+            OR = {
+                is_enslaved = no
+                owner = { has_civic = civic_du_contrat_social }
+            }
+            is_being_purged = no
+            is_being_assimilated = no
+            NOT = { has_trait = trait_syncretic_proles }
+            NOT = { has_trait = trait_nerve_stapled }
+            NOT = { has_trait = trait_zombie }
+            NOT = { has_trait = trait_flesh_components }
+            NOT = { has_trait = trait_fallen_god }
+            OR = {
+                NOT = { has_trait = trait_mechanical }
+                AND = {
+                    owner = { has_technology = tech_synthetic_workers }
+                    owner = { has_policy_flag = ai_full_rights }
+                }
+            }
+            OR = {
+                NOT = { has_trait = trait_thl_doll }
+                AND = {
+                    owner = { has_technology = tech_sapient_dolls }
+                    owner = { has_policy_flag = ai_full_rights }
+                }
+            }
+            NOT = { has_citizenship_type = { type = citizenship_organic_trophy } }
+            if = {
+                limit = {
+                    divinity_right_to_work_job_check_trigger_exempt = no
+                }
+                divinity_right_to_work_job_check_trigger_ruler = yes
+            }
+            if = {
+                limit = {
+                    owner = { has_valid_civic = civic_sparta_spirit }
+                }
+                is_enslaved = no
+                has_citizenship_type = { country = owner type = citizenship_full }
+            }
+        }
+    }
+}
+
+#专家阶级的工作判定
+#this/root = pop
+#checked if job's possible_precalc = can_fill_specialist_job
+can_fill_specialist_job = {
+    can_fill_specialist_job_trigger = yes
+    # Defined in 01_scripted_triggers_jobs.txt
+    if = {
+        limit = {
+            has_global_flag = eci_educated
+            exists = owner
+            owner = {
+                OR = {
+                    has_valid_civic = civic_moth_chasing_flames
+                    has_valid_civic = civic_ruthless_competition
+                }
+            }
+        }
+        custom_tooltip = {
+            text = POP_EDUCATED_LOW
+            has_modifier = pop_highly_educated
+        }
+    }
+}
+
+#劳工阶级的工作判定
+#this/root = pop
+#checked if job's possible_precalc = can_fill_worker_job
+can_fill_worker_job = {
+    if = {
+        custom_tooltip = WORKER_JOB_TRIGGER
+        hidden_trigger = {
+            NOT = { has_ethic = ethic_gestalt_consciousness }
+            exists = owner
+            is_being_purged = no
+            is_being_assimilated = no
+            is_sparta_citizenship_full = no
+            NOT = { has_citizenship_type = { type = citizenship_organic_trophy } }
+            NOT = { has_trait = trait_fallen_god }
+            NAND = {
+                has_citizenship_type = { type = citizenship_slavery }
+                OR = {
+                    has_slavery_type = { type = slavery_livestock }
+                    has_slavery_type = { type = slavery_matrix }
+                }
+            }
+            if = {
+                limit = {
+                    divinity_right_to_work_job_check_trigger_exempt = no
+                }
+                divinity_right_to_work_job_check_trigger_worker = yes
+            }
+        }
+    }
+    else_if = {
+        limit = {
+            has_global_flag = eci_educated
+            exists = owner
+            owner = {
+                OR = {
+                    has_valid_civic = civic_moth_chasing_flames
+                    has_valid_civic = civic_ruthless_competition
+                }
+            }
+        }
+        custom_tooltip = {
+            text = POP_EDUCATED_LOW
+            has_modifier = pop_highly_educated
+        }
+    }
+}
