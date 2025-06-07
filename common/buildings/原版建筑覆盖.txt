@@ -2495,3 +2495,75 @@ building_noble_estates = {
         text = job_noble_effect_desc
     }
 }
+
+#水培农场
+building_hydroponics_farm = {
+    base_buildtime = @b1_time
+    category = resource
+
+    building_sets = {
+        hydroponics
+    }
+
+    potential = {
+        exists = owner
+        owner = {
+            AND = {
+                is_ai = no
+                NOR = {
+                    has_origin = origin_void_dwellers
+                    has_origin = origin_void_machines
+                }
+            }
+            is_wilderness_empire = no
+        }
+        NOT = { is_planet_class = pc_machine }
+        NOT = { has_modifier = resort_colony }
+    }
+    destroy_trigger = {
+        exists = owner
+        OR = {
+            owner = {
+                OR = {
+                    AND = {
+                        is_ai = yes
+                        NOR = {
+                            has_origin = origin_void_dwellers
+                            has_origin = origin_void_machines
+                        }
+                    }
+                    is_wilderness_empire = yes
+                }
+            }
+            planet = {
+                NOT = { is_planet_class = pc_habitat }
+                free_building_slots = 0
+                owner = {
+                    is_ai = yes
+                    has_monthly_income = {
+                        resource = food
+                        value > 100
+                    }
+                }
+            }
+        }
+    }
+
+    inline_script = {
+        script = jobs/farmers_add
+        AMOUNT = @building_static_jobs
+    }
+
+    resources = {
+        category = planet_buildings
+        cost = {
+            minerals = @b1_minerals
+        }
+        upkeep = {
+            energy = 2
+        }
+    }
+    prerequisites = {
+        "tech_hydroponics"
+    }
+}
