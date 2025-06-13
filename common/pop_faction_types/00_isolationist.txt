@@ -87,17 +87,8 @@ isolationist = {
 	}
 
 	can_join_faction = {
-		is_shackled_robot = no
-		can_think = yes
-		OR = {
-			NOT = { is_same_species = owner_species }
-			owner = {
-				OR = {
-					has_ethic = ethic_pacifist
-					has_ethic = ethic_fanatic_pacifist
-				}
-			}
-		}
+		can_join_faction_mentally = yes
+		has_ethic = ethic_defensivism
 	}
 
 	attraction = {
@@ -121,21 +112,8 @@ isolationist = {
 		}
 
 		modifier = {
-			factor = 1.5
-
-			OR = {
-				has_ethic = ethic_xenophobe
-				has_ethic = ethic_fanatic_xenophobe
-			}
-		}
-
-		modifier = {
-			factor = 0.25
-
-			OR = {
-				has_ethic = ethic_militarist
-				has_ethic = ethic_fanatic_militarist
-			}
+			factor = 2.0
+			has_ethic = ethic_defensivism
 		}
 
 		# Should really check for citizenship instead
@@ -560,9 +538,9 @@ isolationist = {
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
 		script = "paragon/global_faction_demands"
-		ETHIC = ethic_xenophobe
-		ETHIC_FANATIC = ethic_fanatic_xenophobe
-		ETHIC_OPPOSED = ethic_xenophile
+		ETHIC = ethic_defensivism
+		ETHIC_FANATIC = ethic_fanatic_defensivism
+		ETHIC_OPPOSED = ethic_defensivism
 	}
 
 	on_create = {
@@ -572,15 +550,15 @@ isolationist = {
 	on_destroy = {
 		if = {
 			limit = {
-				has_modifier = promoted_xenophobe
+				has_modifier = promoted_defensivism
 			}
-			remove_modifier = promoted_xenophobe
+			remove_modifier = promoted_defensivism
 		}
 		if = {
 			limit = {
-				has_modifier = suppressed_xenophobe
+				has_modifier = suppressed_defensivism
 			}
-			remove_modifier = suppressed_xenophobe
+			remove_modifier = suppressed_defensivism
 		}
 	}
 
@@ -612,7 +590,7 @@ isolationist = {
 				}
 				support > 0.20
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_xenophobe" }
+					NOT = { has_ethic = "ethic_defensivism" }
 				}
 			}
 
@@ -620,7 +598,7 @@ isolationist = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
-					shift_ethic = ethic_xenophobe
+					shift_ethic = ethic_defensivism
 					hidden_effect = {
 						every_pop_faction = { # embraces xenophobe ethos
 							limit = { is_pop_faction_type = supremacist }
@@ -659,7 +637,7 @@ isolationist = {
 					factor = 0
 					support < 0.50
 					owner = {
-						has_ethic = ethic_xenophobe
+						has_ethic = ethic_defensivism
 					}
 				}
 				modifier = {
@@ -684,8 +662,8 @@ isolationist = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_xenophobe
-						has_modifier = promoted_xenophobe
+						has_modifier = suppressed_defensivism
+						has_modifier = promoted_defensivism
 					}
 				}
 			}
@@ -693,7 +671,7 @@ isolationist = {
 			effect = {
 				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
-					add_modifier = { modifier = promoted_xenophobe days = -1 }
+					add_modifier = { modifier = promoted_defensivism days = -1 }
 				}
 			}
 
@@ -708,13 +686,13 @@ isolationist = {
 			potential = {
 				exists = owner
 				parameter:empire = {
-					has_modifier = promoted_xenophobe
+					has_modifier = promoted_defensivism
 				}
 			}
 
 			effect = {
 				parameter:empire = {
-					remove_modifier = promoted_xenophobe
+					remove_modifier = promoted_defensivism
 				}
 			}
 
@@ -730,22 +708,9 @@ isolationist = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_xenophobe
-						has_modifier = promoted_xenophobe
+						has_modifier = suppressed_defensivism
+						has_modifier = promoted_defensivism
 					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					hidden_effect = {
-						every_pop_faction = {
-							limit = { is_pop_faction_type = supremacist }
-							add_modifier = { modifier = suppressed_faction days = -1 }
-						}
-					}
-					add_modifier = { modifier = suppressed_xenophobe days = -1 }
 				}
 			}
 
@@ -760,14 +725,14 @@ isolationist = {
 			potential = {
 				exists = owner
 				parameter:empire = {
-					has_modifier = suppressed_xenophobe
+					has_modifier = suppressed_defensivism
 				}
 			}
 
 			effect = {
 				remove_modifier = suppressed_faction
 				parameter:empire = {
-					remove_modifier = suppressed_xenophobe
+					remove_modifier = suppressed_defensivism
 					hidden_effect = {
 						every_pop_faction = {
 							limit = { is_pop_faction_type = supremacist }

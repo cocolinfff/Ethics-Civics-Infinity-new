@@ -83,6 +83,7 @@ silent = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
+		has_ethic = ethic_conciliationsm
 	}
 	attraction = {
 		base = 100
@@ -95,6 +96,19 @@ silent = {
 					is_ruler = yes
 				}
 			}
+		}
+		modifier = {
+			factor = 0.75
+			exists = root
+			root = {
+				NOT = {
+					exists = leader
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			has_ethic = ethic_conciliationsm
 		}
 		modifier = { # 统治阶级不屑于隐瞒自己（笑
 			factor = 0.1
@@ -124,20 +138,390 @@ silent = {
 			}
 		}
 	}
-	leader = { # Never Leader
-		base = 0
+	leader = {
+		base = 100
+		modifier = {
+			factor = 0
+			is_event_leader = yes
+		}
 	}
-	
-	# No Demands
+
+	# DEMAND: Faction Outraged (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_isolationist
+	}
+
+	# DEMAND: Faction Pleased (by a GalCom Resolution)
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_isolationist
+	}
+
+	# Demands
+
+	demand = { # 低工时
+		title = "DEMAND_WORKHOUR_SOCIALISM"
+		unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+		desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+		fulfilled_effect = 10
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = future_working_hours_liberal
+					has_policy_flag = free_working_hours
+					has_policy_flag = standard_working_hours
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = future_working_hours_liberal
+					has_policy_flag = free_working_hours
+				}
+			}
+		}
+	}
+	demand = {
+		title = "DEMAND_WORKHOUR_SOCIALISM"
+		unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+		desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_policy_flag = future_working_hours_liberal
+					has_policy_flag = free_working_hours
+					has_policy_flag = standard_working_hours
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = short_working_hours
+			}
+		}
+	}
+
+	demand = {
+		title = "PROGRESSIVE_NO_AUTO"
+		unfulfilled_title = "PROGRESSIVE_AUTO"
+		desc = "PROGRESSIVE_DEMOCRATIC_GOVERNMENT_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -15
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					is_imperial_authority = yes
+					is_dictatorial_authority = yes
+				}
+			}
+		}
+	}
+
+	demand = {
+		title = "TOTALITARIAN_UNDERLING"
+		unfulfilled_title = "TOTALITARIAN_NOT_UNDERLING"
+		desc = "TOTALITARIAN_UNDERLING_DESC"
+
+		unfulfilled_effect = -10
+		fulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				is_subject = yes
+			}
+		}
+
+		trigger = {
+			owner = {
+				is_subject = no
+			}
+		}
+	}
+
+	# Faction Demands for Ruler and Council positions.
+	inline_script = {
+		script = "paragon/global_faction_demands"
+		ETHIC = ethic_conciliationsm
+		ETHIC_OPPOSED = ethic_conciliationsm
+	}
 
 	on_create = {
-		# pop_faction_event = { id = factions.1 }
+		pop_faction_event = { id = factions.0 }
 	}
 
 	on_destroy = {
+		if = {
+			limit = {
+				has_modifier = promoted_conciliationsm
+			}
+			remove_modifier = promoted_conciliationsm
+		}
+		if = {
+			limit = {
+				has_modifier = suppressed_conciliationsm
+			}
+			remove_modifier = suppressed_conciliationsm
+		}
 	}
-	
+
 	actions = {
-		# Why You Want Do So
+		embrace_faction = {
+			title = "EMBRACE_FACTION"
+			description = "EMBRACE_FACTION_DESC"
+
+			cost = {
+				unity = 5000
+			}
+
+			valid = {
+				custom_tooltip = {
+					fail_text = EMBRACE_FACTION_COOLDOWN
+					parameter:empire = {
+						NOT = { has_modifier = embraced_faction_timer }
+					}
+				}
+				support > 0.15
+				parameter:empire = {
+					NOT = { has_ethic = "ethic_conciliationsm" }
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = embraced_faction days = 3600 }
+				parameter:empire = {
+					shift_ethic = ethic_conciliationsm
+					hidden_effect = {
+						add_modifier = { modifier = embraced_faction_timer days = 3600 }
+						every_pop_faction = {
+							limit = { NOT = { is_same_value = root } }
+							add_modifier = { modifier = embraced_another_faction days = 3600 }
+						}
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = TargetFaction
+					parameter:empire = {
+						every_relation = {
+							limit = {
+								is_ai = no
+								is_country_type = default
+								has_communications = prev
+								has_intel_level = {
+									who = prev
+									category = government
+									level >= 1
+								}
+							}
+							country_event = { id = factions.2000 }
+						}
+					}
+				}
+			}
+
+			ai_weight = {
+				base = 1
+				modifier = {
+					factor = 0
+					support < 0.50
+					owner = {
+						has_ethic = ethic_conciliationsm
+					}
+				}
+				modifier = {
+					factor = 0
+					owner = { has_valid_civic = civic_fanatic_purifiers }
+				}
+				modifier = {
+					factor = 0
+					owner = {
+						count_pop_faction = {
+							count < 4
+						}
+					}
+				}
+			}
+		}
+		promote_faction = {
+			title = "PROMOTE_FACTION"
+			description = "PROMOTE_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_conciliationsm
+						has_modifier = promoted_conciliationsm
+					}
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					add_modifier = { modifier = promoted_conciliationsm days = -1 }
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_promote_faction = {
+			title = "CANCEL_PROMOTE_FACTION"
+			description = "CANCEL_PROMOTE_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = promoted_conciliationsm
+				}
+			}
+
+			effect = {
+				parameter:empire = {
+					remove_modifier = promoted_conciliationsm
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_conciliationsm
+						has_modifier = promoted_conciliationsm
+					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_conciliationsm days = -1 }
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					has_modifier = suppressed_conciliationsm
+				}
+			}
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_conciliationsm
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		# Faction Extortion Buttons
+		extort_faction = {
+			title = "EXTORT_FACTION"
+			description = "EXTORT_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				owner = {
+					is_oligarchic_authority = yes
+					has_country_flag = cyber_collectivist
+					NOR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
+				}
+				is_faction_extorted = no
+			}
+
+			effect = {
+				set_faction_extorted = yes
+				custom_tooltip = minerals_extortion_tt
+				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		extort_faction_crowdsourcing = { #Crowdsourcing version
+			title = "EXTORT_FACTION"
+			description = "EXTORT_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				owner = {
+					is_oligarchic_authority = yes
+					has_country_flag = cyber_collectivist
+					OR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
+				}
+				is_faction_extorted = no
+			}
+
+			effect = {
+				set_faction_extorted = yes
+				custom_tooltip = crowdsourced_extortion_tt
+				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_extort_faction = {
+			title = "CANCEL_EXTORT_FACTION"
+			description = "CANCEL_EXTORT_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				owner = {
+					is_oligarchic_authority = yes
+					has_country_flag = cyber_collectivist
+				}
+				is_faction_extorted = yes
+			}
+
+			effect = {
+				set_faction_extorted = no
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
 	}
 }

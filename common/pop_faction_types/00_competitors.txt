@@ -37,6 +37,34 @@ competitors = {
 			mult = @crowdsourcing_multiplier
 		}
 	}
+	extortion_resource = {
+		category = pop_factions
+		produces = {
+			trigger = {
+				owner = {
+					NOR = {
+						has_civic = civic_crowdsourcing
+						has_civic = civic_corporate_crowdsourcing
+					}
+				}
+			}
+			minerals = @faction_base_output
+			mult = @faction_extortion_minerals_ratio
+		}
+		produces = {
+			trigger = {
+				owner = {
+					OR = {
+						has_civic = civic_crowdsourcing
+						has_civic = civic_corporate_crowdsourcing
+					}
+				}
+			}
+			society_research = @faction_major_output
+			engineering_research = @faction_minor_output
+			mult = @faction_extortion_crowdsourcing_ratio
+		}
+	}
 	is_potential = {
 		is_faction_allowed = yes
 	}
@@ -53,7 +81,7 @@ competitors = {
 	}
 	can_join_faction = {
 		can_join_faction_mentally = yes
-		has_ethic = ethic_materialist
+		has_ethic = ethic_pragmatism
 	}
 	attraction = {
 		base = 100
@@ -78,7 +106,7 @@ competitors = {
 		}
 		modifier = {
 			factor = 2.0
-			has_ethic = ethic_materialist
+			has_ethic = ethic_pragmatism
 		}
 		modifier = {
 			factor = 2
@@ -109,12 +137,12 @@ competitors = {
 					owner = { is_materialist = yes }
 				}
 				OR = {
-					has_ethic = ethic_materialist
+					has_ethic = ethic_pragmatism
 				}
 			}
 			OR = {
-				has_job = foundry_specialist
-				has_job = artisan_specialist
+				has_job = foundry
+				has_job = artisan
 			}
 		}
 		# 万众一心
@@ -161,54 +189,6 @@ competitors = {
 				}
 			}
 		}
-		
-		demand = { # 低工时
-			title = "DEMAND_WORKHOUR_SOCIALISM"
-			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
-			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
-						has_policy_flag = standard_working_hours
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					OR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
-					}
-				}
-			}
-		}
-		demand = {
-			title = "DEMAND_WORKHOUR_SOCIALISM"
-			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
-			fulfilled_effect = 5
-			unfulfilled_effect = -10 
-			potential = {
-				exists = owner
-				owner = {
-					NOR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
-						has_policy_flag = standard_working_hours
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = short_working_hours
-				}
-			}
-		}
 
 		demand = { # 学术优待
 			title = "DEMAND_LIVING_ACADEMY"
@@ -224,7 +204,7 @@ competitors = {
 			}
 			trigger = {
 				owner = {
-					any_owned_pop = {
+					any_owned_pop_group = {
 						has_living_standard = { type = living_standard_academic_privilege }
 					}
 				}
@@ -244,7 +224,7 @@ competitors = {
 			}
 			trigger = {
 				owner = {
-					any_owned_pop = {
+					any_owned_pop_group = {
 						OR = {
 							has_living_standard = { type = living_standard_utopian }
 							has_living_standard = { type = living_standard_stratified }
@@ -402,10 +382,10 @@ competitors = {
 					}
 					any_relation = {
 						has_communications = root.owner
-						any_owned_pop = {
+						any_owned_pop_group = {
 							OR = {
-								pop_has_trait = trait_mechanical
-								pop_has_trait = trait_cybernetic
+								has_trait = trait_mechanical
+								has_trait = trait_cybernetic
 							}
 						}
 					}
@@ -413,10 +393,10 @@ competitors = {
 			}
 			trigger = {
 				owner = {
-					any_owned_pop = {
+					any_owned_pop_group = {
 						OR = {
-							pop_has_trait = trait_mechanical
-							pop_has_trait = trait_cybernetic
+							has_trait = trait_mechanical
+							has_trait = trait_cybernetic
 						}
 					}
 				}
@@ -487,28 +467,26 @@ competitors = {
 		# 派系的委员会和领导人诉求
 		inline_script = {
 			script = "paragon/global_faction_demands"
-			ETHIC = ethic_materialist
-			ETHIC_FANATIC = ethic_fanatic_materialist
-			ETHIC_OPPOSED = ethic_spiritualist
+			ETHIC = ethic_pragmatism
+			ETHIC_OPPOSED = ethic_pragmatism
 		}
 
 	on_create = {
-		# pop_faction_event = {
-		# 	id = factions.1
-		# }
+		pop_faction_event = { id = factions.0 }
 	}
+
 	on_destroy = {
 		if = {
 			limit = {
-				has_modifier = promoted_materialist
+				has_modifier = promoted_pragmatism
 			}
-			remove_modifier = promoted_materialist
+			remove_modifier = promoted_pragmatism
 		}
 		if = {
 			limit = {
-				has_modifier = suppressed_materialist
+				has_modifier = suppressed_pragmatism
 			}
-			remove_modifier = suppressed_materialist
+			remove_modifier = suppressed_pragmatism
 		}
 	}
 
@@ -540,14 +518,14 @@ competitors = {
 				}
 				support > 0.15
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_materialist" }
+					NOT = { has_ethic = "ethic_pragmatism" }
 				}
 			}
 
 			effect = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				parameter:empire = {
-					shift_ethic = ethic_materialist
+					shift_ethic = ethic_pragmatism
 					hidden_effect = {
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
@@ -582,7 +560,7 @@ competitors = {
 					factor = 0
 					support < 0.50
 					owner = {
-						has_ethic = ethic_materialist
+						has_ethic = ethic_pragmatism
 					}
 				}
 				modifier = {
@@ -607,15 +585,15 @@ competitors = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_materialist
-						has_modifier = promoted_materialist
+						has_modifier = suppressed_pragmatism
+						has_modifier = promoted_pragmatism
 					}
 				}
 			}
 
 			effect = {
 				parameter:empire = {
-					add_modifier = { modifier = promoted_materialist days = -1 }
+					add_modifier = { modifier = promoted_pragmatism days = -1 }
 				}
 			}
 
@@ -630,13 +608,13 @@ competitors = {
 			potential = {
 				exists = owner
 				parameter:empire = {
-					has_modifier = promoted_materialist
+					has_modifier = promoted_pragmatism
 				}
 			}
 
 			effect = {
 				parameter:empire = {
-					remove_modifier = promoted_materialist
+					remove_modifier = promoted_pragmatism
 				}
 			}
 
@@ -652,8 +630,8 @@ competitors = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_materialist
-						has_modifier = promoted_materialist
+						has_modifier = suppressed_pragmatism
+						has_modifier = promoted_pragmatism
 					}
 				}
 			}
@@ -661,7 +639,7 @@ competitors = {
 			effect = {
 				add_modifier = { modifier = suppressed_faction days = -1 }
 				parameter:empire = {
-					add_modifier = { modifier = suppressed_materialist days = -1 }
+					add_modifier = { modifier = suppressed_pragmatism days = -1 }
 				}
 			}
 
@@ -676,15 +654,91 @@ competitors = {
 			potential = {
 				exists = owner
 				parameter:empire = {
-					has_modifier = suppressed_materialist
+					has_modifier = suppressed_pragmatism
 				}
 			}
 
 			effect = {
 				remove_modifier = suppressed_faction
 				parameter:empire = {
-					remove_modifier = suppressed_materialist
+					remove_modifier = suppressed_pragmatism
 				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		# Faction Extortion Buttons
+		extort_faction = {
+			title = "EXTORT_FACTION"
+			description = "EXTORT_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				owner = {
+					is_oligarchic_authority = yes
+					has_country_flag = cyber_collectivist
+					NOR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
+				}
+				is_faction_extorted = no
+			}
+
+			effect = {
+				set_faction_extorted = yes
+				custom_tooltip = minerals_extortion_tt
+				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		extort_faction_crowdsourcing = { #Crowdsourcing version
+			title = "EXTORT_FACTION"
+			description = "EXTORT_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				owner = {
+					is_oligarchic_authority = yes
+					has_country_flag = cyber_collectivist
+					OR = {
+						has_valid_civic = civic_crowdsourcing
+						has_valid_civic = civic_corporate_crowdsourcing
+					}
+				}
+				is_faction_extorted = no
+			}
+
+			effect = {
+				set_faction_extorted = yes
+				custom_tooltip = crowdsourced_extortion_tt
+				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_extort_faction = {
+			title = "CANCEL_EXTORT_FACTION"
+			description = "CANCEL_EXTORT_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				owner = {
+					is_oligarchic_authority = yes
+					has_country_flag = cyber_collectivist
+				}
+				is_faction_extorted = yes
+			}
+
+			effect = {
+				set_faction_extorted = no
 			}
 
 			ai_weight = {
