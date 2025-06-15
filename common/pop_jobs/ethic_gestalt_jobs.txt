@@ -1,0 +1,95 @@
+
+
+#苗床
+tentacle_seedbed_drone = {
+    category = simple_drone
+    condition_string = DRONE_JOB_TRIGGER
+    building_icon = building_spawning_pool
+    clothes_texture_index = 3
+    icon = bio_trophy
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+    possible_precalc = can_fill_drone_job
+    possible = {
+        hidden_trigger = { exists = owner }
+        NOT = { has_trait = trait_zombie }
+        owner = { has_civic = civic_libido_equipment }
+    }
+
+    resources = {
+        category = planet_jobs
+        upkeep = {
+            trigger = {
+                is_lithoid = no
+            }
+            food = 1
+        }
+        upkeep = {
+            trigger = {
+                is_lithoid = yes
+            }
+            minerals = 1
+        }
+    }
+    planet_modifier = {
+        founder_species_growth_mult = 0.05
+        pop_decline_speed = 0.05
+    }
+    triggered_planet_modifier = {
+        potential = { always = yes }
+        planet_amenities_add = 600
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+    # 多彩环境强化
+    triggered_planet_modifier = {
+        potential = {
+            AND = {
+                has_global_flag = love_between_us
+                OR = {
+                    has_trait = trait_DC_ethic_lust_skynet
+                    has_trait = trait_DC_ethic_carnalism
+                }
+            }
+        }
+        founder_species_growth_mult = 0.05
+    }
+    triggered_planet_modifier = {
+        potential = {
+            AND = {
+                has_global_flag = love_between_us
+                OR = {
+                    has_trait = trait_DC_ethic_lust_skynet
+                    has_trait = trait_DC_ethic_carnalism
+                }
+            }
+        }
+        planet_amenities_add = 600
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    weight = {
+        weight = @clerk_job_weight
+        modifier = { # 可控的动态权重
+            factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+            owner = { has_edict = dynamic_weight }
+        }
+        modifier = {
+            factor = 10
+            is_enslaved = yes
+        }
+        modifier = {
+            factor = 10
+            AND = {
+                has_global_flag = love_between_us
+                OR = {
+                    has_trait = trait_DC_ethic_lust_skynet
+                    has_trait = trait_DC_ethic_carnalism
+                }
+            }
+        }
+    }
+}
