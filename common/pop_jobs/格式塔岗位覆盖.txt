@@ -325,30 +325,97 @@ logistics_drone = {
 
 #维护子个体
 maintenance_drone = {
-    rank = 1
+    category = maintenance_drone
+    is_capped_by_modifier = no
+    count_as_available_for_ai = yes
 
-    weight = {
-        weight = 0
+    swappable_data = {
+        default = {
+            condition_string = DRONE_JOB_TRIGGER
+            building_icon = building_maintenance_depot
+        }
     }
 
-    pop_group_modifier = {
-        pop_housing_usage_base = 1
-    }
+    tags = { amenities }
 
-    # scope: pop to be resettled
-    allow_resettlement = {
-        always = yes
+    possible_pre_triggers = {
+        has_owner = yes
+        is_enslaved = no
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
     }
-
-    resettlement_cost = {
-        energy = 100
-    }
-
-    # Triggered Modifiers
-    inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
 
     resources = {
-        category = pop_category_maintenance_drones
+        category = planet_maintenance_drones
+        produces = {
+            trade = 1
+        }
+    }
+
+    possible_precalc = can_fill_drone_job
+
+    possible = {
+        hidden_trigger = { exists = owner }
+        owner = {
+            is_gestalt = yes
+            is_wilderness_empire = no
+        }
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            always = yes
+        }
+        planet_amenities_no_happiness_add = 400
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            owner = { has_active_tradition = tr_versatility_finish }
+        }
+        planet_amenities_no_happiness_add = 200
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = planet.orbital_defence
+            planet.orbital_defence = {
+                exists = starbase
+                starbase = {
+                    has_starbase_building = ring_maintenance_hub
+                }
+            }
+        }
+        planet_amenities_no_happiness_add = 100
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            planet = {
+                is_ringworld = yes
+                has_building = building_alpha_hub
+            }
+        }
+        planet_amenities_no_happiness_add = 100
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            planet = {
+                is_planet_class = pc_hive
+            }
+            exists = owner
+            owner = {
+                has_country_flag = cyber_hive_integrated
+            }
+        }
+        planet_amenities_no_happiness_add = 200
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
     }
 
     triggered_planet_modifier = {
@@ -358,5 +425,37 @@ maintenance_drone = {
         }
         planet_jobs_produces_mult = 0.01
     }
+
+    weight = {
+        weight = 0
+        weight = @maintenance_drone_job
+        mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+        modifier = {
+            mult = value:job_weights_modifier|JOB|maintenance_drone|RESOURCE|unity|FACTOR|0.25|
+            exists = owner
+            owner = {
+                OR = {
+                    has_valid_civic = civic_machine_maintenance_protocols
+                    has_active_tradition = tr_versatility_operational_proxies
+                }
+            }
+        }
+        modifier = {
+            factor = 1.1
+            exists = owner
+            years_passed < 1
+            owner = { has_valid_civic = civic_machine_assimilator }
+            has_trait = trait_cybernetic
+        }
+        modifier = {
+            factor = 0
+            exists = owner
+            owner = {
+                has_tradition = tr_virtuality_finish
+            }
+        }
+    }
+
+    inline_script = "jobs/automodding_priority_amenities"
 
 }
