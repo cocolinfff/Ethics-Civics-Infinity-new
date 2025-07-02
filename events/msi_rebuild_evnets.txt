@@ -1247,6 +1247,68 @@ country_event = {
 	}
 }
 
+# 核心星球与占领区机制
+namespace = msi_occupied_area
+planet_event = {
+	id = msi_occupied_area.0
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+		remove_planet_flag = msi_core_planet@fromfrom
+		set_timed_planet_flag = { flag = msi_core_planet@from years = 10 }
+		planet_event = { id = msi_occupied_area.0 years = 10 }
+	}
+}
+planet_event = {
+	id = msi_occupied_area.1
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_planet_flag = msi_occupied_area@from }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = { has_planet_flag = msi_core_planet@from }
+				fromfrom = { is_gestalt = no }
+			}
+			add_modifier = { modifier = msi_occupy_the_planet_modifier years = 10 }
+			set_timed_planet_flag = { flag = msi_occupied_area@from years = 10 }
+		}
+		if = {
+			limit = {
+				NOT = { has_planet_flag = msi_core_planet@from }
+				fromfrom = { is_gestalt = yes }
+			}
+			add_modifier = { modifier = msi_occupy_the_planet_modifier_ges years = 10 }
+			set_timed_planet_flag = { flag = msi_occupied_area@from years = 10 }
+		}
+		if = {
+			limit = {
+				has_planet_flag = msi_core_planet@from
+				OR = {
+					has_modifier = msi_occupy_the_planet_modifier
+					has_modifier = msi_occupy_the_planet_modifier_ges
+				}
+			}
+			remove_modifier = msi_occupy_the_planet_modifier
+			remove_modifier = msi_occupy_the_planet_modifier_ges
+		}
+		if = {
+			limit = {
+				has_planet_flag = msi_core_planet@from
+				has_planet_flag = msi_occupied_area@fromfrom
+			}
+			remove_planet_flag = msi_occupied_area@fromfrom
+		}
+	}
+}
+
 # 共产主义社会
 namespace = ethic_communist_society
 country_event = {
@@ -1271,7 +1333,11 @@ country_event = {
 		}
 		has_tradition = tr_future_society
 		has_technology = tech_ascension_theory
-		NOT = { has_civic = civic_communist_society }
+		NOR = {
+			has_civic = civic_communist_society
+			has_civic = civic_advanced_socialism
+			has_civic = civic_communist_ash
+		}
 	}
 	immediate = {
 	}
