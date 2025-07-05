@@ -471,7 +471,7 @@ country_event = {
             physics_research = 1000
             society_research = 1000
             engineering_research = 1000
-            multiplier = event_target:dedication_leader.trigger:has_skill
+            multiplier = event_target:dedication_leader.trigger:has_total_skill
         }
         event_target:dedication_leader = { kill_leader = { show_notification = no } }
     }
@@ -1842,7 +1842,7 @@ event = {
                 set_country_flag = Story2
                 give_technology = {
                     message = no
-                    tech = tech_federal_state
+                    tech = tech_federation_code
                 }
                 join_alliance = { who = event_target:civic_forum_friends_player override_requirements = yes }
             }
@@ -1924,7 +1924,7 @@ country_event = {
                         limit = {
                             any_playable_country = {
                                 is_ai = yes
-                                is_socialism = no
+                                is_egalitarian = no
                                 num_owned_planets > 0
                                 any_owned_pop_group = {
                                     OR = {
@@ -1938,7 +1938,7 @@ country_event = {
                             limit = {
                                 is_ai = yes
                                 is_gestalt = no
-                                is_socialism = no
+                                is_egalitarian = no
                                 num_owned_planets > 0
                                 any_owned_pop_group = {
                                     OR = {
@@ -2108,7 +2108,7 @@ country_event = {
                                     last_created_leader = {
                                         if = {
                                             limit = {
-                                                has_skill > 1
+                                                has_total_skill > 1
                                                 num_traits = 0
                                             }
                                             add_trait = {
@@ -2208,7 +2208,7 @@ country_event = {
                                     last_created_leader = {
                                         if = {
                                             limit = {
-                                                has_skill > 1
+                                                has_total_skill > 1
                                                 num_traits = 0
                                             }
                                             add_trait = {
@@ -2583,11 +2583,11 @@ country_event = {
         }
         from = {
             OR = {
-                has_skill = 8
+                has_total_skill = 8
                 has_trait = leader_trait_legendary_leader
                 AND = {
                     has_trait = leader_trait_legendary_offspring
-                    has_skill >= 4
+                    has_total_skill >= 4
                 }
             }
             NOT = { has_leader_flag = home_country_isomorphism_contributed }
@@ -2718,7 +2718,7 @@ country_event = {
                 trigger = count_owned_pop_amount
                 parameters = {
                     limit = {
-                        has_pop_flag = revolutionary_terrorism_kill
+                        has_pop_group_flag = revolutionary_terrorism_kill
                     }
                 }
                 variable = revolutionary_terrorism_value_kill_1
@@ -2729,7 +2729,7 @@ country_event = {
             }
             every_owned_pop_group = {
                 limit = {
-                    has_pop_flag = revolutionary_terrorism_kill
+                    has_pop_group_flag = revolutionary_terrorism_kill
                 }
                 if = {
                     limit = {
@@ -2844,7 +2844,7 @@ planet_event = {
             trigger = count_owned_pop_amount
             parameters = {
                 limit = {
-                    has_pop_flag = revolutionary_terrorism_kill
+                    has_pop_group_flag = revolutionary_terrorism_kill
                 }
             }
             variable = revolutionary_terrorism_value_kill_1
@@ -2855,7 +2855,7 @@ planet_event = {
         }
         every_owned_pop_group = {
             limit = {
-                has_pop_flag = revolutionary_terrorism_kill
+                has_pop_group_flag = revolutionary_terrorism_kill
             }
             if = {
                 limit = {
@@ -3487,6 +3487,181 @@ country_event = {
                 }
             }
         }
+    }
+}
+
+# 恒星崇拜
+namespace = ethic_star_worship
+country_event = {
+    id = ethic_star_worship.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_star_worship
+    }
+
+    immediate = {
+        every_owned_planet = {
+            limit = { is_colony = yes }
+            planet_event = { id = ethic_star_worship.1 }
+        }
+    }
+}
+planet_event = {
+    id = ethic_star_worship.1
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        exists = owner
+        owner = { has_valid_civic = civic_star_worship }
+    }
+
+    immediate = {
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_a_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_a_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_b_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_b_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_f_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_f_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_g_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_g_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_k_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_m_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_m_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_m_giant_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_m_giant_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_t_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_t_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_neutron_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_neutron_star days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_pulsar
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_pulsar days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_black_hole
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_black_hole days = -1 }
+        }
+        if = {
+            limit = {
+                solar_system = {
+                    any_system_planet = {
+                        is_planet_class = pc_toxoid_star
+                    }
+                }
+            }
+            add_modifier = { modifier = civic_star_worship_toxoid_star days = -1 }
+        }
+    }
+}
+planet_event = {
+    id = ethic_star_worship.2
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        exists = owner
+        owner = {
+            NOT = { has_valid_civic = civic_star_worship }
+        }
+    }
+
+    immediate = {
+        remove_modifier = civic_star_worship_a_star
+        remove_modifier = civic_star_worship_b_star
+        remove_modifier = civic_star_worship_f_star
+        remove_modifier = civic_star_worship_g_star
+        remove_modifier = civic_star_worship_k_star
+        remove_modifier = civic_star_worship_m_star
+        remove_modifier = civic_star_worship_m_giant_star
+        remove_modifier = civic_star_worship_t_star
+        remove_modifier = civic_star_worship_neutron_star
+        remove_modifier = civic_star_worship_pulsar
+        remove_modifier = civic_star_worship_black_hole
+        remove_modifier = civic_star_worship_toxoid_star
     }
 }
 
