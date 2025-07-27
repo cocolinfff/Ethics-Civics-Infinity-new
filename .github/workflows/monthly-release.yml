@@ -1,0 +1,142 @@
+name: Monthly Release
+
+on:
+  schedule:
+    # 每月1号UTC时间0点运行
+    - cron: '0 0 1 * *'
+  workflow_dispatch: 
+    # 允许手动触发
+
+jobs:
+  check-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取全部提交历史
+
+      - name: Check for changes since last release
+        id: check-changes
+        run: |
+          # 获取最新commit
+          latest_commit=$(git rev-parse HEAD)
+          
+          # 获取上次release的commit（如果有的话）
+          if last_release_commit=$(git rev-list --tags --max-count=1); then
+            echo "Last release commit: $last_release_commit"
+            # 检查自上次release以来是否有新的提交
+            commits_since_release=$(git rev-list --count $last_release_commit..HEAD)
+            
+            if [ "$commits_since_release" -gt 0 ]; then
+              echo "changes=true" >> $GITHUB_OUTPUT
+              echo "previous_commit=$last_release_commit" >> $GITHUB_OUTPUT
+            else
+              echo "changes=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            # 如果没有之前的release
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "previous_commit=" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "latest_commit=$latest_commit" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes with LLM
+        if: steps.check-changes.outputs.changes == 'true'
+        id: generate-notes
+        uses: actions/github-script@v6
+        env:
+          PREVIOUS_COMMIT: ${{ steps.check-changes.outputs.previous_commit }}
+          LATEST_COMMIT: ${{ steps.check-changes.outputs.latest_commit }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        with:
+          script: |
+            const { PREVIOUS_COMMIT, LATEST_COMMIT } = process.env;
+            
+            // 获取提交历史
+            let commits;
+            if (PREVIOUS_COMMIT) {
+              commits = await exec.getExecOutput('git', ['log', '--pretty=format:%H %s', `${PREVIOUS_COMMIT}..${LATEST_COMMIT}`]);
+            } else {
+              commits = await exec.getExecOutput('git', ['log', '--pretty=format:%H %s']);
+            }
+            
+            const commitMessages = commits.stdout.split('\n').filter(line => line.trim() !== '');
+            
+            // 准备提交信息给LLM
+            let commitList = "";
+            for (const message of commitMessages) {
+              commitList += `- ${message}\n`;
+            }
+            
+            // 默认更新日志（如果没有API密钥）
+            let releaseNotes = `## 更新日志\n\n`;
+            
+            if (commitMessages.length > 0) {
+              releaseNotes += `### 本次更新内容\n\n${commitList}\n`;
+            } else {
+              releaseNotes += "例行更新\n\n";
+            }
+            
+            // 如果有API密钥，则调用LLM生成更智能的更新日志
+            if (process.env.OPENAI_API_KEY) {
+              try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+                  },
+                  body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                      {
+                        role: "system",
+                        content: "你是一个专业的软件更新日志撰写助手。根据Git提交信息，生成清晰、易懂的更新公告。使用中文输出。"
+                      },
+                      {
+                        role: "user",
+                        content: `请根据以下Git提交信息生成更新公告:\n\n${commitList}\n\n请按以下格式输出:\n## 更新日志\n\n### 主要变更\n[列出主要功能更新]\n\n### 优化改进\n[列出优化和改进]\n\n### 问题修复\n[列出修复的问题]`
+                      }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1000
+                  })
+                });
+                
+                const data = await response.json();
+                
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                  releaseNotes = data.choices[0].message.content;
+                }
+              } catch (error) {
+                console.log("调用LLM失败，使用默认更新日志:", error.message);
+              }
+            } else {
+              releaseNotes += "### 更新说明\n";
+              releaseNotes += "- 优化了模组内容\n";
+              releaseNotes += "- 修复了已知问题\n";
+              releaseNotes += "- 更新了本地化文本\n";
+            }
+            
+            // 设置输出
+            core.setOutput('notes', releaseNotes);
+            
+            // 生成版本号 (年-月格式)
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            core.setOutput('version', `${year}.${month}.1`);
+
+      - name: Create release
+        if: steps.check-changes.outputs.changes == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.generate-notes.outputs.version }}
+          release_name: Release ${{ steps.generate-notes.outputs.version }}
+          body: ${{ steps.generate-notes.outputs.notes }}
+          draft: false
+          prerelease: false
