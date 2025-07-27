@@ -45,6 +45,27 @@ jobs:
           
           echo "latest_commit=$latest_commit" >> $GITHUB_OUTPUT
 
+      - name: Collect file changes
+        if: steps.check-changes.outputs.changes == 'true'
+        id: collect-changes
+        run: |
+          # 获取上次release的commit（如果有的话）
+          if [ -n "${{ steps.check-changes.outputs.previous_commit }}" ]; then
+            # 获取修改的文件列表
+            changed_files=$(git diff --name-only ${{ steps.check-changes.outputs.previous_commit }}..${{ steps.check-changes.outputs.latest_commit }})
+          else
+            # 如果没有之前的release，获取所有文件
+            changed_files=$(git ls-tree -r HEAD --name-only)
+          fi
+          
+          # 限制文件列表长度
+          limited_files=$(echo "$changed_files" | head -n 50)
+          
+          # 输出文件列表
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$limited_files" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Generate release notes with LLM
         if: steps.check-changes.outputs.changes == 'true'
         id: generate-notes
@@ -52,10 +73,11 @@ jobs:
         env:
           PREVIOUS_COMMIT: ${{ steps.check-changes.outputs.previous_commit }}
           LATEST_COMMIT: ${{ steps.check-changes.outputs.latest_commit }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          CHANGED_FILES: ${{ steps.collect-changes.outputs.changed_files }}
         with:
           script: |
-            const { PREVIOUS_COMMIT, LATEST_COMMIT } = process.env;
+            const { PREVIOUS_COMMIT, LATEST_COMMIT, CHANGED_FILES } = process.env;
             
             // 获取提交历史
             let commits;
@@ -73,6 +95,13 @@ jobs:
               commitList += `- ${message}\n`;
             }
             
+            // 准备文件变更信息给LLM
+            const fileList = CHANGED_FILES.split('\n').filter(line => line.trim() !== '');
+            let fileListStr = "";
+            for (const file of fileList) {
+              fileListStr += `- ${file}\n`;
+            }
+            
             // 默认更新日志（如果没有API密钥）
             let releaseNotes = `## 更新日志\n\n`;
             
@@ -83,30 +112,37 @@ jobs:
             }
             
             // 如果有API密钥，则调用LLM生成更智能的更新日志
-            if (process.env.OPENAI_API_KEY) {
+            if (process.env.DEEPSEEK_API_KEY) {
               try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                // 设置超时时间为30秒
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
+                const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+                    'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
                   },
                   body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
+                    model: "deepseek-reasoner",
                     messages: [
                       {
                         role: "system",
-                        content: "你是一个专业的软件更新日志撰写助手。根据Git提交信息，生成清晰、易懂的更新公告。使用中文输出。"
+                        content: "你是一个专业的软件更新日志撰写助手。根据Git提交信息和文件变更列表，生成清晰、易懂的更新公告。使用中文输出。"
                       },
                       {
                         role: "user",
-                        content: `请根据以下Git提交信息生成更新公告:\n\n${commitList}\n\n请按以下格式输出:\n## 更新日志\n\n### 主要变更\n[列出主要功能更新]\n\n### 优化改进\n[列出优化和改进]\n\n### 问题修复\n[列出修复的问题]`
+                        content: `请根据以下信息生成更新公告:\n\n提交历史:\n${commitList}\n\n变更文件列表:\n${fileListStr}\n\n请按以下格式输出:\n## 更新日志\n\n### 主要变更\n[列出主要功能更新]\n\n### 优化改进\n[列出优化和改进]\n\n### 问题修复\n[列出修复的问题]`
                       }
                     ],
                     temperature: 0.7,
-                    max_tokens: 1000
-                  })
+                    max_tokens: 10240
+                  }),
+                  signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
                 
                 const data = await response.json();
                 
@@ -130,7 +166,7 @@ jobs:
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
-            core.setOutput('version', `${year}.${month}.1`);
+            core.setOutput('version', `${year}.${month}`);
 
       - name: Create release
         if: steps.check-changes.outputs.changes == 'true'
