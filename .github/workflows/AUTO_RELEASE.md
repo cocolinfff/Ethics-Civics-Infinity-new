@@ -22,17 +22,6 @@
   4. 调用 LLM API 优化更新公告（可选）
   5. 创建新的 Release
 
-## 权限配置
-
-已在工作流中添加了必要的权限声明：
-
-```yaml
-permissions:
-  contents: write  # 授予创建release的权限
-```
-
-这个配置解决了 "Resource not accessible by integration" 错误，确保工作流有足够的权限创建 release。
-
 ## 配置说明
 
 ### 基础配置（必需）
