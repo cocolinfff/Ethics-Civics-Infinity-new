@@ -66,6 +66,20 @@ jobs:
           echo "$limited_files" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Extract game version from descriptor.mod
+        if: steps.check-changes.outputs.changes == 'true'
+        id: extract-game-version
+        run: |
+          # 读取descriptor.mod文件获取游戏版本
+          if [ -f "descriptor.mod" ]; then
+            supported_version=$(grep "supported_version=" descriptor.mod | cut -d'"' -f2)
+            echo "supported_version=$supported_version" >> $GITHUB_OUTPUT
+            echo "Extracted game version: $supported_version"
+          else
+            echo "supported_version=unknown" >> $GITHUB_OUTPUT
+            echo "descriptor.mod file not found"
+          fi
+
       - name: Generate release notes with LLM
         if: steps.check-changes.outputs.changes == 'true'
         id: generate-notes
@@ -75,9 +89,10 @@ jobs:
           LATEST_COMMIT: ${{ steps.check-changes.outputs.latest_commit }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           CHANGED_FILES: ${{ steps.collect-changes.outputs.changed_files }}
+          GAME_VERSION: ${{ steps.extract-game-version.outputs.supported_version }}
         with:
           script: |
-            const { PREVIOUS_COMMIT, LATEST_COMMIT, CHANGED_FILES } = process.env;
+            const { PREVIOUS_COMMIT, LATEST_COMMIT, CHANGED_FILES, GAME_VERSION } = process.env;
             
             // 获取提交历史
             let commits;
@@ -104,6 +119,11 @@ jobs:
             
             // 默认更新日志（如果没有API密钥）
             let releaseNotes = `## 更新日志\n\n`;
+            
+            // 添加游戏版本信息
+            if (GAME_VERSION && GAME_VERSION !== "unknown") {
+              releaseNotes += `**适配游戏版本**: ${GAME_VERSION}\n\n`;
+            }
             
             if (commitMessages.length > 0) {
               releaseNotes += `### 本次更新内容\n\n${commitList}\n`;
@@ -133,7 +153,7 @@ jobs:
                       },
                       {
                         role: "user",
-                        content: `请根据以下信息生成更新公告:\n\n提交历史:\n${commitList}\n\n变更文件列表:\n${fileListStr}\n\n请按以下格式输出:\n## 更新日志\n\n### 主要变更\n[列出主要功能更新]\n\n### 优化改进\n[列出优化和改进]\n\n### 问题修复\n[列出修复的问题]`
+                        content: `请根据以下信息生成更新公告:\n\n提交历史:\n${commitList}\n\n变更文件列表:\n${fileListStr}\n\n适配游戏版本: ${GAME_VERSION}\n\n请按以下格式输出:\n## 更新日志\n\n**适配游戏版本**: ${GAME_VERSION}\n\n### 主要变更\n[列出主要功能更新]\n\n### 优化改进\n[列出优化和改进]\n\n### 问题修复\n[列出修复的问题]`
                       }
                     ],
                     temperature: 0.7,
@@ -157,6 +177,11 @@ jobs:
               releaseNotes += "- 优化了模组内容\n";
               releaseNotes += "- 修复了已知问题\n";
               releaseNotes += "- 更新了本地化文本\n";
+            }
+            
+            // 确保游戏版本信息始终包含在更新日志中
+            if (GAME_VERSION && GAME_VERSION !== "unknown" && !releaseNotes.includes("适配游戏版本")) {
+              releaseNotes = `## 更新日志\n\n**适配游戏版本**: ${GAME_VERSION}\n\n` + releaseNotes.substring(releaseNotes.indexOf('\n\n') + 2);
             }
             
             // 设置输出
