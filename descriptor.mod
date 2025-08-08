@@ -1,4 +1,4 @@
-version="3.12.*"
+version="4.0.*"
 tags={
 	"Font"
 }

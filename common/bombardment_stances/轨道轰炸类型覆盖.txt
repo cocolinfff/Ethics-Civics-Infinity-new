@@ -30,14 +30,20 @@ pox = {
 	trigger = {
 		owner = {
 			OR = {
+				has_relic = r_pox_sample
+				has_valid_civic = civic_biochemical_warrior
+				has_valid_civic = civic_hive_biochemical_warrior
 				AND = {
-					has_relic = r_pox_sample
-					OR = {
-						NOT = { is_country_type = default }
-						has_policy_flag = orbital_bombardment_indiscriminate
-						has_policy_flag = orbital_bombardment_armageddon
+					owner = { is_country_type = enclave_mercenary }
+					root.controller = {
+						has_relic = r_pox_sample
 					}
 				}
+			}
+			OR = {
+				NOT = { is_country_type = default }
+				has_policy_flag = orbital_bombardment_indiscriminate
+				has_policy_flag = orbital_bombardment_armageddon
 				AND = {
 					has_valid_civic = civic_biochemical_warrior
 					NOT = { has_policy_flag = orbital_bombardment_selective }
@@ -46,19 +52,11 @@ pox = {
 					has_valid_civic = civic_hive_biochemical_warrior
 					NOT = { has_policy_flag = orbital_bombardment_selective }
 				}
-				has_edict = poison_gas
-				AND = {
-					owner = { is_country_type = enclave_mercenary }
-					root.controller = {
-						has_relic = r_pox_sample
-					}
-				}
-				AND = {
-					owner = { is_country_type = enclave_mercenary }
-					root.controller = {
-						has_edict = poison_gas
-					}
-				}
+			}
+		}
+		NOT = {
+			any_owned_ship = {
+				has_ship_flag = behemoth_hatchling_ship
 			}
 		}
 	}
@@ -66,22 +64,23 @@ pox = {
 	default = no
 
 	stop_when_armies_dead = no
+	stop_when_ground_combat = no
 	abduct_pops = no
 
 	planet_damage = 0.2
 	army_damage = 1.5
 
-	kill_pop_group_chance = { # Should only target organics
+	kill_pop_chance = { # Should only target organics
 		base = 1.5
 		modifier = {
 			factor = 0
-			OR = {
-				pop_has_trait = trait_machine_unit
-				pop_has_trait = trait_mechanical
+			species = {
+				is_robotic_species = yes
 			}
 		}
 	}
-	min_pops_to_kill_pop_group = 0
+	min_pops_to_kill_pop = 0
+	kill_pop_amount = { min = 0 max = 200 }
 
 	# root = fleet
 	# from = planet
@@ -103,17 +102,24 @@ raiding = {
 			owner = { has_ascension_perk = ap_nihilistic_acquisition }
 			owner = { has_valid_civic = civic_barbaric_despoilers }
 			owner = { has_valid_civic = civic_martial_tribes }
+			owner = { has_origin = origin_slavers }
+			owner = { has_origin = origin_khan_successor }
+			owner = { is_country_type = debt_collectors }
 			AND = {
-				exists = leader
-				leader = {
-					has_trait = leader_trait_master_sacker
+				owner = { is_country_type = enclave_mercenary }
+				controller = {
+					OR = {
+						has_ascension_perk = ap_nihilistic_acquisition
+						has_valid_civic = civic_barbaric_despoilers
+						has_origin = origin_slavers
+						has_origin = origin_khan_successor
+					}
 				}
 			}
-			owner = {
-				any_owned_leader = {
-					is_councilor = yes
-					has_trait = leader_trait_master_sacker
-				}
+		}
+		NOT = {
+			any_owned_ship = {
+				has_ship_flag = behemoth_hatchling_ship
 			}
 		}
 	}
@@ -121,15 +127,17 @@ raiding = {
 	default = no
 
 	stop_when_armies_dead = no
+	stop_when_ground_combat = no
 	abduct_pops = yes
 
-	planet_damage = 1.0
+	planet_damage = 0.5
 	army_damage = 0.5
 
-	kill_pop_group_chance = {
-		base = 1.0
+	kill_pop_chance = {
+		base = 0.15
 	}
-	min_pops_to_kill_pop_group = 2
+	min_pops_to_kill_pop = 200
+	kill_pop_amount = { min = 0 max = 200 }
 
 	# root = fleet
 	# from = planet
@@ -139,7 +147,13 @@ raiding = {
 			factor = 0
 			exists = from
 			from = {
-				owner = { NOT = { is_hostile = root.owner } }
+				OR = {
+					pop_amount < 200
+					owner = { NOT = { is_hostile = root.owner } }
+				}
+			}
+			NOT = {
+				owner = { has_origin = origin_slavers }
 			}
 		}
 		modifier = {
@@ -148,6 +162,13 @@ raiding = {
 			from = {
 				owner = { has_claim = root.solar_system }
 			}
+			NOT = {
+				owner = { has_origin = origin_slavers }
+			}
+		}
+		modifier = {
+			factor = 100
+			owner = { has_origin = origin_slavers }
 		}
 	}
 }
