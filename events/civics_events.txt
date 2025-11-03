@@ -468,9 +468,9 @@ country_event = {
     option = {
         name = ethic_civic_zhaowen_dao.1.a
         add_resource = {
-            physics_research = 1000
-            society_research = 1000
-            engineering_research = 1000
+            physics_research = 2500
+            society_research = 2500
+            engineering_research = 2500
             multiplier = event_target:dedication_leader.trigger:has_total_skill
         }
         event_target:dedication_leader = { kill_leader = { show_notification = no } }
@@ -493,13 +493,12 @@ country_event = {
                     resource = unity
                     value = 12
                 }
-                random_owned_pop_group = {
+                every_owned_pop_job = {
                     limit = {
                         has_research_job = yes
                     }
-                    while = {
-                        count = 1
-                        kill_single_pop = yes
+                    kill_assigned_pop_amount = {
+                        amount = 100
                     }
                 }
             }
@@ -2445,7 +2444,10 @@ ship_event = { #Entering Unstable Planet System
         if = {
             limit = {
                 event_target:taxpayer = {
-                    is_amoeba_country_type = yes
+                    OR = {
+                        is_amoeba_country_type = yes
+                        is_tiyanki_country_type = yes
+                    }
                 }
             }
             event_target:taxpackager = {
@@ -3140,28 +3142,21 @@ country_event = {
 
 # 人民军队
 namespace = ethic_martial_brotherhood
-fleet_event = {
+country_event = {
     id = ethic_martial_brotherhood.0
     hide_window = yes
     is_triggered_only = yes
     trigger = {
-        #	|舰队控制者|
-        exists = controller
-        controller = { has_valid_civic = civic_martial_brotherhood }
-        #	|殖民地|
-        from = {
-            is_scope_type = planet
-            is_colony = yes
-            is_under_colonization = no
-            exists = owner
-            owner = { is_same_value = this.controller }
-        }
+        has_valid_civic = civic_martial_brotherhood
     }
 
     immediate = {
-        from = {
-            add_modifier = { modifier = eci_civic_martial_brotherhood_modifier days = 360 }
-            planet_event = { id = ethic_martial_brotherhood.1 days = 361 }
+        every_owned_planet = {
+            limit = {
+                is_colony = yes
+                is_under_colonization = no
+            }
+            planet_event = { id = ethic_martial_brotherhood.1 }
         }
     }
 }
@@ -3170,20 +3165,51 @@ planet_event = {
     hide_window = yes
     is_triggered_only = yes
     trigger = {
+        NOT = { has_modifier = eci_civic_martial_brotherhood_modifier }
         exists = owner
         owner = { has_valid_civic = civic_martial_brotherhood }
-        any_fleet_in_orbit = {
-            exists = controller
-            controller = {
-                has_valid_civic = civic_martial_brotherhood
-                is_same_value = root.owner
+        solar_system = {
+            any_fleet_in_system = {
+                is_ship_class = shipclass_military
+                owner = { is_same_value = root.owner }
             }
         }
     }
 
     immediate = {
-        add_modifier = { modifier = eci_civic_martial_brotherhood_modifier days = 360 }
-        planet_event = { id = ethic_martial_brotherhood.1 days = 361 }
+        add_modifier = { modifier = eci_civic_martial_brotherhood_modifier years = 1 }
+        planet.owner = {
+            country_event = { id = ethic_martial_brotherhood.0 years = 1 }
+        }
+    }
+}
+fleet_event = {
+    id = ethic_martial_brotherhood.2
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        #	|舰队控制者|
+        exists = controller
+        controller = { has_valid_civic = civic_martial_brotherhood }
+        #	|星系|
+        from = {
+            exists = owner
+            owner = { is_same_value = this.controller }
+        }
+    }
+
+    immediate = {
+        from = {
+            every_system_planet = {
+                limit = {
+                    is_colony = yes
+                    is_under_colonization = no
+                    exists = owner
+                    owner = { is_same_value = from.controller }
+                }
+                planet_event = { id = ethic_martial_brotherhood.1 }
+            }
+        }
     }
 }
 
