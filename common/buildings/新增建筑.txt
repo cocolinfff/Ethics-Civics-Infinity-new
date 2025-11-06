@@ -877,10 +877,143 @@ building_commercial_megaplex_gestalt = {
     }
 }
 
+#联合餐饮服务中心
+building_united_catering_service_center = {
+    base_buildtime = @b1_time
+    base_cap_amount = 1
+    icon = building_sacred_grove
+
+    category = pop_assembly
+
+    building_sets = {
+        urban
+        government
+        research
+    }
+
+    potential = {
+        NOT = { has_modifier = slave_colony }
+        exists = owner
+        owner = { has_valid_civic = civic_gourmet_journey }
+    }
+
+    destroy_trigger = {
+        has_modifier = slave_colony
+        is_gestalt = yes
+    }
+
+    resources = {
+        category = planet_buildings
+        cost = {
+            minerals = @b1_minerals
+        }
+        upkeep = {
+            energy = 2
+        }
+    }
+
+    planet_modifier = {
+        planet_amenities_mult = 0.33
+        job_chef_per_pop = 0.01
+    }
+
+    inline_script = {
+        script = jobs/farmers_add
+        AMOUNT = @base_rural_district_jobs
+    }
+
+    country_modifier = {
+        planet_stability_mult = 0.05
+    }
+
+    show_tech_unlock_if = {
+        owner = { has_valid_civic = civic_gourmet_journey }
+    }
+
+    ai_resource_production = {
+        food = 50
+        unity = 50
+        influence = 1
+    }
+}
+
+#外星美食街
+holding_alien_food_street = {
+    base_buildtime = @b2_time
+    owner_type = subject_holding
+    icon = building_sacred_grove
+    planet_limit = 1
+
+    category = amenity
+
+    potential = {
+        exists = owner.overlord
+        owner.overlord = { has_valid_civic = civic_gourmet_journey }
+    }
+
+    allow = {
+        exists = owner
+        owner = {
+            is_gestalt = no
+        }
+    }
+
+    planet_modifier = {
+        job_chef_add = 200
+        job_chef_per_pop = 0.01
+    }
+
+    planet_modifier = {
+        monthly_loyalty = 1
+    }
+
+    resources = {
+        category = planet_holdings
+        cost = {
+            minerals = @b1_minerals
+        }
+        upkeep = {
+            energy = @b1_upkeep
+        }
+        upkeep = {
+            trigger = {
+                exists = planet.owner
+                planet.owner = { is_lithoid = yes }
+            }
+            minerals = 10
+        }
+        upkeep = {
+            trigger = {
+                exists = planet.owner
+                planet.owner = {
+                    OR = {
+                        is_machine_empire = yes
+                        is_mechanical_empire = yes
+                    }
+                }
+            }
+            energy = 10
+        }
+        upkeep = {
+            trigger = {
+                exists = planet.owner
+                planet.owner = {
+                    is_lithoid = no
+                    is_machine_empire = no
+                    is_mechanical_empire = no
+                }
+            }
+            food = 10
+        }
+    }
+}
+
 #宇宙尽头的餐馆
 building_ethic_akx_worm_4 = {
     base_buildtime = 900
-    base_cap_amount = 1
+    empire_limit = {
+        base = 1
+    }
     can_demolish = no
     can_be_ruined = no
     can_be_disabled = no
@@ -891,23 +1024,24 @@ building_ethic_akx_worm_4 = {
         entertainment
     }
     potential = {
-        exists = planet
-        planet = { is_capital = yes	}
         NOR = {
             has_modifier = slave_colony
             has_planet_flag = planetary_station
         }
+        exists = owner
+        owner = {
+            has_technology = tech_akx_worm_1
+            has_valid_civic = civic_gourmet_journey
+        }
     }
     planet_modifier = {
         planet_amenities_mult = 1
-    }
-    prerequisites = {
-        "tech_akx_worm_1"
+        pop_happiness = 1
     }
     resources = {
         category = planet_buildings
         cost = {
-            minerals = 1000
+            minerals = 10000
         }
         upkeep = {
             energy = @b3_upkeep
@@ -1033,11 +1167,12 @@ building_mage_tower_1 = {
             has_modifier = resort_colony
             has_modifier = slave_colony
             has_modifier = crucible_colony
-            NAND = {
-                exists = owner
-                OR = {
-                    owner = { has_origin = origin_wizarding_world }
-                    owner = { has_civic = civic_dark_consortium }
+            exists = owner
+            owner = { is_gestalt = yes }
+            owner = {
+                NOR = {
+                    has_origin = origin_wizarding_world
+                    has_civic = civic_dark_consortium
                 }
             }
         }
@@ -1125,11 +1260,12 @@ building_mage_tower_2 = {
             has_modifier = resort_colony
             has_modifier = slave_colony
             has_modifier = crucible_colony
-            NAND = {
-                exists = owner
-                OR = {
-                    owner = { has_origin = origin_wizarding_world }
-                    owner = { has_civic = civic_dark_consortium }
+            exists = owner
+            owner = { is_gestalt = yes }
+            owner = {
+                NOR = {
+                    has_origin = origin_wizarding_world
+                    has_civic = civic_dark_consortium
                 }
             }
         }
@@ -1219,11 +1355,12 @@ building_mage_tower_3 = {
             has_modifier = resort_colony
             has_modifier = slave_colony
             has_modifier = crucible_colony
-            NAND = {
-                exists = owner
-                OR = {
-                    owner = { has_origin = origin_wizarding_world }
-                    owner = { has_civic = civic_dark_consortium }
+            exists = owner
+            owner = { is_gestalt = yes }
+            owner = {
+                NOR = {
+                    has_origin = origin_wizarding_world
+                    has_civic = civic_dark_consortium
                 }
             }
         }
@@ -1394,13 +1531,12 @@ building_school_of_magic = {
         }
     }
     destroy_trigger = {
-        exists = owner
         OR = {
             has_modifier = resort_colony
             has_modifier = slave_colony
+            exists = owner
+            owner = { is_gestalt = yes }
             owner = {
-                is_gestalt = no
-                is_regular_empire = no
                 NOR = {
                     has_origin = origin_wizarding_world
                     has_civic = civic_dark_consortium
@@ -1826,5 +1962,288 @@ building_equipment_breeding_plant = {
             }
         }
         text = tooltip_organic_and_artificial_assembly_warning
+    }
+}
+
+#居住站住宅模块
+building_habitat_housing = {
+    base_buildtime = @b1_time
+    icon = building_residence
+
+    category = amenity
+
+    building_sets = {
+        government
+        urban
+        generator
+        farming
+        mining
+    }
+
+    potential = {
+        is_planet_class = pc_habitat
+        exists = owner
+        owner = {
+            is_void_dweller_empire = no
+        }
+    }
+
+    destroy_trigger = {
+        exists = owner
+        OR = {
+            AND = {
+                owner = { is_ai = yes }
+                free_building_slots = 0
+                free_jobs < 100
+                free_housing > 1000
+            }
+            owner = {
+                is_void_dweller_empire = yes
+            }
+        }
+    }
+
+    convert_to = {
+        building_drone_storage
+        building_hive_warren
+        building_luxury_residence
+        building_communal_housing
+    }
+
+    planet_modifier = {
+        planet_housing_add = 1000
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                has_active_tradition = tr_domination_imperious_architecture
+            }
+        }
+        modifier = {
+            planet_housing_add = 100
+        }
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                is_real_estate_market_country = yes
+            }
+        }
+        modifier = {
+            job_bureaucrat_add = 100
+            planet_crime_mult = 0.05
+        }
+    }
+
+    resources = {
+        category = planet_buildings
+        cost = {
+            minerals = @b1_minerals
+        }
+        upkeep = {
+            energy = 2
+        }
+    }
+
+    upgrades = {
+        "building_habitat_housing_large"
+    }
+}
+
+#居住站公寓
+building_habitat_housing_large = {
+    base_buildtime = @b2_time
+    can_build = no
+    icon = building_luxury_residence
+
+    category = amenity
+
+    building_sets = {
+        government
+        urban
+        generator
+        farming
+        mining
+    }
+
+    potential = {
+        has_building = building_habitat_housing
+        is_planet_class = pc_habitat
+        exists = owner
+        owner = {
+            is_void_dweller_empire = no
+        }
+    }
+
+    allow = {
+        has_upgraded_capital = yes
+    }
+
+    destroy_trigger = {
+        exists = owner
+        owner = {
+            is_void_dweller_empire = yes
+        }
+    }
+
+    show_tech_unlock_if = {
+        exists = owner
+        owner = {
+            is_void_dweller_empire = no
+        }
+    }
+
+    convert_to = {
+        building_drone_megastorage
+        building_expanded_warren
+        building_paradise_dome
+        building_communal_housing_large
+    }
+
+    planet_modifier = {
+        planet_housing_add = 2000
+        planet_amenities_add = 2000
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                has_active_tradition = tr_domination_imperious_architecture
+            }
+        }
+        modifier = {
+            planet_housing_add = 100
+        }
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                is_real_estate_market_country = yes
+            }
+        }
+        modifier = {
+            job_bureaucrat_add = 100
+            planet_crime_mult = 0.05
+        }
+    }
+
+    resources = {
+        category = planet_buildings
+        cost = {
+            minerals = @b2_minerals
+            rare_crystals = @b2_rare_cost
+        }
+        upkeep = {
+            energy = 3
+            rare_crystals = @b2_rare_upkeep
+        }
+    }
+
+    prerequisites = {
+        "tech_habitat_2"
+    }
+}
+
+#居住站生态住宅
+building_habitat_housing_large_max = {
+    base_buildtime = @b3_time
+    can_build = no
+    icon = building_paradise_dome
+
+    category = amenity
+
+    building_sets = {
+        government
+        urban
+        generator
+        farming
+        mining
+    }
+
+    potential = {
+        has_building = building_habitat_housing_large
+        is_planet_class = pc_habitat
+        exists = owner
+        owner = {
+            is_void_dweller_empire = no
+        }
+    }
+
+    allow = {
+        has_upgraded_capital = yes
+    }
+
+    destroy_trigger = {
+        exists = owner
+        owner = {
+            is_void_dweller_empire = yes
+        }
+    }
+
+    show_tech_unlock_if = {
+        exists = owner
+        owner = {
+            is_void_dweller_empire = no
+        }
+    }
+
+    convert_to = {
+        building_drone_megastorage
+        building_expanded_warren
+        building_paradise_dome
+        building_communal_housing_large
+    }
+
+    planet_modifier = {
+        planet_housing_add = 4000
+        planet_amenities_add = 4000
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                has_active_tradition = tr_domination_imperious_architecture
+            }
+        }
+        modifier = {
+            planet_housing_add = 100
+        }
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                is_real_estate_market_country = yes
+            }
+        }
+        modifier = {
+            job_bureaucrat_add = 100
+            planet_crime_mult = 0.05
+        }
+    }
+
+    resources = {
+        category = planet_buildings
+        cost = {
+            minerals = @b3_minerals
+            rare_crystals = @b3_rare_cost
+        }
+        upkeep = {
+            energy = 3
+            rare_crystals = @b3_rare_upkeep
+        }
+    }
+
+    prerequisites = {
+        "tech_habitat_3"
     }
 }

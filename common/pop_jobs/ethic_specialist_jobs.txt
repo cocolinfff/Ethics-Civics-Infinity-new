@@ -1,11 +1,12 @@
 #劳动模范
 labour_hero = {
 	category = specialist
-	condition_string = WORKER_JOB_TRIGGER
 
 	swappable_data = {
 		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
 			building_icon = building_power_plant
+			icon = labour_hero
 		}
 	}
 
@@ -1079,6 +1080,107 @@ healthcare_synthetic = {
 		}
 	}
 	inline_script = "jobs/automodding_priority_research"
+}
+
+#厨师
+chef = {
+	category = specialist
+
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_united_catering_service_center
+			icon = chef
+		}
+	}
+
+	tags = { trade amenities }
+
+	possible_pre_triggers = {
+		has_owner = yes
+		is_being_purged = no
+		is_being_assimilated = no
+		is_sapient = yes
+	}
+
+	possible_precalc = can_fill_specialist_job
+
+	resources = {
+		category = planet_chefs
+		produces = {
+			trade = 8
+			consumer_goods = 1
+		}
+		upkeep = {
+			food = 3
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			always = yes
+		}
+		planet_amenities_add = 200
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	planet_modifier = {
+		pop_citizen_happiness = 0.025
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = planet
+			planet = {
+				exists = orbital_defence
+				orbital_defence = {
+					exists = starbase
+					starbase = {
+						has_starbase_building = ring_trade_hub
+					}
+				}
+			}
+		}
+		planet_amenities_add = 100
+		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+	}
+
+	weight = {
+		weight = @specialist_job_weight
+		mult = value:job_weights_modifier|JOB|trader|RESOURCE|trade|
+		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+		# crisis purge
+		modifier = {
+			factor = 0.01
+			exists = planet
+			exists = planet.controller
+			planet.controller = {
+				OR = {
+					is_country_type = swarm
+					is_country_type = ai_empire
+				}
+			}
+			OR = { # contingency won't purge itself
+				NOT = { exists = event_target:custodian_bot }
+				AND = {
+					exists = event_target:custodian_bot
+					NOT = { species = { is_same_value = event_target:custodian_bot } }
+				}
+			}
+		}
+	}
+
+	inline_script = "jobs/automodding_priority_trade"
+
+	promotion = {
+		time = @standard_promotion_time
+		effect = {
+			pop_amount_change_category = {
+				CATEGORY = specialist
+				AMOUNT = local_pop_amount
+			}
+		}
+	}
 }
 
 

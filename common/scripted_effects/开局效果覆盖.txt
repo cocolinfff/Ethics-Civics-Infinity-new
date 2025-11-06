@@ -1921,3 +1921,74 @@ generate_random_royalty = {
         }
     }
 }
+
+#创建灵督宿敌
+create_exiled_country = {
+    if = {
+        limit = {
+            NOT = { exists = event_target:exiled_country@root }
+        }
+        create_species = {
+            name = random
+            class = HUM
+            namelist = HUM2
+            portrait = psionic_10
+            traits = {
+                trait = trait_organic
+                trait = trait_psionic
+                trait = trait_haunting_visions
+                trait = trait_cranial_hypertrophy
+                trait = trait_uncanny_intuition
+            }
+            effect = {
+                modify_species = {
+                    species = this
+                    ideal_planet_class = root.species
+                    effect = { save_event_target_as = exiled_species }
+                }
+            }
+        }
+        create_country = {
+            name = random
+            species = event_target:exiled_species
+            authority = "auth_dictatorial"
+            ethos = {
+                ethic = "ethic_authoritarian"
+                ethic = "ethic_fanatic_spiritualist"
+            }
+            civics = {
+                civic = civic_imperial_cult
+                civic = civic_star_worship
+                civic = civic_superstitious_beliefs
+                civic = civic_answer
+            }
+            type = exiled
+            origin = "origin_default"
+            ignore_initial_colony_error = yes
+            effect = {
+                set_graphical_culture = psionic_01
+                set_country_flag = mindwarden_exiled
+                save_event_target_as = current_exiled_country
+                save_global_event_target_as = exiled_country@root
+                root = {
+                    save_global_event_target_as = mindwarden_country@prev
+                }
+                ruler = { add_trait = { trait = leader_trait_chosen } }
+
+                # Starhold tech
+                give_technology = { tech = tech_starbase_3 }
+                # Improved Deflectors tech
+                give_technology = { tech = tech_shields_2 }
+                # Blue Lasers tech
+                give_technology = { tech = tech_lasers_2 }
+                # Cold Fusion Power tech
+                give_technology = { tech = tech_fusion_power }
+                give_technology = { tech = tech_cold_fusion_power }
+
+                # They're hostile towards their Mindwardens
+                set_hostile = root
+                root = { set_hostile = prev }
+            }
+        }
+    }
+}
