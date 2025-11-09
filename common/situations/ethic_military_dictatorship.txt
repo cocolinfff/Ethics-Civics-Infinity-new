@@ -33,61 +33,62 @@ building_super_battleships = {
             }
             owner = {
                 any_owned_starbase = {
-                    NOT = { has_starbase_building = colossus_yards }
+                    NOT = { has_starbase_building = titan_yards }
+                }
+            }
+        }
+        modifier = {
+            desc = ethic_military_dictatorship.3_effects
+            factor = 5
+            OR = {
+                owner = {
+                    country_uses_bio_ships = no
+                    has_technology = tech_titans
+                    NOT = { has_technology = tech_cosmogenesis_FE_titan }
+                }
+                owner = {
+                    country_uses_bio_ships = yes
+                    has_technology = tech_biogenesis_titans
+                    NOT = { has_technology = tech_cosmogenesis_stinger }
+                }
+            }
+        }
+        modifier = {
+            desc = ethic_military_dictatorship.3_effects_2
+            factor = 10
+            OR = {
+                owner = {
+                    country_uses_bio_ships = no
+                    has_technology = tech_cosmogenesis_FE_titan
+                }
+                owner = {
+                    country_uses_bio_ships = yes
+                    has_technology = tech_cosmogenesis_stinger
                 }
             }
         }
         modifier = {
             desc = alert_resource_shortage_title
             factor = 0
-            owner = {
-                has_resource = { type = alloys amount < 0 }
-                has_monthly_income = { resource = alloys value = 0 }
+            OR = {
+                owner = {
+                    country_uses_bio_ships = no
+                    has_resource = { type = alloys amount < 0 }
+                    has_monthly_income = { resource = alloys value = 0 }
+                }
+                owner = {
+                    country_uses_bio_ships = yes
+                    has_resource = { type = food amount < 0 }
+                    has_monthly_income = { resource = food value = 0 }
+                }
             }
         }
     }
     on_progress_complete = {
         custom_tooltip = ethic_military_dictatorship.2.a_effects
         hidden_effect = {
-            create_fleet = {
-                name = random
-                effect = {
-                    set_owner = prev
-                    if = {
-                        limit = {
-                            owner = {
-                                country_uses_bio_ships = yes
-                            }
-                        }
-                        create_ship = {
-                            random_existing_design = bio_titan
-                        }
-                    }
-                    else_if = {
-                        limit = {
-                            owner = {
-                                country_uses_bio_ships = no
-                            }
-                        }
-                        create_ship = {
-                            random_existing_design = titan
-                        }
-                    }
-                    set_name = {
-                        key = NAME_Royal_Fleet
-                        variable_string = "[Root.GetRulerName]"
-                    }
-                    set_location = prev.capital_scope.star
-                }
-            }
-            last_created_fleet = {
-                every_owned_ship = {
-                    set_name = {
-                        key = NAME_Royal_Ship
-                        variable_string = "[Root.GetRulerTitle]"
-                        variable_string = "[Root.GetRulerName]"
-                    }
-                }
+            owner = {
+                country_event = { id = ethic_military_dictatorship.4 }
             }
         }
         destroy_situation = this
@@ -109,7 +110,18 @@ building_super_battleships = {
         }
         resources = {
             category = situations
-            upkeep = { alloys = 10 }
+            upkeep = {
+                trigger = {
+                    this.owner = { country_uses_bio_ships = no }
+                }
+                alloys = 10
+            }
+            upkeep = {
+                trigger = {
+                    this.owner = { country_uses_bio_ships = yes }
+                }
+                food = 25
+            }
         }
         ai_weight = {
             factor = 999
@@ -125,7 +137,18 @@ building_super_battleships = {
         }
         resources = {
             category = situations
-            upkeep = { alloys = 20 }
+            upkeep = {
+                trigger = {
+                    this.owner = { country_uses_bio_ships = no }
+                }
+                alloys = 20
+            }
+            upkeep = {
+                trigger = {
+                    this.owner = { country_uses_bio_ships = yes }
+                }
+                food = 50
+            }
         }
         modifier = {
             starbase_shipyard_build_speed_mult = -0.33
@@ -141,7 +164,18 @@ building_super_battleships = {
         }
         resources = {
             category = situations
-            upkeep = { alloys = 40 }
+            upkeep = {
+                trigger = {
+                    this.owner = { country_uses_bio_ships = no }
+                }
+                alloys = 40
+            }
+            upkeep = {
+                trigger = {
+                    this.owner = { country_uses_bio_ships = yes }
+                }
+                food = 100
+            }
         }
         modifier = {
             starbase_shipyard_build_speed_mult = -0.66

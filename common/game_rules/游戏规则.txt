@@ -275,3 +275,46 @@ can_fill_worker_job = {
         }
     }
 }
+
+## 如果这项返回真值，即使没有被清除，该物种也将减少
+# This = species
+# From = planet
+## Note: success text tooltips are shown in alert_pops_declining alert.
+should_force_decline_species = {
+    OR = {
+        # Infertile Clone Army pops should decline if in Country that can't have Vats, or there is a Vat shortage.
+        custom_tooltip = {
+            success_text = CLONE_ARMY_FORCE_DECLINE
+            exists = this
+            OR = {
+                has_trait = trait_clone_soldier_infertile
+                has_trait = trait_clone_soldier_infertile_full_potential
+            }
+            from = {
+                OR = {
+                    # Check if country is unable to build Vats for this species.
+                    AND = {
+                        exists = owner
+                        owner = {
+                            OR = {
+                                NOT = { has_origin = origin_clone_army }					# Can't have Vats.
+                                has_country_flag = clone_army_fertility_unlocked			# Can't have Vats anymore.
+                                NOT = { owner_main_species = { is_same_species = root } }	# Our Vats can't build this species.
+                            }
+                        }
+                    }
+                    # Vats check out, but are there more pops than Vats support?
+                    check_variable = { which = clone_pops_missing value < 0 }
+                }
+            }
+        }
+
+        from = {
+            custom_tooltip = {
+                success_text = VOIDSPAWN_FORCE_DECLINE
+                exists = this
+                has_modifier = voidspawn_colony_mod
+            }
+        }
+    }
+}
