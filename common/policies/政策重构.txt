@@ -2243,6 +2243,169 @@ economic_stance = {
 	}
 }
 
+# 货币本位
+currency_standard = {
+	potential = {
+		OR = {
+			NOT = {
+				is_no_planet_country = yes
+			}
+			has_origin = origin_ev_both_choosen
+			has_valid_civic = civic_ev_planet_and_fleet
+			has_ascension_perk = ev_land_planets
+		}
+		OR = {
+			NOT = { has_ethic = ethic_gestalt_consciousness }
+			has_civic = civic_machine_financial_investment
+			has_civic = civic_hive_capital_creates_gods
+			AND = {
+				has_active_tradition = tr_future_economy_ges
+				has_technology = tech_ascension_theory
+			}
+		}
+	}
+	# 能源货币
+	option = {
+		name = "currency_standard_energy"
+		policy_flags = {
+			currency_standard_energy
+		}
+		potential = {
+			NOT = { has_policy_flag = economic_stance_credit_economy }
+		}
+		on_enabled = {
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					energy = 0.5
+				}
+			}
+		}
+		AI_weight = {
+			factor = 1
+		}
+	}
+	# 贵金属货币
+	option = {
+		name = "currency_standard_minerals"
+		policy_flags = {
+			currency_standard_minerals
+		}
+		potential = {
+			NOT = { has_policy_flag = economic_stance_credit_economy }
+		}
+		on_enabled = {
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					minerals = 0.5
+				}
+			}
+		}
+		AI_weight = {
+			factor = 1
+		}
+	}
+	# 粮食货币
+	option = {
+		name = "currency_standard_food"
+		policy_flags = {
+			currency_standard_food
+		}
+		potential = {
+			NOT = { has_policy_flag = economic_stance_credit_economy }
+			OR = {
+				is_lithoid_empire = no
+				is_individual_machine = no
+				is_machine_empire = no
+				country_uses_bio_ships = yes
+			}
+		}
+		on_enabled = {
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					food = 0.5
+				}
+			}
+		}
+		AI_weight = {
+			factor = 1
+		}
+	}
+	# 工业品货币
+	option = {
+		name = "currency_standard_industrial"
+		policy_flags = {
+			currency_standard_industrial
+		}
+		potential = {
+			NOT = { has_policy_flag = economic_stance_credit_economy }
+		}
+		on_enabled = {
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					consumer_goods = 0.5
+					alloys = 0.25
+				}
+			}
+		}
+		AI_weight = {
+			factor = 1
+		}
+	}
+	# 信用货币
+	option = {
+		name = "currency_standard_unity"
+		policy_flags = {
+			currency_standard_unity
+		}
+		on_enabled = {
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					unity = 0.5
+				}
+			}
+		}
+		AI_weight = {
+			factor = 1
+		}
+	}
+	# 论文积分
+	option = {
+		name = "currency_standard_research"
+		policy_flags = {
+			currency_standard_research
+		}
+		potential = {
+			NOT = { has_valid_civic = civic_transcendence }
+		}
+		on_enabled = {
+			hidden_effect = {
+				set_trade_conversions = {
+					trade = 0.5
+					society_research = 0.1
+					physics_research = 0.1
+					engineering_research = 0.1
+				}
+			}
+		}
+		AI_weight = {
+			factor = 1
+			modifier = {
+				factor = 9999
+				OR = {
+					has_ethic = ethic_fanatic_materialist
+					has_valid_civic = civic_technocracy
+					has_valid_civic = civic_cyber_dictatorship
+				}
+			}
+		}
+	}
+}
+
 # 税收投资
 trade_policy = {
 	potential = {
@@ -2284,20 +2447,6 @@ trade_policy = {
 		modifier = {
 			diplo_weight_pops_mult = 0.25
 			diplo_weight_economy_mult = 0.25
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					energy = 0.15
-					food = 0.15
-					minerals = 0.15
-					consumer_goods = 0.1
-					exotic_gases = 0.01
-					rare_crystals = 0.01
-					volatile_motes = 0.01
-				}
-			}
 		}
 		AI_weight = {
 			factor = 99999
@@ -2348,18 +2497,6 @@ trade_policy = {
 		modifier = {
 			pop_ethic_authoritarian_attraction_mult = 0.3
 		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.4
-					energy = 0.2
-					food = 0.25
-					minerals = 0.2
-					consumer_goods = 0.1
-					alloys = 0.075
-				}
-			}
-		}
 		AI_weight = {
 			modifier = {
 				factor = 5
@@ -2405,14 +2542,6 @@ trade_policy = {
 			job_rentier_per_pop = 0.1
 			job_postpartum_workers_per_pop = 0.05
 		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.5
-					energy = 0.5
-				}
-			}
-		}
 		AI_weight = {
 			modifier = {
 				factor = 0
@@ -2452,16 +2581,6 @@ trade_policy = {
 		modifier = {
 			planet_building_build_speed_mult = 0.2
 			job_environmental_pollution_caused_mult = 0.1
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.4
-					energy = 0.2
-					minerals = 0.375
-					consumer_goods = 0.2
-				}
-			}
 		}
 		valid = {
 			is_economic_stance_planned = no
@@ -2517,13 +2636,6 @@ trade_policy = {
 			planet_structures_cost_mult = -0.1
 			job_environmental_pollution_caused_mult = 0.1
 		}
-		on_enabled = {
-			set_trade_conversions = {
-				trade = 0.4
-				consumer_goods = 0.2
-				alloys = 0.125
-			}
-		}
 		valid = {
 			is_economic_stance_planned = no
 		}
@@ -2574,17 +2686,6 @@ trade_policy = {
 		modifier = {
 			country_unity_produces_mult = 0.05
 		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.4
-					unity = 0.1
-					society_research = 0.1
-					physics_research = 0.1
-					engineering_research = 0.1
-				}
-			}
-		}
 		AI_weight = {
 			factor = 3
 			modifier = {
@@ -2625,17 +2726,6 @@ trade_policy = {
 		}
 		modifier = {
 			pop_cat_ruler_happiness = 0.15
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					consumer_goods = 0.3
-					exotic_gases = 0.01
-					rare_crystals = 0.01
-					volatile_motes = 0.01
-				}
-			}
 		}
 		valid = {
 			is_economic_stance_planned = no
@@ -2694,15 +2784,6 @@ trade_policy = {
 			pop_citizen_happiness = 0.1
 			pop_amenities_usage_mult = 0.15
 		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					consumer_goods = 0.3
-					unity = 0.15
-				}
-			}
-		}
 		AI_weight = {
 			factor = 3
 			modifier = {
@@ -2759,16 +2840,6 @@ trade_policy = {
 			planet_jobs_alloys_produces_mult = 0.2
 			planet_jobs_minerals_produces_mult = 0.2
 			job_environmental_pollution_caused_mult = 0.15
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					minerals = 0.15
-					consumer_goods = 0.1
-					alloys = 0.15
-				}
-			}
 		}
 		AI_weight = {
 			factor = 5
@@ -2829,16 +2900,6 @@ trade_policy = {
 			planet_jobs_physics_research_produces_mult = 0.2
 			planet_jobs_society_research_produces_mult = 0.2
 			planet_jobs_engineering_research_produces_mult = 0.2
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					society_research = 0.2
-					physics_research = 0.2
-					engineering_research = 0.2
-				}
-			}
 		}
 		AI_weight = {
 			factor = 50
@@ -2902,16 +2963,6 @@ trade_policy = {
 			country_unity_produces_mult = 0.1
 			job_environmental_pollution_caused_mult = 0.15
 		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					food = 0.5
-					minerals = 0.375
-					consumer_goods = 0.2
-				}
-			}
-		}
 		AI_weight = {
 			factor = 50
 			modifier = {
@@ -2959,19 +3010,6 @@ trade_policy = {
 		}
 		modifier = {
 			pop_government_ethic_attraction = 0.5
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					energy = 0.25
-					food = 0.3
-					minerals = 0.25
-					consumer_goods = 0.125
-					alloys = 0.075
-					unity = 0.05
-				}
-			}
 		}
 		AI_weight = {
 			factor = 50
@@ -3025,15 +3063,6 @@ trade_policy = {
 			planet_artisans_upkeep_mult = -0.1
 			starbase_shipyard_build_speed_mult = 0.15
 			job_environmental_pollution_caused_mult = 0.15
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					consumer_goods = 0.2
-					alloys = 0.3
-				}
-			}
 		}
 		valid = {
 			OR = {
@@ -3090,16 +3119,6 @@ trade_policy = {
 			planet_building_build_speed_mult = 0.25
 			planet_colony_development_speed_mult = 0.25
 			job_environmental_pollution_caused_mult = 0.1
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					energy = 0.5
-					food = 0.5
-					minerals = 0.5
-				}
-			}
 		}
 		valid = {
 			OR = {
@@ -3173,17 +3192,6 @@ trade_policy = {
 			country_society_tech_research_speed = 0.05
 			pop_cat_worker_happiness = 0.1
 			pop_ethic_egalitarian_attraction_mult = 0.25
-		}
-		on_enabled = {
-			hidden_effect = {
-				set_trade_conversions = {
-					trade = 0.25
-					unity = 0.15
-					society_research = 0.15
-					physics_research = 0.15
-					engineering_research = 0.15
-				}
-			}
 		}
 		AI_weight = {
 			modifier = {
