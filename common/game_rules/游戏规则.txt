@@ -333,3 +333,37 @@ can_generate_leader_from_species = {
         root = { has_valid_civic = civic_du_contrat_social }
     }
 }
+
+#能够成为宿敌的条件
+#Root = target country
+#This = country
+is_valid_rival = {
+    custom_tooltip = {
+        fail_text = INVALID_RIVAL_DESC
+        root = {
+            OR = {
+                prev = {
+                    NOR = {
+                        is_country_type = default
+                        #	ZOFE
+                        is_country_type = ascended_empire
+                        is_country_type = lost_empire
+                        #	EE
+                        is_country_type = eternal_empire
+                        #	ev
+                        is_country_type = default_ev
+                    }
+                }
+                AND = {
+                    relative_power = { who = prev value >= inferior }
+                    OR = {
+                        relative_power = { who = prev value <= superior }
+                        prev = { has_policy_flag = diplo_stance_animosity }
+                        prev = { has_valid_civic = civic_unrestrained_feuds }
+                    }
+                }
+                is_country_type = mirrored_country # Mirrored Empire doesn't have relative power but we want to be rivals anyway
+            }
+        }
+    }
+}
