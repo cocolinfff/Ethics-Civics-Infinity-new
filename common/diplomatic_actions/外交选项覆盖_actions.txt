@@ -1,0 +1,144 @@
+# 宣布宿敌
+action_make_rival = {
+	icon = "GFX_diplomacy_status_rivalry"
+	auto_accepted = yes
+	requires_actor_independence = no
+	requires_recipient_independence = no
+	should_show_auto_accept_message_recipient = yes
+	should_notify_all_communications = yes
+	action_type = aggressive
+
+	potential = {
+		hidden_trigger = {
+			is_fallen_empire_machine = no
+			from = { is_fallen_empire_machine = no }
+		}
+
+		# Disable against fallen empires for subjects.
+		# Can't be rivals with your overlord or their other subjects.
+		hidden_trigger = {
+			OR = {
+				has_valid_civic = civic_eternal_victory
+				NAND = {
+					is_subject = yes
+					FROM = {
+						OR = {
+							is_fallen_empire = yes
+							is_overlord_to = ROOT
+							has_overlord = ROOT.overlord
+						}
+					}
+				}
+			}
+		}
+		# Can't be rivals with your subjects.
+		hidden_trigger = {
+			OR = {
+				has_valid_civic = civic_eternal_victory
+				NOT = {
+					FROM = {
+						is_subject = yes
+						has_overlord = ROOT
+					}
+				}
+			}
+		}
+
+		custom_tooltip = grants_humiliation_cb_originator
+	}
+
+	possible = {
+		custom_tooltip = {
+			fail_text = "requires_actor_not_fanatic_purifiers"
+			OR = {
+				is_same_species = from
+				NOT = { has_valid_civic = civic_fanatic_purifiers }
+				has_valid_civic = civic_eternal_victory
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_devouring_swarm"
+			NOT = { has_valid_civic = civic_hive_devouring_swarm }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_terminator"
+			OR = {
+				is_same_species = from
+				NOT = { has_civic = civic_machine_terminator }
+				AND = {
+					has_civic = civic_machine_terminator
+					from = {
+						OR = {
+							has_country_flag = synthetic_empire
+							is_machine_empire = yes
+							is_individual_machine = yes
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_machine_assimilator"
+			NOT = { has_valid_civic = civic_machine_assimilator }
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_scorched_earth"
+			OR = {
+				is_genocidal_infernal = no
+				has_valid_civic = civic_eternal_victory
+				from = { is_infernal_empire = yes }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_actor_not_inward_perfection"
+			OR = {
+				NOT = { has_valid_civic = civic_inwards_perfection }
+				has_valid_civic = civic_eternal_victory
+			}
+		}
+		custom_tooltip = {
+			fail_text = "requires_terrible_opinion_or_supremacist"
+			OR = {
+				has_valid_civic = civic_eternal_victory
+				opinion_level = { who = from level <= terrible }
+				is_harming_relations_with = from
+				from = { is_at_war_with = prev }
+				OR = {
+					has_policy_flag = "diplo_stance_supremacist"
+					from = { has_policy_flag = "diplo_stance_supremacist" }
+					is_fallen_empire = yes
+					from = { is_fallen_empire = yes }
+					has_policy_flag = "diplo_stance_animosity"
+					from = { has_policy_flag = "diplo_stance_animosity" }
+				}
+				from = { is_rival = prev }
+
+				# We can be rivals with the Mirror Empire no matter relations' level
+				from = { is_country_type = mirrored_country }
+			}
+		}
+		custom_tooltip = {
+			fail_text = "the_fe_is_busy_with_synth_queen"
+			OR = {
+				from = { is_fallen_empire = no }
+				has_valid_civic = civic_eternal_victory
+				AND = {
+					NOT = { has_global_flag = synth_queen_happened }
+					from = {
+						is_fallen_empire = yes
+					}
+				}
+			}
+		}
+	}
+
+	on_accept = {
+		hidden_effect = {
+			check_casus_belli_valid = {
+				target = from
+				type = cb_humiliation
+			}
+			set_country_flag = has_declared_rival
+		}
+	}
+}
