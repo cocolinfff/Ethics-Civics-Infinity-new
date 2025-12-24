@@ -1,0 +1,126 @@
+
+building_communism = {
+	picture = GFX_evt_grand_speech
+	complete_icon_frame = GFX_situation_outcome_frame_red
+	complete_icon = GFX_situation_outcome_unknown
+	stages = {
+		building_communism_1 = {
+			icon = GFX_situation_stage_1
+			icon_background = GFX_situation_stage_frame_blue
+			end = 10
+			modifier = {
+				pop_ethic_egalitarian_attraction_mult = 0.33
+				pop_ethic_xenophobe_attraction_mult = -0.33
+			}
+		}
+		building_communism_2 = {
+			icon = GFX_situation_stage_2
+			icon_background = GFX_situation_stage_frame_green
+			end = 40
+			modifier = {
+				pop_ethic_egalitarian_attraction_mult = 0.66
+				pop_ethic_xenophobe_attraction_mult = -0.66
+			}
+		}
+		building_communism_3 = {
+			icon = GFX_situation_stage_3
+			icon_background = GFX_situation_stage_frame_red
+			end = 70
+			modifier = {
+				pop_ethic_egalitarian_attraction_mult = 1
+				pop_ethic_xenophobe_attraction_mult = -1
+			}
+		}
+	}
+	monthly_progress = {
+		base = 1
+		modifier = {
+            desc = civic_tooltip_not_xenophobe
+			add = -1
+			owner = {
+				OR = {
+					has_ethic = ethic_xenophobe
+					has_ethic = ethic_fanatic_xenophobe
+				}
+			}
+		}
+		modifier = {
+			desc = civic_tooltip_not_authoritarian
+			add = -2
+			owner = {
+				OR = {
+					has_ethic = ethic_authoritarian
+					has_ethic = ethic_fanatic_authoritarian
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			desc = "situation_ethic_or_civic_needed_desc"
+			owner = {
+				NOR = {
+					has_ethic = ethic_fanatic_egalitarian
+					has_valid_civic = civic_shared_burden
+					has_valid_civic = civic_socialistic
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			desc = "situation_authority_needed_desc"
+			owner = {
+				NOR = {
+					has_authority = auth_democratic
+					has_authority = auth_direct_democratic
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			desc = "situation_future_finish_needed_desc"
+			current_stage = building_communism_2
+			owner = {
+				NOT = {
+					has_tradition = tr_future_finish
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			desc = "situation_ascension_theory_needed_desc"
+			current_stage = building_communism_3
+			owner = {
+				NOT = {
+					has_technology = tech_ascension_theory
+				}
+			}
+		}
+	}
+	on_progress_complete = {
+		custom_tooltip = building_communism_situation_end
+		hidden_effect = {
+			owner = { country_event = { id = ethic_communist_society.1 } }
+			destroy_situation = this
+		}
+	}
+	on_fail = {
+		custom_tooltip = building_communism_failed
+		owner = { add_modifier = { modifier = post_revolutionary days = 3600 } }
+		hidden_effect = {
+			owner = {
+				remove_country_flag = towards_communism
+				set_country_flag = reject_communism
+			}
+		}
+	}
+	start_value = 4
+	approach = {
+		name = building_communism_war
+        icon = GFX_situation_approach_this_is_fine
+        icon_background = GFX_situation_approach_bg_yellow
+		default = yes
+		on_select = {
+			custom_tooltip = building_communism_war_tooltip
+		}
+	}
+}
