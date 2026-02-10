@@ -1,14 +1,28 @@
 ##############################
-# Isolationist Faction
+# Peaceful Prosperity Faction
 ##############################
 
-isolationist = {
+prosperity = {
 	election_header = "GFX_faction_header_yellow"
-	guiding_ethic = ethic_defensivism
-	visual_ethic = "isolationist_visual_ethic"
+	guiding_ethic = ethic_pacifist
+	visual_ethic = "prosperity_visual_ethics"
 
 	unique = yes
 	support_multiplier = 1
+
+	is_potential = {
+		is_faction_allowed = yes
+		owner = { is_egalitarian = no }
+	}
+
+	parameters = {
+		empire = {
+			type = country
+			valid_objects = {
+				is_same_value = root
+			}
+		}
+	}
 
 	resources = {
 		category = pop_factions
@@ -32,9 +46,8 @@ isolationist = {
 					}
 				}
 			}
-			engineering_research = 0.05
-			society_research = 0.05
-			physics_research = 0.05
+			engineering_research = @faction_major_output
+			physics_research = @faction_minor_output
 			mult = @crowdsourcing_multiplier
 		}
 	}
@@ -50,8 +63,8 @@ isolationist = {
 					}
 				}
 			}
-			minerals = @faction_base_output
-			mult = @faction_extortion_minerals_ratio
+			energy = @faction_base_output
+			mult = @faction_extortion_energy_ratio
 		}
 		produces = {
 			trigger = {
@@ -62,22 +75,9 @@ isolationist = {
 					}
 				}
 			}
-			society_research = @faction_major_output
-			engineering_research = @faction_minor_output
+			engineering_research = @faction_major_output
+			physics_research = @faction_minor_output
 			mult = @faction_extortion_crowdsourcing_ratio
-		}
-	}
-
-	is_potential = {
-		is_faction_allowed = yes
-	}
-
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
 		}
 	}
 
@@ -89,15 +89,6 @@ isolationist = {
 	can_join_faction = {
 		is_shackled_robot = no
 		can_think = yes
-		OR = {
-			NOT = { is_same_species = owner_species }
-			owner = {
-				OR = {
-					has_ethic = ethic_pacifist
-					has_ethic = ethic_fanatic_pacifist
-				}
-			}
-		}
 	}
 
 	attraction = {
@@ -121,19 +112,28 @@ isolationist = {
 		}
 
 		modifier = {
-			factor = 2.0
-			has_ethic = ethic_defensivism
+			factor = 1.5
+			is_pacifist = yes
+			NOT = { is_pop_category = worker }
 		}
 
 		# Should really check for citizenship instead
-		#modifier = {
-		#	factor = 1.25
-		#	NOT = { is_same_species = owner_species }
-		#}
+		modifier = {
+			factor = 1.25
+			NOT = { is_same_species = owner_species }
+		}
 	}
 
 	leader = {
 		base = 100
+
+		modifier = {
+			factor = 0.0
+			OR = {
+				leader_class = commander
+				leader_class = commander
+			}
+		}
 
 		modifier = {
 			factor = 0.0
@@ -144,22 +144,139 @@ isolationist = {
 	# DEMAND: Faction Outraged (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_outraged
-		FLAG = galcom_resolution_passed_anti_isolationist
+		FLAG = galcom_resolution_passed_anti_prosperity
 	}
 
 	# DEMAND: Faction Pleased (by a GalCom Resolution)
 	inline_script = {
 		script = pop_faction_types/demand_faction_pleased
-		FLAG = galcom_resolution_passed_pro_isolationist
+		FLAG = galcom_resolution_passed_pro_prosperity
 	}
 
-	demand = { # "ISOLATIONIST_PHILOSOPHY"
-		title = "ISOLATIONIST_PHILOSOPHY"
-		unfulfilled_title = "ISOLATIONIST_NO_PHILOSOPHY"
-		desc = "ISOLATIONIST_PHILOSOPHY_DESC"
+	demand = { # 市场放任 （市社）
+		title = "DEMAND_ECONOMY_FREE"
+		unfulfilled_title = "DEMAND_ECONOMY_FREE"
+		desc = "DEMAND_ECONOMY_FREE_DESC"
+		fulfilled_effect = 10
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_policy_flag = economic_stance_gift_economy
+					has_policy_flag = economic_stance_credit_economy
+					has_policy_flag = economic_stance_gestalt_economy
+					has_policy_flag = economic_stance_emotional_economy
+				}
+				has_policy_flag = economic_stance_market
+			}
+		}
+		trigger = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_market
+			}
+		}
+	}
+	demand = {
+		title = "DEMAND_ECONOMY_FREE"
+		unfulfilled_title = "DEMAND_ECONOMY_FREE"
+		desc = "DEMAND_ECONOMY_FREE_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_policy_flag = economic_stance_market
+					has_policy_flag = economic_stance_gift_economy
+					has_policy_flag = economic_stance_credit_economy
+					has_policy_flag = economic_stance_gestalt_economy
+					has_policy_flag = economic_stance_emotional_economy
+				}
+			}
+		}
+		trigger = {
+			exists = owner
+			owner = {
+				has_policy_flag = economic_stance_mixed
+			}
+		}
+	}
 
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
+
+	demand = { # 企业政府 (企业优先，不要太民主或专制)
+		title = "DEMAND_GOVERNMENT_ENTERPRISE"
+		unfulfilled_title = "DEMAND_GOVERNMENT_ENTERPRISE"
+		desc = "DEMAND_GOVERNMENT_ENTERPRISE_DESC"
+		fulfilled_effect = 10
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					is_eci_megacorp = yes
+					is_indirect_democracy = yes
+					is_dictatorial = yes
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				is_eci_megacorp = yes
+			}
+		}
+	}
+	demand = {
+		title = "DEMAND_GOVERNMENT_ENTERPRISE"
+		unfulfilled_title = "DEMAND_GOVERNMENT_ENTERPRISE"
+		desc = "DEMAND_GOVERNMENT_ENTERPRISE_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					is_eci_megacorp = yes
+					is_indirect_democracy = yes
+					is_dictatorial = yes
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				is_oligarchy = yes
+			}
+		}
+	}
+
+	demand = {
+		title = "PROSPERITY_LIQUIDITY"
+		unfulfilled_title = "PROSPERITY_NO_LIQUIDITY"
+		desc = "PROSPERITY_LIQUIDITY_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				num_owned_planets >= 3
+			}
+		}
+
+		trigger = {
+			owner = { resource_stockpile_compare = { resource = energy value >= 5000 } }
+		}
+	}
+
+	demand = {
+		title = "PROSPERITY_PHILOSOPHY"
+		unfulfilled_title = "PROSPERITY_NO_PHILOSOPHY"
+		desc = "PROSPERITY_PHILOSOPHY_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -10
 
 		potential = {
 			exists = owner
@@ -174,62 +291,36 @@ isolationist = {
 
 		trigger = {
 			owner = {
-				NOT = { has_policy_flag = unrestricted_wars }
-			}
-		}
-	}
-
-	demand = { # "ISOLATIONIST_NO_AGGRESSIVE_WAR"
-		title = "ISOLATIONIST_NO_AGGRESSIVE_WAR"
-		unfulfilled_title = "ISOLATIONIST_AGGRESSIVE_WAR"
-		desc = "ISOLATIONIST_NO_AGGRESSIVE_WAR_DESC"
-
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 2
-				any_war = { is_war_participant = { who = prev side = attackers } }
-			}
-		}
-
-		trigger = {
-			owner = {
-				NOT = { any_war = { is_war_participant = { who = prev side = attackers } } }
+				has_policy_flag = no_wars
 			}
 		}
 	}
 
 	demand = {
-		title = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION"
-		unfulfilled_title = "SUPREMACIST_ISOLATIONIST_FEDERATION"
-		desc = "SUPREMACIST_ISOLATIONIST_NO_FEDERATION_DESC"
+		title = "PROSPERITY_PEACE"
+		unfulfilled_title = "PROSPERITY_NO_PEACE"
+		desc = "PROSPERITY_PEACE_DESC"
 
-		unfulfilled_effect = -25
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 0
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_federation = no
-			}
-		}
-	}
-
-	demand = {
-		title = "ISOLATIONIST_MOVEMENT_RESTRICTED"
-		unfulfilled_title = "ISOLATIONIST_MOVEMENT_UNRESTRICTED"
-		desc = "ISOLATIONIST_MOVEMENT_RESTRICTED_DESC"
-
+		fulfilled_effect = 5
 		unfulfilled_effect = -10
+
+		potential = {
+			exists = owner
+		}
+
+		trigger = {
+			owner = {
+				is_at_war = no
+			}
+		}
+	}
+
+	demand = {
+		title = "PROSPERITY_NOT_AGGRESSOR"
+		unfulfilled_title = "PROSPERITY_AGGRESSOR"
+		desc = "PROSPERITY_NOT_AGGRESSOR_DESC"
+
+		unfulfilled_effect = -30
 		fulfilled_effect = 0.001
 
 		potential = {
@@ -242,24 +333,17 @@ isolationist = {
 		trigger = {
 			owner = {
 				NOR = {
-					num_migration_pacts > 0 #doesn't check all the stuff below, but early exclude if it is true
-					has_policy_flag = refugees_allowed
-					any_relation = {
-						has_communications = root.owner
-						OR = {
-							has_diplo_migration_treaty = root.owner
-							root.owner = { has_diplo_migration_treaty = prevprev }
-						}
-					}
+					has_country_flag = entered_war_as_attacker
+					any_war = { is_war_participant = { who = prev side = attackers } }
 				}
 			}
 		}
 	}
 
 	demand = {
-		title = "ISOLATIONIST_NON_AGGRESSION1"
-		unfulfilled_title = "ISOLATIONIST_FEW_NON_AGGRESSION1"
-		desc = "ISOLATIONIST_NON_AGGRESSION_DESC1"
+		title = "PROSPERITY_PEACEFUL_APPLICATIONS"
+		unfulfilled_title = "PROSPERITY_NO_PEACEFUL_APPLICATIONS"
+		desc = "PROSPERITY_PEACEFUL_APPLICATIONS_DESC"
 
 		fulfilled_effect = 5
 		unfulfilled_effect = -0.001
@@ -267,15 +351,13 @@ isolationist = {
 		potential = {
 			exists = owner
 			owner = {
-				num_communications > 2
-				count_playable_country = {
-					limit = {
-						OR = {
-							has_non_aggression_pact = root.owner
-							has_association_status = root.owner
-						}
-					}
-					count < 2
+				host_has_dlc = "Ancient Relics Story Pack"
+				has_technology = tech_arcane_deciphering
+				OR = {
+					has_modifier = artifact_find_peaceful_application_happy_bios
+					has_modifier = artifact_find_peaceful_application_consumer_goods
+					has_modifier = artifact_find_peaceful_application_amenities
+					has_modifier = artifact_find_peaceful_application_leader_improvement
 				}
 			}
 		}
@@ -283,17 +365,51 @@ isolationist = {
 		trigger = {
 			owner = {
 				OR = {
-					num_non_aggression_pacts > 0
-					exists = associated_federation
+					has_modifier = artifact_find_peaceful_application_happy_bios
+					has_modifier = artifact_find_peaceful_application_consumer_goods
+					has_modifier = artifact_find_peaceful_application_amenities
+					has_modifier = artifact_find_peaceful_application_leader_improvement
 				}
 			}
 		}
 	}
 
 	demand = {
-		title = "ISOLATIONIST_NON_AGGRESSION2"
-		unfulfilled_title = "ISOLATIONIST_FEW_NON_AGGRESSION2"
-		desc = "ISOLATIONIST_NON_AGGRESSION_DESC2"
+		title = "PROSPERITY_MILITARY_APPLICATIONS"
+		unfulfilled_title = "PROSPERITY_NO_MILITARY_APPLICATIONS"
+		desc = "PROSPERITY_MILITARY_APPLICATIONS_DESC"
+
+		unfulfilled_effect = -5
+		fulfilled_effect = +0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				host_has_dlc = "Ancient Relics Story Pack"
+				has_technology = tech_arcane_deciphering
+				OR = {
+					has_modifier = artifact_find_military_application_army
+					has_modifier = artifact_find_military_application_shield_damage
+					has_modifier = artifact_find_military_application_armor_damage
+				}
+			}
+		}
+
+		trigger = {
+			owner = {
+				NOR = {
+					has_modifier = artifact_find_military_application_army
+					has_modifier = artifact_find_military_application_shield_damage
+					has_modifier = artifact_find_military_application_armor_damage
+				}
+			}
+		}
+	}
+
+	demand = {
+		title = "MERCANTILE_DIPLO_STANCE"
+		unfulfilled_title = "MERCANTILE_DIPLO_STANCE"
+		desc = "MERCANTILE_DIPLO_STANCE_DESC"
 
 		fulfilled_effect = 10
 		unfulfilled_effect = -0.001
@@ -301,166 +417,48 @@ isolationist = {
 		potential = {
 			exists = owner
 			owner = {
-				num_communications > 2
-				count_playable_country = {
-					limit = {
-						OR = {
-							has_non_aggression_pact = root.owner
-							has_association_status = root.owner
-						}
-					}
-					count > 1
-				}
-				count_playable_country = {
-					limit = {
-						OR = {
-							has_non_aggression_pact = root.owner
-							has_association_status = root.owner
-						}
-					}
-					count < 3
-				}
+				is_homicidal = no
+				is_country_type = default
+				has_policy_flag = diplo_stance_mercantile
 			}
 		}
 
 		trigger = {
 			owner = {
-				count_playable_country = {
-					limit = {
-						OR = {
-							has_non_aggression_pact = root.owner
-							has_association_status = root.owner
-						}
-					}
-					count > 1
-				}
+				has_policy_flag = diplo_stance_mercantile
 			}
 		}
 	}
 
 	demand = {
-		title = "ISOLATIONIST_NON_AGGRESSION3"
-		unfulfilled_title = "ISOLATIONIST_FEW_NON_AGGRESSION3"
-		desc = "ISOLATIONIST_NON_AGGRESSION_DESC3"
+		title = PROSPERITY_FEDERATION
+		unfulfilled_title = PROSPERITY_FEDERATION_NOT_MILITARIST
+		desc = PROSPERITY_FEDERATION_DESC
 
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
+		unfulfilled_effect = -10
+		fulfilled_effect = 0.001
 
 		potential = {
-			exists = owner
-			owner = {
-				num_communications > 2
-				count_playable_country = {
-					limit = {
-						OR = {
-							has_non_aggression_pact = root.owner
-							has_association_status = root.owner
-						}
-					}
-					count > 2
-				}
-			}
+			exists = owner.federation
+			owner.federation = { has_federation_type = military_federation }
 		}
 
 		trigger = {
-			owner = {
-				count_playable_country = {
-					limit = {
-						OR = {
-							has_non_aggression_pact = root.owner
-							has_association_status = root.owner
-						}
-					}
-					count > 2
+			OR = {
+				NOT = { exists = owner.federation }
+				owner.federation = {
+					NOT = { has_federation_type = military_federation }
 				}
 			}
 		}
 	}
 
 	demand = {
-		title = "ISOLATIONIST_PEACE1"
-		unfulfilled_title = "ISOLATIONIST_NO_PEACE1"
-		desc = "ISOLATIONIST_PEACE_DESC1"
+		title = "AGGRESSIVE_DIPLO_STANCE"
+		unfulfilled_title = "AGGRESSIVE_DIPLO_STANCE"
+		desc = "AGGRESSIVE_DIPLO_STANCE_DESC"
 
-		fulfilled_effect = 5
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 0
-			}
-		}
-
-		trigger = {
-			owner = {
-				years_of_peace = {
-					value > 9
-				}
-			}
-		}
-	}
-
-	demand = {
-		title = "ISOLATIONIST_PEACE2"
-		unfulfilled_title = "ISOLATIONIST_NO_PEACE2"
-		desc = "ISOLATIONIST_PEACE_DESC2"
-
-		fulfilled_effect = 10
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 0
-				years_of_peace = {
-					value > 9
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
-				years_of_peace = {
-					value > 24
-				}
-			}
-		}
-	}
-
-	demand = {
-		title = "ISOLATIONIST_PEACE3"
-		unfulfilled_title = "ISOLATIONIST_NO_PEACE3"
-		desc = "ISOLATIONIST_PEACE_DESC3"
-
-		fulfilled_effect = 15
-		unfulfilled_effect = -0.001
-
-		potential = {
-			exists = owner
-			owner = {
-				num_communications > 0
-				years_of_peace = {
-					value > 24
-				}
-			}
-		}
-
-		trigger = {
-			owner = {
-				years_of_peace = {
-					value > 49
-				}
-			}
-		}
-	}
-
-	demand = {
-		title = "ISOLATIONIST_DIPLO_STANCE"
-		unfulfilled_title = "ISOLATIONIST_DIPLO_STANCE"
-		desc = "ISOLATIONIST_DIPLO_STANCE_DESC"
-
-		fulfilled_effect = 10
+		fulfilled_effect = 0.001
 		unfulfilled_effect = -10
 
 		potential = {
@@ -468,46 +466,27 @@ isolationist = {
 			owner = {
 				is_homicidal = no
 				is_country_type = default
-				is_megacorp = no
-			}
-		}
-
-		trigger = {
-			owner = {
-				has_policy_flag = diplo_stance_isolationist
-			}
-		}
-	}
-
-	demand = {
-		title = "ISOLATIONIST_REPEAL_PROACTIVE_FIRST_CONTACT_POLICY"
-		unfulfilled_title = "ISOLATIONIST_NO_PROACTIVE_FIRST_CONTACT_POLICY"
-		desc = "ISOLATIONIST_REPEAL_PROACTIVE_FIRST_CONTACT_POLICY_DESC"
-
-		unfulfilled_effect = -10
-		fulfilled_effect = 0.001
-
-		potential = {
-			exists = owner
-			owner = {
 				OR = {
-					years_passed <= 75
-					has_country_flag = recent_first_contact_process_started
+					has_policy_flag = diplo_stance_belligerent
+					has_policy_flag = diplo_stance_supremacist
 				}
 			}
 		}
 
 		trigger = {
 			owner = {
-				NOT = { has_policy_flag = first_contact_proactive }
+				NOR = {
+					has_policy_flag = diplo_stance_belligerent
+					has_policy_flag = diplo_stance_supremacist
+				}
 			}
 		}
 	}
 
 	demand = { # Unplugged: De-Cyberize
-		title = ISOLATIONIST_UNPLUGGED_DECYBERIZE
-		unfulfilled_title = ISOLATIONIST_UNPLUGGED_NOT_DECYBERIZE
-		desc = ISOLATIONIST_UNPLUGGED_DECYBERIZE_DESC
+		title = PROSPERITY_UNPLUGGED_DECYBERIZE
+		unfulfilled_title = PROSPERITY_UNPLUGGED_NOT_DECYBERIZE
+		desc = PROSPERITY_UNPLUGGED_DECYBERIZE_DESC
 
 		unfulfilled_effect = -10
 		fulfilled_effect = 5
@@ -547,9 +526,9 @@ isolationist = {
 	# Faction Demands for Ruler and Council positions.
 	inline_script = {
 		script = "paragon/global_faction_demands"
-		ETHIC = ethic_defensivism
-		ETHIC_FANATIC = ethic_fanatic_defensivism
-		ETHIC_OPPOSED = ethic_defensivism
+		ETHIC = ethic_pacifist
+		ETHIC_FANATIC = ethic_fanatic_pacifist
+		ETHIC_OPPOSED = ethic_militarist
 	}
 
 	on_create = {
@@ -559,15 +538,15 @@ isolationist = {
 	on_destroy = {
 		if = {
 			limit = {
-				has_modifier = promoted_defensivism
+				has_modifier = promoted_pacifist
 			}
-			remove_modifier = promoted_defensivism
+			remove_modifier = promoted_pacifist
 		}
 		if = {
 			limit = {
-				has_modifier = suppressed_defensivism
+				has_modifier = suppressed_pacifist
 			}
-			remove_modifier = suppressed_defensivism
+			remove_modifier = suppressed_pacifist
 		}
 	}
 
@@ -599,7 +578,7 @@ isolationist = {
 				}
 				support > 0.20
 				parameter:empire = {
-					NOT = { has_ethic = "ethic_defensivism" }
+					NOT = { has_ethic = "ethic_fanatic_pacifist" }
 				}
 			}
 
@@ -607,12 +586,8 @@ isolationist = {
 				add_modifier = { modifier = embraced_faction days = 3600 }
 				owner = { set_country_flag = has_embraced_faction }
 				parameter:empire = {
-					shift_ethic = ethic_defensivism
+					shift_ethic = ethic_pacifist
 					hidden_effect = {
-						every_pop_faction = { # embraces xenophobe ethos
-							limit = { is_pop_faction_type = supremacist }
-							add_modifier = { modifier = embraced_faction days = 3600 }
-						}
 						add_modifier = { modifier = embraced_faction_timer days = 3600 }
 						every_pop_faction = {
 							limit = { NOT = { is_same_value = root } }
@@ -646,7 +621,7 @@ isolationist = {
 					factor = 0
 					support < 0.50
 					owner = {
-						has_ethic = ethic_defensivism
+						has_ethic = ethic_pacifist
 					}
 				}
 				modifier = {
@@ -671,8 +646,8 @@ isolationist = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_defensivism
-						has_modifier = promoted_defensivism
+						has_modifier = suppressed_pacifist
+						has_modifier = promoted_pacifist
 					}
 				}
 			}
@@ -680,7 +655,7 @@ isolationist = {
 			effect = {
 				owner = { set_country_flag = has_promoted_faction }
 				parameter:empire = {
-					add_modifier = { modifier = promoted_defensivism days = -1 }
+					add_modifier = { modifier = promoted_pacifist days = -1 }
 				}
 			}
 
@@ -695,13 +670,13 @@ isolationist = {
 			potential = {
 				exists = owner
 				parameter:empire = {
-					has_modifier = promoted_defensivism
+					has_modifier = promoted_pacifist
 				}
 			}
 
 			effect = {
 				parameter:empire = {
-					remove_modifier = promoted_defensivism
+					remove_modifier = promoted_pacifist
 				}
 			}
 
@@ -717,9 +692,16 @@ isolationist = {
 				exists = owner
 				parameter:empire = {
 					NOR = {
-						has_modifier = suppressed_defensivism
-						has_modifier = promoted_defensivism
+						has_modifier = suppressed_pacifist
+						has_modifier = promoted_pacifist
 					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_pacifist days = -1 }
 				}
 			}
 
@@ -734,20 +716,14 @@ isolationist = {
 			potential = {
 				exists = owner
 				parameter:empire = {
-					has_modifier = suppressed_defensivism
+					has_modifier = suppressed_pacifist
 				}
 			}
 
 			effect = {
 				remove_modifier = suppressed_faction
 				parameter:empire = {
-					remove_modifier = suppressed_defensivism
-					hidden_effect = {
-						every_pop_faction = {
-							limit = { is_pop_faction_type = supremacist }
-							remove_modifier = suppressed_faction
-						}
-					}
+					remove_modifier = suppressed_pacifist
 				}
 			}
 
@@ -775,7 +751,7 @@ isolationist = {
 
 			effect = {
 				set_faction_extorted = yes
-				custom_tooltip = minerals_extortion_tt
+				custom_tooltip = energy_extortion_tt
 				custom_tooltip = ONLY_ONE_EXTORTED_FACTION_TT
 			}
 
