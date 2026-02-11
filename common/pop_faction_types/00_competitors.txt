@@ -108,51 +108,6 @@ competitors = {
 			factor = 2.0
 			has_ethic = ethic_pragmatism
 		}
-		modifier = {
-			factor = 2
-			is_robot_pop = yes
-		}
-		# Actions
-		modifier = {
-			factor = @factionattractionpromote
-			has_pop_faction_flag = promote_faction
-		}
-		modifier = {
-			factor = @factionattractionsuppress
-			has_pop_faction_flag = suppress_faction
-		}
-		# Angry
-		modifier = {
-			factor = @factionattractionmedium
-			exists = root
-			root = { faction_approval < 0.5 }
-			happiness < 0.5
-		}
-		# Stance from Job
-		modifier = {
-			factor = @factionattractionhighvery
-			OR = {
-				AND = {
-					exists = owner
-					owner = { is_materialist = yes }
-				}
-				OR = {
-					has_ethic = ethic_pragmatism
-				}
-			}
-			OR = {
-				has_job_type = foundry
-				has_job_type = artisan
-			}
-		}
-		# 万众一心
-		modifier = {
-			factor = 0.1
-			exists = root
-			root = { faction_approval < 0.5 }
-			exists = owner
-			owner = { has_ascension_perk = ap_one_vision }
-		}
 	}
 	leader = {
 		base = 100
@@ -161,315 +116,244 @@ competitors = {
 			is_event_leader = yes
 		}
 	}
-	
+
 	# 诉求
-		# Faction Outraged
-		inline_script = {
-			script = pop_faction_types/demand_faction_outraged
-			FLAG = galcom_resolution_passed_anti_xenoist
+	# Faction Outraged
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_xenoist
+	}
+	# Faction Pleased
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_xenoist
+	}
+
+	demand = { # 投资创新
+		title = "DEMAND_INVEST_RESEARCH"
+		unfulfilled_title = "DEMAND_INVEST_RESEARCH"
+		desc = "DEMAND_INVEST_RESEARCH_DESC"
+		fulfilled_effect = 5
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
 		}
-		# Faction Pleased
-		inline_script = {
-			script = pop_faction_types/demand_faction_pleased
-			FLAG = galcom_resolution_passed_pro_xenoist
-		}
-		
-		demand = { # 投资创新
-			title = "DEMAND_INVEST_RESEARCH"
-			unfulfilled_title = "DEMAND_INVEST_RESEARCH"
-			desc = "DEMAND_INVEST_RESEARCH_DESC"
-			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
+		trigger = {
+			owner = {
+				has_policy_flag = trade_conversion_innovation
 			}
-			trigger = {
-				owner = {
-					has_policy_flag = trade_conversion_innovation
+		}
+	}
+
+	demand = { # 学术优待
+		title = "DEMAND_LIVING_ACADEMY"
+		unfulfilled_title = "DEMAND_LIVING_ACADEMY"
+		desc = "DEMAND_LIVING_ACADEMY_DESC"
+		fulfilled_effect = 10
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_pop_group = {
+					has_living_standard = { type = living_standard_academic_privilege }
 				}
+			}
+		}
+		trigger = {
+			owner = {
+				any_owned_pop_group = {
+					has_living_standard = { type = living_standard_academic_privilege }
+				}
+			}
+		}
+	}
+	demand = { # 学术优待
+		title = "DEMAND_LIVING_ACADEMY"
+		unfulfilled_title = "DEMAND_LIVING_ACADEMY"
+		desc = "DEMAND_LIVING_ACADEMY_DESC"
+		fulfilled_effect = 5
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_pop_group = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_stratified }
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				any_owned_pop_group = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_stratified }
+					}
+				}
+			}
+		}
+	}
+	demand = { # 学术优待
+		title = "DEMAND_LIVING_ACADEMY"
+		unfulfilled_title = "DEMAND_LIVING_ACADEMY"
+		desc = "DEMAND_LIVING_ACADEMY_DESC"
+		fulfilled_effect = 0.001
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_pop_group = {
+					OR = {
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_normal }
+						has_living_standard = { type = living_standard_subsistence }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				any_owned_pop_group = {
+					OR = {
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_normal }
+					}
+				}
+			}
+		}
+	}
+
+	demand = { # 机器劳工
+		title = "DEMAND_ROBOT_WORK"
+		unfulfilled_title = "DEMAND_ROBOT_WORK"
+		desc = "DEMAND_ROBOT_WORK_DESC"
+		fulfilled_effect = 5
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = robots_allowed
+				NOT = { has_policy_flag = ai_servitude }
+			}
+		}
+	}
+
+	demand = { # "TRADITIONALIST_PSIONIC_TEACHINGS"
+		title = "TRADITIONALIST_PSIONIC_TEACHINGS"
+		unfulfilled_title = "TRADITIONALIST_NO_PSIONIC_TEACHINGS"
+		desc = "TRADITIONALIST_PSIONIC_TEACHINGS_DESC"
+
+		fulfilled_effect = 10
+		unfulfilled_effect = -0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_origin = origin_shroudwalker_apprentice
 			}
 		}
 
-		demand = { # 学术优待
-			title = "DEMAND_LIVING_ACADEMY"
-			unfulfilled_title = "DEMAND_LIVING_ACADEMY"
-			desc = "DEMAND_LIVING_ACADEMY_DESC"
-			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-				owner = {
-					is_ai = no # 仅玩家，减少卡顿
-				}
+		trigger = {
+			owner = {
+				has_technology = tech_psionic_theory
 			}
-			trigger = {
-				owner = {
-					any_owned_pop_group = {
-						has_living_standard = { type = living_standard_academic_privilege }
-					}
+		}
+	}
+	#秘密知识
+	demand = {
+		title = "TECHNOLOGIST_SECRET_KNOWLEDGE"
+		unfulfilled_title = "TECHNOLOGIST_NO_SECRET_KNOWLEDGE"
+		desc = "TECHNOLOGIST_SECRET_KNOWLEDGE_DESC"
+		fulfilled_effect = 10
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_modifier = fallen_empire_gift_databanks
+					has_modifier = curator_insight
 				}
 			}
 		}
-		demand = { # 学术优待
-			title = "DEMAND_LIVING_ACADEMY"
-			unfulfilled_title = "DEMAND_LIVING_ACADEMY"
-			desc = "DEMAND_LIVING_ACADEMY_DESC"
-			fulfilled_effect = 5
-			unfulfilled_effect = -10
-			potential = {
-				exists = owner
-				owner = {
-					is_ai = no # 仅玩家，减少卡顿
-				}
-			}
-			trigger = {
-				owner = {
-					any_owned_pop_group = {
-						OR = {
-							has_living_standard = { type = living_standard_utopian }
-							has_living_standard = { type = living_standard_stratified }
-						}
-					}
+		trigger = {
+			always = yes
+		}
+	}
+	#过往智识
+	demand = {
+		title = "TECHNOLOGIST_ARCANA"
+		unfulfilled_title = "TECHNOLOGIST_NO_ARCANA"
+		desc = "TECHNOLOGIST_ARCANA_DESC"
+		fulfilled_effect = 5
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_modifier = arcane_deciphering_cooldown
+					has_modifier = arcane_insight
 				}
 			}
 		}
-		
-		demand = { # 科研道德
-			title = "DEMAND_RESEARCH_TOLERANCE"
-			unfulfilled_title = "DEMAND_RESEARCH_TOLERANCE"
-			desc = "DEMAND_RESEARCH_TOLERANCE_DESC"
-			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-				owner = {
-					NOR = {
-						has_policy_flag = dogma_bottom_line
-						has_policy_flag = moral_bottom_line
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = rational_bottom_line
+		trigger = {
+			always = yes
+		}
+	}
+	#先驱秘辛
+	demand = {
+		title = "TECHNOLOGIST_PRECURSOR_SECRETS"
+		unfulfilled_title = "TECHNOLOGIST_NO_PRECURSOR_SECRETS"
+		desc = "TECHNOLOGIST_PRECURSOR_SECRETS_DESC"
+		fulfilled_effect = 5
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_modifier = artifact_cybrex_research_completed
+					has_modifier = artifact_irassian_research_completed
+					has_modifier = artifact_league_research_completed
+					has_modifier = artifact_vultaum_research_completed_suppressed
+					has_modifier = artifact_vultaum_research_completed_public
+					has_country_flag = artifact_yuht_research_completed
 				}
 			}
 		}
-		demand = {
-			title = "DEMAND_RESEARCH_TOLERANCE"
-			unfulfilled_title = "DEMAND_RESEARCH_TOLERANCE"
-			desc = "DEMAND_RESEARCH_TOLERANCE_NO_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -10
-			potential = {
-				owner = {
-					OR = {
-						has_policy_flag = dogma_bottom_line
-						has_policy_flag = moral_bottom_line
-					}
-				}
-			}
-			trigger = {
-				always = no
+		trigger = {
+			always = yes
+		}
+	}
+
+	demand = { # "TRADITIONALIST_SHROUD_CURSE"
+		title = "TRADITIONALIST_SHROUD_CURSE"
+		unfulfilled_title = "TRADITIONALIST_NO_SHROUD_CURSE"
+		desc = "TRADITIONALIST_SHROUD_CURSE_DESC"
+
+		fulfilled_effect = -5
+		unfulfilled_effect = 0.001
+
+		potential = {
+			exists = owner
+			owner = {
+				has_country_flag = negative_shroud_outcome
 			}
 		}
 
-		demand = { # 机器劳工
-			title = "DEMAND_ROBOT_WORK"
-			unfulfilled_title = "DEMAND_ROBOT_WORK"
-			desc = "DEMAND_ROBOT_WORK_DESC"
-			fulfilled_effect = 5
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = robots_allowed
-					NOT = { has_policy_flag = ai_servitude }
-				}
+		trigger = {
+			owner = {
+				has_country_flag = negative_shroud_outcome
 			}
 		}
+	}
 
-		demand = { # 时代尖兵
-			title = "TECHNOLOGIST_TECH_LEAP"
-			unfulfilled_title = "TECHNOLOGIST_TECH_LAG"
-			desc = "TECHNOLOGIST_TECH_LEAP_DESC"
-			fulfilled_effect = 10
-			unfulfilled_effect = -20
-			potential = {
-				exists = owner
-				owner = {
-					any_relation = {
-						has_communications = root.owner
-						is_country_type = default
-						NOT = {
-							has_government = gov_successor_khanate
-						}
-					}
-					NOR = {
-						has_country_flag = primitives_can_into_space
-						is_subject = yes
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					NOT = {
-						any_relation = {
-							has_communications = root.owner
-							is_country_type = default
-							NOT = {
-								has_government = gov_successor_khanate
-							}
-							relative_power = {
-								who = root.owner
-								category = technology
-								value > equivalent
-							}
-						}
-					}
-				}
-			}
-		}
-
-		#基因工程
-		demand = {
-			title = "GENETIC_SUPERIORITY"
-			unfulfilled_title = "NO_GENETIC_SUPERIORITY"
-			desc = "GENETIC_SUPERIORITY_DESC"
-			fulfilled_effect = 15
-			unfulfilled_effect = -2
-			potential = {
-				exists = owner
-				owner = {
-					has_origin = origin_symbiotic_race
-				}
-			}
-			trigger = {
-				owner = {
-					has_ascension_perk = ap_engineered_evolution
-				}
-			}
-		}
-		#血肉苦弱
-		demand = {
-			title = "TRADITIONALIST_FLESH_IS_WEAK"
-			unfulfilled_title = "NO_TRADITIONALIST_FLESH_IS_WEAK"
-			desc = "TRADITIONALIST_FLESH_IS_WEAK_DESC"
-			fulfilled_effect = 10
-			potential = {
-				exists = owner
-			}
-			trigger = {
-				owner = {
-					has_country_flag = flesh_weakened
-				}
-			}
-		}
-		#嫉妒合成人技术
-		demand = {
-			title = "TECHNOLOGIST_NO_SYNTH_ENVY"
-			unfulfilled_title = "TECHNOLOGIST_SYNTH_ENVY"
-			desc = "TECHNOLOGIST_NO_SYNTH_ENVY_DESC"
-			unfulfilled_effect = -10
-			fulfilled_effect = 0.001
-			potential = {
-				exists = owner
-				owner = {
-					NOT = {
-						has_ascension_perk = ap_synthetic_evolution
-					}
-					any_relation = {
-						has_communications = root.owner
-						any_owned_pop_group = {
-							OR = {
-								has_trait = trait_mechanical
-								has_trait = trait_cybernetic
-							}
-						}
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					any_owned_pop_group = {
-						OR = {
-							has_trait = trait_mechanical
-							has_trait = trait_cybernetic
-						}
-					}
-				}
-			}
-		}
-		#秘密知识
-		demand = {
-			title = "TECHNOLOGIST_SECRET_KNOWLEDGE"
-			unfulfilled_title = "TECHNOLOGIST_NO_SECRET_KNOWLEDGE"
-			desc = "TECHNOLOGIST_SECRET_KNOWLEDGE_DESC"
-			fulfilled_effect = 10
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_modifier = fallen_empire_gift_databanks
-						has_modifier = curator_insight
-					}
-				}
-			}
-			trigger = {
-				always = yes
-			}
-		}
-		#过往智识
-		demand = {
-			title = "TECHNOLOGIST_ARCANA"
-			unfulfilled_title = "TECHNOLOGIST_NO_ARCANA"
-			desc = "TECHNOLOGIST_ARCANA_DESC"
-			fulfilled_effect = 5
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_modifier = arcane_deciphering_cooldown
-						has_modifier = arcane_insight
-					}
-				}
-			}
-			trigger = {
-				always = yes
-			}
-		}
-		#先驱秘辛
-		demand = {
-			title = "TECHNOLOGIST_PRECURSOR_SECRETS"
-			unfulfilled_title = "TECHNOLOGIST_NO_PRECURSOR_SECRETS"
-			desc = "TECHNOLOGIST_PRECURSOR_SECRETS_DESC"
-			fulfilled_effect = 5
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_modifier = artifact_cybrex_research_completed
-						has_modifier = artifact_irassian_research_completed
-						has_modifier = artifact_league_research_completed
-						has_modifier = artifact_vultaum_research_completed_suppressed
-						has_modifier = artifact_vultaum_research_completed_public
-						has_country_flag = artifact_yuht_research_completed
-					}
-				}
-			}
-			trigger = {
-				always = yes
-			}
-		}
-	
-		# 派系的委员会和领导人诉求
-		inline_script = {
-			script = "paragon/global_faction_demands"
-			ETHIC = ethic_pragmatism
-			ETHIC_OPPOSED = ethic_pragmatism
-		}
+	# 派系的委员会和领导人诉求
+	inline_script = {
+		script = "paragon/global_faction_demands"
+		ETHIC = ethic_pragmatism
+		ETHIC_OPPOSED = ethic_pragmatism
+	}
 
 	on_create = {
 		pop_faction_event = { id = factions.0 }

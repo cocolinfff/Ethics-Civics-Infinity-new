@@ -11,6 +11,17 @@ slaves = {
 	resources = {
 		category = pop_factions
 		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_policy_flag = slavery_allowed }
+			}
+			unity = -0.25
+		}
+		produces = {
+			trigger = {
+				exists = owner
+				owner = { has_policy_flag = slavery_not_allowed }
+			}
 			unity = 0.25
 		}
 	}
@@ -39,11 +50,6 @@ slaves = {
 		can_think = yes
 		is_enslaved = yes
 		NOT = { has_ethic = ethic_authoritarian }
-		OR = { # Only Same Ideology or Job
-			can_join_faction_slaves_i = yes
-			can_join_faction_slaves_c = yes
-			#can_join_faction_slaves_j = yes
-		}
 	}
 	attraction = {
 		base = 75 # Not Common
@@ -88,14 +94,6 @@ slaves = {
 			happiness < 0.35
 			is_enslaved = yes
 		}
-		# 万众一心
-		modifier = {
-			factor = 0.1
-			exists = root
-			root = { faction_approval < 0.5 }
-			exists = owner
-			owner = { has_ascension_perk = ap_one_vision }
-		}
 	}
 	leader = {
 		base = 1
@@ -114,98 +112,98 @@ slaves = {
 			is_event_leader = yes
 		}
 	}
-	
+
 	# 诉求
-		# Faction Outraged
-		inline_script = {
-			script = pop_faction_types/demand_faction_outraged
-			FLAG = galcom_resolution_passed_anti_xenoist
-		}
-		# Faction Pleased
-		inline_script = {
-			script = pop_faction_types/demand_faction_pleased
-			FLAG = galcom_resolution_passed_pro_xenoist
-		}
-		
-		demand = { # 低工时
-			title = "DEMAND_WORKHOUR_SOCIALISM"
-			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
-			fulfilled_effect = 10
-			#unfulfilled_effect = 0 # Yellow
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
-						has_policy_flag = standard_working_hours
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					OR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
-					}
-				}
-			}
-		}
-		demand = {
-			title = "DEMAND_WORKHOUR_SOCIALISM"
-			unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
-			desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
-			fulfilled_effect = 5
-			unfulfilled_effect = -10 
-			potential = {
-				exists = owner
-				owner = {
-					NOR = {
-						has_policy_flag = future_working_hours_liberal
-						has_policy_flag = free_working_hours
-						has_policy_flag = standard_working_hours
-					}
-				}
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = short_working_hours
-				}
-			}
-		}
+	# Faction Outraged
+	inline_script = {
+		script = pop_faction_types/demand_faction_outraged
+		FLAG = galcom_resolution_passed_anti_xenoist
+	}
+	# Faction Pleased
+	inline_script = {
+		script = pop_faction_types/demand_faction_pleased
+		FLAG = galcom_resolution_passed_pro_xenoist
+	}
 
-		demand = { # 废奴
-			title = "DEMAND_SLAVERY_BAN"
-			unfulfilled_title = "DEMAND_SLAVERY_BAN"
-			desc = "DEMAND_SLAVERY_BAN_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -35
-			potential = {
-				exists = owner
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = slavery_not_allowed
+	demand = { # 低工时
+		title = "DEMAND_WORKHOUR_SOCIALISM"
+		unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+		desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+		fulfilled_effect = 10
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_policy_flag = future_working_hours_liberal
+					has_policy_flag = free_working_hours
+					has_policy_flag = standard_working_hours
 				}
 			}
 		}
+		trigger = {
+			owner = {
+				OR = {
+					has_policy_flag = future_working_hours_liberal
+					has_policy_flag = free_working_hours
+				}
+			}
+		}
+	}
+	demand = {
+		title = "DEMAND_WORKHOUR_SOCIALISM"
+		unfulfilled_title = "DEMAND_WORKHOUR_SOCIALISM"
+		desc = "DEMAND_WORKHOUR_SOCIALISM_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -10
+		potential = {
+			exists = owner
+			owner = {
+				NOR = {
+					has_policy_flag = future_working_hours_liberal
+					has_policy_flag = free_working_hours
+					has_policy_flag = standard_working_hours
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = short_working_hours
+			}
+		}
+	}
 
-		demand = { # 反对净化
-			title = "DEMAND_PURGE_NO"
-			unfulfilled_title = "DEMAND_PURGE_NO"
-			desc = "DEMAND_PURGE_NO_DESC"
-			#fulfilled_effect = 0 # Yellow
-			unfulfilled_effect = -15
-			potential = {
-				exists = owner
-			}
-			trigger = {
-				owner = {
-					has_policy_flag = purge_not_allowed
-				}
+	demand = { # 废奴
+		title = "DEMAND_SLAVERY_BAN"
+		unfulfilled_title = "DEMAND_SLAVERY_BAN"
+		desc = "DEMAND_SLAVERY_BAN_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -35
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = slavery_not_allowed
 			}
 		}
+	}
+
+	demand = { # 反对净化
+		title = "DEMAND_PURGE_NO"
+		unfulfilled_title = "DEMAND_PURGE_NO"
+		desc = "DEMAND_PURGE_NO_DESC"
+		fulfilled_effect = 5
+		unfulfilled_effect = -15
+		potential = {
+			exists = owner
+		}
+		trigger = {
+			owner = {
+				has_policy_flag = purge_not_allowed
+			}
+		}
+	}
 
 	on_create = {
 		pop_faction_event = {
@@ -231,7 +229,7 @@ slaves = {
 			title = "EMBRACE_FACTION"
 			description = "EMBRACE_FACTION_DESC"
 			cost = { influence = 100 }
-			
+
 			potential = {
 				exists = owner
 				owner = {
@@ -278,5 +276,50 @@ slaves = {
 			ai_weight = { base = 0 }
 		}
 		# Suppress An Ilegal Faction is Impossible
+		suppress_faction = {
+			title = "SUPPRESS_FACTION"
+			description = "SUPPRESS_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = {
+					NOR = {
+						has_modifier = suppressed_egalitarian
+						has_modifier = promoted_egalitarian
+					}
+				}
+			}
+
+			effect = {
+				add_modifier = { modifier = suppressed_faction days = -1 }
+				parameter:empire = {
+					add_modifier = { modifier = suppressed_egalitarian days = -1 }
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
+		cancel_suppress_faction = {
+			title = "CANCEL_SUPPRESS_FACTION"
+			description = "CANCEL_SUPPRESS_FACTION_DESC"
+
+			potential = {
+				exists = owner
+				parameter:empire = { has_modifier = suppressed_egalitarian }
+			}
+
+			effect = {
+				remove_modifier = suppressed_faction
+				parameter:empire = {
+					remove_modifier = suppressed_egalitarian
+				}
+			}
+
+			ai_weight = {
+				base = 0
+			}
+		}
 	}
 }

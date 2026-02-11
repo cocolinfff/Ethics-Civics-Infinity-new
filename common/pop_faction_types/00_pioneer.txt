@@ -160,10 +160,7 @@ pioneer = {
 		potential = {
 			exists = owner
 			owner = {
-				OR = {
-					is_indirect_democracy = yes
-					is_oligarchy = yes
-				}
+				is_indirect_democracy = yes
 			}
 		}
 		trigger = {
@@ -177,14 +174,11 @@ pioneer = {
 		unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
 		desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
 		fulfilled_effect = 5
-		unfulfilled_effect = -10
+		#unfulfilled_effect = 0 # Yellow
 		potential = {
 			exists = owner
 			owner = {
-				NOR = {
-					is_indirect_democracy = yes
-					is_oligarchy = yes
-				}
+				is_direct_democracy = yes
 			}
 		}
 		trigger = {
@@ -193,49 +187,22 @@ pioneer = {
 			}
 		}
 	}
-	demand = { # 精英政治 (社的先锋队捍卫自己的权力)
-		title = "DEMAND_GOVERNMENT_ELITE"
-		unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
-		desc = "DEMAND_GOVERNMENT_ELITE_DESC"
-		fulfilled_effect = 10
-		#unfulfilled_effect = 0 # Yellow
-		potential = {
-			exists = owner
-			owner = {
-				is_egalitarian = yes
-				OR = {
-					is_oligarchy = yes
-					is_imperial = yes
-					is_indirect_democracy = yes
-				}
-			}
-		}
-		trigger = {
-			owner = {
-				is_oligarchy = yes
-			}
-		}
-	}
 	demand = {
-		title = "DEMAND_GOVERNMENT_ELITE"
-		unfulfilled_title = "DEMAND_GOVERNMENT_ELITE"
-		desc = "DEMAND_GOVERNMENT_ELITE_DESC"
-		fulfilled_effect = 5
+		title = "DEMAND_GOVERNMENT_DEMOCRACY"
+		unfulfilled_title = "DEMAND_GOVERNMENT_DEMOCRACY"
+		desc = "DEMAND_GOVERNMENT_DEMOCRACY_DESC"
+		fulfilled_effect = 0.001
 		unfulfilled_effect = -10
 		potential = {
 			exists = owner
 			owner = {
-				is_egalitarian = yes
-				NOR = {
-					is_oligarchy = yes
-					is_imperial = yes
-					is_indirect_democracy = yes
-				}
+				is_direct_democracy = no
+				is_democratic = no
 			}
 		}
 		trigger = {
 			owner = {
-				is_dictatorial = yes
+				is_imperial = no
 			}
 		}
 	}
@@ -475,7 +442,7 @@ pioneer = {
 			}
 		}
 	}
-	demand = { # 经济平等 (社)
+	demand = { # 经济平等
 		title = "DEMAND_LIVING_EQUALITY"
 		unfulfilled_title = "DEMAND_LIVING_EQUALITY"
 		desc = "DEMAND_LIVING_EQUALITY_DESC"
@@ -484,14 +451,49 @@ pioneer = {
 		potential = {
 			exists = owner
 			owner = {
-				is_egalitarian = yes
-				is_ai = no # 仅玩家，减少卡顿
+				any_owned_species = {
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
 			}
 		}
 		trigger = {
 			owner = {
 				any_owned_species = {
-					has_living_standard = { type = living_standard_utopian }
+					OR = {
+						has_living_standard = { type = living_standard_utopian }
+						has_living_standard = { type = living_standard_shared_burden }
+					}
+				}
+			}
+		}
+	}
+	demand = {
+		title = "DEMAND_LIVING_EQUALITY"
+		unfulfilled_title = "DEMAND_LIVING_EQUALITY"
+		desc = "DEMAND_LIVING_EQUALITY_DESC"
+		fulfilled_effect = 5
+		#unfulfilled_effect = 0 # Yellow
+		potential = {
+			exists = owner
+			owner = {
+				any_owned_species = {
+					OR = {
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_worker_ownership }
+					}
+				}
+			}
+		}
+		trigger = {
+			owner = {
+				any_owned_species = {
+					OR = {
+						has_living_standard = { type = living_standard_good }
+						has_living_standard = { type = living_standard_worker_ownership }
+					}
 				}
 			}
 		}
@@ -505,14 +507,20 @@ pioneer = {
 		potential = {
 			exists = owner
 			owner = {
-				is_egalitarian = yes
-				is_ai = no # 仅玩家，减少卡顿
+				any_owned_species = {
+					OR = {
+						has_living_standard = { type = living_standard_normal }
+						has_living_standard = { type = living_standard_subsistence }
+						has_living_standard = { type = living_standard_stratified }
+						has_living_standard = { type = living_standard_academic_privilege }
+					}
+				}
 			}
 		}
 		trigger = {
 			owner = {
 				any_owned_species = {
-					has_living_standard = { type = living_standard_shared_burden }
+					has_living_standard = { type = living_standard_normal }
 				}
 			}
 		}
@@ -523,7 +531,7 @@ pioneer = {
 		unfulfilled_title = "DEMAND_HEALTH_PUBLIC"
 		desc = "DEMAND_HEALTH_PUBLIC_DESC"
 		fulfilled_effect = 5
-		#unfulfilled_effect = 0 # Yellow
+		unfulfilled_effect = -5
 		potential = {
 			exists = owner
 		}
@@ -539,7 +547,7 @@ pioneer = {
 		unfulfilled_title = "DEMAND_EDUCATION_PUBLIC"
 		desc = "DEMAND_EDUCATION_PUBLIC_DESC"
 		fulfilled_effect = 5
-		#unfulfilled_effect = 0 # Yellow
+		unfulfilled_effect = -5
 		potential = {
 			exists = owner
 		}
@@ -553,47 +561,27 @@ pioneer = {
 	demand = { # 言论自由
 		title = "DEMAND_SPEECH_FREE"
 		unfulfilled_title = "DEMAND_SPEECH_FREE"
-		desc = "DEMAND_SPEECH_FREE_DESC"
-		fulfilled_effect = 5
+		desc = "DEMAND_SPEECH_FREE_UTOPIA_DESC"
+		fulfilled_effect = 10
 		#unfulfilled_effect = 0 # Yellow
 		potential = {
 			exists = owner
-			owner = {
-				is_egalitarian = no
-				NOT = { has_policy_flag = strict_control }
-			}
+			owner = { has_policy_flag = freedom_utopia }
 		}
 		trigger = {
-			owner = { has_policy_flag = freedom_of_speech }
-		}
-	}
-	demand = {
-		title = "DEMAND_SPEECH_FREE"
-		unfulfilled_title = "DEMAND_SPEECH_FREE"
-		desc = "DEMAND_SPEECH_FREE_DESC"
-		#fulfilled_effect = 0 # Yellow
-		unfulfilled_effect = -10
-		potential = {
-			exists = owner
-			owner = {
-				is_egalitarian = no
-				has_policy_flag = strict_control
-			}
-		}
-		trigger = {
-			always = no
+			owner = { has_policy_flag = freedom_utopia }
 		}
 	}
 	demand = { # 定向管控 （社）
 		title = "DEMAND_SPEECH_DIRECT"
 		unfulfilled_title = "DEMAND_SPEECH_DIRECT"
 		desc = "DEMAND_SPEECH_DIRECT_DESC"
-		fulfilled_effect = 10
+		fulfilled_effect = 5
 		#unfulfilled_effect = 0 # Yellow
 		potential = {
 			exists = owner
 			owner = {
-				is_egalitarian = yes
+				NOT = { has_policy_flag = freedom_utopia }
 			}
 		}
 		trigger = {
@@ -608,9 +596,12 @@ pioneer = {
 		title = "EDUCATION_CAMPAIGN"
 		unfulfilled_title = "NO_EDUCATION_CAMPAIGN"
 		desc = "EDUCATION_CAMPAIGN_DESC"
-		fulfilled_effect = 15
+		fulfilled_effect = 10
 		potential = {
 			exists = owner
+			owner = {
+				has_edict = education_campaign
+			}
 		}
 		trigger = {
 			owner = {
@@ -634,7 +625,12 @@ pioneer = {
 			}
 		}
 		trigger = {
-			always = yes
+			owner = {
+				OR = {
+					has_valid_civic = civic_shared_burden
+					has_valid_civic = civic_socialistic
+				}
+			}
 		}
 	}
 
