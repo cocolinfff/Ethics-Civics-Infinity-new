@@ -46,8 +46,8 @@ jobs:
           echo "当前目录: $(pwd)"
           # 当前目录就是 Mod 目录，工具在 ./linter_tool 子目录
           # 运行工具，传入当前目录 (.) 作为 mod 路径
-          cd linter_tool && python main.py .. > ../linter_report.txt 2>&1 || true
-          cd ..
+          # 使用子shell确保工作目录自动恢复
+          (cd linter_tool && python main.py .. > ../linter_report.txt 2>&1) || true
           if [ -f linter_report.txt ]; then
             echo "报告已生成"
             ls -la linter_report.txt
