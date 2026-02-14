@@ -69,14 +69,12 @@ jobs:
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
           fi
           # Extract the full analysis report file
-          if compgen -G "linter_tool/mod_analysis_*" > /dev/null; then
-            latest_report=$(ls -t linter_tool/mod_analysis_* | head -n1)
-            if [ -n "$latest_report" ]; then
-              report_name=$(basename "$latest_report")
-              cp "$latest_report" "./$report_name"
-              summary_report="$report_name"
-              echo "Found analysis report file: $report_name"
-            fi
+          latest_report=$(find linter_tool -maxdepth 1 -type f -name 'mod_analysis_*' -printf '%T@ %p\n' | sort -rn | head -n1 | cut -d' ' -f2-)
+          if [ -n "$latest_report" ]; then
+            report_name=$(basename "$latest_report")
+            cp "$latest_report" "./$report_name"
+            summary_report="$report_name"
+            echo "Found analysis report file: $report_name"
           else
             echo "mod_analysis report file not found"
           fi
@@ -104,7 +102,7 @@ jobs:
           retention-days: 7
 
       - name: 💾 上传分析报告附件
-        if: env.SUMMARY_REPORT != 'linter_report.txt'
+        if: env.SUMMARY_REPORT != '' && env.SUMMARY_REPORT != 'linter_report.txt'
         uses: actions/upload-artifact@v4
         with:
           name: Mod-Analysis-Report-${{ github.ref_name }}
