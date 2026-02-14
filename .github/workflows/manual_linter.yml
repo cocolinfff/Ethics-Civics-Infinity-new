@@ -37,7 +37,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip'
 
       # 4. 运行检测工具并捕获输出
       - name: 🚀 运行完整性检测
@@ -47,12 +46,21 @@ jobs:
           echo "当前目录: $(pwd)"
           # 当前目录就是 Mod 目录，工具在 ./linter_tool 子目录
           # 运行工具，传入当前目录 (.) 作为 mod 路径
-          cd linter_tool && python main.py .. > ../linter_report.txt 2>&1 || echo "LINTER_FAILED=true" >> $GITHUB_ENV
-          echo "---"
-          echo "报告已生成"
-          ls -la ../linter_report.txt
-          echo "报告内容前10行:"
-          head -10 ../linter_report.txt
+          cd linter_tool && python main.py .. > ../linter_report.txt 2>&1 || true
+          cd ..
+          if [ -f linter_report.txt ]; then
+            echo "报告已生成"
+            ls -la linter_report.txt
+            echo "报告内容前10行:"
+            head -10 linter_report.txt
+            # 检查是否有错误
+            if grep -qi "error\|exception\|traceback" linter_report.txt; then
+              echo "LINTER_FAILED=true" >> $GITHUB_ENV
+            fi
+          else
+            echo "报告文件生成失败"
+            echo "LINTER_FAILED=true" >> $GITHUB_ENV
+          fi
 
       # 5. 输出完整报告内容
       - name: 📄 输出完整报告
