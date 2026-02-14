@@ -101,9 +101,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Mod-Linter-Report-${{ github.ref_name }}
-          path: |
-            linter_report.txt
-            ${{ env.SUMMARY_REPORT }}
+          path: linter_report.txt
+          retention-days: 7
+
+      - name: 💾 上传分析报告附件
+        if: env.SUMMARY_REPORT != 'linter_report.txt'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mod-Analysis-Report-${{ github.ref_name }}
+          path: ${{ env.SUMMARY_REPORT }}
           retention-days: 7
 
       # 7. 如果上一步检测出致命错误，在这里让 Action 标红变败
