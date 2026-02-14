@@ -55,6 +55,7 @@ jobs:
             exit 1
           fi
           summary_report="linter_report.txt"
+          has_analysis_report="false"
           if [ -f linter_report.txt ]; then
             echo "报告已生成"
             ls -la linter_report.txt
@@ -70,10 +71,10 @@ jobs:
           fi
           # Extract the full analysis report file
           latest_report=$(python - <<'PY'
-import glob, os
+import glob, os, sys
 files = glob.glob("linter_tool/mod_analysis_*")
 if not files:
-    raise SystemExit(0)
+    sys.exit(0)
 latest = max(files, key=os.path.getmtime)
 print(latest)
 PY
@@ -82,11 +83,13 @@ PY
             report_name=$(basename "$latest_report")
             cp "$latest_report" "./$report_name"
             summary_report="$report_name"
+            has_analysis_report="true"
             echo "Found analysis report file: $report_name"
           else
             echo "mod_analysis report file not found"
           fi
           echo "SUMMARY_REPORT=$summary_report" >> $GITHUB_ENV
+          echo "HAS_ANALYSIS_REPORT=$has_analysis_report" >> $GITHUB_ENV
 
       # 5. 输出完整报告内容
       - name: 📄 输出完整报告
@@ -110,7 +113,7 @@ PY
           retention-days: 7
 
       - name: 💾 上传分析报告附件
-        if: env.SUMMARY_REPORT != '' && env.SUMMARY_REPORT != 'linter_report.txt' && hashFiles(env.SUMMARY_REPORT) != ''
+        if: env.HAS_ANALYSIS_REPORT == 'true' && hashFiles(env.SUMMARY_REPORT) != ''
         uses: actions/upload-artifact@v4
         with:
           name: Mod-Analysis-Report-${{ github.ref_name }}
