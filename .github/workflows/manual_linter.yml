@@ -45,25 +45,39 @@ jobs:
           echo "开始运行检测工具..."
           echo "当前目录: $(pwd)"
           # 当前目录就是 Mod 目录，工具在 ./linter_tool 子目录
-          # 运行工具，传入当前目录 (.) 作为 mod 路径
+          # 运行工具，传入当前目录 (..) 作为 mod 路径
           # 使用子shell确保工作目录自动恢复
           if [ -d linter_tool ]; then
-            (cd linter_tool && python main.py .. > ../linter_report.txt 2>&1) || true
-          else
-            echo "错误: linter_tool 目录不存在"
-            echo "LINTER_FAILED=true" >> $GITHUB_ENV
-            exit 1
-          fi
-          if [ -f linter_report.txt ]; then
-            echo "报告已生成"
-            ls -la linter_report.txt
-            echo "报告内容前10行:"
-            head -10 linter_report.txt
+            # 运行工具并捕获控制台输出
+            (cd linter_tool && python main.py .. 2>&1) | tee console_output.txt || true
+            
+            # 查找生成的报告文件（格式：mod_analysis_<模组名>_<时间戳>.txt）
+            REPORT_FILE=$(find linter_tool -maxdepth 1 -name "mod_analysis_*.txt" -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
+            
+            if [ -n "$REPORT_FILE" ] && [ -f "$REPORT_FILE" ]; then
+              echo "找到生成的报告文件: $REPORT_FILE"
+              # 复制报告文件到根目录
+              cp "$REPORT_FILE" linter_report.txt
+              echo "报告文件大小:"
+              ls -lh linter_report.txt
+              echo "报告内容前20行:"
+              head -20 linter_report.txt
+            else
+              echo "未找到生成的报告文件，使用控制台输出作为报告"
+              mv console_output.txt linter_report.txt
+            fi
+            
             # 检查工具是否崩溃 (检测 Python Traceback 标识)
             if grep -q "^Traceback" linter_report.txt; then
               echo "LINTER_FAILED=true" >> $GITHUB_ENV
             fi
           else
+            echo "错误: linter_tool 目录不存在"
+            echo "LINTER_FAILED=true" >> $GITHUB_ENV
+            exit 1
+          fi
+          
+          if [ ! -f linter_report.txt ]; then
             echo "报告文件生成失败"
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
           fi
