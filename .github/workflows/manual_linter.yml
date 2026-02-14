@@ -54,6 +54,8 @@ jobs:
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
             exit 1
           fi
+          # 默认使用执行日志作为摘要
+          echo "SUMMARY_REPORT=linter_report.txt" >> $GITHUB_ENV
           if [ -f linter_report.txt ]; then
             echo "报告已生成"
             ls -la linter_report.txt
@@ -67,15 +69,28 @@ jobs:
             echo "报告文件生成失败"
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
           fi
+          # 提取完整分析报告文件
+          if compgen -G "linter_tool/mod_analysis_*" > /dev/null; then
+            latest_report=$(ls -t linter_tool/mod_analysis_* | head -n1)
+            if [ -n "$latest_report" ]; then
+              report_name=$(basename "$latest_report")
+              cp "$latest_report" "./$report_name"
+              echo "SUMMARY_REPORT=$report_name" >> $GITHUB_ENV
+              echo "找到分析报告文件: $report_name"
+            fi
+          else
+            echo "未找到 mod_analysis 报告文件"
+          fi
 
       # 5. 输出完整报告内容
       - name: 📄 输出完整报告
         run: |
-          if [ -f linter_report.txt ]; then
+          report_path="${SUMMARY_REPORT:-linter_report.txt}"
+          if [ -f "$report_path" ]; then
             echo "## 📄 完整检测报告" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```text' >> $GITHUB_STEP_SUMMARY
-            cat linter_report.txt >> $GITHUB_STEP_SUMMARY
+            cat "$report_path" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           else
             echo "报告文件生成失败" >> $GITHUB_STEP_SUMMARY
@@ -86,7 +101,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Mod-Linter-Report-${{ github.ref_name }}
-          path: linter_report.txt
+          path: |
+            linter_report.txt
+            ${{ env.SUMMARY_REPORT }}
           retention-days: 7
 
       # 7. 如果上一步检测出致命错误，在这里让 Action 标红变败
