@@ -74,10 +74,16 @@ jobs:
           # Extract the full analysis report file
           latest_report=$(python - <<'PY'
 import glob, os, sys
-files = glob.glob("linter_tool/**/mod_analysis_*", recursive=True)
-if not files:
+entries = []
+for path in glob.glob("linter_tool/**/mod_analysis_*.txt", recursive=True):
+    try:
+        mtime = os.path.getmtime(path)
+    except OSError:
+        continue
+    entries.append((mtime, path))
+if not entries:
     sys.exit(0)
-latest = max(files, key=lambda x: (os.path.getmtime(x), x))
+latest = max(entries, key=lambda x: (x[0], x[1]))[1]
 print(latest)
 PY
 )
