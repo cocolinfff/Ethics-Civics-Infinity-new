@@ -72,7 +72,7 @@ jobs:
           # Extract the full analysis report file
           latest_report=$(python - <<'PY'
 import glob, os, sys
-files = glob.glob("linter_tool/mod_analysis_*")
+files = glob.glob("linter_tool/**/mod_analysis_*", recursive=True)
 valid_files = [path for path in files if os.access(path, os.R_OK)]
 if not valid_files:
     sys.exit(0)
@@ -80,7 +80,7 @@ latest = max(valid_files, key=os.path.getmtime)
 print(latest)
 PY
 )
-          if [ -n "$latest_report" ]; then
+          if [ -n "$latest_report" ] && [ -f "$latest_report" ]; then
             report_name=$(basename "$latest_report")
             cp "$latest_report" "$report_name"
             summary_report="$report_name"
@@ -109,7 +109,7 @@ PY
       - name: 💾 上传完整日志附件
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Linter-Report-${{ github.run_id }}
+          name: Mod-Linter-Report-${{ replace(github.ref_name, '/', '_') }}-${{ github.run_id }}
           path: linter_report.txt
           retention-days: 7
 
@@ -117,7 +117,7 @@ PY
         if: env.HAS_ANALYSIS_REPORT == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Analysis-Report-${{ github.run_id }}
+          name: Mod-Analysis-Report-${{ replace(github.ref_name, '/', '_') }}-${{ github.run_id }}
           path: ${{ env.SUMMARY_REPORT }}
           retention-days: 7
 
