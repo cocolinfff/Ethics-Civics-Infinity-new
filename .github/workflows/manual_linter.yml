@@ -75,11 +75,8 @@ import glob, os, sys
 files = glob.glob("linter_tool/mod_analysis_*")
 valid_files = []
 for path in files:
-    try:
-        os.path.getmtime(path)
-    except OSError:
-        continue
-    valid_files.append(path)
+    if os.path.exists(path) and os.access(path, os.R_OK):
+        valid_files.append(path)
 if not valid_files:
     sys.exit(0)
 latest = max(valid_files, key=os.path.getmtime)
@@ -115,7 +112,7 @@ PY
       - name: 💾 上传完整日志附件
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Linter-Report-${{ github.ref_name }}
+          name: Mod-Linter-Report-${{ github.run_id }}
           path: linter_report.txt
           retention-days: 7
 
@@ -123,7 +120,7 @@ PY
         if: env.HAS_ANALYSIS_REPORT == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Analysis-Report-${{ github.ref_name }}
+          name: Mod-Analysis-Report-${{ github.run_id }}
           path: ${{ env.SUMMARY_REPORT }}
           retention-days: 7
 
