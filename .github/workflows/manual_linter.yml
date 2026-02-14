@@ -54,7 +54,7 @@ jobs:
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
             exit 1
           fi
-          # 默认使用执行日志作为摘要
+          # Use execution log as the default summary
           echo "SUMMARY_REPORT=linter_report.txt" >> $GITHUB_ENV
           if [ -f linter_report.txt ]; then
             echo "报告已生成"
@@ -69,17 +69,17 @@ jobs:
             echo "报告文件生成失败"
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
           fi
-          # 提取完整分析报告文件
+          # Extract the full analysis report file
           if compgen -G "linter_tool/mod_analysis_*" > /dev/null; then
             latest_report=$(ls -t linter_tool/mod_analysis_* | head -n1)
             if [ -n "$latest_report" ]; then
               report_name=$(basename "$latest_report")
               cp "$latest_report" "./$report_name"
               echo "SUMMARY_REPORT=$report_name" >> $GITHUB_ENV
-              echo "找到分析报告文件: $report_name"
+              echo "Found analysis report file: $report_name"
             fi
           else
-            echo "未找到 mod_analysis 报告文件"
+            echo "mod_analysis report file not found"
           fi
 
       # 5. 输出完整报告内容
