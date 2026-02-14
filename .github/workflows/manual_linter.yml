@@ -73,9 +73,16 @@ jobs:
           latest_report=$(python - <<'PY'
 import glob, os, sys
 files = glob.glob("linter_tool/mod_analysis_*")
-if not files:
+valid_files = []
+for path in files:
+    try:
+        os.path.getmtime(path)
+    except OSError:
+        continue
+    valid_files.append(path)
+if not valid_files:
     sys.exit(0)
-latest = max(files, key=os.path.getmtime)
+latest = max(valid_files, key=os.path.getmtime)
 print(latest)
 PY
 )
@@ -113,7 +120,7 @@ PY
           retention-days: 7
 
       - name: 💾 上传分析报告附件
-        if: env.HAS_ANALYSIS_REPORT == 'true' && hashFiles(env.SUMMARY_REPORT) != ''
+        if: env.HAS_ANALYSIS_REPORT == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: Mod-Analysis-Report-${{ github.ref_name }}
