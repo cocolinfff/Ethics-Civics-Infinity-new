@@ -54,8 +54,7 @@ jobs:
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
             exit 1
           fi
-          # Use execution log as the default summary
-          echo "SUMMARY_REPORT=linter_report.txt" >> $GITHUB_ENV
+          summary_report="linter_report.txt"
           if [ -f linter_report.txt ]; then
             echo "报告已生成"
             ls -la linter_report.txt
@@ -75,22 +74,22 @@ jobs:
             if [ -n "$latest_report" ]; then
               report_name=$(basename "$latest_report")
               cp "$latest_report" "./$report_name"
-              echo "SUMMARY_REPORT=$report_name" >> $GITHUB_ENV
+              summary_report="$report_name"
               echo "Found analysis report file: $report_name"
             fi
           else
             echo "mod_analysis report file not found"
           fi
+          echo "SUMMARY_REPORT=$summary_report" >> $GITHUB_ENV
 
       # 5. 输出完整报告内容
       - name: 📄 输出完整报告
         run: |
-          report_path="${SUMMARY_REPORT:-linter_report.txt}"
-          if [ -f "$report_path" ]; then
+          if [ -f "$SUMMARY_REPORT" ]; then
             echo "## 📄 完整检测报告" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```text' >> $GITHUB_STEP_SUMMARY
-            cat "$report_path" >> $GITHUB_STEP_SUMMARY
+            cat "$SUMMARY_REPORT" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           else
             echo "报告文件生成失败" >> $GITHUB_STEP_SUMMARY
