@@ -18,8 +18,6 @@ on:
 jobs:
   mod-linter:
     runs-on: ubuntu-latest
-    env:
-      SANITIZED_REF: ${{ replace(github.ref_name, '/', '_') }}
 
     steps:
       # 1. 检出当前 Mod 的代码
@@ -56,8 +54,6 @@ jobs:
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
             exit 1
           fi
-          summary_report="linter_report.txt"
-          has_analysis_report="false"
           if [ -f linter_report.txt ]; then
             echo "报告已生成"
             ls -la linter_report.txt
@@ -71,42 +67,15 @@ jobs:
             echo "报告文件生成失败"
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
           fi
-          # Extract the full analysis report file
-          latest_report=$(python - <<'PY'
-import glob, os, sys
-entries = []
-for path in glob.glob("linter_tool/**/mod_analysis_*.txt", recursive=True):
-    try:
-        mtime = os.path.getmtime(path)
-    except OSError:
-        continue
-    entries.append((mtime, path))
-if not entries:
-    sys.exit(0)
-latest = max(entries, key=lambda x: (x[0], x[1]))[1]
-print(latest)
-PY
-)
-          if [ -n "$latest_report" ] && [ -f "$latest_report" ]; then
-            report_name=$(basename "$latest_report")
-            cp "$latest_report" "$report_name"
-            summary_report="$report_name"
-            has_analysis_report="true"
-            echo "Found analysis report file: $report_name"
-          else
-            echo "mod_analysis report file not found"
-          fi
-          echo "SUMMARY_REPORT=$summary_report" >> $GITHUB_ENV
-          echo "HAS_ANALYSIS_REPORT=$has_analysis_report" >> $GITHUB_ENV
 
       # 5. 输出完整报告内容
       - name: 📄 输出完整报告
         run: |
-          if [ -f "$SUMMARY_REPORT" ]; then
+          if [ -f linter_report.txt ]; then
             echo "## 📄 完整检测报告" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```text' >> $GITHUB_STEP_SUMMARY
-            cat "$SUMMARY_REPORT" >> $GITHUB_STEP_SUMMARY
+            cat linter_report.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           else
             echo "报告文件生成失败" >> $GITHUB_STEP_SUMMARY
@@ -116,16 +85,8 @@ PY
       - name: 💾 上传完整日志附件
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Linter-Report-${{ env.SANITIZED_REF }}-${{ github.run_id }}
+          name: Mod-Linter-Report-${{ github.ref_name }}
           path: linter_report.txt
-          retention-days: 7
-
-      - name: 💾 上传分析报告附件
-        if: env.HAS_ANALYSIS_REPORT == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: Mod-Analysis-Report-${{ env.SANITIZED_REF }}-${{ github.run_id }}
-          path: ${{ env.SUMMARY_REPORT }}
           retention-days: 7
 
       # 7. 如果上一步检测出致命错误，在这里让 Action 标红变败
