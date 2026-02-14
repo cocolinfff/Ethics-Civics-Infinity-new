@@ -69,7 +69,15 @@ jobs:
             echo "LINTER_FAILED=true" >> $GITHUB_ENV
           fi
           # Extract the full analysis report file
-          latest_report=$(find linter_tool -maxdepth 1 -type f -name 'mod_analysis_*' -printf '%T@ %p\n' | sort -rn | head -n1 | cut -d' ' -f2-)
+          latest_report=$(python - <<'PY'
+import glob, os
+files = glob.glob("linter_tool/mod_analysis_*")
+if not files:
+    raise SystemExit(0)
+latest = max(files, key=os.path.getmtime)
+print(latest)
+PY
+)
           if [ -n "$latest_report" ]; then
             report_name=$(basename "$latest_report")
             cp "$latest_report" "./$report_name"
@@ -102,7 +110,7 @@ jobs:
           retention-days: 7
 
       - name: 💾 上传分析报告附件
-        if: env.SUMMARY_REPORT != '' && env.SUMMARY_REPORT != 'linter_report.txt'
+        if: env.SUMMARY_REPORT != '' && env.SUMMARY_REPORT != 'linter_report.txt' && hashFiles(env.SUMMARY_REPORT) != ''
         uses: actions/upload-artifact@v4
         with:
           name: Mod-Analysis-Report-${{ github.ref_name }}
