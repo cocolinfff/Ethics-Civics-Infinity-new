@@ -44,15 +44,15 @@ jobs:
         run: |
           echo "开始运行检测工具..."
           echo "当前目录: $(pwd)"
-          # 当前目录就是 Mod 目录，工具在 ./linter_tool 子目录
-          # 运行工具，传入当前目录 (..) 作为 mod 路径
+          # 当前目录是 Mod 根目录，工具在 ./linter_tool 子目录
+          # 进入 linter_tool 后，用 .. 指向其父目录（即 Mod 根目录）
           # 使用子shell确保工作目录自动恢复
           if [ -d linter_tool ]; then
             # 运行工具并捕获控制台输出
             (cd linter_tool && python main.py .. 2>&1) | tee console_output.txt || true
             
-            # 检查工具是否崩溃 (检测 Python Traceback 标识)
-            if grep -q "^Traceback" console_output.txt; then
+            # 检查工具是否崩溃 (检测 Python Traceback)
+            if grep -q "Traceback (most recent call last)" console_output.txt; then
               echo "LINTER_FAILED=true" >> $GITHUB_ENV
             fi
             
