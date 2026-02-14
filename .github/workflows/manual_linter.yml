@@ -18,6 +18,8 @@ on:
 jobs:
   mod-linter:
     runs-on: ubuntu-latest
+    env:
+      SANITIZED_REF: ${{ replace(github.ref_name, '/', '_') }}
 
     steps:
       # 1. 检出当前 Mod 的代码
@@ -73,10 +75,9 @@ jobs:
           latest_report=$(python - <<'PY'
 import glob, os, sys
 files = glob.glob("linter_tool/**/mod_analysis_*", recursive=True)
-valid_files = [path for path in files if os.access(path, os.R_OK)]
-if not valid_files:
+if not files:
     sys.exit(0)
-latest = max(valid_files, key=os.path.getmtime)
+latest = max(files, key=lambda x: (os.path.getmtime(x), x))
 print(latest)
 PY
 )
@@ -109,7 +110,7 @@ PY
       - name: 💾 上传完整日志附件
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Linter-Report-${{ replace(github.ref_name, '/', '_') }}-${{ github.run_id }}
+          name: Mod-Linter-Report-${{ env.SANITIZED_REF }}-${{ github.run_id }}
           path: linter_report.txt
           retention-days: 7
 
@@ -117,7 +118,7 @@ PY
         if: env.HAS_ANALYSIS_REPORT == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Mod-Analysis-Report-${{ replace(github.ref_name, '/', '_') }}-${{ github.run_id }}
+          name: Mod-Analysis-Report-${{ env.SANITIZED_REF }}-${{ github.run_id }}
           path: ${{ env.SUMMARY_REPORT }}
           retention-days: 7
 
