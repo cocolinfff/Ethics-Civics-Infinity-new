@@ -48,64 +48,17 @@ jobs:
           cd linter_tool
           python main.py .. > ../linter_report.txt 2>&1 || echo "LINTER_FAILED=true" >> $GITHUB_ENV
 
-      # 5. 高完成度核心：生成 GitHub 网页端可视化报告
-      - name: 📊 生成网页检测报告
+      # 5. 输出完整报告内容
+      - name: 📄 输出完整报告
         run: |
-          # 统计错误、警告、信息数量
-          ERRORS=$(grep -c "ERROR" linter_report.txt 2>/dev/null || echo "0")
-          WARNINGS=$(grep -c "WARNING" linter_report.txt 2>/dev/null || echo "0")
-          INFOS=$(grep -c "INFO" linter_report.txt 2>/dev/null || echo "0")
-
-          echo "## 🔍 Mod 完整性检测报告" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| 项目 | 数值 |" >> $GITHUB_STEP_SUMMARY
-          echo "|:---:|:---:|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🏷️ 运行分支 | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚙️ 检测级别 | \`${{ inputs.log_level }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| ❌ 错误 | **$ERRORS** |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚠️ 警告 | **$WARNINGS** |" >> $GITHUB_STEP_SUMMARY
-          echo "| ℹ️ 提示 | **$INFOS** |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # 读取报告文件
           if [ -f linter_report.txt ]; then
-            # 提取规则信息
-            echo "### 📋 规则信息" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            grep -E "^Stellaris Version:|^Game Path:|^Rules Built:|^Threshold:" linter_report.txt | head -5 >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "## 📄 完整检测报告" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-
-            # 实体统计
-            echo "### 📊 实体统计" >> $GITHUB_STEP_SUMMARY
+            echo '```text' >> $GITHUB_STEP_SUMMARY
+            cat linter_report.txt >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            grep -E "^Files:|^Total entities:|^  \+ " linter_report.txt | head -10 >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-
-            # 错误详情
-            if [ "$ERRORS" -gt "0" ]; then
-              echo "### ❌ 错误详情" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              grep -A1 "ERROR\]" linter_report.txt | head -20 >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-            fi
-
-            # 警告详情
-            if [ "$WARNINGS" -gt "0" ]; then
-              echo "### ⚠️ 警告详情" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              grep "WARNING\]" linter_report.txt | head -15 >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-            fi
-
-            # 缺失推荐字段统计
-            echo "### 📝 缺失推荐字段 (部分)" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            grep "Missing recommended" linter_report.txt | head -20 >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "报告文件生成失败" >> $GITHUB_STEP_SUMMARY
           fi
 
       # 6. 提供完整日志文件供下载
