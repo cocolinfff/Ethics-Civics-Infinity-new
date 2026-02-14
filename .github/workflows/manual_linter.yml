@@ -51,8 +51,14 @@ jobs:
             # 运行工具并捕获控制台输出
             (cd linter_tool && python main.py .. 2>&1) | tee console_output.txt || true
             
+            # 检查工具是否崩溃 (检测 Python Traceback 标识)
+            if grep -q "^Traceback" console_output.txt; then
+              echo "LINTER_FAILED=true" >> $GITHUB_ENV
+            fi
+            
             # 查找生成的报告文件（格式：mod_analysis_<模组名>_<时间戳>.txt）
-            REPORT_FILE=$(find linter_tool -maxdepth 1 -name "mod_analysis_*.txt" -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
+            # 使用 ls -t 按时间排序，兼容 BSD/GNU find
+            REPORT_FILE=$(ls -t linter_tool/mod_analysis_*.txt 2>/dev/null | head -1)
             
             if [ -n "$REPORT_FILE" ] && [ -f "$REPORT_FILE" ]; then
               echo "找到生成的报告文件: $REPORT_FILE"
@@ -65,11 +71,6 @@ jobs:
             else
               echo "未找到生成的报告文件，使用控制台输出作为报告"
               mv console_output.txt linter_report.txt
-            fi
-            
-            # 检查工具是否崩溃 (检测 Python Traceback 标识)
-            if grep -q "^Traceback" linter_report.txt; then
-              echo "LINTER_FAILED=true" >> $GITHUB_ENV
             fi
           else
             echo "错误: linter_tool 目录不存在"
