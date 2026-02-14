@@ -53,8 +53,8 @@ jobs:
             ls -la linter_report.txt
             echo "报告内容前10行:"
             head -10 linter_report.txt
-            # 检查是否有错误 (匹配行首的错误标识或常见的错误模式)
-            if grep -qiE "(^(error|exception|traceback|fatal|critical)|error:|critical:)" linter_report.txt; then
+            # 检查工具是否崩溃 (仅检测 Python 异常,不检测 linter 报告的正常错误)
+            if grep -qE "^Traceback \(most recent call last\):|^[A-Za-z]+Error:" linter_report.txt; then
               echo "LINTER_FAILED=true" >> $GITHUB_ENV
             fi
           else
