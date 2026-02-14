@@ -73,10 +73,7 @@ jobs:
           latest_report=$(python - <<'PY'
 import glob, os, sys
 files = glob.glob("linter_tool/mod_analysis_*")
-valid_files = []
-for path in files:
-    if os.path.exists(path) and os.access(path, os.R_OK):
-        valid_files.append(path)
+valid_files = [path for path in files if os.access(path, os.R_OK)]
 if not valid_files:
     sys.exit(0)
 latest = max(valid_files, key=os.path.getmtime)
@@ -85,7 +82,7 @@ PY
 )
           if [ -n "$latest_report" ]; then
             report_name=$(basename "$latest_report")
-            cp "$latest_report" "./$report_name"
+            cp "$latest_report" "$report_name"
             summary_report="$report_name"
             has_analysis_report="true"
             echo "Found analysis report file: $report_name"
