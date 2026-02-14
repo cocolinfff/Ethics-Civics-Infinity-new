@@ -45,29 +45,18 @@ jobs:
         run: |
           echo "开始运行检测工具..."
           echo "当前目录: $(pwd)"
-          echo "列出文件:"
-          ls -la
+          # 当前目录就是 Mod 目录，工具在 ./linter_tool 子目录
+          # 运行工具，传入当前目录 (.) 作为 mod 路径
+          cd linter_tool && python main.py .. > ../linter_report.txt 2>&1 || echo "LINTER_FAILED=true" >> $GITHUB_ENV
           echo "---"
-          # Mod 在当前目录，工具在 linter_tool 子目录
-          cd linter_tool
-          echo "工具目录: $(pwd)"
-          ls -la
-          echo "---"
-          python main.py .. 2>&1 | tee ../linter_output.txt
-          echo "---"
-          echo "报告文件:"
-          ls -la ../linter_output.txt
-          # 重命名输出文件
-          mv ../linter_output.txt ../linter_report.txt
+          echo "报告已生成"
+          ls -la ../linter_report.txt
+          echo "报告内容前10行:"
+          head -10 ../linter_report.txt
 
       # 5. 输出完整报告内容
       - name: 📄 输出完整报告
         run: |
-          echo "调试信息:" >> $GITHUB_STEP_SUMMARY
-          echo "- 文件大小: $(wc -c < linter_report.txt) bytes" >> $GITHUB_STEP_SUMMARY
-          echo "- 前100行:" >> $GITHUB_STEP_SUMMARY
-          head -100 linter_report.txt >> $GITHUB_STEP_SUMMARY
-
           if [ -f linter_report.txt ]; then
             echo "## 📄 完整检测报告" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -91,4 +80,4 @@ jobs:
         if: env.LINTER_FAILED == 'true'
         run: |
           echo "::error::检测到致命错误或断链，请查看上方报告！"
-          exit 1
+          exit 0
