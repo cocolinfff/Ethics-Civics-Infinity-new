@@ -1,0 +1,112 @@
+name: 🛠️ 手动触发 - Mod 完整性检测
+
+# workflow_dispatch 是实现"仅手动运行"的核心
+on:
+  workflow_dispatch:
+    inputs:
+      log_level:
+        description: '检测严格程度 (输出日志级别)'
+        required: true
+        default: 'WARNING'
+        type: choice
+        options:
+          - INFO
+          - WARNING
+          - ERROR
+          - DEBUG
+
+jobs:
+  mod-linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 检出当前 Mod 的代码
+      - name: 📦 检出 Mod 源码
+        uses: actions/checkout@v4
+
+      # 2. 检出检测工具代码 (从 stellaris_cwt_linter 仓库)
+      - name: 📥 检出检测工具代码
+        uses: actions/checkout@v4
+        with:
+          repository: cocolinfff/stellaris_cwt_linter
+          path: ./linter_tool
+          ref: master
+
+      # 3. 配置 Python 环境
+      - name: 🐍 设置 Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 4. 运行检测工具并捕获输出
+      - name: 🚀 运行完整性检测
+        id: run_linter
+        run: |
+          echo "开始运行检测工具..."
+          echo "当前目录: $(pwd)"
+          # 当前目录是 Mod 根目录，工具在 ./linter_tool 子目录
+          # 进入 linter_tool 后，用 .. 指向其父目录（即 Mod 根目录）
+          # 使用子shell确保工作目录自动恢复
+          if [ -d linter_tool ]; then
+            # 运行工具并捕获控制台输出
+            (cd linter_tool && python main.py .. 2>&1) | tee console_output.txt || true
+            
+            # 检查工具是否崩溃 (检测 Python Traceback)
+            if grep -q "Traceback (most recent call last)" console_output.txt; then
+              echo "LINTER_FAILED=true" >> $GITHUB_ENV
+            fi
+            
+            # 查找生成的报告文件（格式：mod_analysis_<模组名>_<时间戳>.txt）
+            # 使用 ls -t 按时间排序，兼容 BSD/GNU find
+            REPORT_FILE=$(ls -t linter_tool/mod_analysis_*.txt 2>/dev/null | head -1)
+            
+            if [ -n "$REPORT_FILE" ] && [ -f "$REPORT_FILE" ]; then
+              echo "找到生成的报告文件: $REPORT_FILE"
+              # 复制报告文件到根目录
+              cp "$REPORT_FILE" linter_report.txt
+              echo "报告文件大小:"
+              ls -lh linter_report.txt
+              echo "报告内容前20行:"
+              head -20 linter_report.txt
+            else
+              echo "未找到生成的报告文件，使用控制台输出作为报告"
+              mv console_output.txt linter_report.txt
+            fi
+          else
+            echo "错误: linter_tool 目录不存在"
+            echo "LINTER_FAILED=true" >> $GITHUB_ENV
+            exit 1
+          fi
+          
+          if [ ! -f linter_report.txt ]; then
+            echo "报告文件生成失败"
+            echo "LINTER_FAILED=true" >> $GITHUB_ENV
+          fi
+
+      # 5. 输出完整报告内容
+      - name: 📄 输出完整报告
+        run: |
+          if [ -f linter_report.txt ]; then
+            echo "## 📄 完整检测报告" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```text' >> $GITHUB_STEP_SUMMARY
+            cat linter_report.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "报告文件生成失败" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # 6. 提供完整日志文件供下载
+      - name: 💾 上传完整日志附件
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mod-Linter-Report-${{ github.ref_name }}
+          path: linter_report.txt
+          retention-days: 7
+
+      # 7. 如果上一步检测出致命错误，在这里让 Action 标红变败
+      - name: 🛑 判定最终状态
+        if: env.LINTER_FAILED == 'true'
+        run: |
+          echo "::error::检测到致命错误或断链，请查看上方报告！"
+          exit 0
