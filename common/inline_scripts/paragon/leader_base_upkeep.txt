@@ -1,45 +1,26 @@
-@leader_unity_upkeep = 1
-
 # Default upkeep if owner doesn't exist (E.g. event hire window)
 upkeep = {
 	trigger = {
-		has_leader_upkeep = yes
 		owner = {
 			is_ai = yes
 		}
 	}
-	unity = @leader_unity_upkeep
+	unity = 1
 	mult = trigger:has_total_skill
 }
 upkeep = {
 	trigger = {
-		has_leader_upkeep = yes
 		owner = {
 			is_ai = no
 			is_regular_empire = yes
 			has_valid_civic = civic_anarchism
 		}
 	}
-	unity = 2.5
+	unity = 3
 	mult = trigger:has_total_skill
 }
 upkeep = {
 	trigger = {
-		leader_class = scientist
-		has_leader_upkeep = yes
-		owner = {
-			is_ai = no
-			is_regular_empire = yes
-			has_valid_civic = civic_anarchism
-			has_valid_civic = civic_zhaowen_dao
-		}
-	}
-	unity = -1
-	mult = trigger:has_total_skill
-}
-upkeep = {
-	trigger = {
-		has_leader_upkeep = yes
 		NOT = { root = { has_trait = trait_imperial_heir } }
 		owner = {
 			is_ai = no
@@ -47,59 +28,53 @@ upkeep = {
 			NOR = {
 				has_valid_civic = civic_coalition_government
 				has_valid_civic = civic_merchant_guilds
+				AND = {
+					prev.species = {
+						is_robotic_species = no
+					}
+					is_megacorp = yes
+					OR = {
+						is_purity_authority = yes
+						is_cloning_authority = yes
+						is_mutation_authority = yes
+					}
+				}
 			}
 		}
 	}
-	unity = @leader_unity_upkeep
+	unity = 1
 	mult = trigger:has_total_skill
 }
+# Trade Upkeep for Genetic Corporate Empires
 upkeep = {
 	trigger = {
-		leader_class = scientist
-		has_leader_upkeep = yes
-		NOT = { root = { has_trait = trait_imperial_heir } }
+		species = {
+			is_robotic_species = no
+		}
+		exists = owner
 		owner = {
-			is_ai = no
-			is_regular_empire = yes
+			is_megacorp = yes
+			OR = {
+				is_purity_authority = yes
+				is_cloning_authority = yes
+				is_mutation_authority = yes
+			}
 			NOR = {
-				has_valid_civic = civic_coalition_government
-				has_valid_civic = civic_merchant_guilds
+				root = {
+					has_trait = trait_imperial_heir
+					OR = {
+						is_ruler = yes
+						is_heir = yes
+					}
+				}
 			}
-			has_valid_civic = civic_zhaowen_dao
 		}
 	}
-	unity = -0.5
-	mult = trigger:has_total_skill
+	trade = 2
+	mult = trigger:has_base_skill
 }
 upkeep = {
 	trigger = {
-		has_leader_upkeep = yes
-		NOT = { root = { has_trait = trait_imperial_heir } }
-		owner = {
-			is_ai = no
-			has_valid_civic = civic_merchant_guilds
-		}
-	}
-	consumer_goods = 1
-	mult = trigger:has_total_skill
-}
-upkeep = {
-	trigger = {
-		leader_class = scientist
-		has_leader_upkeep = yes
-		NOT = { root = { has_trait = trait_imperial_heir } }
-		owner = {
-			is_ai = no
-			has_valid_civic = civic_merchant_guilds
-			has_valid_civic = civic_zhaowen_dao
-		}
-	}
-	consumer_goods = -0.5
-	mult = trigger:has_total_skill
-}
-upkeep = {
-	trigger = {
-		has_leader_upkeep = yes
 		owner = {
 			is_ai = no
 			is_machine_empire = yes
@@ -110,10 +85,11 @@ upkeep = {
 }
 upkeep = {
 	trigger = {
-		has_leader_upkeep = yes
 		owner = {
 			is_ai = no
 			is_hive_empire = yes
+		}
+		species = {
 			is_lithoid = no
 		}
 	}
@@ -122,13 +98,63 @@ upkeep = {
 }
 upkeep = {
 	trigger = {
-		has_leader_upkeep = yes
 		owner = {
 			is_ai = no
 			is_hive_empire = yes
+		}
+		species = {
 			is_lithoid = yes
 		}
 	}
 	minerals = 1
 	mult = trigger:has_total_skill
+}
+# Energy upkeep for Replicatory Association
+upkeep = {
+	trigger = {
+		exists = owner
+		OR = {
+			owner = { has_policy_flag = replicatory_association_insurance_stellar }
+			AND = {
+				OR = {
+					is_ruler = yes
+					is_councilor = yes
+				}
+				owner = { has_policy_flag = replicatory_association_insurance_platinium }
+			}
+			AND = {
+				is_ruler = yes
+				owner = { has_policy_flag = replicatory_association_insurance_basic }
+			}
+		}
+	}
+	energy = @replicatory_association_insurance_upkeep
+	mult = trigger:has_base_skill
+}
+# Society upkeep for Homogenous Submission
+upkeep = {
+	trigger = {
+		exists = owner
+		owner = {
+			is_dictatorial_authority = yes
+		}
+		has_trait_tier1or2or3 = {
+			TRAIT = leader_trait_backup_clone
+		}
+		OR = {
+			AND = {
+				leader_class = scientist
+				owner = { has_policy_flag = homogenous_class_scientists }
+			}
+			AND = {
+				leader_class = official
+				owner = { has_policy_flag = homogenous_class_officials }
+			}
+			AND = {
+				leader_class = commander
+				owner = { has_policy_flag = homogenous_class_commanders }
+			}
+		}
+	}
+	society_research = @homogenous_clone_upkeep
 }
