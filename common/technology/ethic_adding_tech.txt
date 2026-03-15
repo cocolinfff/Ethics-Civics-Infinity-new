@@ -1,7 +1,7 @@
 # 更多国策新增科技
 
 #自动化生产
-tech_auto_buildings = {
+tech_auto_buildings_1 = {
 	tier = 1
 	cost = @tier1cost3
 	area = physics
@@ -27,12 +27,12 @@ tech_auto_buildings = {
 }
 
 #复杂自动流水线
-tech_adv_auto_buildings_1 = {
+tech_auto_buildings_2 = {
 	cost = @tier2cost1
 	area = physics
 	category = { computing }
 	tier = 2
-	prerequisites = { "tech_auto_buildings" "tech_self_aware_logic" }
+	prerequisites = { "tech_auto_buildings_1" "tech_self_aware_logic" }
 	weight = @tier2weight1
 
 	potential = {
@@ -52,17 +52,17 @@ tech_adv_auto_buildings_1 = {
 	}
 }
 
-#活建筑
-tech_adv_auto_buildings_2 = {
-	cost = @tier4cost1
-	area = physics
-	category = { computing }
-	tier = 4
-	prerequisites = { "tech_adv_auto_buildings_1" "tech_self_aware_logic" }
-	weight = @tier4weight1
+#自迭代工业
+tech_adv_auto_buildings_productivity_1 = {
+	cost = @tier3cost1
+	area = engineering
+	category = { industry }
+	tier = 3
+	prerequisites = { "tech_auto_buildings_2" "tech_colonial_centralization" }
+	weight = @tier3weight1
 
 	modifier = {
-		bonus_automated_workforce_mult = 1
+		bonus_automated_workforce_mult = 0.25
 	}
 
 	potential = {
@@ -82,38 +82,33 @@ tech_adv_auto_buildings_2 = {
 	}
 }
 
-#自我指涉（循环科技）
-tech_adv_auto_buildings_repeatable = {
-	area = society
-	cost = @repeatableTechBaseCost
-	cost_per_level = @repeatableTechLevelCost
-	tier = @repeatableTechTier
-	category = { computing }
-	levels = -1
-	prerequisites = { "tech_adv_auto_buildings_2" "tech_galactic_administration" }
-	weight = @repeatableTechWeight
+#活建筑
+tech_adv_auto_buildings_productivity_2 = {
+	cost = @tier4cost1
+	area = engineering
+	category = { industry }
+	tier = 4
+	prerequisites = { "tech_adv_auto_buildings_productivity_1" "tech_galactic_administration" }
+	weight = @tier4weight1
+
+	modifier = {
+		bonus_automated_workforce_mult = 0.25
+	}
 
 	potential = {
 		NOT = { has_modifier = eci_event_100_c }
 	}
 
-	modifier = {
-		bonus_automated_workforce_mult = 1
-	}
-
 	weight_modifier = {
-		factor = @repatableTechFactor
+		factor = 4
 	}
 
 	ai_weight = {
-		factor = 1.0
-	}
-
-	weight_groups = {
-		repeatable
-	}
-	mod_weight_if_group_picked = {
-		repeatable = 0.01
+		factor = @capital_tech_ai_factor
+		modifier = {
+			factor = 1.25
+			has_trait_in_council = { TRAIT = leader_trait_curator }
+		}
 	}
 }
 
