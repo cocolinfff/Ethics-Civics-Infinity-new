@@ -1,36 +1,3 @@
-tech_solar_panel_network = {
-	area = engineering
-	tier = 0
-	category = { voidcraft }
-	prerequisites = { "tech_starbase_2" }
-	start_tech = yes
-
-	potential = {
-		always = yes
-	}
-}
-
-#Living Metal
-tech_mine_living_metal = {
-	cost = @tier5cost1
-	area = engineering
-	tier = 5
-	category = { materials }
-	prerequisites = { "tech_engineering_3" }
-	weight = @tier5weight1
-	
-	weight_modifier = {
-		modifier = {
-			factor = 0
-			years_passed > 80
-		}
-		modifier = {
-			factor = 1.5
-			years_passed > 80
-		}
-	}
-}
-
 #Droids
 tech_droid_workers = {
 	cost = @tier2cost3
@@ -66,7 +33,7 @@ tech_droid_workers = {
 				has_ethic = "ethic_fanatic_spiritualist"
 			}
 			not = {
-				has_civic = civic_machine_cult
+				has_valid_civic = civic_machine_soul_servant
 			}
 		}
 		modifier = {
@@ -82,7 +49,7 @@ tech_droid_workers = {
 		}
 		modifier = {
 			factor = 2
-			has_civic = civic_machine_cult
+			has_valid_civic = civic_machine_soul_servant
 		}
 	}
 	ai_weight = {
@@ -129,7 +96,7 @@ tech_synthetic_workers = {
 	}
 	gateway = robotics
 	modifier = {
-		planet_jobs_robotic_produces_mult = 0.1
+		robotic_pop_bonus_workforce_mult = 0.1
 	}
 	potential = {
 		NOR = {
@@ -150,7 +117,7 @@ tech_synthetic_workers = {
 				has_ethic = "ethic_fanatic_spiritualist"
 			}
 			not = {
-				has_civic = civic_machine_cult
+				has_valid_civic = civic_machine_soul_servant
 			}
 		}
 		modifier = {
@@ -176,7 +143,7 @@ tech_synthetic_workers = {
 		}
 		modifier = {
 			factor = 2
-			has_civic = civic_machine_cult
+			has_valid_civic = civic_machine_soul_servant
 		}
 		modifier = {
 			factor = 4
@@ -216,13 +183,21 @@ tech_mining_1 = {
 	weight = @tier1weight1
 
 	modifier = {
-		planet_miners_minerals_produces_mult = 0.20
-		planet_buildings_minerals_produces_mult = 0.15
+		planet_miners_minerals_produces_mult = 0.10
 		starbase_constructions_minerals_produces_mult = 0.10
 	}
 
 	weight_modifier = {
 
+	}
+
+	technology_swap = {
+		name = tech_mining_1_wilderness
+		inherit_icon = yes
+		inherit_effects = yes
+		trigger = {
+			is_wilderness_empire = yes
+		}
 	}
 
 	ai_weight = {
@@ -241,8 +216,7 @@ tech_mining_2 = {
 	weight = @tier2weight1
 
 	modifier = {
-		planet_miners_minerals_produces_mult = 0.20
-		planet_buildings_minerals_produces_mult = 0.15
+		planet_miners_minerals_produces_mult = 0.10
 		starbase_constructions_minerals_produces_mult = 0.10
 	}
 
@@ -266,13 +240,29 @@ tech_mining_3 = {
 	weight = @tier3weight1
 
 	modifier = {
-		planet_miners_minerals_produces_mult = 0.20
-		planet_buildings_minerals_produces_mult = 0.15
+		planet_miners_minerals_produces_mult = 0.10
 		starbase_constructions_minerals_produces_mult = 0.10
 	}
 
 	weight_modifier = {
 
+	}
+
+	technology_swap = {
+		name = tech_mining_3
+		inherit_icon = yes
+		inherit_effects = yes
+		trigger = {
+			has_ascension_perk = ap_weather_control
+		}
+		prereqfor_desc = {
+			custom = {
+				title = tech_generate_magnetic_storm_tt
+			}
+		}
+		weight = {
+			factor = 1
+		}
 	}
 
 	ai_weight = {
@@ -291,7 +281,6 @@ tech_advanced_metallurgy_1 = {
 
 	modifier = {
 		planet_metallurgists_produces_mult = 0.10
-		planet_buildings_alloys_produces_mult = 0.10
 	}
 
 	weight_modifier = {
@@ -314,7 +303,6 @@ tech_advanced_metallurgy_2 = {
 
 	modifier = {
 		planet_metallurgists_produces_mult = 0.10
-		planet_buildings_alloys_produces_mult = 0.10
 	}
 
 	weight_modifier = {
@@ -330,6 +318,51 @@ tech_advanced_metallurgy_2 = {
 # ##################
 # 原版开局科技
 # ##################
+
+tech_space_exploration = {
+	cost = @tier0cost1
+	area = physics
+	start_tech = yes
+	category = { computing }
+	tier = 0
+
+	starting_potential = {
+		NOR = {
+			has_origin = origin_taking_care_of_god
+			has_origin = origin_galaxy_iron_curtain
+		}
+	}
+
+	potential = {
+		OR = {
+			NOT = { has_origin = origin_galaxy_iron_curtain }
+			AND = {
+				has_origin = origin_galaxy_iron_curtain
+				is_authoritarian = no
+			}
+		}
+	}
+
+	#allow auto-explore on science ships
+	feature_flags = {
+		tech_automated_exploration
+		unlocks_auto_research
+	}
+
+	prereqfor_desc = {
+		ship = {
+			title = "TECH_UNLOCK_SCIENCE_SHIP_CONSTRUCTION_TITLE"
+			desc = "TECH_UNLOCK_SCIENCE_SHIP_CONSTRUCTION_DESC"
+		}
+	}
+
+	ai_weight = {
+		modifier = {
+			factor = value:tech_weight_likelihood
+			has_trait_in_council = { TRAIT = leader_trait_expertise_computing }
+		}
+	}
+}
 
 tech_space_construction = {
 	cost = @tier1cost1

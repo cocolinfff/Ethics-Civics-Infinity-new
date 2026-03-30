@@ -323,7 +323,7 @@ col_capital_administrators = {
 				is_full_economic_stance_planned = yes
 			}
 		}
-		planet_bureaucrats_produces_mult = 0.2
+		planet_administrators_admin_cap_produces_add = 5
 		#planet_labour_hero_produces_mult = 1
 	}
 
@@ -334,7 +334,7 @@ col_capital_administrators = {
 				is_imperfection_economic_stance_planned = yes
 			}
 		}
-		planet_bureaucrats_produces_mult = 0.1
+		planet_administrators_admin_cap_produces_add = 2
 		#planet_labour_hero_produces_mult = 0.5
 	}
 
@@ -358,14 +358,181 @@ col_capital_administrators = {
 			is_capital = yes
 		}
 		modifier = {
-			factor = 0
-			owner = {
-				is_at_war = yes
-				num_owned_planets = 1
+			num_zones = {
+				type = zone_unity
+				value > 0
 			}
+			add = @zone_urban
 		}
 		inline_script = {
-			script = colony_types/shared_weights_adm_ethic
+			script = colony_types/shared_weights_admin
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_city
+			}
+			mode = add
+		}
+	}
+}
+
+# 文化首都
+col_capital_unity = {
+	icon = GFX_colony_type_capital_unity
+
+	potential = {
+		NOT = { is_planet_class = pc_cosmogenesis_world }
+		exists = owner
+		owner = { has_technology = tech_adaptive_bureaucracy }
+		AND = {
+			exists = owner
+			OR = {
+				is_capital = yes
+				AND = {
+					is_sector_capital = yes
+					owner = { is_admin_decenter = yes }
+				}
+				AND = {
+					owner = {
+						OR = {
+							has_government = gov_anarchic_society
+							has_government = gov_anarchocommunism
+							has_government = gov_anarchocapitalism
+						}
+					}
+				}
+			}
+		}
+		NAND = {
+			exists = owner
+			owner = {
+				OR = {
+					NOT = { is_country_type = default }
+					is_gestalt = yes
+				}
+			}
+		}
+	}
+
+	planet_modifier = {
+		pop_government_ethic_attraction = 1
+		planet_administrators_admin_cap_produces_add = 5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_center = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_jobs_unity_produces_mult = 0.1
+		planet_resettlement_unemployed_destination_mult = 0.05
+		mult = owner.trigger:num_sectors
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_admin_decenter = yes
+			}
+		}
+		planet_stability_add = 5
+		planet_jobs_unity_produces_mult = 0.25
+		planet_resettlement_unemployed_destination_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = { uses_district_set = ring_world }
+		logistic_growth_mult = 0.1
+		planet_pop_assembly_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner_or_space_owner.federation
+			owner_or_space_owner.federation = {
+				has_federation_perk = all_the_priests_1
+			}
+			exists = owner
+			owner = {
+				is_regular_empire = yes
+			}
+		}
+		job_bureaucrat_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner_or_space_owner.federation
+			owner_or_space_owner.federation = {
+				has_federation_perk = all_the_priests_1
+			}
+			exists = owner
+			owner = {
+				is_regular_empire = no
+			}
+		}
+		job_coordinator_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_unity_produces_mult = 0.20
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_jobs_unity_produces_mult = 0.10
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_eci_megacorp = yes
+				num_buildings = { type = building_executive_retreat value >= 1 }
+			}
+		}
+		job_executive_add = 1
+		mult = value:count_building|BUILDING|building_executive_retreat|
+	}
+
+	weight_modifier = {
+		base = 10000
+		modifier = {
+			factor = @stickiness
+			has_designation = col_capital_unity
+		}
+		modifier = {
+			num_zones = {
+				type = zone_unity_spiritualist
+				value > 0
+			}
+			add = @zone_urban
+		}
+		inline_script = {
+			script = colony_types/shared_weights_priests
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_city
+			}
+			mode = add
 		}
 	}
 }
@@ -517,83 +684,22 @@ col_capital_foundry = {
 	weight_modifier = {
 		base = 10000
 		modifier = {
-			factor = 0
-			owner = { is_admin_decenter = yes }
-			is_capital = yes
-		}
-		modifier = {
-			factor = 0
-			owner = {
-				is_at_war = yes
-				num_owned_planets = 1
-			}
-		}
-		modifier = {
 			factor = @stickiness
 			has_designation = col_capital_foundry
 		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_industrial
-			}
-			mode = add
-			mult = 3
-		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_hab_industrial
-			}
-			mode = add
-			mult = 3
-		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_arcology_arms_industry
-			}
-			mode = add
-			mult = 8
-		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_arcology_civilian_industry
-			}
-			mode = add
-			mult = -3
-		}
 		modifier = {
-			add = 10
-			OR = {
-				has_building = building_foundry_1
-				has_building = building_foundry_2
-				has_building = building_foundry_3
+			num_zones = {
+				type = zone_foundry
+				value > 0
 			}
+			add = @zone_urban
 		}
-		modifier = {
-			add = -5
-			OR = {
-				has_building = building_factory_1
-				has_building = building_factory_2
-				has_building = building_factory_3
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_city
 			}
-		}
-		modifier = {
-			add = 10
-			num_districts = { type = district_industrial value >= 1 }
-			exists = owner
-			owner = {
-				OR = {
-					country_uses_consumer_goods = no
-					has_monthly_income = { resource = consumer_goods value >= 0 }
-				}
-				resource_revenue_compare = {
-					resource = alloys
-					value < trigger:years_passed
-				}
-			}
+			mode = add
 		}
 	}
 }
@@ -746,80 +852,22 @@ col_capital_factory = {
 	weight_modifier = {
 		base = 10000
 		modifier = {
-			factor = 0
-			owner = { is_admin_decenter = yes }
-			is_capital = yes
-		}
-		modifier = {
-			factor = 0
-			owner = {
-				is_at_war = yes
-				num_owned_planets = 1
-			}
-		}
-		modifier = {
 			factor = @stickiness
 			has_designation = col_capital_factory
 		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_industrial
-			}
-			mode = add
-			mult = 3
-		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_hab_industrial
-			}
-			mode = add
-			mult = 3
-		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_arcology_civilian_industry
-			}
-			mode = add
-			mult = 8
-		}
-		complex_trigger_modifier = {
-			trigger = num_districts
-			parameters = {
-				type = district_arcology_arms_industry
-			}
-			mode = add
-			mult = -3
-		}
 		modifier = {
-			add = 10
-			OR = {
-				has_building = building_factory_1
-				has_building = building_factory_2
-				has_building = building_factory_3
+			num_zones = {
+				type = zone_factory
+				value > 0
 			}
+			add = @zone_urban
 		}
-		modifier = {
-			add = -5
-			OR = {
-				has_building = building_foundry_1
-				has_building = building_foundry_2
-				has_building = building_foundry_3
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_city
 			}
-		}
-		modifier = {
-			add = 10
-			num_districts = { type = district_industrial value >= 1 }
-			exists = owner
-			owner = {
-				resource_revenue_compare = {
-					resource = alloys
-					value >= trigger:years_passed
-				}
-				has_monthly_income = { resource = consumer_goods value < 0 }
-			}
+			mode = add
 		}
 	}
 }
@@ -958,47 +1006,20 @@ col_capital_trade = {
 	weight_modifier = {
 		base = 10000
 		modifier = {
-			factor = 0
-			owner = {
-				is_at_war = yes
-				num_owned_planets = 1
-			}
-		}
-		modifier = {
-			add = @stickiness
+			factor = @stickiness
 			has_designation = col_capital_trade
 		}
 		modifier = {
-			factor = @stickiness
-			owner = { is_authoritarian = yes }
-		}
-		complex_trigger_modifier = {
-			trigger = num_assigned_jobs
-			parameters = {
-				job = mogul
+			num_zones = {
+				type = zone_trade
+				value > 0
 			}
-			mode = add
-			mult = 2
+			add = @zone_urban
 		}
 		complex_trigger_modifier = {
-			trigger = num_assigned_jobs
+			trigger = num_districts
 			parameters = {
-				job = merchant
-			}
-			mode = add
-			mult = 2
-		}
-		complex_trigger_modifier = {
-			trigger = num_assigned_jobs
-			parameters = {
-				job = trader
-			}
-			mode = add
-		}
-		complex_trigger_modifier = {
-			trigger = num_assigned_jobs
-			parameters = {
-				job = numistic_priest
+				type = district_city
 			}
 			mode = add
 		}
@@ -1122,22 +1143,165 @@ col_capital_extraction = {
 	weight_modifier = {
 		base = 10000
 		modifier = {
-			factor = 0
-			owner = {
-				is_at_war = yes
-				num_owned_planets = 1
+			factor = @stickiness
+			has_designation = col_capital_extraction
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_generator_uncapped
+			}
+			mode = add
+		}
+		modifier = {
+			num_zones = {
+				type = zone_energy
+				value > 0
+			}
+			add = @zone_rural
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_generator
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_geothermal # are always uncapped
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_generator
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_geothermal
+			}
+			mode = add
+		}
+		modifier = {
+			add = 500
+			OR = {
+				has_modifier = hazardous_weather
+				has_modifier = strong_magnetic_field
 			}
 		}
 		modifier = {
-			add = @stickiness
-			has_designation = col_capital_extraction
+			mult = -0.1
+			has_modifier = energy_poor
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_mining_uncapped
+			}
+			mode = add
 		}
 		modifier = {
-			factor = @stickiness
-			owner = { is_egalitarian = yes }
+			num_zones = {
+				type = zone_minerals
+				value > 0
+			}
+			add = @zone_rural
 		}
-		inline_script = {
-			script = colony_types/shared_weights_capital_extraction
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_mining
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_melting
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_mining
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_melting
+			}
+			mode = add
+		}
+		modifier = {
+			add = 500
+			OR = {
+				has_modifier = asteroid_belt
+				has_modifier = mineral_rich
+				has_modifier = ultra_rich
+				has_modifier = extensive_moon_system
+				has_modifier = asteroid_impacts
+				has_modifier = carbon_world
+				# Volcanic Worlds
+				has_modifier = volcanic_mineral_rich
+				has_modifier = volcanic_ultra_rich
+				has_modifier = volcanic_subterranean
+				has_modifier = volcanic_asteroid_impacts
+				has_modifier = volcanic_hollow_planet
+				has_modifier = volcanic_lavafall
+			}
+		}
+		modifier = {
+			mult = -0.1
+			has_modifier = mineral_poor
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_farming_uncapped
+			}
+			mode = add
+		}
+		modifier = {
+			num_zones = {
+				type = zone_food
+				value > 0
+			}
+			add = @zone_rural
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_farming
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_farming
+			}
+			mode = add
+		}
+		modifier = {
+			add = 500
+			has_modifier = lush_planet
+		}
+		modifier = {
+			mult = -0.1
+			OR = {
+				has_modifier = bleak_planet
+				has_modifier = unbalanced_ecosystem
+				has_modifier = irradiated_planet
+			}
 		}
 	}
 }
@@ -1257,13 +1421,6 @@ col_capital_research = {
 	weight_modifier = {
 		base = 10000
 		modifier = {
-			factor = 0
-			owner = {
-				is_at_war = yes
-				num_owned_planets = 1
-			}
-		}
-		modifier = {
 			factor = @stickiness
 			has_designation = col_capital_research
 		}
@@ -1271,8 +1428,145 @@ col_capital_research = {
 			factor = @stickiness
 			owner = { is_materialist = yes }
 		}
-		inline_script = {
-			script = colony_types/shared_weights_research
+		modifier = {
+			num_zones = {
+				type = zone_research
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_habitat_research
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_physics
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_physics_arcology
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_physics_ring_world
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_society
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_society_arcology
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_society_ring_world
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_engineering
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_engineering_arcology
+				value > 0
+			}
+			add = @zone_urban
+		}
+		modifier = {
+			num_zones = {
+				type = zone_research_engineering_ring_world
+				value > 0
+			}
+			add = @zone_urban
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_city
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_research
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_research_physics
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_research_society
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_arcology_research_engineering
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_ring_world_research
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_ring_world_research_physics
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_ring_world_research_society
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_ring_world_research_engineering
+			}
+			mode = add
 		}
 	}
 }
@@ -1352,7 +1646,21 @@ col_capital_fortress = {
 		}
 		modifier = {
 			factor = @stickiness
-			has_designation = col_fortress
+			has_designation = col_capital_foundry
+		}
+		modifier = {
+			num_zones = {
+				type = zone_fortress
+				value > 0
+			}
+			add = @zone_urban
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_city
+			}
+			mode = add
 		}
 		modifier = {
 			factor = 20
@@ -1373,6 +1681,185 @@ col_capital_fortress = {
 			}
 			mode = add
 			mult = 4
+		}
+	}
+}
+
+# 乡村星球
+col_rural = {
+	icon = GFX_colony_type_rural
+
+	potential = {
+		exists = owner
+		owner = { is_gestalt = no }
+		NOR = {
+			uses_district_set = habitat
+			uses_district_set = ring_world
+			uses_district_set = machine_world
+			uses_district_set = hive_world
+			uses_district_set = city_world
+			uses_district_set = pdecocity
+			uses_district_set = pdmilarc
+			uses_district_set = pdcorpoarc
+			uses_district_set = pdtechnoarch
+		}
+		is_special_colony_type = no
+		is_capital = no
+		NAND = {
+			exists = owner
+			AND = {
+				is_sector_capital = yes
+				owner = { is_admin_decenter = yes }
+			}
+			owner = {
+				OR = {
+					has_government = gov_anarchic_society
+					has_government = gov_anarchocommunism
+					has_government = gov_anarchocapitalism
+				}
+			}
+		}
+		NOT = { is_planet_class = pc_nanotech }
+	}
+
+	planet_modifier = {
+		planet_jobs_worker_produces_mult = 0.15
+		planet_district_farming_build_speed_mult = 0.25
+		planet_district_generator_build_speed_mult = 0.25
+		planet_district_mining_build_speed_mult = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_full_economic_stance_planned = yes
+			}
+		}
+		planet_districts_cost_mult = -0.2
+		planet_labour_hero_produces_mult = 0.25
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_imperfection_economic_stance_planned = yes
+			}
+		}
+		planet_districts_cost_mult = -0.1
+		planet_labour_hero_produces_mult = 0.15
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_tradition = tr_adaptability_finish }
+		}
+		modifier = {
+			planet_jobs_worker_produces_mult = 0.05
+		}
+	}
+
+	weight_modifier = {
+		modifier = {
+			add = 5
+			has_designation = col_rural
+		}
+		modifier = {
+			planet_size > @rural_max_size
+			add = @rural_over_max_size
+		}
+		modifier = {
+			num_zones = {
+				type = zone_minerals
+				value > 0
+			}
+			add = @zone_rural
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_mining
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_melting
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_mining
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_melting
+			}
+			mode = add
+		}
+		modifier = {
+			num_zones = {
+				type = zone_food
+				value > 0
+			}
+			add = @zone_rural
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_farming
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_farming
+			}
+			mode = add
+		}
+		modifier = {
+			num_zones = {
+				type = zone_energy
+				value > 0
+			}
+			add = @zone_rural
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_generator
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_districts
+			parameters = {
+				type = district_geothermal # are always uncapped
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_generator
+			}
+			mode = add
+		}
+		complex_trigger_modifier = {
+			trigger = num_free_districts
+			parameters = {
+				type = district_geothermal
+			}
+			mode = add
 		}
 	}
 }
