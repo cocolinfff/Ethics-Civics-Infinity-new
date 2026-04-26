@@ -2928,3 +2928,174 @@ building_automation_bureaucrat_2 = { # exists for tech tooltip mostly
         text = automation_bureaucrat_tankbound_tooltip
     }
 }
+
+##########
+# 经互会
+##########
+#驻附庸军事基地
+holding_jhh_building_1 = {
+    base_buildtime = 1000
+    owner_type = subject_holding
+    icon = holding_overlord_garrison
+    base_cap_amount = 1
+    desc = { text = holding_jhh_building_1_modifier_desc }
+    category = government
+
+    potential = {
+        has_overlord_dlc = yes
+    }
+
+    allow = {
+        custom_tooltip = {
+            fail_text = is_capital
+            exists = planet
+            planet = {
+                is_capital = yes
+            }
+        }
+        custom_tooltip = {
+            fail_text = subject_is_jhh
+            exists = planet.owner
+            planet.owner = {
+                is_specialist_subject_type = { TYPE = jhh }
+            }
+        }
+    }
+    triggered_planet_modifier = {
+        potential = {
+            overlord_has_more_than_num_armies_on_planet = { NUM = 19 }
+        }
+        jhh_on_building_modifier = 4
+    }
+    triggered_planet_modifier = {
+        potential = {
+            jhh_armies_on_planet = { RANGE_MIN = 15 RANGE_MAX = 19 }
+        }
+        jhh_on_building_modifier = 3
+    }
+    triggered_planet_modifier = {
+        potential = {
+            jhh_armies_on_planet = {RANGE_MIN = 10 RANGE_MAX = 14}
+        }
+        jhh_on_building_modifier = 2
+    }
+    triggered_planet_modifier = {
+        potential = {
+            jhh_armies_on_planet = {RANGE_MIN = 5 RANGE_MAX = 9}
+        }
+        jhh_on_building_modifier = 1
+    }
+    resources = {
+        category = planet_holdings
+        cost = {
+            influence = 100
+            alloys = 1000
+        }
+        upkeep = {
+            influence = 1
+        }
+    }
+
+    country_modifier = {
+        envoys_add = 2
+        intel_decryption_add = 3
+        intel_encryption_add = 3
+        add_base_country_intel = 10
+        country_naval_cap_add = 200
+        starbase_shipyard_build_speed_mult = 0.2
+        country_base_influence_produces_add = -1
+        #country_resource_max_add = 500000
+        #trade_value_mult = 1
+    }
+
+    on_built = {
+        planet = {
+            set_planet_flag = has_jhh_building_1
+        }
+    }
+
+    on_destroy = {
+        planet = {
+            remove_planet_flag = has_jhh_building_1
+        }
+    }
+
+    destroy_trigger = {
+        exists = planet.owner
+        planet.owner = {
+            NOT = {
+                is_specialist_subject_type = { TYPE = jhh }
+            }
+        }
+    }
+}
+
+#稀有资源生产指导中心
+holding_jhh_building_2 = {
+    base_buildtime = 1000
+    owner_type = subject_holding
+    icon = holding_propaganda_office
+    base_cap_amount = 1
+
+    category = government
+
+    potential = {
+        has_overlord_dlc = yes
+    }
+
+    allow = {
+        exists = planet
+        planet = { is_capital = yes }
+    }
+
+
+    planet_modifier = {
+        planet_jobs_exotic_gases_produces_mult = 0.2
+        planet_jobs_rare_crystals_produces_mult = 0.2
+        planet_jobs_volatile_motes_produces_mult = 0.2
+        planet_jobs_minerals_upkeep_mult = 0.5
+        planet_housing_add = 500
+        building_time_mult = -0.1
+        planet_building_build_speed_mult = 0.5
+        planet_clear_blocker_time_mult = -0.5
+        job_chemist_add = 500
+        job_gas_refiner_add = 500
+        job_translucer_add = 500
+    }
+
+    resources = {
+        category = planet_holdings
+        cost = {
+            influence = 100
+            alloys = 1000
+            volatile_motes = 200
+            exotic_gases = 200
+            rare_crystals = 200
+        }
+        upkeep = {
+            alloys = 10
+            consumer_goods = 10
+            energy = 20
+            minerals = 20
+            food = 20
+            influence = 1
+        }
+        produces = {
+            volatile_motes = 5
+            exotic_gases = 5
+            rare_crystals = 5
+        }
+    }
+
+    destroy_trigger = {
+        exists = planet.owner
+        planet.owner = {
+            NOT = {
+                is_specialist_subject_type = { TYPE = jhh }
+            }
+        }
+    }
+    #triggered_desc = {
+    #	text = job_overlord_propagandist_effect_desc
+    #}
+}

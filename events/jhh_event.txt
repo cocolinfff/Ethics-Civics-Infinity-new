@@ -1,0 +1,126 @@
+namespace = jhh
+event = {
+    id = jhh.0
+    hide_window = yes
+    is_triggered_only = yes
+    immediate = {
+        set_global_flag = jhh_is_load
+    }
+}
+country_event = {
+    id = jhh.1
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        is_ai = no
+    }
+    immediate = {
+        set_global_flag = jhh_is_load
+    }
+}
+country_event = {
+    id = jhh.665
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        is_subject = yes
+        any_agreement = {
+            has_term_value = {
+                term = specialist_type
+                value = specialist_jhh
+            }
+        }
+    }
+    immediate = {
+        every_owned_planet = {
+            limit = {
+                has_holding = {
+                    holding = holding_jhh_building_1
+                    owner = owner.overlord
+                }
+            }
+            planet_event = {
+                id = jhh.666
+            }
+        }
+    }
+}
+planet_event = {
+    id = jhh.666
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        OR = {
+            has_holding = {
+                holding = holding_jhh_building_1
+                owner = owner.overlord
+            }
+        }
+    }
+    immediate = {
+        owner = {
+            set_variable = { which = jhh_modifier1_count value = 0 }
+        }
+        if = {
+            limit = {
+                overlord_has_more_than_num_armies_on_planet = { NUM = 4 }
+            }
+            owner = {
+                change_variable = { which = jhh_modifier1_count value = 1 }
+            }
+        }
+        if = {
+            limit = {
+                overlord_has_more_than_num_armies_on_planet = { NUM = 9 }
+            }
+            owner = {
+                change_variable = { which = jhh_modifier1_count value = 1 }
+            }
+        }
+        if = {
+            limit = {
+                overlord_has_more_than_num_armies_on_planet = { NUM = 14 }
+            }
+            owner = {
+                change_variable = { which = jhh_modifier1_count value = 1 }
+            }
+        }
+        if = {
+            limit = {
+                overlord_has_more_than_num_armies_on_planet = { NUM = 19 }
+            }
+            owner = {
+                change_variable = { which = jhh_modifier1_count value = 1 }
+            }
+        }
+        owner = {
+            country_event = {
+                id = jhh.667
+            }
+        }
+    }
+}
+country_event = {
+    id = jhh.667
+    hide_window = yes
+    is_triggered_only = yes
+    immediate = {
+        set_variable = { which = jhh_building1_modi_muti value = 0 }
+        remove_modifier = jhh_subject_building_modifier
+        if = {
+            limit = {
+                check_variable = { which = jhh_modifier1_count value > 0 }
+            }
+            set_variable = { which = jhh_building1_modi_muti value = 1 }
+            while = {
+                count = jhh_modifier1_count
+                multiply_variable = { which = jhh_building1_modi_muti value = 2 }
+            }
+        }
+        divide_variable = { which = jhh_building1_modi_muti value = 2 }
+        add_modifier = {
+            modifier = jhh_subject_building_modifier
+            mult = jhh_building1_modi_muti
+        }
+    }
+}
