@@ -498,3 +498,465 @@ maintenance_drone = {
     inline_script = "jobs/automodding_priority_amenities"
 
 }
+
+#采矿子个体
+mining_drone = {
+    category = simple_drone
+
+    swappable_data = {
+        default = {
+            condition_string = DRONE_JOB_TRIGGER
+            building_icon = building_mineral_purification_plant
+        }
+        #Scrapper Drones - d_space_ship_graveyard + shattered_ring_world
+        swap_type = {
+            trigger = {
+                OR = {
+                    has_deposit = d_space_ship_graveyard
+                    is_planet_class = pc_shattered_ring_habitable
+                }
+            }
+            name = scrap_miner_drone
+            desc = scrap_miner_drone
+            building_icon = building_mineral_purification_plant
+            condition_string = DRONE_JOB_TRIGGER
+            weight = 2
+        }
+        swap_type = {
+            trigger = {
+                miner_is_crystal_miner_trigger = yes
+            }
+            icon = crystal_mining_drone
+            name = crystal_mining_drone
+            desc = crystal_mining_drone
+            building_icon = building_crystal_mines
+            weight = 5
+        }
+        swap_type = {
+            trigger = {
+                exists = owner
+                owner = {
+                    is_wilderness_empire = yes
+                }
+            }
+            name = grubsymbiont
+            desc = grubsymbiont
+            icon = grubsymbiont
+            building_icon = churning_tunnels_3
+            condition_string = DRONE_JOB_TRIGGER
+            weight = 10
+        }
+        swap_type = {
+            trigger = {
+                miner_is_thermoforger_trigger = yes
+            }
+            icon = mining_drone
+            name = melt_extractor_drone
+            desc = melt_extractor_drone
+            weight = 15
+        }
+    }
+
+    tags = { minerals strategic_resource }
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_enslaved = no
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+
+    possible_precalc = can_fill_drone_job
+    possible = { simple_drone_trigger = yes }
+
+    resources = {
+        category = planet_miners
+        produces = {
+            trigger = {
+                exists = planet
+                planet = {
+                    NOR = {
+                        has_deposit = d_space_ship_graveyard
+                        is_planet_class = pc_shattered_ring_habitable
+                    }
+                }
+            }
+            minerals = 10
+        }
+        produces = {
+            trigger = {
+                exists = planet
+                planet = {
+                    OR = {
+                        has_deposit = d_space_ship_graveyard
+                        is_planet_class = pc_shattered_ring_habitable
+                    }
+                }
+            }
+            minerals = 4
+            alloys = 2
+        }
+        produces = {
+            trigger = {
+                planet = {
+                    has_planet_flag = has_material_requisitorium
+                }
+            }
+            minerals = @requisitorium_minerals_reduction
+        }
+        # Job Swap - Thermoforger
+        produces = {
+            trigger = {
+                exists = planet
+                planet = {
+                    miner_is_thermoforger_trigger = yes
+                }
+            }
+            minerals = 2
+            alloys = 1
+        }
+        upkeep = {
+            trigger = {
+                exists = planet
+                planet = {
+                    miner_is_thermoforger_trigger = yes
+                }
+            }
+            energy = 2
+        }
+    }
+
+    overlord_resources = {
+        category = planet_requisitioned_minerals
+        produces = {
+            trigger = {
+                planet = {
+                    has_planet_flag = has_material_requisitorium
+                }
+            }
+            minerals = @requisitorium_minerals_overlord
+        }
+    }
+
+    weight = {
+        weight = @simple_drone_job_weight
+        mult = value:job_weights_modifier|JOB|mining_drone|RESOURCE|minerals|
+        modifier = {
+            factor = 1.1
+            exists = owner
+            years_passed < 1
+            owner = { has_valid_civic = civic_machine_assimilator }
+            has_trait = trait_cybernetic
+        }
+        modifier = {
+            factor = 0.9
+            owner = {
+                has_monthly_income = {
+                    resource = minerals
+                    value > 85
+                }
+            }
+        }
+    }
+
+    inline_script = "jobs/automodding_priority_minerals"
+
+    promotion = {
+        time = @standard_promotion_time
+        effect = {
+            pop_amount_change_category = {
+                CATEGORY = simple_drone
+                AMOUNT = local_pop_amount
+            }
+        }
+    }
+}
+
+#农业子个体
+agri_drone = {
+    category = simple_drone
+
+    swappable_data = {
+        default = {
+            condition_string = DRONE_JOB_TRIGGER
+            building_icon = building_food_processing_facility
+        }
+        swap_type = {
+            trigger = {
+                farmer_is_puddle_technician_trigger = yes
+            }
+            name = puddle_technician_drone
+            desc = puddle_technician_drone
+            icon = puddle_technician_drone
+            weight = 10
+        }
+        swap_type = {
+            trigger = {
+                farmer_is_gas_extractor_trigger = yes
+            }
+            name = gas_extraction_drone
+            desc = gas_extraction_drone
+            icon = gas_extraction_drone
+            building_icon = building_gas_extractors
+            weight = 20
+        }
+        swap_type = {
+            trigger = {
+                exists = owner
+                owner = {
+                    is_wilderness_empire = yes
+                }
+            }
+            name = pollinosymbiont
+            desc = pollinosymbiont
+            icon = pollinosymbiont
+            building_icon = massive_growth_3
+            condition_string = DRONE_JOB_TRIGGER
+            weight = 100
+        }
+    }
+
+    tags = { food }
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_enslaved = no
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+
+    possible_precalc = can_fill_drone_job
+    possible = { simple_drone_trigger = yes }
+
+    resources = {
+        category = planet_farmers
+        produces = {
+            food = 8
+        }
+        produces = {
+            trigger = {
+                exists = owner
+                owner = {
+                    is_robot_empire = yes
+                    is_catalytic_empire = no
+                }
+            }
+            food = -2
+        }
+        # Job Swap - Puddle Technician
+        produces = {
+            trigger = {
+                farmer_is_puddle_technician_trigger = yes
+            }
+            alloys = 2
+        }
+        produces = {
+            trigger = {
+                planet = {
+                    has_planet_flag = has_produce_requisitorium
+                }
+            }
+            food = -4
+        }
+    }
+
+    overlord_resources = {
+        category = planet_requisitioned_food
+        produces = {
+            trigger = {
+                planet = {
+                    has_planet_flag = has_produce_requisitorium
+                }
+            }
+            food = 4
+        }
+    }
+
+    weight = {
+        weight = @simple_drone_job_weight
+        mult = value:job_weights_modifier|JOB|agri_drone|RESOURCE|food|
+        modifier = {
+            factor = 0.9
+            owner = {
+                has_monthly_income = {
+                    resource = food
+                    value > 50
+                }
+            }
+        }
+        modifier = {
+            factor = 0.9
+            owner = {
+                is_robot_empire = yes
+            }
+        }
+        modifier = {
+            factor = 1.1
+            exists = owner
+            years_passed < 1
+            owner = { has_valid_civic = civic_machine_assimilator }
+            has_trait = trait_cybernetic
+        }
+
+        modifier = {
+            factor = 0.5
+            has_trait = trait_lithoid
+
+            owner = {
+                is_lithoid_empire = yes
+                country_uses_food = no
+                has_monthly_income = {
+                    resource = food
+                    value >= 0
+                }
+            }
+        }
+        modifier = {
+            factor = 0.5
+            has_trait = trait_infernal
+
+            owner = {
+                is_infernal_empire = yes
+                country_uses_food = no
+                has_monthly_income = {
+                    resource = food
+                    value >= 0
+                }
+            }
+        }
+    }
+
+    inline_script = "jobs/automodding_priority_food"
+
+    promotion = {
+        time = @standard_promotion_time
+        effect = {
+            pop_amount_change_category = {
+                CATEGORY = simple_drone
+                AMOUNT = local_pop_amount
+            }
+        }
+    }
+}
+
+#技工子个体
+technician_drone = {
+    category = simple_drone
+
+    swappable_data = {
+        default = {
+            condition_string = DRONE_JOB_TRIGGER
+            building_icon = building_energy_grid
+        }
+        swap_type = {
+            trigger = {
+                technician_is_mote_harvester_trigger = yes
+            }
+            icon = mote_harvesting_drone
+            name = mote_harvesting_drone
+            desc = mote_harvesting_drone
+            building_icon = building_mote_harvesting_traps
+            weight = 5
+        }
+        swap_type = {
+            trigger = {
+                exists = owner
+                owner = {
+                    is_wilderness_empire = yes
+                }
+            }
+            name = photosymbiont
+            desc = photosymbiont
+            icon = photosymbiont
+            building_icon = bio_electric_stimulator_3
+            condition_string = DRONE_JOB_TRIGGER
+            weight = 10
+        }
+    }
+
+    tags = { energy }
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_enslaved = no
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+
+    possible_precalc = can_fill_drone_job
+    possible = { simple_drone_trigger = yes }
+
+    resources = {
+        category = planet_technician
+        produces = {
+            energy = 8
+        }
+        produces = {
+            trigger = {
+                exists = owner
+                owner = {
+                    is_robot_empire = yes
+                }
+            }
+            energy = 4
+        }
+        produces = {
+            trigger = {
+                planet = {
+                    has_planet_flag = has_energy_requisitorium
+                }
+            }
+            energy = -4
+        }
+    }
+
+    overlord_resources = {
+        category = planet_requisitioned_energy
+        produces = {
+            trigger = {
+                planet = {
+                    has_planet_flag = has_energy_requisitorium
+                }
+            }
+            energy = 6
+        }
+    }
+
+    weight = {
+        weight = @simple_drone_job_weight
+        mult = value:job_weights_modifier|JOB|technician_drone|RESOURCE|energy|
+
+        modifier = {
+            factor = 0.9
+            owner = {
+                has_monthly_income = {
+                    resource = energy
+                    value > 50
+                }
+            }
+        }
+
+        modifier = {
+            factor = 1.1
+            exists = owner
+            years_passed < 1
+            owner = { has_valid_civic = civic_machine_assimilator }
+            has_trait = trait_cybernetic
+        }
+    }
+
+    inline_script = "jobs/automodding_priority_energy"
+
+    promotion = {
+        time = @standard_promotion_time
+        effect = {
+            pop_amount_change_category = {
+                CATEGORY = simple_drone
+                AMOUNT = local_pop_amount
+            }
+        }
+    }
+}
