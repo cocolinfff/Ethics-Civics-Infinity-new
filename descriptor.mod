@@ -4,6 +4,6 @@ tags={
 }
 picture="thumbnail_new.png"
 name="More Societies: Infinity"
-supported_version="v4.3.*"
+supported_version="v4.4.*"
 path="C:/Users/16049/Documents/Paradox Interactive/Stellaris/mod/Ethics and Civics Infinity"
 remote_file_id="2280945168"
