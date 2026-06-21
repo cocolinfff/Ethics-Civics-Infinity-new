@@ -1,39 +1,9 @@
 
 ruler = {
 	rank = 4
+	change_job_threshold = 1.14 # A pop that is 4.5% better than me will displace me (1.045^3 = 1.14)
+	job_reshuffle_interval = 13
 
-	change_job_threshold = 2.0
-
-	triggered_pop_group_modifier = {
-		potential = {
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-				has_dystopian_society_living_standard_type = yes
-			}
-		}
-		pop_happiness = -0.60
-	}
-
-	triggered_pop_group_modifier = {
-		potential = {
-			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-			}
-			exists = owner
-			owner = {
-				is_galactic_community_member = yes
-			}
-		}
-
-		pop_happiness = 0.10
-	}
 	triggered_pop_group_modifier = {
 		potential = {
 			is_enslaved = yes
@@ -47,6 +17,13 @@ ruler = {
 
 	weight = {
 		weight = 3
+	}
+
+	automation_resources = {
+		category = planet_automated_jobs
+		upkeep = {
+			energy = @automation_upkeep_elite
+		}
 	}
 
 	planet_modifier = {
@@ -80,98 +57,7 @@ ruler = {
 		always = yes
 	}
 
-	resettlement_cost = {
-		energy = 500
-	}
-
-	resettlement_cost = {
-		trigger = {
-			owner = {
-				NOT = { has_valid_civic = civic_corvee_system }
-			}
-		}
-		unity = 50
-	}
-
-	#感性经济
-	triggered_planet_modifier = {
-		potential = {
-			this = {
-				OR = {
-					has_living_standard = { type = living_standard_utopian country = root }
-					has_living_standard = { type = living_standard_shared_burden country = root }
-					has_living_standard = { type = living_standard_worker_ownership country = root }
-				}
-			}
-			NAND = {
-				exists = owner
-				owner = {
-					has_deficit = consumer_goods
-				}
-			}
-			OR = {
-				AND = {
-					this = { is_lithoid = no }
-					NAND = {
-						exists = owner
-						owner = {
-							has_deficit = food
-						}
-					}
-				}
-				AND = {
-					this = { is_lithoid = yes }
-					NAND = {
-						exists = owner
-						owner = {
-							has_deficit = minerals
-						}
-					}
-				}
-			}
-		}
-		pop_happiness = 0.01
-	}
-
-	#灵飞高级政体
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_psionic
-				has_trait = trait_latent_psionic
-			}
-			exists = owner
-			owner = {
-				has_authority = auth_direct_democratic
-				has_country_flag = psionics_country
-			}
-		}
-		planetary_ascension_effect_mult = 0.01
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_authority = auth_imperial
-				has_country_flag = psionics_country
-			}
-		}
-		psionic_pop_bonus_workforce_mult = 0.1
-	}
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_psionic
-				has_trait = trait_latent_psionic
-			}
-			exists = owner
-			owner = {
-				has_authority = auth_corporate
-				has_country_flag = psionics_country
-			}
-		}
-		planet_pops_trade_produces_mult = 0.02
-	}
+	inline_script = "pop_categories/resettlement_costs"
 
 	#效率主义
 	triggered_planet_modifier = {
@@ -454,21 +340,6 @@ ruler = {
 			physics_research = 1
 			engineering_research = 1
 			society_research = 1
-		}
-
-		#民族经济
-		produces = {
-			trigger = {
-				is_enslaved = no
-				exists = owner
-				owner = {
-					has_active_tradition = tr_isolated_ethnic_purity
-					is_egalitarian = yes
-				}
-			}
-			energy = 0.5
-			minerals = 0.5
-			food = 0.5
 		}
 		#朝闻道
 		produces = {
@@ -789,61 +660,17 @@ ruler = {
 
 specialist = {
 	rank = 3
+	change_job_threshold = 1.07 # A pop that is 2.3% better than me will displace me (1.023^3 = 1.07)
+	job_reshuffle_interval = 7
 
-	change_job_threshold = 1.25
-
-	triggered_pop_group_modifier = {
-		potential = {
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-				has_dystopian_society_living_standard_type = yes
-			}
-		}
-		pop_happiness = -0.40
+	weight = {
+		weight = 2
 	}
 
-	triggered_pop_group_modifier = {
-		potential = {
-			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-			}
-			exists = owner
-			owner = {
-				is_galactic_community_member = yes
-			}
-		}
-
-		pop_happiness = 0.10
-	}
-	triggered_pop_group_modifier = {
-		potential = {
-			is_enslaved = yes
-			owner = {
-				has_valid_civic = civic_ideal_slavery
-			}
-		}
-
-		pop_housing_usage_base = 0.5
-	}
-
-	triggered_pop_group_modifier = {
-		potential = {
-			planet = {
-				exists = army_leader
-				army_leader = {
-					has_trait = leader_trait_honored_warmaster
-				}
-			}
-		}
-		modifier = {
-			planet_defense_armies_add = 1
+	automation_resources = {
+		category = planet_automated_jobs
+		upkeep = {
+			energy = @automation_upkeep_specialist
 		}
 	}
 
@@ -851,10 +678,6 @@ specialist = {
 		weight = 2
 	}
 
-	planet_modifier = {
-		pop_cat_postpartum_workers_happiness = 0.01
-		planet_crime_add = 0.5
-	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
 		planet_crime_add = 1
@@ -876,93 +699,35 @@ specialist = {
 		mult = modifier:pop_specialists_amenities_usage_base
 	}
 
+	triggered_pop_group_modifier = {
+		potential = {
+			is_enslaved = yes
+			owner = {
+				has_valid_civic = civic_ideal_slavery
+			}
+		}
+
+		pop_housing_usage_base = 0.5
+	}
+
 	# scope: pop to be resettled
 	allow_resettlement = {
 		always = yes
 	}
 
-	resettlement_cost = {
-		energy = 250
-	}
+	inline_script = "pop_categories/resettlement_costs"
 
-	resettlement_cost = {
-		trigger = {
-			owner = {
-				NOT = { has_valid_civic = civic_corvee_system }
-			}
-		}
-		unity = 25
-	}
-
-	#感性经济
 	triggered_planet_modifier = {
 		potential = {
-			this = {
-				OR = {
-					has_living_standard = { type = living_standard_utopian country = root }
-					has_living_standard = { type = living_standard_shared_burden country = root }
-					has_living_standard = { type = living_standard_worker_ownership country = root }
-				}
-			}
-			NAND = {
-				exists = owner
-				owner = {
-					has_deficit = consumer_goods
-				}
-			}
-			OR = {
-				AND = {
-					this = { is_lithoid = no }
-					NAND = {
-						exists = owner
-						owner = {
-							has_deficit = food
-						}
-					}
-				}
-				AND = {
-					this = { is_lithoid = yes }
-					NAND = {
-						exists = owner
-						owner = {
-							has_deficit = minerals
-						}
-					}
-				}
-			}
-		}
-		pop_happiness = 0.01
-	}
-
-	#灵飞高级政体
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_psionic
-				has_trait = trait_latent_psionic
-			}
 			exists = owner
-			owner = {
-				has_authority = auth_direct_democratic
-				has_country_flag = psionics_country
-			}
+			owner = { has_civic = civic_dystopian_society }
 		}
-		planetary_ascension_effect_mult = 0.01
+		planet_crime_add = 1
 	}
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_psionic
-				has_trait = trait_latent_psionic
-			}
-			exists = owner
-			owner = {
-				has_authority = auth_corporate
-				has_country_flag = psionics_country
-			}
-		}
-		planet_pops_trade_produces_mult = 0.02
-	}
+
+	# Triggered Modifiers
+	inline_script = "pop_categories/social_classes_triggered_modifiers"
+	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
 
 	#效率主义
 	triggered_planet_modifier = {
@@ -1143,31 +908,6 @@ specialist = {
 		planet_pop_assembly_mult = 0.01
 	}
 
-	# Triggered Modifiers
-	inline_script = "pop_categories/social_classes_triggered_modifiers"
-	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
-
-	triggered_pop_group_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					AND = {
-						is_purity_authority = yes
-						is_oligarchic_authority = yes
-					}
-					has_modifier = augment_appreciation
-				}
-			}
-			species = {
-				is_variable_set = species_traits_purity_count
-			}
-		}
-		key = concept_genetic_purity
-		bonus_pop_growth_mult = @purity_traits_bonus_workforce_mult
-		mult = species.species_traits_purity_count
-	}
-
 	resources = {
 		category = pop_category_specialists
 
@@ -1213,21 +953,6 @@ specialist = {
 			physics_research = 1
 			engineering_research = 1
 			society_research = 1
-		}
-
-		#民族经济
-		produces = {
-			trigger = {
-				is_enslaved = no
-				exists = owner
-				owner = {
-					has_active_tradition = tr_isolated_ethnic_purity
-					is_egalitarian = yes
-				}
-			}
-			energy = 0.5
-			minerals = 0.5
-			food = 0.5
 		}
 		#超节奏生活
 		produces = {
@@ -1496,6 +1221,8 @@ specialist = {
 		# Living Standard Trait Output
 		inline_script = "pop_categories/living_standard_specialist_production"
 
+		inline_script = "pop_categories/indentured_assets_slave_produce"
+
 		produces = {
 			trigger = {
 				OR = {
@@ -1527,308 +1254,40 @@ specialist = {
 
 worker = {
 	rank = 2
+	job_reshuffle_interval = 3
 
-	change_job_threshold = 1.15
+	change_job_threshold = 1.03 # A pop that is 1% better than me will displace me (1.01^3 = 1.03)
 
-	triggered_pop_group_modifier = {
-		potential = {
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-				has_dystopian_society_living_standard_type = yes
-			}
-		}
-		pop_happiness = -0.25
-	}
-
-	#感性经济
-	triggered_planet_modifier = {
-		potential = {
-			this = {
-				OR = {
-					has_living_standard = { type = living_standard_utopian country = root }
-					has_living_standard = { type = living_standard_shared_burden country = root }
-					has_living_standard = { type = living_standard_worker_ownership country = root }
-				}
-			}
-			NAND = {
-				exists = owner
-				owner = {
-					has_deficit = consumer_goods
-				}
-			}
-			OR = {
-				AND = {
-					this = { is_lithoid = no }
-					NAND = {
-						exists = owner
-						owner = {
-							has_deficit = food
-						}
-					}
-				}
-				AND = {
-					this = { is_lithoid = yes }
-					NAND = {
-						exists = owner
-						owner = {
-							has_deficit = minerals
-						}
-					}
-				}
-			}
-		}
-		pop_happiness = 0.01
-	}
-
-	#灵飞高级政体
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_psionic
-				has_trait = trait_latent_psionic
-			}
-			exists = owner
-			owner = {
-				has_authority = auth_direct_democratic
-				has_country_flag = psionics_country
-			}
-		}
-		planetary_ascension_effect_mult = 0.01
-	}
-	triggered_planet_modifier = {
-		potential = {
-			OR = {
-				has_trait = trait_psionic
-				has_trait = trait_latent_psionic
-			}
-			exists = owner
-			owner = {
-				has_authority = auth_corporate
-				has_country_flag = psionics_country
-			}
-		}
-		planet_pops_trade_produces_mult = 0.02
-	}
-
-	#效率主义
-	triggered_planet_modifier = {
-		potential = {
-			is_robot_pop_group = yes
-			exists = owner
-			owner = {
-				has_ethic = ethic_fanatic_materialist
-			}
-		}
-		pop_bonus_workforce_mult = 0.01
-	}
-
-	#教权主义
-	triggered_planet_modifier = {
-		potential = {
-			this = { has_ethic = ethic_spiritualist }
-			exists = owner
-			owner = {
-				has_ethic = ethic_fanatic_materialist
-			}
-		}
-		pop_bonus_workforce_mult = 0.01
-	}
-
-	#先验乌托邦
 	triggered_planet_modifier = {
 		potential = {
 			exists = owner
-			owner = { has_valid_civic = civic_transcendental_utopia }
-			has_citizenship_type = {
-				country = root.owner
-				type = citizenship_limited
-			}
+			owner = { has_civic = civic_dystopian_society }
 		}
-		planet_crime_add = 2
+		planet_crime_add = 1
 	}
 
-	#恶之花
 	triggered_planet_modifier = {
 		potential = {
-			is_enslaved = no
-			exists = owner
-			owner = { has_valid_civic = civic_flower_of_evil }
+			planet = { has_modifier = penal_colony }
 		}
-		planet_crime_mult = 0.01
-		pop_decline_speed = 0.01
+		planet_crime_add = 3
 	}
 
-	#错误复制者
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
-		}
-		planet_pop_assembly_add = 0.5
-	}
-
-	#劳动民主
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_transcendental_utopia }
-		}
-		planet_amenities_add = 100
-	}
-
-	#先验乌托邦
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_transcendental_utopia }
-		}
-		planet_amenities_add = 150
-	}
-
-	#共产主义社会
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_communist_society }
-		}
-		planet_crime_mult = -0.05
-	}
-
-	#光荣与梦想
-	triggered_planet_modifier = {
-		potential = {
-			is_same_species = root
-			is_enslaved = no
-			exists = owner
-			owner = { has_valid_civic = civic_glory_and_dream }
-		}
-		planet_jobs_slave_produces_mult = 0.005
-	}
-
-	#共识算法
-	triggered_planet_modifier = {
-		potential = {
-			happiness > 0.5
-			exists = owner
-			owner = { has_valid_civic = civic_cyber_demos_cratos }
-		}
-		planet_stability_add = 1
-	}
-	triggered_planet_modifier = {
-		potential = {
-			happiness < 0.5
-			exists = owner
-			owner = { has_valid_civic = civic_cyber_demos_cratos }
-		}
-		planet_stability_add = -1
-	}
-
-	#苦难回响
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = { has_valid_civic = civic_echoes_of_suffering }
-		}
-		pop_category_workers_consumer_goods_upkeep_mult = -0.005
-		pop_category_workers_food_upkeep_mult = -0.005
-	}
-
-	#机械嬗变
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = mechanical_transmutation
-			}
-		}
-		planet_pop_assembly_mult = 0.01
-	}
-
-	# 革命先锋队
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_valid_civic = civic_socialistic
-				}
-			}
-		}
-		planet_building_build_speed_mult = 0.01
-	}
-
-	#神权政治
-	triggered_planet_modifier = {
-		potential = {
-			has_ethic = ethic_spiritualist
-			exists = owner
-			owner = {
-				has_valid_civic = civic_exalted_priesthood
-			}
-		}
-		pop_amenities_usage_mult = -0.01
-	}
-
-	triggered_pop_group_modifier = {
-		potential = {
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-				has_dystopian_society_living_standard_type = yes
-			}
-		}
-		pop_happiness = -0.60
-	}
-	triggered_pop_group_modifier = {
-		potential = {
-			has_global_flag = galactic_community_resolution_divinity_comfort_the_fallen
-			is_unemployed = yes
-			NOR = {
-				has_very_high_living_standard_type = yes
-				has_high_living_standard_type = yes
-				has_shared_burden_living_standard_type = yes
-			}
-			owner = {
-				is_galactic_community_member = yes
-			}
-		}
-
-		pop_happiness = 0.10
-	}
-	triggered_pop_group_modifier = {
-		potential = {
-			is_enslaved = yes
-			owner = {
-				has_valid_civic = civic_ideal_slavery
-			}
-		}
-
-		pop_housing_usage_base = 0.5
-	}
-
-	# This is called whenever a Pop is created, moved to a different planet, or gets a new owner
-	assign_to_pop = {
-		exists = owner
-		owner = {
-			is_gestalt = no
-		}
-	}
-	weight = {
-		weight = 1
-	}
-
-	pop_group_modifier = {
-		pop_cat_postpartum_workers_happiness = 0.02
-	}
 	triggered_planet_modifier = {
 		potential = { always = yes }
 		planet_crime_add = 1
 		mult = modifier:planet_workers_crime_add
+	}
+
+	weight = {
+		weight = 1
+	}
+
+	automation_resources = {
+		category = planet_automated_jobs
+		upkeep = {
+			energy = @automation_upkeep_worker
+		}
 	}
 
 	pop_group_modifier = {
@@ -1851,22 +1310,34 @@ worker = {
 		always = yes
 	}
 
-	resettlement_cost = {
-		energy = 100
-	}
-
-	resettlement_cost = {
-		trigger = {
-			owner = {
-				NOT = { has_valid_civic = civic_corvee_system }
-			}
-		}
-		unity = 10
-	}
+	inline_script = "pop_categories/resettlement_costs"
 
 	# Triggered Modifiers
 	inline_script = "pop_categories/social_classes_triggered_modifiers"
 	inline_script = "pop_categories/social_classes_triggered_modifiers_no_happiness"
+
+	triggered_pop_group_modifier = {
+		potential = {
+			is_enslaved = yes
+			owner = {
+				has_valid_civic = civic_ideal_slavery
+			}
+		}
+
+		pop_housing_usage_base = 0.5
+	}
+
+	# This is called whenever a Pop is created, moved to a different planet, or gets a new owner
+	assign_to_pop = {
+		exists = owner
+		owner = {
+			is_gestalt = no
+		}
+	}
+
+	pop_group_modifier = {
+		pop_cat_postpartum_workers_happiness = 0.02
+	}
 
 	triggered_pop_group_modifier = {
 		potential = {
@@ -1932,21 +1403,6 @@ worker = {
 			physics_research = 1
 			engineering_research = 1
 			society_research = 1
-		}
-
-		#民族经济
-		produces = {
-			trigger = {
-				is_enslaved = no
-				exists = owner
-				owner = {
-					has_active_tradition = tr_isolated_ethnic_purity
-					is_egalitarian = yes
-				}
-			}
-			energy = 0.5
-			minerals = 0.5
-			food = 0.5
 		}
 		#超节奏生活
 		produces = {
@@ -2302,8 +1758,6 @@ worker = {
 			}
 			unity = 0.5
 		}
-		# Living Standard Trait Output
-		inline_script = "pop_categories/living_standard_worker_production"
 
 		produces = {
 			trigger = {
@@ -2315,12 +1769,17 @@ worker = {
 			}
 			trade = @trade_value_prosperity_gospel
 		}
+		# Living Standard Trait Output
+		inline_script = "pop_categories/living_standard_worker_production"
+
+		inline_script = "pop_categories/indentured_assets_slave_produce"
 
 		produces = {
 			trigger = {
-				has_trait = trait_inner_darkness
+				is_spiritualist = yes
+				owner = { has_valid_civic = civic_gospel_of_the_masses }
 			}
-			sr_dark_matter = @inner_darkness_dark_matter_production
+			trade = @trade_value_prosperity_gospel
 		}
 
 		produces = {
@@ -2349,6 +1808,165 @@ worker = {
 			}
 			consumer_goods = @raining_corpses_resource_amount
 		}
+	}
+
+	#效率主义
+	triggered_planet_modifier = {
+		potential = {
+			is_robot_pop_group = yes
+			exists = owner
+			owner = {
+				has_ethic = ethic_fanatic_materialist
+			}
+		}
+		pop_bonus_workforce_mult = 0.01
+	}
+
+	#教权主义
+	triggered_planet_modifier = {
+		potential = {
+			this = { has_ethic = ethic_spiritualist }
+			exists = owner
+			owner = {
+				has_ethic = ethic_fanatic_materialist
+			}
+		}
+		pop_bonus_workforce_mult = 0.01
+	}
+
+	#先验乌托邦
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+			has_citizenship_type = {
+				country = root.owner
+				type = citizenship_limited
+			}
+		}
+		planet_crime_add = 2
+	}
+
+	#恶之花
+	triggered_planet_modifier = {
+		potential = {
+			is_enslaved = no
+			exists = owner
+			owner = { has_valid_civic = civic_flower_of_evil }
+		}
+		planet_crime_mult = 0.01
+		pop_decline_speed = 0.01
+	}
+
+	#错误复制者
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_individual_machine_replication_corporate }
+		}
+		planet_pop_assembly_add = 0.5
+	}
+
+	#劳动民主
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+		}
+		planet_amenities_add = 100
+	}
+
+	#先验乌托邦
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_transcendental_utopia }
+		}
+		planet_amenities_add = 150
+	}
+
+	#共产主义社会
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_communist_society }
+		}
+		planet_crime_mult = -0.05
+	}
+
+	#光荣与梦想
+	triggered_planet_modifier = {
+		potential = {
+			is_same_species = root
+			is_enslaved = no
+			exists = owner
+			owner = { has_valid_civic = civic_glory_and_dream }
+		}
+		planet_jobs_slave_produces_mult = 0.005
+	}
+
+	#共识算法
+	triggered_planet_modifier = {
+		potential = {
+			happiness > 0.5
+			exists = owner
+			owner = { has_valid_civic = civic_cyber_demos_cratos }
+		}
+		planet_stability_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			happiness < 0.5
+			exists = owner
+			owner = { has_valid_civic = civic_cyber_demos_cratos }
+		}
+		planet_stability_add = -1
+	}
+
+	#苦难回响
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_valid_civic = civic_echoes_of_suffering }
+		}
+		pop_category_workers_consumer_goods_upkeep_mult = -0.005
+		pop_category_workers_food_upkeep_mult = -0.005
+	}
+
+	#机械嬗变
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				has_policy_flag = mechanical_transmutation
+			}
+		}
+		planet_pop_assembly_mult = 0.01
+	}
+
+	# 革命先锋队
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				OR = {
+					has_valid_civic = civic_socialistic
+				}
+			}
+		}
+		planet_building_build_speed_mult = 0.01
+	}
+
+	#神权政治
+	triggered_planet_modifier = {
+		potential = {
+			has_ethic = ethic_spiritualist
+			exists = owner
+			owner = {
+				has_valid_civic = civic_exalted_priesthood
+			}
+		}
+		pop_amenities_usage_mult = -0.01
 	}
 }
 
@@ -2585,11 +2203,12 @@ criminal = {
 
 
 
-slave = {
-	rank = 0
-	display_category = worker
+slave_unemployment = {
+	is_unemployment_job = yes
+	rank = 2
+	change_job_threshold = 0.1
 
-	change_job_threshold = 1.15
+	display_category = worker
 
 	assign_to_pop = {
 		is_enslaved = yes
@@ -2603,7 +2222,6 @@ slave = {
 	}
 
 	pop_group_modifier = {
-		pop_political_power = -0.75
 		pop_housing_usage_base = 0.75
 		pop_amenities_usage_base = 0.75
 	}
@@ -2616,6 +2234,8 @@ slave = {
 	resettlement_cost = {
 		energy = 50
 	}
+
+	inline_script = "pop_categories/resettlement_costs_low"
 
 	# Triggered Modifiers
 	inline_script = "pop_categories/social_classes_triggered_modifiers"
@@ -2652,16 +2272,6 @@ slave = {
 			}
 		}
 		pop_bonus_workforce_mult = 0.01
-	}
-
-	triggered_pop_group_modifier = {
-		potential = {
-			owner = {
-				has_councilor = { COUNCILOR = "councilor_slaver_guilds" }
-			}
-		}
-		species_empire_size_mult = 1
-		mult = value:empire_size_councilor_slaver_guilds
 	}
 
 	#灵飞高级政体
@@ -2757,7 +2367,7 @@ slave = {
 	}
 
 	resources = {
-		category = pop_category_slave
+		category = pop_category_workers
 		produces = {
 			trigger = {
 				owner = {
