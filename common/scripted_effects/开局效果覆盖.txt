@@ -71,27 +71,29 @@ generate_start_pops = {
                     }
                 }
                 create_pop_group = {
-                    size = 600
-                    species = last_created_species
-                }
-            }
-            else_if = {
-                limit = {
-                    owner = {
-                        has_origin = origin_necrophage
-                        is_gestalt = yes
-                    }
-                }
-                create_pop_group = {
-                    size = 900
+                    size = 1200
                     species = last_created_species
                 }
             }
             else = {
                 create_pop_group = {
-                    size = 1200
+                    size = 2400
                     species = last_created_species
                 }
+            }
+        }
+        # Forever Cruise: set citizenship type
+        if = {
+            limit = {
+                owner = { has_origin = origin_forever_cruise }
+            }
+            last_created_species = {
+                set_citizenship_type = {
+                    country = prev.owner
+                    type = citizenship_cruise_crew
+                }
+                set_species_flag = cruise_founding_crew
+                save_global_event_target_as = cruise_crew_species@prev.owner
             }
         }
         generate_civic_secondary_pops = yes
@@ -165,6 +167,27 @@ generate_start_pops = {
             limit = { pop_amount < 4800 }	# Includes the 2,000 Bio-Trophies that were already created.
             create_pop_group = {
                 species = owner_main_species
+            }
+        }
+    }
+    if = {
+        limit = { owner = { has_origin = origin_shroud_forged } }
+        while = {
+            limit = { pop_amount < 1900 }
+            create_pop_group = {
+                species = owner_main_species
+                ethos = random
+            }
+        }
+        owner_main_species = {
+            drone_conversion_new_species_effect = yes
+            set_species_flag = original_main_species # After conversion effect, so it's the only species with the flag
+        }
+        while = {
+            limit = { pop_amount < 2900 }
+            create_pop_group = {
+                species = event_target:secondary_main_species
+                category = complex_drone
             }
         }
     }
@@ -285,15 +308,14 @@ generate_start_pops = {
         }
     }
     if = {
-        limit = { #homicidal necrophages lose 1/4 of their necrophytes to fleeing
-            owner = {
-                has_origin = origin_necrophage
-                is_homicidal = yes
-            }
+        limit = {
+            owner = { has_origin = origin_cosmic_dawn }
         }
-        create_pop_group = {
-            size = 200
-            species = owner_main_species
+        while = {
+            limit = { pop_amount < 2200 }
+            create_pop_group = {
+                species = owner_main_species
+            }
         }
     }
     if = {
@@ -401,43 +423,6 @@ generate_start_pops = {
         }
     }
 
-    # Cybernetic Creed: add Unique Traits
-    if = {
-        limit = {
-            owner = {
-                has_origin = origin_cybernetic_creed
-            }
-        }
-        while = {
-            limit = {
-                any_owned_pop_group = {
-                    is_robotic_species = no
-                    has_ethic = ethic_spiritualist
-                    has_cybernetic_creed_trait = no
-                }
-            }
-            weighted_random_owned_pop_group = {
-                limit = {
-                    is_robotic_species = no
-                    has_ethic = ethic_spiritualist
-                    has_cybernetic_creed_trait = no
-                }
-                modify_species = {
-                    species = this
-                    add_trait = trait_cyborg_ritualistic_implants
-                    add_traits_at_start_of_list = yes
-                }
-            }
-        }
-        owner = {
-            set_policy = {
-                policy = robot_pop_policy
-                option = robot_pops_allowed
-                cooldown = no
-            }
-        }
-    }
-
     #Synthetic Fertility
     if = {
         limit = {
@@ -445,6 +430,17 @@ generate_start_pops = {
         }
         create_pop_group = {
             size = 900
+            species = owner_main_species
+        }
+    }
+
+    #Deep Sleep
+    if = {
+        limit = {
+            owner = { is_deep_sleep_country = yes }
+        }
+        create_pop_group = {
+            size = 3000
             species = owner_main_species
         }
     }
@@ -463,6 +459,14 @@ generate_civic_secondary_pops = {
         }
         owner = {
             set_country_flag = lithoid_subspecies
+        }
+    }
+    else_if = {
+        limit = {
+            owner = { last_created_species = { is_infernal = yes } }
+        }
+        owner = {
+            set_country_flag = infernal_subspecies
         }
     }
     else = {
@@ -676,6 +680,48 @@ generate_civic_secondary_pops = {
         create_pop_group = {
             size = 1000
             species = last_created_species
+        }
+    }
+
+    # Forever Cruise: set citizenship, living standard & preference; spawn Pops
+    if = {
+        limit = {
+            owner = { has_origin = origin_forever_cruise }
+        }
+        if = {
+            limit = {
+                owner = { has_valid_civic = civic_machine_servitor }
+            }
+            # Pops were already spawned by the Rogue Servitor block above; only re-tag here.
+            last_created_species = {
+                set_citizenship_type = {
+                    country = prev.owner
+                    type = citizenship_organic_trophy
+                }
+                set_species_flag = cruise_founding_passenger
+                save_global_event_target_as = cruise_passenger_species@prev.owner
+            }
+        }
+        else = {
+            last_created_species = {
+                set_citizenship_type = {
+                    country = prev.owner
+                    type = citizenship_cruise_passenger
+                }
+                set_living_standard = {
+                    country = prev.owner
+                    type = living_standard_cruise_passenger
+                }
+                set_species_flag = cruise_founding_passenger
+                save_global_event_target_as = cruise_passenger_species@prev.owner
+            }
+            while = {
+                count = @civilians_counter
+                create_pop_group = {
+                    size = @civilians_gamestart
+                    species = last_created_species
+                }
+            }
         }
     }
 }

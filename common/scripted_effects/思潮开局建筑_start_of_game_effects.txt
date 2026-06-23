@@ -43,7 +43,9 @@ msi_generate_start_buildings_and_districts = {
 		}
 		if = {
 			limit = {
-				is_nomadic = no
+				owner? = {
+					is_nomadic = no
+				}
 			}
 			add_building = {
 				zone = zone_industrial
@@ -52,7 +54,9 @@ msi_generate_start_buildings_and_districts = {
 		}
 		if = {
 			limit = {
-				is_nomadic = yes
+				owner? = {
+					is_nomadic = yes
+				}
 			}
 			add_building = {
 				zone = zone_ark_industrial
@@ -68,7 +72,9 @@ msi_generate_start_buildings_and_districts = {
 		}
 		if = {
 			limit = {
-				is_nomadic = no
+				owner? = {
+				    is_nomadic = no
+				}
 			}
 			add_building = {
 				district = district_city
@@ -77,7 +83,9 @@ msi_generate_start_buildings_and_districts = {
 		}
 		if = {
 			limit = {
-				is_nomadic = yes
+				owner? = {
+				    is_nomadic = yes
+				}
 			}
 			add_building = {
 				district = district_ark_city
@@ -198,6 +206,17 @@ msi_generate_start_buildings_and_districts = {
 	if = {
 		limit = {
 			owner? = {
+				has_origin = origin_planet_arkship
+			}
+		}
+		while = {
+			count = 2
+			add_district = district_mining
+		}
+	}
+	if = {
+		limit = {
+			owner? = {
 				has_valid_civic = civic_vilified
 			}
 		}
@@ -267,6 +286,68 @@ msi_generate_start_buildings_and_districts = {
 			}
 		}
 		add_building = building_noble_estates
+	}
+	if = {
+		limit = {
+			owner? = {
+				has_origin = origin_the_source_of_life
+			}
+		}
+		add_building = building_organic_sanctuary
+		set_planet_size = 30
+
+		# 5 + 3 energy
+		add_deposit = d_searing_desert
+		add_deposit = d_underwater_vent
+		add_deposit = d_tempestous_mountain
+
+		# 5 + 3 mining
+		add_deposit = d_ore_rich_caverns
+		add_deposit = d_prosperous_mesa
+		add_deposit = d_submerged_ore_veins
+
+		# 5 + 3 farming (lithoids swap 3 for minerals)
+		add_deposit = d_lush_jungle
+		add_deposit = d_teeming_reef
+
+		if = {
+			limit = {
+				exists = owner
+				owner = {
+					is_lithoid_empire = yes
+				}
+			}
+			add_deposit = d_rich_mountain
+		}
+		else_if = {
+			limit = {
+				exists = owner
+				owner = {
+					is_lithoid_empire = no
+				}
+			}
+			add_deposit = d_black_soil
+		}
+		# In case the owner doesn't exist, as when creating Life-Seeded pre-ftls.
+		else = {
+			random_list = {
+				50 = { add_deposit = d_rich_mountain }
+				50 = { add_deposit = d_black_soil }
+			}
+		}
+
+		# 1 random medium deposit
+		random_list = {
+			33 = { add_deposit = d_frozen_gas_lake }
+			33 = { add_deposit = d_prosperous_mesa }
+			33 = { add_deposit = d_fertile_lands }
+		}
+
+		add_deposit = d_dust_caverns
+		add_deposit = d_bubbling_swamp
+		add_deposit = d_crystalline_caverns
+		add_building = building_ancient_cryo_chamber
+		set_deposit = d_living_metal_1
 	}
 	if = {
 		limit = {
@@ -409,6 +490,135 @@ msi_generate_start_buildings_and_districts = {
 	if = {
 		limit = {
 			owner? = {
+				has_origin = origin_planet_arkship
+			}
+		}
+		solar_system = {
+			every_system_planet = {
+				limit = {
+					colonizable_planet = no
+					is_star = no
+				}
+				clear_deposits = yes
+			}
+			every_system_planet = {
+				limit = {
+					is_asteroid = yes
+				}
+				remove_planet = yes
+			}
+			every_system_planet = {
+				limit = {
+					colonizable_planet = no
+					is_star = no
+					is_asteroid = no
+					NOT = { is_planet_class = pc_gas_giant }
+				}
+				change_pc = pc_broken
+			}
+			every_system_planet = {
+				limit = {
+					colonizable_planet = no
+					is_star = no
+					is_planet_class = pc_gas_giant
+				}
+				change_pc = pc_molten
+				add_modifier = { modifier = chthonian_planet }
+				every_moon = {
+					limit = {
+						colonizable_planet = no
+					}
+					remove_planet = yes
+				}
+				while = {
+					limit = {
+						planet_size >= 20
+					}
+					change_planet_size = -6
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner? = {
+				has_origin = origin_arkship_alliance
+			}
+		}
+		root.capital_scope.star = {
+			solar_system = {
+				every_system_planet = {
+					limit = {
+						colonizable_planet = no
+						is_star = no
+					}
+					create_ambient_object = {
+						type = "ancient_battlefield_object"
+						location = this
+					}
+					clear_deposits = yes
+				}
+				every_system_planet = {
+					limit = {
+						is_asteroid = yes
+					}
+					create_ambient_object = {
+						type = "ancient_battlefield_object"
+						location = this
+					}
+					remove_planet = yes
+				}
+				every_system_planet = {
+					limit = {
+						colonizable_planet = no
+						is_star = no
+						is_asteroid = no
+						NOT = { is_planet_class = pc_gas_giant }
+					}
+					change_pc = pc_broken
+					create_ambient_object = {
+						type = "abandoned_ship_object"
+						location = from
+					}
+					create_ambient_object = {
+						type = "ancient_battlefield_object"
+						location = this
+					}
+				}
+				every_system_planet = {
+					limit = {
+						colonizable_planet = no
+						is_star = no
+						is_planet_class = pc_gas_giant
+					}
+					change_pc = pc_molten
+					add_modifier = { modifier = chthonian_planet }
+					every_moon = {
+						limit = {
+							colonizable_planet = no
+						}
+						remove_planet = yes
+					}
+					while = {
+						limit = {
+							planet_size >= 20
+						}
+						change_planet_size = -6
+					}
+					create_ambient_object = {
+						type = derelict_particle_accelerator
+					}
+					create_ambient_object = {
+						type = "abandoned_ship_object"
+						location = from
+					}
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			owner? = {
 				has_origin = origin_stormborn
 			}
 		}
@@ -446,6 +656,14 @@ msi_generate_start_buildings_and_districts = {
 			use_3d_location = yes
 			entity_scale_to_size = yes
 		}
+	}
+	if = {
+		limit = {
+			owner? = {
+			    has_origin = origin_planet_arkship
+			}
+		}
+		add_modifier = { modifier = mineral_poor days = -1 }
 	}
 }
 
@@ -512,5 +730,36 @@ origin_advanced_start_minerals = {
 	create_pop_group = {
 		size = 500
 		species = owner_main_species
+	}
+}
+
+origin_planet_arkship_start = {
+	optimize_memory
+	starbase = {
+		set_starbase_building = {
+			slot = 3
+			building = arkship_environmental_control_center
+		}
+		set_starbase_building = {
+			slot = 4
+			building = arkship_environmental_control_center
+		}
+	}
+	colony = {
+		while = {
+			count = 2
+			add_district = district_ark_city
+		}
+		add_zone = {
+			district = district_ark_city
+			zone = zone_industrial
+			zone_slot = 1
+		}
+		if = {
+			limit = {
+				owner? = { is_gestalt = no }
+			}
+			add_building = building_medical_1
+		}
 	}
 }

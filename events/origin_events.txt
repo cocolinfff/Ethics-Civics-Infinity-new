@@ -4434,22 +4434,10 @@ country_event = {
     }
 
     immediate = {
-        owner = {
-            create_leader = {
-                class = official
-                name = random
-                species = owner_main_species
-                randomize_traits = no
-                traits = {
-                    1 = random_common
-                }
-            }
-        }
         random_owned_colony = {
             limit = {
                 is_planet_class = pc_wandering_planet
             }
-            set_leader = last_created_leader
             clear_blockers = yes
             remove_all_buildings = yes
             remove_all_districts = yes
@@ -4597,25 +4585,6 @@ country_event = {
         }
         if = {
             limit = {
-                OR = {
-                    num_owned_planets > 0
-                    any_owned_ship = {
-                        OR = {
-                            is_ship_size = mini_homeless_ship
-                            is_ship_size = homeless_ship
-                            is_ship_size = homeless_ship_starbase
-                            is_ship_size = private_homeless_ship
-                            is_ship_size = private_homeless_ship_starbase
-                            is_ship_size = megastructures_homeless_ship
-                            is_ship_size = ev_fleet_size_ship
-                        }
-                    }
-                }
-            }
-            set_country_type = default
-        }
-        if = {
-            limit = {
                 num_owned_planets = 0
                 any_owned_ship = {
                     NOR = {
@@ -4644,26 +4613,12 @@ country_event = {
         has_origin = origin_wandering_planet
     }
     immediate = {
-        random_owned_fleet = {
-            limit = {
-                any_owned_ship = {
-                    is_ship_size = wandering_planet
-                }
-            }
-            save_event_target_as = wandering_planetlocation
+        set_country_as_nomad_effect = { IS_NOMAD = yes }
+        country_event = {
+            id = nomads.20
         }
-        while = {
-            count = 2
-            create_fleet = {
-                effect = {
-                    set_owner = root
-                    set_location = event_target:wandering_planetlocation
-                    create_ship = {
-                        random_existing_design = colonizer
-                    }
-                }
-            }
-        }
+        set_resource_converter = nomadic_operational_reserves
+        set_variable = { which = contract_completed value = 0 }
     }
 }
 
@@ -5047,5 +5002,110 @@ country_event = {
     option = {
         name = distar.1056.a
         set_origin = origin_common_sense_changes_leader_death
+    }
+}
+
+# 星际迷航
+namespace = ethic_planet_arkship
+country_event = {
+    id = ethic_planet_arkship.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_origin = origin_planet_arkship
+    }
+    immediate = {
+        create_fleet = {
+            name = NAME_SEER
+            effect = {
+                set_location = root.capital_scope
+                set_owner = root
+                create_ship = {
+                    create_colony = yes
+                    random_existing_design = science_arkship_tier_1
+                    name = random
+                    effect = {
+                        initialize_arkship_starbase_effect = yes
+                        upgrade_colony_shelter = yes
+                        origin_planet_arkship_start = yes
+                        owner = {
+                            create_leader = {
+                                class = commander
+                                name = random
+                                species = owner_main_species
+                                randomize_traits = no
+                                traits = {
+                                    1 = random_common
+                                }
+                            }
+                        }
+                        fleet = {
+                            set_leader = last_created_leader
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+# 星舟永嗣
+namespace = ethic_arkship_alliance
+country_event = {
+    id = ethic_arkship_alliance.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_origin = origin_arkship_alliance
+    }
+    immediate = {
+        create_fleet = {
+            name = NAME_Overlord_Empire
+            effect = {
+                set_location = {
+                    target = root.capital_scope.star
+                    distance = 10
+                    angle = 200
+                }
+                set_owner = root
+                create_ship = {
+                    random_existing_design = military_arkship_tier_1
+                    name = random
+                    effect = {
+                        initialize_arkship_starbase_effect = yes
+                        home_arkship_initial_setup = yes
+                        colony = {
+                            upgrade_colony_shelter = yes
+                            generate_start_buildings_and_districts = yes
+                            generate_start_pops = yes
+                        }
+                    }
+                }
+            }
+        }
+        create_fleet = {
+            name = NAME_Overlord_Enforcers
+            effect = {
+                set_location = {
+                    target = root.capital_scope.star
+                    distance = 10
+                    angle = 100
+                }
+                set_owner = root
+                create_ship = {
+                    random_existing_design = military_arkship_tier_1
+                    name = random
+                    effect = {
+                        initialize_arkship_starbase_effect = yes
+                        home_arkship_initial_setup = yes
+                        colony = {
+                            upgrade_colony_shelter = yes
+                            generate_start_buildings_and_districts = yes
+                            generate_start_pops = yes
+                        }
+                    }
+                }
+            }
+        }
     }
 }

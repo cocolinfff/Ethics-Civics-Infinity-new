@@ -1,0 +1,67 @@
+# This inline script collects the shared functionality between all arkship megastructures.
+entity = $ENTITY$
+construction_entity = $ENTITY$
+portrait = "GFX_megastructure_construction_background"
+place_entity_on_planet_plane = no
+build_type = inside_gravity_well
+show_in_outliner = no
+use_planet_resource = no
+construction_blocks_and_blocked_by = none
+build_time = @arkship_build_time_720
+
+resources = {
+	category = megastructures_arkships
+	cost = {
+		influence = @arkship_cost_influence_500
+	}
+	cost = {
+		trigger = { country_uses_bio_ships = no }
+		alloys = @arkship_cost_alloys_10000
+	}
+	cost = {
+		trigger = { country_uses_bio_ships = yes }
+		alloys = @arkship_cost_alloys_10000
+		mult = 0.5
+	}
+	cost = {
+		trigger = { country_uses_bio_ships = yes }
+		food = @arkship_cost_alloys_10000
+		mult = @halved_alloy_to_food_cost_ratio
+	}
+}
+
+potential = {
+	OR = {
+		is_nomadic = yes
+		has_origin = origin_planet_arkship
+	}
+	has_technology = tech_arkship_construction
+	has_technology = $TECHNOLOGY$
+	from = {
+		is_arkship_fleet = yes
+	}
+}
+
+possible = {
+	fromfrom = {
+		is_arkship_fleet = yes
+	}
+}
+
+on_build_complete = {
+	create_arkship_effect = {
+		TYPE = $SHIP_SIZE$
+		OWNER = from
+		LOCATION = fromfrom
+	}
+	remove_megastructure = fromfrom
+	from = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = arkship_built_$SHIP_SIZE$ }
+			}
+			set_country_flag = arkship_built_$SHIP_SIZE$
+		}
+		country_event = { id = timeline.100 }
+	}
+}
