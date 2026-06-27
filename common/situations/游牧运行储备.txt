@@ -1,0 +1,321 @@
+### Nomad Mineral Situation
+situation_nomad_economy = {
+    picture = GFX_evt_waystation
+    situation_log_category = empire_concerns
+
+    category = neutral
+
+    initial_progress = 150000
+
+    abort_trigger = {
+        OR = {
+            NOT = { exists = owner }
+            owner = {
+                is_nomadic = no
+            }
+        }
+    }
+
+    on_start = {
+        set_situation_approach = situation_nomad_economy_smooth_spending
+        owner = {
+            if = {
+                limit = {
+                    NOT = { has_country_flag = msi_situation_nomad_economy }
+                }
+                set_country_flag = msi_situation_nomad_economy
+            }
+        }
+    }
+
+    on_fail = {}
+
+    on_progress_complete = {}
+
+    permanent = yes
+    show_in_outliner = no
+
+    stages = {
+        situation_nomad_economy_stage_1_struggle = {
+            icon = GFX_situation_stage_1
+            icon_background = GFX_situation_stage_frame_red
+            color = light_orange
+            end = 20000
+            modifier = {
+                ship_fire_rate_mult = -0.25
+                ship_shield_mult = -0.25
+                ship_armor_mult = -0.25
+                pop_bonus_workforce_mult = -0.25
+            }
+            triggered_modifier = {
+                potential = {
+                    situation_progress < 1000
+                }
+                ship_fire_rate_mult = -0.25
+                ship_shield_mult = -0.25
+                ship_armor_mult = -0.25
+                planet_stability_add = -25
+                country_physics_research_produces_mult = -0.75
+                country_society_research_produces_mult = -0.75
+                country_engineering_research_produces_mult = -0.75
+                country_unity_produces_mult = -0.75
+                country_alloys_produces_mult = -0.75
+            }
+            custom_tooltip = "situation_nomad_economy_stage_1_struggle_effects"
+        }
+        situation_nomad_economy_stage_2_struggle = {
+            icon = GFX_situation_stage_2
+            icon_background = GFX_situation_stage_frame_orange
+            color = light_orange
+            end = 50000
+            modifier = {
+                ship_fire_rate_mult = -0.15
+                ship_shield_mult = -0.15
+                ship_armor_mult = -0.15
+                pop_bonus_workforce_mult = -0.15
+            }
+            custom_tooltip = "situation_nomad_economy_stage_1_struggle_effects"
+        }
+        situation_nomad_economy_stage_3_struggle = {
+            icon = GFX_situation_stage_3
+            icon_background = GFX_situation_stage_frame_orange
+            color = light_orange
+            end = 100000
+            modifier = {
+                ship_fire_rate_mult = -0.05
+                ship_shield_mult = -0.05
+                ship_armor_mult = -0.05
+                pop_bonus_workforce_mult = -0.05
+            }
+            custom_tooltip = "situation_nomad_economy_stage_1_struggle_effects"
+        }
+        situation_nomad_economy_stage_4_stable = {
+            icon = GFX_situation_stage_4
+            icon_background = GFX_situation_stage_frame_yellow
+            color = white
+            end = 200000
+            modifier = {
+                planet_stability_mult = 0.05
+                pop_bonus_workforce_mult = 0.05
+            }
+            custom_tooltip = "situation_nomad_economy_stage_2_stable_effects"
+        }
+        situation_nomad_economy_stage_5_stable = {
+            icon = GFX_situation_stage_5
+            icon_background = GFX_situation_stage_frame_yellow
+            color = white
+            end = 350000
+            modifier = {
+                planet_stability_mult = 0.15
+                pop_bonus_workforce_mult = 0.15
+            }
+            custom_tooltip = "situation_nomad_economy_stage_2_stable_effects"
+        }
+        situation_nomad_economy_stage_6_stable = {
+            icon = GFX_situation_stage_6
+            icon_background = GFX_situation_stage_frame_yellow
+            color = white
+            end = 500000
+            modifier = {
+                planet_stability_mult = 0.25
+                pop_bonus_workforce_mult = 0.25
+            }
+            custom_tooltip = "situation_nomad_economy_stage_2_stable_effects"
+        }
+        situation_nomad_economy_stage_7_thriving = {
+            icon = GFX_situation_stage_7
+            icon_background = GFX_situation_stage_frame_blue
+            color = light_green
+            end = 650000
+            modifier = {
+                planet_stability_mult = 0.25
+                pop_bonus_workforce_mult = 0.25
+                pop_happiness = 0.05
+                logistic_growth_mult = 0.05
+                all_technology_research_speed = 0.05
+            }
+            custom_tooltip = "situation_nomad_economy_stage_3_thriving_effects"
+        }
+        situation_nomad_economy_stage_8_thriving = {
+            icon = GFX_situation_stage_8
+            icon_background = GFX_situation_stage_frame_blue
+            color = light_green
+            end = 800000
+            modifier = {
+                planet_stability_mult = 0.25
+                pop_bonus_workforce_mult = 0.25
+                pop_happiness = 0.1
+                logistic_growth_mult = 0.1
+                all_technology_research_speed = 0.1
+            }
+            custom_tooltip = "situation_nomad_economy_stage_3_thriving_effects"
+        }
+        situation_nomad_economy_stage_9_thriving = {
+            icon = GFX_situation_stage_9
+            icon_background = GFX_situation_stage_frame_green
+            color = light_green
+            end = 1000000
+            modifier = {
+                planet_stability_add = 10
+                planet_stability_mult = 0.25
+                pop_bonus_workforce_mult = 0.25
+                pop_happiness = 0.15
+                logistic_growth_mult = 0.15
+                all_technology_research_speed = 0.15
+            }
+            custom_tooltip = "situation_nomad_economy_stage_3_thriving_effects"
+        }
+    }
+
+    approach = {
+        name = situation_nomad_economy_stringent_budget
+        icon = GFX_situation_approach_nomad_neutral
+        icon_background = GFX_situation_approach_bg_yellow
+        on_select = {
+            custom_tooltip = "situation_nomad_economy_stringent_budget_tt"
+            hidden_effect = {
+                owner = {
+                    country_event = {
+                        id = nomads.37
+                    }
+                }
+            }
+        }
+        default = yes
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 50
+                owner = {
+                    any_situation = {
+                        is_situation_type = situation_nomad_economy
+                        current_stage = situation_nomad_economy_stage_1_struggle
+                    }
+                }
+            }
+        }
+
+        modifier = {
+            planet_jobs_upkeep_mult = -0.5
+            planet_pops_alloys_upkeep_mult = -0.5
+            planet_pops_consumer_goods_upkeep_mult = -0.5
+            planet_pops_minerals_upkeep_mult = -0.5
+            planet_pops_food_upkeep_mult = -0.5
+            planet_pops_energy_upkeep_mult = -0.5
+            pop_bonus_workforce_mult = -0.5
+        }
+    }
+
+    approach = {
+        name = situation_nomad_economy_smooth_spending
+        icon = GFX_situation_approach_nomad_good
+        icon_background = GFX_situation_approach_bg_green
+        on_select = {
+            custom_tooltip = "situation_nomad_economy_smooth_spending_tt"
+        }
+        ai_weight = {
+            base = 10
+        }
+        modifier = {
+        }
+    }
+
+    approach = {
+        name = situation_nomad_economy_full_spending
+        icon = GFX_situation_approach_nomad_very_good
+        icon_background = GFX_situation_approach_bg_green
+        allow = {
+            custom_tooltip = {
+                fail_text = no_situation_progress_good
+                owner = {
+                    any_situation = {
+                        is_situation_type = situation_nomad_economy
+                        situation_progress >= 200000
+                    }
+                }
+            }
+        }
+        on_select = {
+            custom_tooltip = "situation_nomad_economy_full_spending_tt"
+        }
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 50
+                owner = {
+                    any_situation = {
+                        is_situation_type = situation_nomad_economy
+                        situation_progress >= @ai_nomad_full_spending_progress_threshold
+                    }
+                }
+            }
+        }
+        modifier = {
+            planet_building_build_speed_mult = 0.5
+            specialist_and_complex_drone_cat_bonus_workforce_mult = 0.25
+            worker_and_simple_drone_cat_bonus_workforce_mult = 0.33
+        }
+    }
+
+    approach = {
+        name = situation_nomad_economy_harvest_everything
+        icon = GFX_situation_approach_nomad_emergency
+        icon_background = GFX_situation_approach_bg_yellow
+        potential = {
+            owner? = {
+            is_star_seeker_empire = yes
+            }
+        }
+        allow = {
+            custom_tooltip = {
+                fail_text = no_arkship_is_encamped
+                owner = {
+                    any_owned_ship = {
+                        is_arkship_ship = yes
+                        is_system_locked = yes
+                    }
+                }
+            }
+            custom_tooltip = {
+                fail_text = no_situation_progress
+                owner = {
+                    any_situation = {
+                        is_situation_type = situation_nomad_economy
+                        situation_progress >= 10001
+                    }
+                }
+            }
+        }
+        on_select = {
+            custom_tooltip = "situation_nomad_economy_harvest_everything_tt"
+        }
+        modifier = {
+            specialist_and_complex_drone_cat_bonus_workforce_mult = 10
+            founder_species_growth_mult = 10
+            diplo_weight_economy_mult = -0.9
+        }
+        ai_weight = {
+            base = 0
+        }
+    }
+    on_monthly = {
+        events = {
+            nomads.38		# Festival duration countdown
+        }
+    }
+    monthly_progress = {
+        base = 0
+        # Modifiers are defined in tooltip order, most important first
+        modifier = {
+            subtract = value:nomad_celebration_upkeep
+            desc = "Celebration_Approach"
+            current_situation_approach = situation_nomad_economy_harvest_everything
+        }
+    }
+    triggered_blocked_desc = {
+        trigger = {
+            situation_progress < 1000
+        }
+        text = situation_nomad_economy_critical_reserves_desc
+    }
+}
