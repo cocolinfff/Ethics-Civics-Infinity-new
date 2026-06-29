@@ -167,6 +167,173 @@ refugees = {
 	}
 }
 
+# 全面战争行径
+nomad_total_war = {
+	potential = {
+		is_nomadic = yes
+	}
+	option = {
+		name = "nomad_total_war_subject"
+
+		valid = {
+			is_homicidal = no
+		}
+
+		policy_flags = {
+			nomad_total_war_subject
+		}
+		ai_weight = {
+			factor = 1
+			modifier = {
+				add = 5
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = subjugator
+			}
+			modifier = {
+				add = 5
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = conqueror # Since Nomads can't hold land this is the best alternative option
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = purger
+			}
+		}
+	}
+
+	option = {
+		name = "nomad_total_war_displace"
+
+		policy_flags = {
+			nomad_total_war_displace
+		}
+
+		modifier = {}
+
+		valid = {
+			is_xenophile = no
+			is_homicidal = no
+			is_true_scientific_socialism = no
+			NOR = {
+				has_valid_civic = civic_liberator
+				has_valid_civic = civic_crusader_spirit
+			}
+		}
+
+		ai_weight = {
+			factor = 5
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				has_ai_personality_behaviour = multispecies
+			}
+		}
+	}
+
+	option = {
+		name = "nomad_total_war_purge"
+
+		in_breach_of = {
+			{
+				key = resolution_rulesofwar_reverence_for_life
+			}
+			{
+				key = resolution_rulesofwar_independent_tribunals
+			}
+			{
+				key = resolution_rulesofwar_last_resort_doctrine
+			}
+			{
+				key = resolution_rulesofwar_demobilization_initiative
+			}
+		}
+
+		policy_flags = {
+			nomad_total_war_purge
+		}
+		modifier = {}
+
+		valid = {
+			custom_tooltip = {
+				success_text = is_not_a_signatory_vassal_success
+				fail_text = is_not_a_signatory_vassal_fail
+				NOT = { any_agreement = { agreement_preset = preset_signatory } }
+			}
+			custom_tooltip = {
+				fail_text = is_broken_shackles_origin
+				NOT = { has_origin = origin_broken_shackles }
+			}
+			is_true_scientific_socialism = no
+			NOR = {
+				has_valid_civic = civic_liberator
+				has_valid_civic = civic_crusader_spirit
+			}
+			OR = {
+				has_ethic = ethic_gestalt_consciousness
+				is_xenophobe = yes
+				has_crisis_perk = menp_undertaker	# Unlocked with Crisis Level 1
+				AND = {
+					custom_tooltip = {
+						text = civic_tooltip_not_xenophile
+						is_xenophile = no
+					}
+					has_purity_imperfection_remediation_tradition = yes
+				}
+			}
+		}
+
+		ai_weight = {
+			factor = 10
+			modifier = {
+				factor = 40
+				has_ethic = ethic_gestalt_consciousness
+				values_others = no
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					is_pacifist = yes
+					values_others = yes
+				}
+			}
+			modifier = {
+				factor = 0
+				has_valid_ai_personality = yes
+				NOR = {
+					has_ai_personality_behaviour = purger
+					has_ethic = ethic_gestalt_consciousness
+					AND = {
+						has_origin = origin_necrophage
+						is_xenophobe = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				has_valid_ai_personality = yes
+				is_ai = yes
+				is_galactic_community_member = yes
+				OR = {
+					is_active_resolution = "resolution_rulesofwar_reverence_for_life"
+					is_active_resolution = "resolution_rulesofwar_independent_tribunals"
+					is_active_resolution = "resolution_rulesofwar_last_resort_doctrine"
+					is_active_resolution = "resolution_rulesofwar_demobilization_initiative"
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ascension_perk = ap_become_the_crisis
+			}
+			modifier = {
+				factor = 1000
+				has_origin = origin_necrophage
+				is_xenophobe = yes
+			}
+		}
+	}
+}
+
 # 战争哲学
 war_philosophy = {
 	potential = {
@@ -3690,7 +3857,6 @@ basic_state_policy = {
 		potential = {
 			OR = {
 				is_true_scientific_socialism = yes
-				has_valid_civic = civic_firing_torch
 				has_valid_civic = civic_liberator
 			}
 			is_characteristic_socialism = no

@@ -1,0 +1,60 @@
+# 在 nomads.1 / nomads.5 内从 Nomad-conquest 附庸范围调用，在 save_event_target_as = nomad_vassal 和 give_planet_and_system_to_rebel 运行之后。对于宗主参与的每一场战争，如果 fromfrom 也是参与者，新附庸（事件目标: nomad_vassal）会加入宗主一方。显式确定阵营，以便引擎在添加新的臣属时不会重新分配阵营。
+nomad_vassal_join_overlord_wars_effect = {
+    event_target:nomad_vassal = {
+        random_agreement = {
+            if = {
+                limit = {
+                    NOT = { agreement_preset = preset_nomadic_purger }
+                    owner.overlord = { is_true_scientific_socialism = no }
+                }
+                set_agreement_preset = { preset = preset_vassal }
+            }
+            if = {
+                limit = {
+                    owner.overlord = { is_true_scientific_socialism = no }
+                }
+                set_agreement_preset = { preset = preset_jhh_subject }
+            }
+            set_agreement_terms = {
+                joins_overlord_wars = joins_overlord_wars_all
+            }
+        }
+    }
+    overlord = {
+        every_war = {
+            limit = {
+                any_war_participant = {
+                    is_same_value = fromfrom
+                }
+                NOT = {
+                    any_war_participant = {
+                        is_same_value = event_target:nomad_vassal
+                    }
+                }
+            }
+            save_event_target_as = nomad_war
+            event_target:nomad_vassal = {
+                if = {
+                    limit = {
+                        overlord = {
+                            is_war_participant = {
+                                war = event_target:nomad_war
+                                side = attackers
+                            }
+                        }
+                    }
+                    join_war_on_side = {
+                        war = event_target:nomad_war
+                        side = attackers
+                    }
+                }
+                else = {
+                    join_war_on_side = {
+                        war = event_target:nomad_war
+                        side = defenders
+                    }
+                }
+            }
+        }
+    }
+}

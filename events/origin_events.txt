@@ -5017,7 +5017,7 @@ country_event = {
                 set_owner = root
                 create_ship = {
                     create_colony = yes
-                    random_existing_design = science_arkship_tier_1
+                    random_existing_design = civilian_arkship_tier_1
                     name = random
                     effect = {
                         initialize_arkship_starbase_effect = yes
@@ -5101,6 +5101,132 @@ country_event = {
                     }
                 }
             }
+        }
+    }
+}
+
+# 兄弟阋墙
+namespace = ethic_contradiction_theory
+country_event = {
+    id = ethic_contradiction_theory.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_origin = origin_contradiction_theory
+    }
+    immediate = {
+        set_country_as_nomad_effect = { IS_NOMAD = yes }
+        country_event = {
+            id = nomads.20
+        }
+        set_resource_converter = nomadic_operational_reserves
+        set_variable = { which = contract_completed value = 0 }
+        # Arkship Random Event Director
+        country_event = {
+            id = arkship.1
+            random = 1800
+        }
+        set_faction_properties = {
+            needs_border_access = no
+        }
+        give_technology = { tech = tech_science_arkship }
+        give_technology = { tech = tech_waystation_1 }
+        refresh_auto_generated_ship_designs = yes
+        create_fleet = {
+            effect = {
+                set_owner = prev
+                create_ship = {
+                    create_colony = yes
+                    random_existing_design = science_arkship_tier_1
+                    effect = {
+                        save_event_target_as = embarking_arkship
+                        initialize_arkship_starbase_effect = yes
+                        home_arkship_initial_setup = yes
+                        colony = {
+                            upgrade_colony_shelter = yes
+                            generate_start_buildings_and_districts = yes
+                            generate_start_pops = yes
+                        }
+                    }
+                }
+                set_location = {
+                    target = root.capital_scope
+                    distance = 0
+                    angle = random
+                }
+            }
+        }
+        capital_scope = {
+            remove_planet = yes
+            solar_system = {
+                every_fleet_in_system = {
+                    limit = {
+                        OR = {
+                            is_normal_starbase = yes
+                            is_ship_size = starbase_starport
+                        }
+                    }
+                    delete_fleet = this
+                }
+            }
+        }
+        create_fleet = {
+            effect = {
+                set_owner = prev
+                create_ship = {
+                    name = random
+                    random_existing_design = nomads_constructor
+                }
+                set_fleet_stance = evasive
+                set_location = {
+                    target = root.capital_scope
+                    distance = 10
+                    angle = 200
+                }
+            }
+        }
+        create_fleet = {
+            effect = {
+                set_owner = prev
+                create_ship = {
+                    name = random
+                    random_existing_design = science
+                }
+                set_fleet_stance = evasive
+                set_location = {
+                    target = root.capital_scope
+                    distance = 10
+                    angle = 100
+                }
+            }
+        }
+        every_owned_fleet = {
+            limit = {
+                OR = {
+                    is_ship_size = constructor
+                    is_ship_size = engineer_vessel
+                }
+            }
+            destroy_fleet = this
+        }
+        capital_scope = {
+            create_country = {
+                name = random
+                ethos = {
+                    ethic = ethic_fanatic_authoritarian
+                    ethic = ethic_xenophobe
+                }
+                authority = from
+                civics = from
+                species = from.species
+                flag = random
+                origin = "origin_default_pre_ftl"
+                type = primitive
+                effect = {
+                    set_country_flag = early_space_age
+                }
+            }
+            set_owner = last_created_country
         }
     }
 }

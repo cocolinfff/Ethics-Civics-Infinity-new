@@ -1,0 +1,135 @@
+namespace = nomads
+
+# Fired whenever a new owner is set for a planet, following a war or through trade
+# This = Planet scope
+# From = Country scope (new owner)
+# FromFrom = Country scope (previous owner, if any)
+carrier_event = {
+    id = nomads.1
+    hide_window = yes
+    is_triggered_only = yes
+
+    trigger = {
+        NOR = {
+            is_planet_class = pc_ark
+            has_carrier_flag = nomad_recently_settled_flag
+        }
+        from = { # Nomads should *never* have planets
+            is_nomadic = yes
+            has_policy_flag = nomad_total_war_subject
+        }
+    }
+
+    immediate = {
+        if = { # We split the check for attacker war and defender war into two different if's just to make scripting easier.
+            inline_script = {
+                script = events/nomad_total_war_ally_system_manager
+                NOMAD = From
+                NOMAD_SIDE = defender
+                ENEMY = FromFrom
+                ENEMY_SIDE = attacker
+                TARGET_SYSTEM = root.solar_system
+                PLANET = root
+            }
+        }
+        else_if = {
+            inline_script = {
+                script = events/nomad_total_war_ally_system_manager
+                NOMAD = From
+                NOMAD_SIDE = attacker
+                ENEMY = FromFrom
+                ENEMY_SIDE = defender
+                TARGET_SYSTEM = root.solar_system
+                PLANET = root
+            }
+        }
+        else_if = {
+            limit = {
+                exists = fromfrom
+            }
+            if = {
+                limit = {
+                    from = {
+                        any_subject = {
+                            has_country_flag = nomad_vassal@fromfrom
+                        }
+                    }
+                }
+                from = {
+                    random_subject = {
+                        limit = {
+                            has_country_flag = nomad_vassal@fromfrom
+                        }
+                        save_event_target_as = nomad_vassal
+                        give_planet_and_system_to_rebel = {
+                            PLANET = root
+                            REBEL = event_target:nomad_vassal
+                            OLD_OWNER = fromfrom
+                        }
+                        nomad_vassal_join_overlord_wars_effect = yes
+                        refresh_species_rights = yes
+                    }
+                }
+            }
+            else = {
+                create_country= {
+                    name = random
+                    ethos = from
+                    authority = from
+                    civics = from
+                    remove_invalid_civics = yes # drop nomad-only civics that aren't valid for this non-nomad vassal
+                    origin = origin_default
+                    species = from.species
+                    flag = random
+                    effect = {
+                        set_country_type = default
+                        set_country_flag = nomad_vassal@fromfrom
+                        establish_communications_no_message = from
+                        establish_communications_no_message = fromfrom
+                        from = {
+                            every_relation = {
+                                establish_communications_no_message = prevprev
+                                add_intel_report = { #Ensuring that they know we are purging pops
+                                    category = economy
+                                    level = 1
+                                    who = prevprev
+                                }
+                            }
+                        }
+                        set_policy = {
+                            policy = robot_pop_policy
+                            option = robot_pops_outlawed
+                            cooldown = yes
+                        }
+                        add_opinion_modifier = { modifier = opinion_liberated_us who = from }
+                        copy_techs_from = {
+                            target = from
+                        }
+                        copy_traditions_from = {
+                            target = from
+                        }
+                        save_event_target_as = nomad_vassal
+                        set_subject_of = {
+                            who = from
+                            preset = preset_nomadic_purger
+                        }
+                        random_agreement = {
+                            add_loyalty = 100
+                        }
+                        give_planet_and_system_to_rebel = {
+                            PLANET = root
+                            REBEL = event_target:nomad_vassal
+                            OLD_OWNER = fromfrom
+                        }
+                        nomad_vassal_join_overlord_wars_effect = yes
+                        refresh_species_rights = yes
+                    }
+                }
+            }
+        }
+
+        else = { #If there was no previous owner there will be no vassal
+            destroy_colony = yes
+        }
+    }
+}
