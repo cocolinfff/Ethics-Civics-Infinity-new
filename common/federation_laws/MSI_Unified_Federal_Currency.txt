@@ -927,3 +927,70 @@ MSI_law_unified_federal_currency_sr_dark_matter_astral_threads = {
 		}
 	}
 }
+
+MSI_law_unified_federal_currency_no_currency = {
+	potential = {
+		has_federation_type = TT_communist_federation
+		has_federation_law = TT_law_communist_road_5
+	}
+	allow = {
+		custom_tooltip = {
+			NOT = {
+				AND = {
+					NOT = { has_federation_law = MSI_law_unified_federal_currency_no_currency }
+					has_modifier = federation_MSI_law_unified_federal_currency_cooldown
+					has_any_federation_law_in_category = MSI_law_unified_federal_currency_special
+				}
+			}
+		}
+	}
+	cohesion_growth = 0.25
+	on_enact = {
+		if = {
+			limit = { has_federation_flag = enable_federation_cooldowns }
+			add_modifier = {
+				modifier = federation_MSI_law_unified_federal_currency_cooldown
+				days = @cooldown
+			}
+		}
+		add_cohesion = -5
+		hidden_effect = {
+			if = {
+				limit = {
+					has_federation_flag = no_federation_fleet
+				}
+				remove_federation_flag = no_federation_fleet
+				set_timed_federation_flag = {
+					flag = no_federation_fleet_build_right_cooldown
+					days = 10
+				}
+			}
+		}
+	}
+
+	ai_weight = {
+		base = 0
+
+		#Default support
+		modifier = {
+			desc = TT_federation_acceptance_fanatic_egalitarian_support_progress
+			add = 50
+			has_ethic = ethic_fanatic_egalitarian
+		}
+
+		modifier = {
+			desc = civic_communist_society
+			add = 9999
+			has_valid_civic = civic_communist_society
+		}
+
+		modifier = {
+			add = 10
+			desc = federation_acceptance_high_cohesion
+			federation = {
+				federation_cohesion >= 99
+				has_federation_law = fleet_contribution_none
+			}
+		}
+	}
+}
