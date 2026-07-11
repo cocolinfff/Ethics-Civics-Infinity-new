@@ -3539,7 +3539,7 @@ fleet_event = {
             random_list = {
                 6 = {}
                 4 = {
-                    random_pop = {
+                    random_owned_pop_group = {
                         save_event_target_as = netori_target
                     }
                     this.controller = {
@@ -4365,6 +4365,176 @@ country_event = {
             authority = random
             civics = random
         }
+    }
+}
+
+# 户枢不蠹
+namespace = ethic_rectification_movement
+country_event = {
+    id = ethic_rectification_movement.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_rectification_movement
+    }
+
+    immediate = {
+        every_owned_leader = {
+            limit = {
+                is_councilor = yes
+                num_negative_traits > 0
+            }
+            kill_leader = { show_notification = no }
+        }
+    }
+}
+
+# 蚕食战术
+namespace = ethic_sausage_cutting_tactics
+country_event = {
+    id = ethic_sausage_cutting_tactics.0
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        OR = {
+            has_valid_civic = civic_sausage_cutting_tactics
+            has_valid_civic = civic_sausage_cutting_tactics_corporate
+        }
+    }
+
+    immediate = {
+        every_owned_starbase = {
+            limit = {
+                solar_system = {
+                    any_neighbor_system = {
+                        system_star.owner = {
+                            is_rival = root
+                        }
+                    }
+                }
+            }
+            solar_system = {
+                every_neighbor_system = {
+                    limit = {
+                        system_star.owner = {
+                            is_rival = root
+                        }
+                    }
+                    every_starbase_in_system = {
+                        ship = { destroy_fleet = this }
+                    }
+                    create_starbase = {
+                        owner = root
+                        size = starbase_outpost
+                    }
+                }
+            }
+        }
+    }
+}
+
+# 多难兴邦
+namespace = ethic_adversity_rejuvenates_the_nation
+country_event = {
+    id = ethic_adversity_rejuvenates_the_nation.1
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_adversity_rejuvenates_the_nation
+        is_at_war = yes
+        any_war = {
+            any_defender = {
+                NOT = { is_same_value = this }
+            }
+        }
+    }
+
+    immediate = {
+        change_variable = {
+            which = adversity_rejuvenates_the_nation_fleet_war_lost
+            value = 1
+        }
+        add_modifier = {
+            modifier = eci_civic_adversity_rejuvenates_the_nation_fleet_war
+            multiplier = adversity_rejuvenates_the_nation_fleet_war_lost
+            clear_on_owner_change = yes
+        }
+    }
+}
+country_event = {
+    id = ethic_adversity_rejuvenates_the_nation.2
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_adversity_rejuvenates_the_nation
+        is_at_war = yes
+        any_war = {
+            any_defender = {
+                NOT = { is_same_value = this }
+            }
+        }
+    }
+
+    immediate = {
+        change_variable = {
+            which = adversity_rejuvenates_the_nation_planet_war_lost
+            value = 1
+        }
+        add_modifier = {
+            modifier = eci_civic_adversity_rejuvenates_the_nation_planet_war
+            multiplier = adversity_rejuvenates_the_nation_planet_war_lost
+            clear_on_owner_change = yes
+        }
+    }
+}
+country_event = {
+    id = ethic_adversity_rejuvenates_the_nation.3
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        exists = root
+        root = { has_valid_civic = civic_adversity_rejuvenates_the_nation }
+    }
+
+    immediate = {
+        root = {
+            change_variable = {
+                which = adversity_rejuvenates_the_nation_war_lost
+                value = 1
+            }
+            add_modifier = {
+                modifier = eci_civic_adversity_rejuvenates_the_nation_lost_war
+                multiplier = adversity_rejuvenates_the_nation_war_lost
+                clear_on_owner_change = yes
+            }
+        }
+    }
+}
+
+# 进步之药
+namespace = ethic_elixir_of_progress
+country_event = {
+    id = ethic_elixir_of_progress.1
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_elixir_of_progress
+    }
+
+    immediate = {
+        add_modifier = { modifier = eci_civic_elixir_of_progress_technology years = 2 }
+    }
+}
+country_event = {
+    id = ethic_elixir_of_progress.2
+    hide_window = yes
+    is_triggered_only = yes
+    trigger = {
+        has_valid_civic = civic_elixir_of_progress
+    }
+
+    immediate = {
+        add_modifier = { modifier = eci_civic_elixir_of_progress_tradition years = 1 }
     }
 }
 
