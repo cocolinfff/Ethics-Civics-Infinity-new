@@ -23,6 +23,7 @@ labour_hero = {
 		OR = {
 			is_enslaved = no
 			owner = { has_valid_civic = civic_du_contrat_social }
+			owner = { has_valid_civic = civic_flower_of_evil }
 		}
 		planet = {
 			NOT = { is_planet_class = pc_cosmogenesis_world }
@@ -273,14 +274,6 @@ labour_hero = {
 				is_artificial = no
 				NOT = { is_planet_class = pc_cosmogenesis_world }
 			}
-			owner = {
-				OR = {
-					NOT = { is_no_planet_country = yes }
-					has_origin = origin_ev_both_choosen
-					has_valid_civic = civic_ev_planet_and_fleet
-					has_ascension_perk = ev_land_planets
-				}
-			}
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
@@ -299,43 +292,32 @@ labour_hero = {
 	}
 	triggered_planet_modifier = {
 		potential = { owner = { NOT = { has_valid_civic = civic_nazbol } } }
-		planet_amenities_add = 2
-		mult = PLANET.value:num_districts_value|DISTRICT|district_hab_cultural|
-	}
-	triggered_planet_modifier = {
-		potential = { owner = { NOT = { has_valid_civic = civic_nazbol } } }
-		planet_amenities_add = 1
+		planet_amenities_add = 3
 		mult = PLANET.value:num_districts_value|DISTRICT|district_city|
 	}
 	triggered_planet_modifier = {
 		potential = { owner = { NOT = { has_valid_civic = civic_nazbol } } }
-		planet_amenities_add = 1
+		planet_amenities_add = 3
 		mult = PLANET.value:num_districts_value|DISTRICT|district_arcology_housing|
 	}
 	triggered_planet_modifier = {
 		potential = { owner = { NOT = { has_valid_civic = civic_nazbol } } }
-		planet_amenities_add = 1
+		planet_amenities_add = 3
 		mult = PLANET.value:num_districts_value|DISTRICT|district_rw_city|
 	}
 	triggered_planet_modifier = {
 		potential = {
 			owner = { NOT = { has_valid_civic = civic_nazbol } }
-			NOT = {
-				planet = { has_designation = col_habitat_farming }
-			}
 		}
-		planet_amenities_add = 1
+		planet_amenities_add = 3
 		mult = PLANET.value:num_districts_value|DISTRICT|district_hab_housing|
 	}
 	triggered_planet_modifier = {
 		potential = {
 			owner = { NOT = { has_valid_civic = civic_nazbol } }
-			NOT = {
-				planet = { has_designation = col_habitat_farming }
-			}
 		}
 		planet_amenities_add = 1
-		mult = PLANET.value:num_districts_value|DISTRICT|district_pdhab_housing|
+		mult = PLANET.value:num_districts_value|DISTRICT|district_ark_city|
 	}
 
 	#非特殊国策固定加成
@@ -349,7 +331,6 @@ labour_hero = {
 	triggered_planet_modifier = {
 		potential = {
 			owner = {
-				has_valid_civic = civic_advanced_socialism
 				NOR = {
 					has_valid_civic = civic_shared_burden
 					has_valid_civic = civic_nazbol
@@ -405,10 +386,7 @@ labour_hero = {
 	triggered_planet_modifier = {
 		potential = {
 			owner = {
-				OR = {
-					has_valid_civic = civic_shared_burden
-					has_valid_civic = civic_advanced_socialism
-				}
+				has_valid_civic = civic_shared_burden
 			}
 		}
 		pop_cat_worker_bonus_workforce_mult = 0.025
@@ -427,10 +405,6 @@ labour_hero = {
 
 	weight = {
 		weight = @worker_prio_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|miner|RESOURCE|minerals|
-			owner = { has_edict = dynamic_weight }
-		}
 		modifier = {
 			factor = 2
 			OR = {
@@ -556,7 +530,6 @@ foundry_specialist = {
 		}
 	}
 	planet_modifier = {
-		trade_value_add = 2
 		planet_metallurgists_alloys_produces_mult = 0.05
 	}
 
@@ -576,14 +549,6 @@ foundry_specialist = {
 	triggered_planet_modifier = {
 		potential = {
 			owner = {
-				OR = {
-					NOT = {
-						is_no_planet_country = yes
-					}
-					has_origin = origin_ev_both_choosen
-					has_valid_civic = civic_ev_planet_and_fleet
-					has_ascension_perk = ev_land_planets
-				}
 				NOT = {
 					has_valid_civic = civic_catalytic_processing
 				}
@@ -592,19 +557,6 @@ foundry_specialist = {
 		}
 		pop_environment_tolerance = -0.02
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
-	}
-	# 分产主义
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_distributism
-			}
-		}
-		modifier = {
-			trade_value_add = 2
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 
 	overlord_resources = {
@@ -633,19 +585,10 @@ foundry_specialist = {
 
 	weight = {
 		weight = @specialist_job_weight		# Fairly important job
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|foundry|RESOURCE|alloys|
-			exists = owner
-			owner = { has_edict = dynamic_weight }
-		}
 		modifier = {
 			factor = 2
 			is_enslaved = yes
 			can_take_servant_job = no
-		}
-		modifier = {
-			factor = 5
-			has_job_type = foundry_specialist
 		}
 	}
 	inline_script = "jobs/ethic_worker_economic"
@@ -735,53 +678,16 @@ artisan_specialist = {
 		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
 	}
 	planet_modifier = {
-		trade_value_add = 3
 		planet_artisans_consumer_goods_produces_mult = 0.05
 	}
 
 	#污染
 	triggered_planet_modifier = {
 		potential = {
-			owner = {
-				OR = {
-					NOT = {
-						is_no_planet_country = yes
-					}
-					has_origin = origin_ev_both_choosen
-					has_valid_civic = civic_ev_planet_and_fleet
-					has_ascension_perk = ev_land_planets
-				}
-			}
 			planet = { is_artificial = no }
 		}
 		pop_environment_tolerance = -0.01
 		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
-	}
-	# 分产主义
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_distributism
-			}
-		}
-		modifier = {
-			trade_value_add = 2
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	# 能工巧匠
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_crafters
-			}
-		}
-		modifier = {
-			trade_value_add = 4
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
 	}
 
 
@@ -813,19 +719,10 @@ artisan_specialist = {
 
 	weight = {
 		weight = @specialist_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
-			exists = owner
-			owner = { has_edict = dynamic_weight }
-		}
 		modifier = {
 			factor = 2
 			is_enslaved = yes
 			can_take_servant_job = no
-		}
-		modifier = {
-			factor = 5
-			has_job_type = artisan_specialist
 		}
 
 		# low income modifier
@@ -859,25 +756,6 @@ re_augur = {
 		}
 	}
 	possible = { always = no }
-
-	resources = {
-		category = planet_jobs
-		produces = {
-			unity = 10
-		}
-	}
-
-	# 视为统治者/先驱者
-	weight = {
-		weight = 30000
-
-		# crisis purge
-		modifier = {
-			factor = 0.01
-			is_crisis_purged_ruler_check = yes
-		}
-	}
-	inline_script = "jobs/automodding_priority_unity"
 }
 
 #天空主教
@@ -891,191 +769,6 @@ re_sky_cardinal = {
 		}
 	}
 	possible = { always = no }
-
-	resources = {
-		category = planet_priests
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_liberation_theology
-				}
-			}
-			unity = 8
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = { always = yes }
-		planet_stability_add = 85
-		mult = planet.society_factor_pops
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 10
-		mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_origin = origin_zarqlanism_idea
-			}
-		}
-		planet_crime_add = -5
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			owner = {
-				has_origin = origin_zarqlanism_idea
-			}
-		}
-		country_admin_cap_add = 5
-	}
-
-	# 视为统治者/先驱者
-	weight = {
-		weight = 30000
-
-		# crisis purge
-		modifier = {
-			factor = 0.01
-			is_crisis_purged_ruler_check = yes
-		}
-	}
-	inline_script = "jobs/automodding_priority_unity"
-}
-
-#机械医生
-healthcare_synthetic = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_autochthon_monument
-			icon = healthcare
-		}
-	}
-	possible = { always = no }
-	resources = {
-		category = planet_doctors
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_policy_flag = mixed_healthcare
-				}
-			}
-			unity = 2
-		}
-		produces = {
-			engineering_research = 1.5
-		}
-		upkeep = {
-			consumer_goods = 1
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			always = yes
-		}
-		planet_amenities_add = 3
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	planet_modifier = {
-		pop_decline_speed = -0.05
-		logistic_growth_mult = 1
-		planet_pop_assembly_add = 1
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = public_healthcare
-			}
-		}
-		modifier = {
-			planet_pop_assembly_mult = 0.025
-			planet_amenities_add = -2
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_policy_flag = private_healthcare
-			}
-		}
-		modifier = {
-			pop_cat_ruler_happiness = 0.05
-			planet_pops_trade_produces_mult = 0.02
-			planet_pop_assembly_mult = -0.025
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_carrier_flag = has_private_clinics }
-		}
-		planet_amenities_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = { has_carrier_flag = has_private_clinics }
-		}
-		trade_value_add = 2
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-
-	weight = {
-		weight = @high_prio_specialist_job_weight
-		modifier = {
-			# 可控的动态权重
-			factor = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
-			exists = owner
-			owner = {
-				has_edict = dynamic_weight
-			}
-		}
-		modifier = {
-			factor = 0.2
-			has_citizenship_rights = no
-			NOT = {
-				has_trait = trait_mechanical
-			}
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_job_type = healthcare_synthetic
-		}
-		modifier = {
-			factor = 0.5
-			is_enslaved = yes
-			has_slavery_type = {
-				type = slavery_indentured
-			}
-		}
-		modifier = {
-			factor = 10
-			NOT = {
-				has_job_type = healthcare_synthetic
-			}
-			planet = {
-				free_amenities < 0
-				has_available_jobs = healthcare_synthetic
-			}
-		}
-	}
-	inline_script = "jobs/automodding_priority_research"
 }
 
 #厨师
@@ -1172,16 +865,6 @@ chef = {
 	}
 
 	inline_script = "jobs/automodding_priority_trade"
-
-	promotion = {
-		time = @standard_promotion_time
-		effect = {
-			pop_amount_change_category = {
-				CATEGORY = specialist
-				AMOUNT = local_pop_amount
-			}
-		}
-	}
 }
 
 
@@ -1196,737 +879,6 @@ media_worker = {
 		}
 	}
 	possible = { always = no }
-	triggered_planet_pop_group_modifier_for_all = {
-		potential = {
-			owner = {
-				has_policy_flag = market_operation
-			}
-		}
-		modifier = {
-			pop_cat_specialist_political_power = 0.5
-		}
-	}
-	resources = {
-		category = planet_media_workers
-		produces = {
-			unity = 4
-		}
-		#信息管制
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					OR = {
-						has_policy_flag = strict_control
-						has_policy_flag = market_operation
-					}
-				}
-			}
-			unity = -1
-		}
-		#完全自由
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_policy_flag = freedom_of_speech
-				}
-			}
-			society_research = 3
-		}
-		#集体共识
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_policy_flag = freedom_utopia
-				}
-			}
-			society_research = 3
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = { has_policy_flag = freedom_utopia }
-				exists = planet
-				planet = { has_building = building_hypercomms_forum }
-			}
-			unity = 1
-		}
-		#和平主义
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_ethic = ethic_fanatic_pacifist
-				}
-			}
-			unity = 2
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_ethic = ethic_pacifist
-				}
-			}
-			unity = 1
-		}
-		upkeep = {
-			consumer_goods = 2
-		}
-
-		#正义之怒
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_glory_and_dream
-					has_valid_civic = civic_righteous_fury
-				}
-			}
-			unity = 3
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_dystopian_society
-					has_valid_civic = civic_righteous_fury
-				}
-			}
-			unity = 5
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_active_tradition = tr_domination_judgment_corps
-					has_valid_civic = civic_righteous_fury
-				}
-			}
-			unity = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_colonial_government
-				}
-				any_country = {
-					has_diplo_migration_treaty = root.owner
-				}
-			}
-			unity = 2
-		}
-		upkeep = {
-			trigger = {
-				planet = {
-					has_modifier = anticrime_campaign
-				}
-				owner = {
-					has_valid_civic = civic_righteous_fury
-				}
-			}
-			energy = 2
-		}
-	}
-
-	planet_modifier = {
-		pop_ethics_shift_speed = 0.1
-	}
-
-	#正义之怒
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				NOT = { has_valid_civic = civic_spirit_of_rule_by_man }
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		modifier = {
-			planet_crime_add = -10
-			planet_stability_add = 2
-			pop_citizen_happiness = -0.02
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_spirit_of_rule_by_man
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		modifier = {
-			planet_crime_add = -5
-			planet_stability_add = 2
-			pop_citizen_happiness = -0.02
-		}
-	}
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_active_tradition = tr_domination_judgment_corps
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		modifier = {
-			planet_crime_add = -5
-		}
-	}
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_spirit_of_rule_by_man
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		country_admin_cap_add = 5
-	}
-	triggered_planet_modifier = {
-		potential = {
-			planet = {
-				has_modifier = anticrime_campaign
-			}
-			owner = {
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		modifier = {
-			planet_crime_add = -10
-		}
-	}
-	triggered_country_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_glory_and_dream
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		modifier = {
-			country_naval_cap_add = 4
-		}
-	}
-
-	#流量密码
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_righteous_fury
-			}
-		}
-		modifier = {
-			species_empire_size_mult = -0.05
-			pop_amenities_usage_mult = 0.05
-		}
-	}
-
-	#舆论控制
-	triggered_planet_modifier = { #严格管理
-		potential = {
-			owner = {
-				has_policy_flag = strict_control
-			}
-		}
-		modifier = {
-			pop_cat_ruler_political_power = 0.5
-		}
-	}
-	triggered_planet_modifier = { #市场运作
-		potential = {
-			owner = {
-				has_policy_flag = market_operation
-			}
-		}
-		modifier = {
-			trade_value_add = 2
-			planet_crime_add = 3
-		}
-	}
-	triggered_planet_modifier = {
-		potential = { planet = { has_building = building_corporate_vault } }
-		trade_value_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	triggered_country_modifier = { #加经费
-		potential = {
-			exists = owner
-			owner = {
-				OR = {
-					has_policy_flag = strict_control
-					has_policy_flag = market_operation
-				}
-			}
-		}
-		modifier = {
-			country_edict_fund_add = 2
-		}
-	}
-	#星光魔镜
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_magic_mirror
-			}
-		}
-		planet_pops_trade_produces_mult = 0.05
-		mult = value_num_rival_country
-	}
-
-	weight = {
-		weight = @specialist_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|media_worker|RESOURCE|unity|
-			owner = { has_edict = dynamic_weight }
-		}
-		modifier = {
-			factor = 0.2
-			has_citizenship_rights = no
-			NOT = { has_trait = trait_mechanical }
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_robot_propaganda_machines
-			OR = {
-				is_non_sapient_robot = yes
-				is_shackled_robot = yes
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_quarrelsome
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_job_type = bureaucrat
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_latent_psionic
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_psionic
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_enigmatic_intelligence_failed
-		}
-	}
-	inline_script = "jobs/automodding_priority_unity"
-}
-
-#血肉机器组装者
-reemployment_HR_supervisor = {
-	category = specialist
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_robot_assembly_plant
-	icon = roboticist
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-
-	possible_precalc = can_fill_specialist_job
-	possible = {
-		is_sparta_slave = no
-	}
-
-	resources = {
-		category = planet_jobs
-		upkeep = {
-			consumer_goods = 0.5
-			minerals = 2
-		}
-	}
-
-	weight = {
-		weight = 5000
-	}
-	inline_script = "jobs/automodding_priority_trade"
-}
-
-#产品总监
-PR_manager = {
-	category = specialist
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_autochthon_monument
-	icon = manager
-	
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-		is_sapient = yes
-	}
-	possible_precalc = can_fill_specialist_job
-	possible = {
-		is_sparta_citizenship_full = no
-	}
-	
-	planet_modifier = {
-		planet_pops_trade_produces_mult = 0.02
-		planet_amenities_add = -3
-	}
-	resources = {
-		category = planet_bureaucrats
-		upkeep = {
-			consumer_goods = 0.5
-			unity = 1.5
-		}
-	}
-
-	weight = {
-		weight = @specialist_job_weight
-		modifier = {
-			factor = 0.2
-			has_citizenship_rights = no
-			NOT = { has_trait = trait_mechanical }
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_robot_propaganda_machines
-			OR = {
-				is_non_sapient_robot = yes
-				is_shackled_robot = yes
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_quarrelsome
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_natural_sociologists
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_thrifty
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_nuumismatic_administration
-		}
-		modifier = {
-			factor = 1.5
-			has_job_type = PR_manager
-		}
-		modifier = {
-			factor = 3
-			has_trait = trait_brainslug
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_presapient_natural_intellectuals
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.4
-			OR = {
-				has_trait = trait_robot_logic_engines
-				has_trait = trait_intelligent
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_latent_psionic
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_psionic
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_enigmatic_intelligence_failed
-		}
-		modifier = {
-			factor = 1.4
-			OR = {
-				has_trait = trait_enigmatic_intelligence
-				has_trait = trait_enigmatic_intelligence_poor
-			}
-		}
-		modifier = {
-			factor = 0.1
-			is_enslaved = yes
-			has_slavery_type = { type = slavery_indentured }
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_void_dweller_1
-			exists = planet
-			planet = { is_planet_class = pc_habitat }
-		}
-		modifier = {
-			factor = 0.85
-			has_trait = trait_void_dweller_1
-			exists = planet
-			planet = { is_artificial = no }
-		}
-		modifier = {
-			factor = 1.25
-			has_trait = trait_necrophage
-		}
-	}
-}
-
-#工人模范
-model_worker = {
-	category = worker
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_foundry_1
-	icon = labour_hero
-
-	possible_pre_triggers = {
-		has_owner = yes
-		is_being_purged = no
-		is_being_assimilated = no
-	}
-	possible_precalc = can_fill_specialist_job
-	possible = {
-		is_sparta_slave = no
-	}
-
-	resources = {
-		category = planet_metallurgists
-		produces = {
-			alloys = 1.5
-			consumer_goods = 3
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
-			}
-			society_research = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_crafters
-				}
-			}
-			consumer_goods = 1
-			engineering_research = 1
-		}
-		produces = {
-			trigger = {
-				owner = {
-					OR = {
-						has_valid_civic = civic_shared_burden
-						has_valid_civic = civic_socialistic
-					}
-				}
-			}
-			engineering_research = 0.25
-		}
-		upkeep = {
-			minerals = 6
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
-			}
-			minerals = -6
-			food = 6
-		}
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				has_valid_civic = civic_industry_pacesetter
-			}
-		}
-		modifier = {
-			planet_metallurgists_alloys_produces_mult = 0.05
-			planet_artisans_consumer_goods_produces_mult = 0.05
-		}
-	}
-
-	weight = {
-		weight = @worker_job_weight		# Fairly important job
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|model_worker|RESOURCE|consumer_goods|
-			owner = { has_edict = dynamic_weight }
-		}
-		modifier = {
-			factor = 20
-			is_enslaved = yes
-			can_take_servant_job = no
-		}
-		modifier = {
-			factor = 2
-			species = {
-				has_species_flag = racket_species_flag
-			}
-		}
-		modifier = {
-			factor = 5
-			has_job_type = foundry
-		}
-		modifier = {
-			factor = 15
-			has_job_type = foundry
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_void_dweller_1
-		}
-	}
-}
-
-#节点维护员
-democratic_politician = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_autochthon_monument
-			icon = bureaucrat
-		}
-	}
-	possible = { always = no }
-	resources = {
-		category = planet_bureaucrats
-		produces = {
-			society_research = 3
-			physics_research = 1
-		}
-		upkeep = {
-			energy = 4
-		}
-	}
-	country_modifier = {
-		country_admin_cap_add = 10
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_technocracy
-			}
-		}
-		country_admin_cap_add = 0.2
-	}
-
-	triggered_country_modifier = {
-		potential = {
-			exists = planet
-			planet = {
-				has_designation = col_capital_research
-			}
-		}
-		country_admin_cap_add = 5
-	}
-	weight = {
-		weight = @specialist_job_weight
-		modifier = {
-			factor = 0.2
-			has_citizenship_rights = no
-			NOT = {
-				has_trait = trait_mechanical
-			}
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_robot_propaganda_machines
-			OR = {
-				is_non_sapient_robot = yes
-				is_shackled_robot = yes
-			}
-		}
-		modifier = {
-			factor = 1.5
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_quarrelsome
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.5
-			has_job_type = democratic_politician
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_latent_psionic
-		}
-		modifier = {
-			factor = 1.2
-			has_trait = trait_psionic
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_enigmatic_intelligence_failed
-		}
-	}
-	inline_script = "jobs/automodding_priority_research"
 }
 
 #深核工程师
@@ -2057,12 +1009,22 @@ deep_miner = {
 			factor = 0.9
 			has_trait = trait_weak
 		}
-		modifier = {
-			factor = 1.2
-			has_ethic = ethic_industrial
-		}
 	}
 	inline_script = "jobs/automodding_priority_minerals"
+}
+
+#节点维护员
+democratic_politician = {
+	category = specialist
+
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_autochthon_monument
+			icon = bureaucrat
+		}
+	}
+	possible = { always = no }
 }
 
 #圣殿骑士
@@ -2076,58 +1038,6 @@ templar = {
 		}
 	}
 	possible = { always = no }
-	
-	resources = {
-		category = planet_knights
-		produces = {
-			trigger = { exists = owner }
-			unity = 3
-			mult = value:knights_unity_output_modifier
-		}
-		produces = {
-			trigger = { exists = owner }
-			physics_research = 1
-			engineering_research = 1
-			society_research = 1
-			mult = value:knights_research_output_modifier
-		}
-		upkeep = {
-			alloys = 1
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = {
-						has_modifier = luminous_blades
-					}
-				}
-			}
-		}
-	}
-
-	pop_group_modifier = {
-		planet_defense_armies_add = 2
-	}
-
-	planet_modifier = {
-		job_squire_add = 1
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = { has_country_flag = toxoids_7090_a }
-		}
-		planet_amenities_add = 5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	country_modifier = {
-		country_naval_cap_add = 4
-	}
-
-	weight = {
-		weight = @high_prio_specialist_job_weight
-	}
-	inline_script = "jobs/automodding_priority_unity"
 }
 
 #死亡骑士
@@ -2142,58 +1052,6 @@ death_knight = {
 		}
 	}
 	possible = { always = no }
-
-	resources = {
-		category = planet_knights
-		produces = {
-			trigger = { exists = owner }
-			unity = 3
-			mult = value:knights_unity_output_modifier
-		}
-		produces = {
-			trigger = { exists = owner }
-			physics_research = 1
-			engineering_research = 1
-			society_research = 1
-			mult = value:knights_research_output_modifier
-		}
-		upkeep = {
-			alloys = 1
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = {
-						has_modifier = luminous_blades
-					}
-				}
-			}
-		}
-	}
-
-	pop_group_modifier = {
-		planet_defense_armies_add = 4
-	}
-
-	planet_modifier = {
-		planet_stability_add = 1.5
-	}
-
-	triggered_planet_modifier = {
-		potential = {
-			owner = { has_country_flag = toxoids_7090_a }
-		}
-		planet_amenities_add = 5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-
-	country_modifier = {
-		country_naval_cap_add = 4
-	}
-
-	weight = {
-		weight = @high_prio_specialist_job_weight
-	}
-	inline_script = "jobs/automodding_priority_unity"
 }
 
 #义侠
@@ -2259,7 +1117,6 @@ righteous_hero = {
 #雇佣兵
 mercenary = {
 	category = specialist
-	clothes_texture_index = 4
 
 	swappable_data = {
 		default = {
@@ -2278,133 +1135,6 @@ mercenary = {
 	possible_precalc = can_fill_specialist_job
 	possible = {
 		always = no
-	}
-
-	country_modifier = {
-		country_naval_cap_add = 4
-	}
-	pop_group_modifier = {
-		planet_defense_armies_add = 3
-	}
-	triggered_planet_modifier = {
-		potential = { always = yes }
-		trade_value_add = 0.5
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	resources = {
-		category = planet_soldiers
-		upkeep = {
-			consumer_goods = 0.5
-		}
-	}
-	weight = {
-		weight = 300
-		modifier = {
-			factor = 10
-			exists = planet
-			planet = {
-				has_modifier = martial_law
-			}
-		}
-		modifier = {
-			factor = 10
-			exists = owner
-			owner = {
-				is_militarist = yes
-			}
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_resilient
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_very_strong
-		}
-		modifier = {
-			factor = 1.5
-			has_trait = trait_strong
-		}
-		modifier = {
-			factor = 0.5
-			has_trait = trait_weak
-		}
-		modifier = {
-			factor = 0.1
-			is_enslaved = yes
-			NOT = {
-				has_slavery_type = {
-					type = slavery_military
-				}
-			}
-		}
-		modifier = {
-			factor = 10
-			is_enslaved = yes
-			has_slavery_type = {
-				type = slavery_military
-			}
-		}
-		modifier = {
-			factor = 0.1
-			can_take_servant_job = yes
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_cybernetic
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_presapient_earthbound
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_limited_regeneration
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_presapient_proles
-		}
-		modifier = {
-			factor = 1.1
-			has_trait = trait_brainslug
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_presapient_natural_intellectuals
-		}
-		modifier = {
-			factor = 1.05
-			OR = {
-				has_trait = trait_robust
-				has_trait = trait_robot_efficient_processors
-			}
-		}
-		modifier = {
-			factor = 1.05
-			has_trait = trait_nerve_stapled
-		}
-		modifier = {
-			factor = 1.1
-			OR = {
-				has_trait = trait_robot_propaganda_machines
-				has_trait = trait_traditional
-			}
-		}
-		modifier = {
-			factor = 0.9
-			has_trait = trait_quarrelsome
-		}
-		modifier = {
-			factor = 0
-			species = {
-				can_be_soldier = no
-			}
-		}
-		modifier = {
-			factor = 2
-			has_trait = trait_lithoid
-		}
 	}
 }
 
@@ -2493,15 +1223,6 @@ transcend = {
 		modifier = {
 			factor = 1.1
 			has_trait = trait_natural_sociologists
-		}
-		modifier = {
-			factor = 0.1
-			has_ethic = ethic_materialist
-			NOT = { has_job_type = priest }
-		}
-		modifier = {
-			factor = 1.5
-			has_job_type = priest
 		}
 		modifier = {
 			factor = 1.5
@@ -2843,341 +1564,6 @@ techno_priest = {
 	inline_script = "jobs/automodding_priority_research"
 }
 
-#铁匠
-primitive_foundry = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_autochthon_monument
-			icon = artificer
-		}
-	}
-	possible = { always = no }
-
-	resources = {
-		category = planet_metallurgists
-		produces = {
-			alloys = 1.5
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
-			}
-			society_research = 1
-		}
-		produces = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			alloys = -0.5
-		}
-		upkeep = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			minerals = 1
-		}
-		upkeep = {
-			minerals = 3
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
-			}
-			minerals = -3
-			food = 4
-		}
-	}
-
-	# 分产主义
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_distributism
-			}
-		}
-		modifier = {
-			trade_value_add = 2
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	overlord_resources = {
-		category = planet_requisitioned_alloys
-		produces = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			alloys = 1
-		}
-	}
-
-	#污染
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				OR = {
-					NOT = {
-						is_no_planet_country = yes
-					}
-					has_origin = origin_ev_both_choosen
-					has_valid_civic = civic_ev_planet_and_fleet
-					has_ascension_perk = ev_land_planets
-				}
-			}
-			planet = { is_artificial = no }
-		}
-		pop_environment_tolerance = -0.005
-		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
-	}
-
-	weight = {
-		weight = @worker_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|foundry|RESOURCE|alloys|
-			owner = { has_edict = dynamic_weight }
-		}
-		modifier = {
-			factor = 2
-			is_enslaved = yes
-			can_take_servant_job = no
-		}
-		modifier = {
-			factor = 5
-			has_job_type = primitive_foundry
-		}
-	}
-}
-
-#原始工匠
-primitive_artisan = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = SPECIALIST_JOB_TRIGGER
-			building_icon = building_autochthon_monument
-			icon = artificer
-		}
-	}
-	possible = { always = no }
-
-	resources = {
-		category = planet_artisans
-		produces = {
-			consumer_goods = 2
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_crafters
-				}
-			}
-			engineering_research = 1
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_cultural_thief
-				}
-			}
-			fake_artifacts = 0.15
-		}
-		produces = {
-			alloys = 1.5
-		}
-		produces = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
-			}
-			society_research = 1
-		}
-		produces = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			alloys = -0.5
-		}
-		upkeep = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_material_requisitorium
-				}
-			}
-			minerals = 1
-		}
-		upkeep = {
-			minerals = 3
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					is_catalytic_empire = yes
-				}
-			}
-			minerals = -3
-			food = 4
-		}
-		upkeep = {
-			minerals = 3
-		}
-		produces = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_produce_requisitorium
-					exists = owner.overlord
-					owner.overlord = { is_gestalt = no }
-				}
-			}
-			consumer_goods = -1.5
-		}
-		upkeep = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_produce_requisitorium
-					exists = owner.overlord
-					owner.overlord = { is_gestalt = no }
-				}
-			}
-			minerals = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_cultural_thief
-				}
-			}
-			minerals = 0.5
-		}
-	}
-	triggered_planet_modifier = {
-		potential = { always = yes }
-		planet_amenities_add = 1
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-	}
-	planet_modifier = {
-		trade_value_add = 3
-	}
-
-	#污染
-	triggered_planet_modifier = {
-		potential = {
-			owner = {
-				OR = {
-					NOT = {
-						is_no_planet_country = yes
-					}
-					has_origin = origin_ev_both_choosen
-					has_valid_civic = civic_ev_planet_and_fleet
-					has_ascension_perk = ev_land_planets
-				}
-			}
-			planet = { is_artificial = no }
-		}
-		pop_environment_tolerance = -0.005
-		mult = value:scripted_modifier_mult|MODIFIER|job_environmental_pollution_caused_mult|
-	}
-	# 分产主义
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_distributism
-			}
-		}
-		modifier = {
-			trade_value_add = 2
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-	# 能工巧匠
-	triggered_planet_modifier = {
-		potential = {
-			exists = owner
-			owner = {
-				has_valid_civic = civic_crafters
-			}
-		}
-		modifier = {
-			trade_value_add = 2
-		}
-		mult = value:scripted_modifier_mult|MODIFIER|pop_job_trade_mult|
-	}
-
-
-	overlord_resources = {
-		category = planet_requisitioned_consumer_goods
-		produces = {
-			trigger = {
-				planet = {
-					has_carrier_flag = has_produce_requisitorium
-					exists = owner.overlord
-					owner.overlord = { is_gestalt = no }
-				}
-			}
-			consumer_goods = 2
-		}
-	}
-
-	weight = {
-		weight = @specialist_job_weight
-		modifier = { # 可控的动态权重
-			factor = value:job_weights_modifier|JOB|artisan|RESOURCE|consumer_goods|
-			exists = owner
-			owner = { has_edict = dynamic_weight }
-		}
-		modifier = {
-			factor = 2
-			is_enslaved = yes
-			can_take_servant_job = no
-		}
-		modifier = {
-			factor = 5
-			has_job_type = primitive_artisan
-		}
-
-		# low income modifier
-		modifier = {
-			factor = 1.2
-			exists = planet
-			planet = {
-				has_available_jobs = "artisan"
-			}
-			exists = owner
-			owner = {
-				is_ai = yes
-				has_monthly_income = {
-					resource = consumer_goods
-					value < 5
-				}
-			}
-		}
-	}
-}
-
 #法师
 magician = {
 	category = specialist
@@ -3280,24 +1666,6 @@ magician = {
 				}
 			}
 			unity = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = { has_valid_civic = civic_the_song_of_gears }
-				}
-			}
-			consumer_goods = 2
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_the_song_of_gears
-				}
-			}
-			alloys = 1
 		}
 		upkeep = {
 			trigger = {
@@ -3411,14 +1779,6 @@ magician = {
 	weight = {
 		weight = @specialist_job_weight
 		modifier = {
-			# 可控的动态权重
-			factor = value:job_weights_research_modifier|JOB|magician|
-			exists = owner
-			owner = {
-				has_edict = dynamic_weight
-			}
-		}
-		modifier = {
 			factor = 0.2
 			has_citizenship_rights = no
 			NOT = {
@@ -3436,10 +1796,6 @@ magician = {
 			can_take_servant_job = yes
 		}
 		modifier = {
-			factor = 1.5
-			has_job_type = magician
-		}
-		modifier = {
 			factor = 0.8
 			is_enslaved = yes
 			has_slavery_type = {
@@ -3450,54 +1806,15 @@ magician = {
 	inline_script = "jobs/automodding_priority_research"
 }
 
-#元素使
-elementalist = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_mage_tower_1
-		}
-	}
-	possible = {
-		always = no
-	}
-}
-#自然萨满
-natural_shaman = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_mage_tower_1
-		}
-	}
-	possible = {
-		always = no
-	}
-}
-#魔导学者
-magician_scholar = {
-	category = specialist
-
-	swappable_data = {
-		default = {
-			condition_string = RULER_JOB_TRIGGER
-			building_icon = building_mage_tower_1
-		}
-	}
-	possible = {
-		always = no
-	}
-}
-
 #地质勘探员
 geoengineer = {
 	category = specialist
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_research_lab_1
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_ranger_lodge
+		}
+	}
 	
 	possible_pre_triggers = {
 		has_owner = yes
@@ -3515,24 +1832,6 @@ geoengineer = {
 		produces = {
 			physics_research = 4
 			engineering_research = 4
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = { has_valid_civic = civic_the_song_of_gears }
-				}
-			}
-			consumer_goods = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_the_song_of_gears
-				}
-			}
-			alloys = 0.25
 		}
 	}
 
@@ -3594,10 +1893,6 @@ geoengineer = {
 			}
 		}
 		modifier = {
-			factor = 1.1
-			has_ethic = ethic_green
-		}
-		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
 		}
@@ -3607,10 +1902,6 @@ geoengineer = {
 				has_trait = trait_presapient_proles
 			}
 		}
-		modifier = {
-			factor = 1.5
-			has_job_type = geoengineer
-		}
 	}
 	inline_script = "jobs/automodding_priority_research"
 }
@@ -3618,8 +1909,12 @@ geoengineer = {
 #野外考察员
 xenobiologist = {
 	category = specialist
-	condition_string = SPECIALIST_JOB_TRIGGER
-	building_icon = building_research_lab_1
+	swappable_data = {
+		default = {
+			condition_string = SPECIALIST_JOB_TRIGGER
+			building_icon = building_research_lab_1
+		}
+	}
 	possible_pre_triggers = {
 		has_owner = yes
 		is_being_purged = no
@@ -3634,24 +1929,6 @@ xenobiologist = {
 		category = planet_researchers
 		produces = {
 			society_research = 7
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					NOT = { has_valid_civic = civic_the_song_of_gears }
-				}
-			}
-			consumer_goods = 0.5
-		}
-		upkeep = {
-			trigger = {
-				exists = owner
-				owner = {
-					has_valid_civic = civic_the_song_of_gears
-				}
-			}
-			alloys = 0.25
 		}
 	}
 
@@ -3711,10 +1988,6 @@ xenobiologist = {
 			}
 		}
 		modifier = {
-			factor = 1.1
-			has_ethic = ethic_green
-		}
-		modifier = {
 			factor = 0.1
 			can_take_servant_job = yes
 		}
@@ -3723,10 +1996,6 @@ xenobiologist = {
 			OR = {
 				has_trait = trait_presapient_proles
 			}
-		}
-		modifier = {
-			factor = 1.5
-			has_job_type = xenobiologist
 		}
 	}
 	inline_script = "jobs/automodding_priority_research"
