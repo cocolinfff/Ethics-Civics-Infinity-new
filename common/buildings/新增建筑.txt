@@ -1620,15 +1620,11 @@ building_mage_tower_3 = {
 #法师学院
 building_school_of_magic = {
     base_buildtime = @b2_time
-    base_cap_amount = 1
+    planet_limit = 1
     category = research
 
     building_sets = {
-        city
         research
-        physics
-        society
-        engineering
     }
 
     potential = {
@@ -1663,11 +1659,19 @@ building_school_of_magic = {
         building_supercomputer
         building_institute
     }
+
     allow = {
-        has_major_upgraded_capital = yes
     }
+
     resources = {
         category = planet_buildings
+        produces = {
+            trigger = {
+                exists = owner
+                owner = { has_valid_civic = civic_innovative_economy }
+            }
+            unity = 100
+        }
         inline_script = {
             script = buildings/nomadic_cost_switcher
             REGULAR_RESOURCE = minerals
@@ -1682,24 +1686,45 @@ building_school_of_magic = {
             energy = @b2_upkeep
             exotic_gases = @b2_rare_upkeep
         }
+    }
 
-        produces = {
-            trigger = {
-                exists = owner
-                owner = { has_valid_civic = civic_innovative_economy }
-            }
-            unity = 50
-        }
-    }
-    country_modifier = {
-        scientist_exp_gain = 0.05
-    }
     planet_modifier = {
-        planet_researchers_produces_mult = 0.15
         job_legendary_mage_add = 3
         job_magician_add = 300
         job_magical_apprentice_add = 900
+        planet_physicists_physics_research_produces_add = 0.5
+        planet_biologists_society_research_produces_add = 0.5
+        planet_engineers_engineering_research_produces_add = 0.5
     }
+
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                is_gestalt = no
+            }
+        }
+        planet_researchers_consumer_goods_upkeep_add = 1
+    }
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                is_machine_empire = yes
+            }
+        }
+        planet_researchers_energy_upkeep_add = 2
+    }
+    triggered_planet_modifier = {
+        potential = {
+            exists = owner
+            owner = {
+                is_hive_empire = yes
+            }
+        }
+        planet_researchers_minerals_upkeep_add = 2
+    }
+
     triggered_planet_modifier = {
         potential = {
             exists = owner
@@ -1711,9 +1736,6 @@ building_school_of_magic = {
             planet_jobs_unity_produces_mult = 0.05
         }
     }
-    prerequisites = {
-        "tech_global_research_initiative"
-    }
 
     triggered_desc = {
         trigger = {
@@ -1724,13 +1746,26 @@ building_school_of_magic = {
         }
         text = has_ley_rift
     }
+
+    inline_script = {
+        script = "jobs/politician_add_from_civic"
+        AMOUNT = @building_static_jobs
+        CIVIC = civic_technocracy
+    }
+
+    prerequisites = {
+        "tech_global_research_initiative"
+    }
+
     show_tech_unlock_if = {
         is_regular_empire = yes
     }
 
+    ai_weight_coefficient = 1.5
+
     inline_script = {
         script = districts/ai_research_extra_weighting
-        AMOUNT = 500
+        AMOUNT = 10
     }
 }
 

@@ -1,0 +1,3636 @@
+#################
+#   一产
+#################
+building_food_processing_facility = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = resource
+
+	building_sets = {
+		farming
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_massive_growth_3'
+		NOR = {
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+		}
+		OR = {
+			owner = { is_ai = no }
+			has_any_farming_district_or_building = yes
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				OR = {
+					AND = {
+						is_ai = yes
+						country_uses_food = no
+					}
+					is_wilderness_empire = yes
+				}
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+			AND = {
+				owner = { is_ai = yes }
+				has_any_farming_district_or_building = no
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_farmers_food_produces_add = 1
+	}
+
+	upgrades = {
+		building_food_processing_center
+	}
+
+	prerequisites = {
+		"tech_food_processing_1"
+	}
+
+	ai_resource_production = {
+		food = 10
+
+		trigger = {
+			has_any_agriculture_zone = yes
+		}
+	}
+
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_food_processing_center = {
+	base_buildtime = @b2_time
+	can_build = no
+	category = resource
+
+	building_sets = {
+		farming
+	}
+
+	potential = {
+		owner = { is_wilderness_empire = no } # see 'building_massive_growth_4'
+	}
+	allow = {
+		exists = owner
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				OR = {
+					AND = {
+						is_ai = yes
+						country_uses_food = no
+					}
+					is_wilderness_empire = yes
+				}
+			}
+			AND = {
+				owner = { is_ai = yes }
+				has_any_farming_district_or_building = no
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = no"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			exotic_gases = @b2_rare_cost
+		}
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = yes"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = 900
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			exotic_gases = 200
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			energy = 2
+			exotic_gases = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			energy = 5
+			exotic_gases = 3
+		}
+	}
+
+	planet_modifier = {
+		planet_farmers_food_produces_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_ringworld_output_boost = yes
+		}
+		modifier = {
+			planet_farmers_food_produces_add = 1
+		}
+	}
+
+	prerequisites = {
+		"tech_food_processing_2"
+	}
+
+	ai_resource_production = {
+		food = 15
+
+		trigger = {
+			has_any_agriculture_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_baol_organic_plant = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = resource
+
+	building_sets = {
+		farming
+		factory
+	}
+
+	potential = {
+		NOR = {
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = {
+				is_ai = yes
+				country_uses_food = no
+			}
+			is_planet_class = pc_machine
+			has_modifier = resort_colony
+		}
+	}
+
+	inline_script = {
+		script = jobs/farmers_add
+		AMOUNT = @building_static_jobs
+	}
+	# for exceptions to the above (i.e. Wilderness):
+	inline_script = {
+		script = buildings/planet_job_resource_produces_add
+		JOB = farmers
+		RESOURCE = food
+		AMOUNT = 0.25
+	}
+
+	# Additional farmer output (non-Archaeoengineering)
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				country_uses_consumer_goods = yes
+			}
+		}
+		planet_farmers_consumer_goods_produces_add = 0.5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				country_uses_consumer_goods = no
+			}
+		}
+		planet_farmers_energy_produces_add = 1
+	}
+
+	# Additional farmer output (with Archaeoengineering)
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				country_uses_consumer_goods = yes
+				has_ascension_perk = ap_archaeoengineers
+			}
+		}
+		planet_farmers_consumer_goods_produces_add = 0.5
+	}
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				country_uses_consumer_goods = no
+				has_ascension_perk = ap_archaeoengineers
+			}
+		}
+		planet_farmers_energy_produces_add = 1
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			minor_artifacts = 25
+		}
+		cost = {
+			trigger = {
+				owner = { is_wilderness_empire = yes }
+			}
+			biomass = @b3_biomass
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	ai_resource_production = {
+		food = 10
+
+		trigger = {
+			has_any_agriculture_zone = yes
+		}
+	}
+
+	inline_script = {
+		script = buildings/on_all_wilderness_buildings_districts
+	}
+
+	prerequisites = {
+		"tech_secrets_baol"
+	}
+}
+
+building_mineral_purification_plant = {
+	desc = {
+		trigger = {
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+		}
+		text = building_mineral_purification_plant_desc
+	}
+	desc = {
+		trigger = { is_planet_class = pc_shattered_ring_habitable }
+		text = building_scrap_processing_plant_desc
+	}
+
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = resource
+
+	building_sets = {
+		mining
+		harvest
+	}
+
+	potential = {
+		owner = { is_wilderness_empire = no } # see 'building_churning_tunnels_3'
+		NOR = {
+			has_modifier = resort_colony
+			is_planet_class = pc_ringworld_habitable
+			is_planet_class = pc_cybrex
+		}
+		OR = {
+			NOT = { is_planet_class = pc_habitat }
+			AND = {
+				is_planet_class = pc_habitat
+				check_modifier_value = {
+					modifier = district_hab_mining_max_add
+					value > 0
+				}
+			}
+		}
+		OR = {
+			has_carrier_flag = ignore_ai_building_limitations
+			owner = { is_ai = no }
+			has_any_mining_district_or_building = yes
+			owner = { is_nomadic = yes }
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes }
+				has_any_mining_district_or_building = no
+			}
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = yes }
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 200
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_nomadic = no }
+		}
+		planet_miners_minerals_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = no
+			}
+		}
+		job_ark_harvester_add = @building_static_jobs
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = yes
+			}
+		}
+		job_ark_harvester_gestalt_add = @building_static_jobs
+	}
+
+	upgrades = {
+		building_mineral_purification_hub
+	}
+
+	prerequisites = {
+		tech_mineral_purification_1
+	}
+
+	ai_resource_production = {
+		minerals = 10
+
+		trigger = {
+			has_any_mining_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+		minerals = 5
+		energy = 10
+
+		trigger = {
+			has_zone = {
+				zone = zone_betharian
+			}
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_mineral_purification_hub = {
+	desc = {
+		trigger = { NOT = { is_planet_class = pc_shattered_ring_habitable } }
+		text = building_mineral_purification_hub_desc
+	}
+
+	desc = {
+		trigger = { is_planet_class = pc_shattered_ring_habitable }
+		text = building_scrap_processing_hub_desc
+	}
+
+	base_buildtime = @b2_time
+	can_build = no
+	category = resource
+
+	building_sets = {
+		mining
+		harvest
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_churning_tunnels_4'
+		OR = {
+			owner = { is_ai = no }
+			has_any_mining_district_or_building = yes
+			owner = { is_nomadic = yes }
+		}
+	}
+	allow = {
+		has_upgraded_capital = yes
+		NOT = { has_modifier = resort_colony }
+	}
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes }
+				has_any_mining_district_or_building = no
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = no"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			volatile_motes = @b2_rare_cost
+		}
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = yes"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 900
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			volatile_motes = 200
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			energy = 2
+			volatile_motes = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			energy = 5
+			volatile_motes = 3
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_nomadic = no }
+			NOT = { is_planet_class = pc_shattered_ring_habitable }
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 2
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_nomadic = no }
+			is_planet_class = pc_shattered_ring_habitable
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 0.5
+			planet_miners_alloys_produces_add = 0.5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = { is_nomadic = no }
+			has_ringworld_output_boost = yes
+		}
+		modifier = {
+			planet_miners_minerals_produces_add = 1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = no
+			}
+		}
+		job_ark_harvester_add = @building_static_jobs_high
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_nomadic = yes
+				is_gestalt = yes
+			}
+		}
+		job_ark_harvester_gestalt_add = @building_static_jobs_high
+	}
+
+	prerequisites = {
+		tech_mineral_purification_2
+	}
+
+	ai_resource_production = {
+		minerals = 15
+
+		trigger = {
+			has_any_mining_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+		minerals = 7.5
+		energy = 15
+
+		trigger = {
+			has_zone = {
+				zone = zone_betharian
+			}
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_energy_grid = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+	category = resource
+
+	building_sets = {
+		generator
+	}
+
+	potential = {
+		NOT = { has_modifier = resort_colony }
+		exists = owner
+		owner = {
+			is_wilderness_empire = no # see 'building_bioelectric_stimulator_3'
+		}
+		OR = {
+			NOT = { is_planet_class = pc_habitat }
+			AND = {
+				is_planet_class = pc_habitat
+				check_modifier_value = {
+					modifier = district_hab_energy_max_add
+					value > 0
+				}
+			}
+		}
+		OR = {
+			owner = { is_ai = no }
+			has_any_generator_district_or_building = yes
+		}
+	}
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes }
+				has_any_generator_district_or_building = no
+			}
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = yes }
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 2
+		}
+	}
+
+	planet_modifier = {
+		planet_technician_energy_produces_add = 1
+	}
+
+	prerequisites = {
+		tech_power_hub_1
+	}
+
+	upgrades = {
+		building_energy_nexus
+	}
+
+	ai_resource_production = {
+		energy = 10
+
+		trigger = {
+			has_any_generator_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_energy_nexus = {
+	base_buildtime = @b2_time
+	can_build = no
+	category = resource
+
+	building_sets = {
+		generator
+	}
+
+	potential = {
+		NOT = { has_modifier = resort_colony }
+		exists = owner
+		owner = { is_wilderness_empire = no }
+		OR = {
+			owner = { is_ai = no }
+			has_any_generator_district_or_building = yes
+		}
+	}
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			AND = {
+				exists = owner
+				owner = { is_ai = yes }
+				has_any_generator_district_or_building = no
+			}
+			AND = {
+				exists = owner
+				owner = { is_wilderness_empire = yes } # see 'building_bioelectric_stimulator_4'
+			}
+		}
+	}
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = no"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			rare_crystals = @b2_rare_cost
+		}
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = yes"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = 900
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			rare_crystals = 200
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			energy = 2
+			rare_crystals = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			energy = 5
+			rare_crystals = 3
+		}
+	}
+
+	planet_modifier = {
+		planet_technician_energy_produces_add = 2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			has_ringworld_output_boost = yes
+		}
+		modifier = {
+			planet_technician_energy_produces_add = 1
+		}
+	}
+
+	prerequisites = {
+		tech_power_hub_2
+	}
+
+	ai_resource_production = {
+		energy = 15
+
+		trigger = {
+			has_any_generator_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+#################
+#   二产
+#################
+building_refinery = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+
+	exempt_from_ai_planet_specialization = no
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_churning_stomach'
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 500
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 3
+		}
+	}
+
+	planet_modifier = {
+		industrial_jobs_exotic_gases_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = no
+		}
+		planet_metallurgists_minerals_upkeep_add = 1
+		planet_artisans_minerals_upkeep_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = yes
+		}
+		planet_metallurgists_food_upkeep_add = 1.5
+		planet_artisans_food_upkeep_add = 1.5
+	}
+
+	prerequisites = {
+		"tech_exotic_gases"
+	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_chemical_plant = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+
+	exempt_from_ai_planet_specialization = no
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_mote_aggravator'
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 3
+		}
+	}
+
+	planet_modifier = {
+		industrial_jobs_volatile_motes_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = no
+		}
+		planet_metallurgists_minerals_upkeep_add = 1
+		planet_artisans_minerals_upkeep_add = 1
+	}
+
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = yes
+		}
+		planet_metallurgists_food_upkeep_add = 1.5
+		planet_artisans_food_upkeep_add = 1.5
+	}
+
+	prerequisites = {
+		"tech_volatile_motes"
+	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_crystal_plant = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+
+	exempt_from_ai_planet_specialization = no
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+		exists = owner
+		owner = { is_wilderness_empire = no }
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 3
+		}
+	}
+
+	planet_modifier = {
+		industrial_jobs_rare_crystals_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = no
+		}
+		planet_metallurgists_minerals_upkeep_add = 1
+		planet_artisans_minerals_upkeep_add = 1
+	}
+
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = yes
+		}
+		planet_metallurgists_food_upkeep_add = 1.5
+		planet_artisans_food_upkeep_add = 1.5
+	}
+
+	prerequisites = {
+		"tech_rare_crystals"
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+	upgrades = {
+		"building_crystal_plant_2"
+	}
+}
+
+building_crystal_plant_2 = {
+	base_buildtime = 800
+	can_build = no
+
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		owner = {
+			has_country_flag = lithoid_crystal_plant
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	planet_modifier = {
+		planet_metallurgists_rare_crystals_produces_add = 1
+		planet_artisans_rare_crystals_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = no
+		}
+		planet_metallurgists_minerals_upkeep_add = 2
+		planet_artisans_minerals_upkeep_add = 2
+	}
+
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = yes
+		}
+		planet_metallurgists_food_upkeep_add = 2.5
+		planet_artisans_food_upkeep_add = 2.5
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 1000
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = 3
+		}
+	}
+
+	prerequisites = {
+		"tech_rare_crystals"
+	}
+
+	show_tech_unlock_if = {
+		owner = { has_country_flag = lithoid_crystal_plant }
+	}
+}
+
+building_ministry_production = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	icon = building_production_center
+
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_regular_empire = yes
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_regular_empire = no }
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+
+	inline_script = {
+		script = "jobs/politician_add"
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_metallurgists_alloys_produces_add = 1
+		planet_artisans_consumer_goods_produces_add = 1
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			volatile_motes = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			volatile_motes = @b2_rare_upkeep
+		}
+	}
+
+	prerequisites = {
+		"tech_global_production_strategy"
+	}
+
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+	}
+
+	inline_script = {
+		script = districts/ai_alloys_extra_weighting
+		AMOUNT = 10
+	}
+
+	inline_script = {
+		script = districts/ai_consumer_goods_extra_weighting
+		AMOUNT = 10
+	}
+}
+
+building_production_center = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_gestalt = yes
+			is_wilderness_empire = no
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = { is_gestalt = no }
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+
+	planet_modifier = {
+		planet_metallurgists_alloys_produces_add = 1
+		planet_artisans_consumer_goods_produces_add = 1
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			volatile_motes = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			volatile_motes = @b2_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/foundry_add
+		AMOUNT = @b1_jobs
+	}
+
+	prerequisites = {
+		"tech_global_production_strategy"
+	}
+
+	show_tech_unlock_if = {
+		is_gestalt = yes
+		is_wilderness_empire = no
+	}
+
+	inline_script = {
+		script = districts/ai_alloys_extra_weighting
+		AMOUNT = 10
+	}
+
+	inline_script = {
+		script = districts/ai_consumer_goods_extra_weighting
+		AMOUNT = 10
+	}
+}
+
+building_coordinated_fulfillment_center_1 = {
+	base_buildtime = @b1_time
+	planet_limit = 1
+
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_relentless_industrialist_empire = yes
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_relentless_industrialist_empire = no }
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	prerequisites = {
+		tech_basic_industry
+	}
+
+	show_tech_unlock_if = {
+		is_relentless_industrialist_empire = yes
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	triggered_desc = {
+		trigger = {
+			NOR = {
+				is_planet_class = pc_nuked
+				is_planet_class = pc_city
+				uses_district_set = habitat
+				uses_district_set = ring_world
+				uses_district_set = shattered_ring_world
+			}
+		}
+		text = building_coordinated_fulfillment_center_tooltip
+	}
+
+	planet_modifier = {
+		planet_metallurgists_alloys_produces_add = 1
+		planet_artisans_consumer_goods_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_policy_flag = relentless_industrialists_full_steam_ahead }
+		}
+		modifier = {
+			planet_metallurgists_alloys_produces_add = 0.5
+			planet_artisans_consumer_goods_produces_add = 0.5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_synthetic_empire = no }
+		}
+		modifier = {
+			logistic_growth_mult = -0.15
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_synthetic_empire = no
+				NAND = {
+					has_policy_flag = relentless_industrialists_study
+					has_country_flag = relentless_industrialists_study_completed
+				}
+			}
+		}
+		modifier = {
+			logistic_growth_mult = -0.05
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_synthetic_empire = yes }
+		}
+		modifier = {
+			habitability_ceil_add = -0.075
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				owner = { is_synthetic_empire = yes }
+				NAND = {
+					has_policy_flag = relentless_industrialists_study
+					has_country_flag = relentless_industrialists_study_completed
+				}
+			}
+		}
+		modifier = {
+			habitability_ceil_add = -0.025
+		}
+	}
+
+	upgrades = {
+		building_coordinated_fulfillment_center_2
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+		upkeep = {
+			unity = 10
+			trigger = {
+				owner = { has_policy_flag = relentless_industrialists_cleanup }
+			}
+		}
+	}
+
+	inline_script = {
+		script = districts/ai_alloys_extra_weighting
+		AMOUNT = 10
+	}
+
+	inline_script = {
+		script = districts/ai_consumer_goods_extra_weighting
+		AMOUNT = 10
+	}
+}
+
+building_coordinated_fulfillment_center_2 = {
+	base_buildtime = @b2_time
+	can_build = no
+
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_relentless_industrialist_empire = no }
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+
+	triggered_desc = {
+		trigger = {
+			NOR = {
+				is_planet_class = pc_nuked
+				is_planet_class = pc_city
+				uses_district_set = habitat
+				uses_district_set = ring_world
+				uses_district_set = shattered_ring_world
+			}
+		}
+		text = building_coordinated_fulfillment_center_tooltip
+	}
+
+	planet_modifier = {
+		planet_metallurgists_alloys_produces_add = 1.5
+		planet_artisans_consumer_goods_produces_add = 1.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { has_policy_flag = relentless_industrialists_full_steam_ahead }
+		}
+		modifier = {
+			planet_metallurgists_alloys_produces_add = 0.5
+			planet_artisans_consumer_goods_produces_add = 0.5
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_synthetic_empire = no }
+		}
+		modifier = {
+			logistic_growth_mult = -0.25
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_synthetic_empire = no
+				NAND = {
+					has_policy_flag = relentless_industrialists_study
+					has_country_flag = relentless_industrialists_study_completed
+				}
+			}
+		}
+		modifier = {
+			logistic_growth_mult = -0.15
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = { is_synthetic_empire = yes }
+		}
+		modifier = {
+			habitability_ceil_add = -0.1
+		}
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				owner = { is_synthetic_empire = yes }
+				NAND = {
+					has_policy_flag = relentless_industrialists_study
+					has_country_flag = relentless_industrialists_study_completed
+				}
+			}
+		}
+		modifier = {
+			habitability_ceil_add = -0.05
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			volatile_motes = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			volatile_motes = @b3_rare_upkeep
+		}
+		upkeep = {
+			unity = 20
+			trigger = {
+				owner = { has_policy_flag = relentless_industrialists_cleanup }
+			}
+		}
+	}
+
+	prerequisites = {
+		tech_global_production_strategy
+	}
+
+	show_tech_unlock_if = {
+		is_relentless_industrialist_empire = yes
+	}
+
+	inline_script = {
+		script = districts/ai_alloys_extra_weighting
+		AMOUNT = 15
+	}
+
+	inline_script = {
+		script = districts/ai_consumer_goods_extra_weighting
+		AMOUNT = 15
+	}
+}
+
+building_archaeo_refinery = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+
+	category = manufacturing
+
+	building_sets = {
+		industrial
+		factory
+		foundry
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+		owner = { has_technology = tech_archaeo_refinery }
+	}
+
+	planet_modifier = {
+		planet_jobs_exotic_gases_produces_mult = 0.1
+		planet_jobs_rare_crystals_produces_mult = 0.1
+		planet_jobs_volatile_motes_produces_mult = 0.1
+		industrial_jobs_exotic_gases_produces_add = 0.5
+		industrial_jobs_rare_crystals_produces_add = 0.5
+		industrial_jobs_volatile_motes_produces_add = 0.5
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				has_ascension_perk = ap_archaeoengineers
+			}
+		}
+		planet_jobs_exotic_gases_produces_mult = 0.1
+		planet_jobs_rare_crystals_produces_mult = 0.1
+		planet_jobs_volatile_motes_produces_mult = 0.1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = no
+		}
+		planet_metallurgists_minerals_upkeep_add = 1
+		planet_artisans_minerals_upkeep_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			industrial_jobs_are_catalytic_trigger = yes
+		}
+		planet_metallurgists_food_upkeep_add = 1.5
+		planet_artisans_food_upkeep_add = 1.5
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			minor_artifacts = @b4_rare_cost		# Deliberately higher than expected
+		}
+		upkeep = {
+			energy = @b2_upkeep
+		}
+	}
+
+	prerequisites = {
+		"tech_archaeo_refinery"
+	}
+}
+
+building_foundry_upkeep_1 = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = manufacturing
+
+	building_sets = {
+		foundry
+		industrial
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_natural_furnace_2'
+		NOT = {
+			has_modifier = resort_colony
+		}
+	}
+	destroy_trigger = {
+		OR = {
+			NOT = { exists = owner }
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			volatile_motes = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			volatile_motes = @b3_rare_upkeep
+		}
+	}
+
+	prerequisites = {
+		tech_alloys_1
+	}
+
+	planet_modifier = {
+		planet_metallurgists_upkeep_mult = -0.20
+	}
+
+	ai_resource_production = {
+		minerals = 10
+		trigger = {
+			exists = owner
+			owner = {
+				is_catalytic_empire = no
+			}
+			has_any_foundry_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+		food = 10
+		trigger = {
+			exists = owner
+			owner = {
+				is_catalytic_empire = yes
+			}
+			has_any_foundry_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+}
+
+building_foundry_efficiency_1 = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+	category = manufacturing
+
+	building_sets = {
+		foundry
+		industrial
+	}
+
+	potential = {
+		exists = owner
+		owner = { is_wilderness_empire = no } # see 'building_natural_furnace_3'
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = no"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			volatile_motes = @b4_rare_cost
+		}
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = yes"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = 1500
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			volatile_motes = 600
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			energy = @b3_upkeep
+			volatile_motes = @b4_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			energy = 15
+			volatile_motes = 8
+		}
+	}
+
+	prerequisites = {
+		tech_alloys_2
+	}
+
+	planet_modifier = {
+		foundry_jobs_bonus_workforce_mult = 0.20
+	}
+
+	ai_resource_production = {
+		alloys = 10
+		trigger = {
+			has_any_foundry_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_factory_upkeep_1 = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = manufacturing
+
+	building_sets = {
+		factory
+		industrial
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			country_uses_consumer_goods = yes
+		}
+		NOT = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			AND = {
+				exists = owner
+				owner = { country_uses_consumer_goods = no }
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = volatile_motes
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b3_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		planet_artisans_upkeep_mult = -0.20
+	}
+
+	ai_resource_production = {
+		minerals = 10
+		trigger = {
+			exists = owner
+			owner = {
+				is_catalytic_empire = no
+			}
+			has_any_foundry_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+		food = 10
+		trigger = {
+			exists = owner
+			owner = {
+				is_catalytic_empire = yes
+			}
+			has_any_foundry_zone = yes
+		}
+	}
+
+	prerequisites = {
+		tech_luxuries_1
+	}
+}
+
+building_factory_efficiency_1 = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+	category = manufacturing
+
+	building_sets = {
+		factory
+		industrial
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			country_uses_consumer_goods = yes
+		}
+		NOT = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+		}
+	}
+
+	destroy_trigger = {
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+
+			AND = {
+				exists = owner
+				owner = { country_uses_consumer_goods = no }
+			}
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = no"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			rare_crystals = @b4_rare_cost
+		}
+		inline_script = {
+			script = buildings/nomadic_cost_switcher_with_additional_trigger
+			TRIGGER = "has_ringworld_output_boost = yes"
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = 1500
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			rare_crystals = 600
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = no
+			}
+			energy = @b3_upkeep
+			rare_crystals = @b4_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				has_ringworld_output_boost = yes
+			}
+			energy = 15
+			rare_crystals = 8
+		}
+	}
+
+	planet_modifier = {
+		artisan_jobs_bonus_workforce_mult = 0.20
+	}
+
+	ai_resource_production = {
+		consumer_goods = 10
+		trigger = {
+			has_any_factory_zone = yes
+		}
+	}
+
+	prerequisites = {
+		tech_luxuries_2
+	}
+}
+
+#################
+#   三产
+#################
+building_supercomputer = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	icon = building_institute
+
+	category = research
+
+	building_sets = {
+		research
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_gestalt = yes
+			is_wilderness_empire = no
+		}
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_regular_empire = yes }
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	convert_to = {
+		building_institute
+		building_school_of_magic
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		planet_physicists_physics_research_produces_add = 1
+		planet_biologists_society_research_produces_add = 1
+		planet_engineers_engineering_research_produces_add = 1
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_gestalt = no
+			}
+		}
+		planet_researchers_consumer_goods_upkeep_add = 1
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_machine_empire = yes
+			}
+		}
+		planet_researchers_energy_upkeep_add = 2
+	}
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+			owner = {
+				is_hive_empire = yes
+			}
+		}
+		planet_researchers_minerals_upkeep_add = 2
+	}
+
+	prerequisites = {
+		"tech_global_research_initiative"
+	}
+
+	show_tech_unlock_if = {
+		is_gestalt = yes
+		is_wilderness_empire = no
+	}
+
+	ai_weight_coefficient = 1.5
+
+	inline_script = {
+		script = districts/ai_research_extra_weighting
+		AMOUNT = 10
+	}
+}
+
+building_physics_lab_1 = {
+	can_build = yes
+	base_buildtime = @b1_time
+	planet_limit = 1
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		physics
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+
+		OR = {
+			has_carrier_flag = ignore_ai_building_limitations
+			owner = {
+				is_ai = no
+			}
+			has_any_research_physics_zone = yes
+			has_any_unspecialized_research_zone = yes
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/physicists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_physicists_physics_research_produces_add = 0.5
+	}
+
+	upgrades = {
+		building_physics_lab_2
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+	ai_weight_coefficient = 1.2
+
+	inline_script = {
+		script = districts/ai_research_physics_extra_weighting
+		AMOUNT = 5
+	}
+
+	prerequisites = {
+		"tech_physics_1"
+	}
+}
+
+building_physics_lab_2 = {
+	can_build = no
+	base_buildtime = @b2_time
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		physics
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			volatile_motes = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			volatile_motes = @b2_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/physicists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_physicists_physics_research_produces_add = 1
+		planet_physicists_volatile_motes_upkeep_add = 0.25
+	}
+
+	upgrades = {
+		building_physics_lab_3
+	}
+
+	prerequisites = {
+		"tech_physics_2"
+	}
+
+	inline_script = {
+		script = districts/ai_research_physics_extra_weighting
+		AMOUNT = 7.5
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+}
+
+building_physics_lab_3 = {
+	can_build = no
+	base_buildtime = @b3_time
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		physics
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			volatile_motes = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			volatile_motes = @b3_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/physicists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		physicist_jobs_bonus_workforce_mult = 0.1
+		planet_physicists_physics_research_produces_add = 2
+		planet_physicists_volatile_motes_upkeep_add = 0.5
+	}
+
+	prerequisites = {
+		"tech_physics_3"
+	}
+
+	inline_script = {
+		script = districts/ai_research_physics_extra_weighting
+		AMOUNT = 10
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_biolab_1 = {
+	can_build = yes
+	base_buildtime = @b1_time
+	planet_limit = 1
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		society
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+
+		OR = {
+			has_carrier_flag = ignore_ai_building_limitations
+			owner = {
+				is_ai = no
+			}
+			has_any_research_society_zone = yes
+			has_any_unspecialized_research_zone = yes
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/biologists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_biologists_society_research_produces_add = 0.5
+	}
+
+	upgrades = {
+		building_biolab_2
+	}
+
+	prerequisites = {
+		"tech_society_1"
+	}
+
+	ai_weight_coefficient = 1.2
+
+	inline_script = {
+		script = districts/ai_research_society_extra_weighting
+		AMOUNT = 5
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+}
+
+building_biolab_2 = {
+	can_build = no
+	base_buildtime = @b2_time
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		society
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/biologists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_biologists_society_research_produces_add = 1
+		planet_biologists_exotic_gases_upkeep_add = 0.25
+	}
+
+	upgrades = {
+		building_biolab_3
+	}
+
+	prerequisites = {
+		"tech_society_2"
+	}
+
+	inline_script = {
+		script = districts/ai_research_society_extra_weighting
+		AMOUNT = 7.5
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+
+}
+
+building_biolab_3 = {
+	can_build = no
+	base_buildtime = @b2_time
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		society
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			exotic_gases = @b3_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/biologists_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		biologist_jobs_bonus_workforce_mult = 0.1
+		planet_biologists_society_research_produces_add = 2
+		planet_biologists_exotic_gases_upkeep_add = 0.5
+	}
+
+	prerequisites = {
+		"tech_society_3"
+	}
+
+	inline_script = {
+		script = districts/ai_research_society_extra_weighting
+		AMOUNT = 10
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_engineering_facility_1 = {
+	can_build = yes
+	base_buildtime = @b1_time
+	planet_limit = 1
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		engineering
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+
+		OR = {
+			has_carrier_flag = ignore_ai_building_limitations
+			owner = {
+				is_ai = no
+			}
+			has_any_research_engineering_zone = yes
+			has_any_unspecialized_research_zone = yes
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b1_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		upkeep = {
+			energy = @b1_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/engineers_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_engineers_engineering_research_produces_add = 0.5
+	}
+
+	upgrades = {
+		building_engineering_facility_2
+	}
+
+	prerequisites = {
+		"tech_engineering_1"
+	}
+
+	ai_weight_coefficient = 1.2
+
+	inline_script = {
+		script = districts/ai_research_engineering_extra_weighting
+		AMOUNT = 5
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_engineering_facility_2 = {
+	can_build = no
+	base_buildtime = @b2_time
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		engineering
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/engineers_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		planet_engineers_engineering_research_produces_add = 1
+		planet_engineers_rare_crystals_upkeep_add = 0.25
+	}
+
+	upgrades = {
+		building_engineering_facility_3
+	}
+
+	prerequisites = {
+		"tech_engineering_2"
+	}
+
+	inline_script = {
+		script = districts/ai_research_engineering_extra_weighting
+		AMOUNT = 7.5
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_engineering_facility_3 = {
+	can_build = no
+	base_buildtime = @b3_time
+	exempt_from_ai_planet_specialization = no
+
+	category = research
+
+	building_sets = {
+		research
+		engineering
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			rare_crystals = @b3_rare_upkeep
+		}
+	}
+
+	inline_script = {
+		script = jobs/engineers_add
+		AMOUNT = @building_static_jobs
+	}
+
+	planet_modifier = {
+		engineer_jobs_bonus_workforce_mult = 0.1
+		planet_engineers_engineering_research_produces_add = 2
+		planet_engineers_rare_crystals_upkeep_add = 0.5
+	}
+
+	prerequisites = {
+		"tech_engineering_3"
+	}
+
+	inline_script = {
+		script = districts/ai_research_engineering_extra_weighting
+		AMOUNT = 10
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_research_upkeep_1 = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = research
+
+	building_sets = {
+		research
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+		NOT = {
+			has_modifier = resort_colony
+		}
+	}
+
+	allow = {
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b3_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		planet_researchers_upkeep_mult = -0.2
+	}
+
+	prerequisites = {
+		"tech_basic_science_lab_2"
+	}
+
+	ai_resource_production = {
+		consumer_goods = 5
+
+		trigger = {
+			exists = owner
+			owner = { is_gestalt = no }
+			has_any_research_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+		energy = 10
+
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+				is_hive_empire = no
+			}
+			has_any_research_zone = yes
+		}
+	}
+
+	ai_resource_production = {
+		minerals = 10
+
+		trigger = {
+			exists = owner
+			owner = {
+				is_gestalt = yes
+				is_hive_empire = yes
+			}
+			has_any_research_zone = yes
+		}
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_research_efficiency_1 = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+	category = research
+
+	building_sets = {
+		research
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_wilderness_empire = no
+		}
+		NOT = {
+			has_modifier = resort_colony
+		}
+	}
+
+	allow = {
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			has_modifier = resort_colony
+			owner = { is_wilderness_empire = yes }
+		}
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = exotic_gases
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b4_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			exotic_gases = @b4_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		researcher_jobs_bonus_workforce_mult = 0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			owner = {
+				is_galactic_community_member = yes
+			}
+			is_active_resolution = "resolution_galacticstudies_extradimensional_experimentation"
+			has_modifier = pm_extradimensional_experimentation
+		}
+		planet_physicists_sr_zro_upkeep_add = 0.5
+		planet_physicists_physics_research_produces_add = 1
+	}
+
+	prerequisites = {
+		"tech_basic_science_lab_2"
+	}
+
+	inline_script = {
+		script = districts/ai_research_extra_weighting
+		AMOUNT = 5
+	}
+
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_galactic_stock_exchange = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = trade
+
+	building_sets = {
+		trade
+	}
+
+	potential = {
+		NOR = {
+			has_modifier = resort_colony
+			has_modifier = slave_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	allow = {
+		orbital_ring_and_arkship_equivalent_absent = {
+			RING = ring_galactic_stock_exchange
+			ARKSHIP = arkship_galactic_stock_exchange
+		}
+	}
+
+	destroy_trigger = {
+		exists = owner
+		OR = {
+			owner = { is_regular_empire = no }
+			has_modifier = slave_colony
+			has_modifier = resort_colony
+			has_modifier = penal_colony
+		}
+	}
+
+	planet_modifier = {
+		pop_trader_bonus_workforce_mult = 0.3
+	}
+
+
+	country_modifier = {
+		country_trade_fee = -0.05
+	}
+
+	inline_script = {
+		script = jobs/trader_add
+		AMOUNT = @building_static_jobs
+	}
+
+	inline_script = {
+		script = "jobs/politician_add_from_civic"
+		AMOUNT = @building_static_jobs
+		CIVIC = civic_merchant_guilds
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	prerequisites = {
+		"tech_galactic_markets"
+	}
+
+	ai_resource_production = {
+		trade = 10
+	}
+}
+
+building_bureaucratic_2 = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	category = unity
+
+	building_sets = {
+		unity
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_regular_empire = yes
+			is_spiritualist = no
+			has_make_spiritualist_perk = no
+		}
+		NOR = {
+			has_modifier = slave_colony
+			has_modifier = resort_colony
+		}
+	}
+
+	allow = {
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_regular_empire = no
+				is_spiritualist = yes
+				has_make_spiritualist_perk = yes
+			}
+		}
+	}
+
+	convert_to = {
+		building_holotemple
+		building_hive_cluster
+		building_network_junction
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		planet_bureaucrats_upkeep_mult = -0.2
+	}
+
+	prerequisites = {
+		"tech_colonial_bureaucracy"
+	}
+
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+		is_spiritualist = no
+		has_make_spiritualist_perk = no
+	}
+}
+
+building_bureaucratic_3 = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+	category = unity
+
+	building_sets = {
+		unity
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_regular_empire = yes
+			is_spiritualist = no
+			has_make_spiritualist_perk = no
+		}
+		NOR = {
+			has_modifier = slave_colony
+			has_modifier = resort_colony
+		}
+	}
+
+	allow = {
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_regular_empire = no
+				is_spiritualist = yes
+				has_make_spiritualist_perk = yes
+			}
+		}
+	}
+
+	convert_to = {
+		building_sacred_nexus
+		building_hive_confluence
+		building_system_conflux
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			rare_crystals = @b3_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		pop_bureaucrat_bonus_workforce_mult = 0.2
+	}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner.federation
+			owner = {
+				federation = {
+					has_federation_perk = all_the_priests_2
+				}
+			}
+		}
+		job_politician_add = @building_static_jobs_low
+	}
+
+	prerequisites = {
+		"tech_galactic_bureaucracy"
+	}
+
+	show_tech_unlock_if = {
+		is_regular_empire = yes
+		is_spiritualist = no
+		has_make_spiritualist_perk = no
+	}
+}
+
+building_network_junction = {
+	base_buildtime = @b2_time
+	icon = building_heritage_site
+	planet_limit = 1
+	category = unity
+
+	building_sets = {
+		unity
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_machine_empire = yes
+			NOT = {
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_machine_empire = no
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+	}
+
+	convert_to = {
+		building_bureaucratic_2
+		building_holotemple
+		building_hive_cluster
+		building_commensal_clearing_3
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		planet_bureaucrats_upkeep_mult = -0.2
+	}
+
+	prerequisites = {
+		"tech_colonial_bureaucracy"
+	}
+
+	show_tech_unlock_if = {
+		is_machine_empire = yes
+		NOT = {
+			has_valid_civic = civic_machine_servitor
+		}
+	}
+}
+
+building_system_conflux = {
+	base_buildtime = @b3_time
+	icon = building_hypercomms_forum
+	planet_limit = 1
+	category = unity
+
+	building_sets = {
+		unity
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_machine_empire = yes
+			NOT = {
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+	}
+
+	allow = {
+		has_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_machine_empire = no
+				has_valid_civic = civic_machine_servitor
+			}
+		}
+	}
+
+	convert_to = {
+		building_bureaucratic_3
+		building_sacred_nexus
+		building_hive_confluence
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			rare_crystals = @b3_rare_upkeep
+		}
+	}
+
+	planet_modifier = {
+		pop_coordinator_bonus_workforce_mult = 0.2
+	}
+
+	prerequisites = {
+		"tech_galactic_bureaucracy"
+	}
+
+	show_tech_unlock_if = {
+		is_machine_empire = yes
+		NOT = {
+			has_valid_civic = civic_machine_servitor
+		}
+	}
+}
+
+building_hive_cluster = {
+	base_buildtime = @b2_time
+	planet_limit = 1
+	exempt_from_ai_planet_specialization = no
+
+	category = unity
+
+	building_sets = {
+		unity
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = yes
+			is_wilderness_empire = no
+		}
+	}
+	allow = {
+		has_upgraded_capital = yes
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_hive_empire = no
+				is_wilderness_empire = yes
+			}
+		}
+	}
+	convert_to = {
+		building_bureaucratic_2
+		building_holotemple
+		building_commensal_clearing_3
+		building_network_junction
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b2_rare_cost
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			exotic_gases = @b2_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_edict = synaptic_reinforcement
+				}
+			}
+			energy = 2
+		}
+	}
+
+	planet_modifier = {}
+
+	triggered_planet_modifier = {
+		potential = {
+			exists = owner
+		}
+		job_coordinator_add = @b2_jobs
+	}
+
+	planet_modifier = {
+		planet_bureaucrats_upkeep_mult = -0.2
+	}
+
+	prerequisites = {
+		"tech_hive_cluster"
+	}
+}
+
+building_hive_confluence = {
+	base_buildtime = @b3_time
+	planet_limit = 1
+	category = unity
+
+	building_sets = {
+		unity
+		government
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = yes
+			is_wilderness_empire = no
+		}
+	}
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+	destroy_trigger = {
+		exists = owner
+		owner = {
+			OR = {
+				is_hive_empire = no
+				is_wilderness_empire = yes
+			}
+		}
+	}
+	convert_to = {
+		building_bureaucratic_3
+		building_sacred_nexus
+		building_commensal_clearing_4
+		building_system_conflux
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b3_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			exotic_gases = @b3_rare_cost
+		}
+		upkeep = {
+			energy = @b3_upkeep
+			exotic_gases = @b3_rare_upkeep
+		}
+		upkeep = {
+			trigger = {
+				exists = owner
+				owner = {
+					has_edict = synaptic_reinforcement
+				}
+			}
+			energy = 2
+		}
+	}
+
+	planet_modifier = {}
+
+	planet_modifier = {
+		pop_coordinator_bonus_workforce_mult = 0.2
+
+	}
+
+	prerequisites = {
+		"tech_hive_confluence"
+	}
+	show_tech_unlock_if = {
+		is_wilderness_empire = no
+	}
+}
+
+building_league_offices = {
+	base_buildtime = @b2_time
+	empire_limit = {
+		base = 1
+	}
+
+	category = unity
+
+	building_sets = {
+		unity
+	}
+
+	potential = {
+		exists = owner
+		owner = {
+			has_technology = tech_secrets_league
+		}
+		NOT = { has_modifier = slave_colony }
+	}
+
+	allow = {
+		has_major_upgraded_capital = yes
+	}
+
+	destroy_trigger = {
+		has_modifier = slave_colony
+	}
+
+	resources = {
+		category = planet_buildings
+		inline_script = {
+			script = buildings/nomadic_cost_switcher
+			REGULAR_RESOURCE = minerals
+			NOMADIC_RESOURCE = rare_crystals
+			COST = @b2_minerals
+			NOMADIC_COST_MULT = @nomadic_minerals_to_strategic_ratio
+		}
+		cost = {
+			rare_crystals = @b2_rare_cost
+			minor_artifacts = 30
+		}
+		upkeep = {
+			energy = @b2_upkeep
+			rare_crystals = @b2_rare_upkeep
+		}
+		cost = {
+			trigger = {
+				owner = { is_wilderness_empire = yes }
+			}
+			biomass = @b3_biomass
+		}
+	}
+
+	inline_script = {
+		script = buildings/on_all_wilderness_buildings_districts
+	}
+
+	country_modifier = {
+		country_edict_fund_add = 100
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			owner = { has_ascension_perk = ap_archaeoengineers }
+		}
+		country_edict_fund_add = 100
+	}
+
+	planet_modifier = {
+		planet_bureaucrats_unity_produces_add = 1
+	}
+
+	triggered_desc = {
+		text = building_league_offices_effect
+	}
+
+	inline_script = {
+		script = jobs/unity_jobs_add
+		AMOUNT = @building_static_jobs
+	}
+
+	prerequisites = {
+		"tech_secrets_league"
+	}
+}
