@@ -1035,7 +1035,6 @@ country_event = {
 	is_triggered_only = yes
 
 	trigger = {
-		is_post_revolutionary = yes
 		NOT = { has_country_flag = not_revolution }
 	}
 
@@ -1043,34 +1042,6 @@ country_event = {
 		name = "ethic_post_revolutionary.1.a"
 		custom_tooltip = ethic_post_revolutionary.1.a.tooltip
 		hidden_effect = {
-			if = {
-				limit = {
-					has_ethic = ethic_authoritarian
-				}
-				country_remove_ethic = ethic_authoritarian
-				shift_ethic = ethic_egalitarian
-			}
-			if = {
-				limit = {
-					has_ethic = ethic_fanatic_authoritarian
-				}
-				country_remove_ethic = ethic_fanatic_authoritarian
-				shift_ethic = ethic_fanatic_egalitarian
-			}
-			if = {
-				limit = {
-					has_ethic = ethic_authoritarian
-				}
-				country_remove_ethic = ethic_authoritarian
-				shift_ethic = ethic_egalitarian
-			}
-			if = {
-				limit = {
-					has_ethic = ethic_fanatic_authoritarian
-				}
-				country_remove_ethic = ethic_fanatic_authoritarian
-				shift_ethic = ethic_fanatic_egalitarian
-			}
 			leader = {
 				if = {
 					limit = {
@@ -1104,10 +1075,12 @@ country_event = {
 					flag = not_revolution
 					years = @post_revolutionary_check_years_1
 				}
-				every_owned_pop = {
+				every_owned_pop_group = {
 					random_list = {
 						19 = { }
-						1 = { kill_pop = yes }
+						1 = {
+							kill_single_pop = yes
+						}
 					}
 				}
 			}
@@ -1117,10 +1090,12 @@ country_event = {
 					flag = not_revolution
 					years = @post_revolutionary_check_years_2
 				}
-				every_owned_pop = {
+				every_owned_pop_group = {
 					random_list = {
-						8 = { }
-						2 = { kill_pop = yes }
+						9 = { }
+						1 = {
+							kill_single_pop = yes
+						}
 					}
 				}
 			}
@@ -1133,10 +1108,12 @@ country_event = {
 					modifier = post_revolutionary_unret
 					years = @post_revolutionary_check_years
 				}
-				every_owned_pop = {
+				every_owned_pop_group = {
 					random_list = {
 						9 = { }
-						1 = { kill_pop = yes }
+						1 = {
+							kill_single_pop = yes
+						}
 					}
 				}
 			}
@@ -1148,6 +1125,34 @@ country_event = {
 				}
 			}
 		}
+	}
+}
+country_event = {
+	id = ethic_post_revolutionary.2
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_true_scientific_socialism = yes
+		NOT = { has_country_flag = reform_and_opening_up }
+	}
+
+	immediate = {
+		set_country_flag = reform_and_opening_up
+	}
+}
+country_event = {
+	id = ethic_post_revolutionary.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_true_scientific_socialism = yes
+		has_country_flag = reform_and_opening_up
+	}
+
+	immediate = {
+		remove_country_flag = reform_and_opening_up
 	}
 }
 
@@ -1430,6 +1435,37 @@ country_event = {
 				option = ai_full_rights
 				cooldown = yes
 			}
+		}
+	}
+}
+
+# 社会主义的政治平衡系统
+namespace = ethic_social_balance
+event = {
+	id = ethic_social_balance.0
+	hide_window = yes
+
+	is_triggered_only = yes
+	trigger = {
+		any_country = {
+			is_regular_empire = yes
+			is_true_scientific_socialism = yes
+			is_ture_communist_society = no
+		}
+	}
+	immediate = {
+		every_country = {
+			limit = {
+				is_regular_empire = yes
+				OR = {
+					is_true_scientific_socialism = yes
+					has_policy_flag = tt_communist_road_3
+					has_policy_flag = tt_communist_road_4
+					has_policy_flag = tt_communist_road_5
+				}
+				is_ture_communist_society = no
+			}
+			start_situation = { type = situation_social_balance }
 		}
 	}
 }
