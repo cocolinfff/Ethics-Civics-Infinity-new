@@ -262,80 +262,65 @@ situation_social_balance = {
             }
         }
         modifier = {
-            desc = edict_cultural_revolution
-            add = -10
+            desc = cultural_revolution
+            add = -20
             owner = {
-                has_edict = cultural_revolution
+                has_country_flag = cultural_revolution
             }
         }
         modifier = {
-            desc = ethic_economic_problem
-            add = 10
+            desc = ethic_economic_problem_energy
+            add = 5
             owner = {
                 has_monthly_income = { resource = energy value < 0 }
             }
         }
         modifier = {
-            desc = ethic_economic_problem
-            add = 10
+            desc = ethic_economic_problem_minerals
+            add = 5
             owner = {
                 has_monthly_income = { resource = minerals value < 0 }
             }
         }
         modifier = {
-            desc = ethic_economic_problem
-            add = 10
+            desc = ethic_economic_problem_food
+            add = 5
             owner = {
                 has_monthly_income = { resource = food value < 0 }
             }
         }
         modifier = {
-            desc = ethic_economic_problem
-            add = 10
+            desc = ethic_economic_problem_consumer_goods
+            add = 5
             owner = {
                 has_monthly_income = { resource = consumer_goods value < 0 }
             }
         }
         modifier = {
-            desc = ethic_economic_problem
-            add = 10
+            desc = ethic_economic_problem_alloys
+            add = 5
             owner = {
                 has_monthly_income = { resource = alloys value < 0 }
             }
         }
         modifier = {
-            desc = ethic_economic_imbalance
+            desc = ethic_economic_problem_trade
             add = 10
             owner = {
-                country_has_situation = { SITUATION = situation_energy_deficit }
+                has_monthly_income = { resource = trade value < 0 }
             }
         }
         modifier = {
             desc = ethic_economic_imbalance
-            add = 10
+            add = -10
             owner = {
-                country_has_situation = { SITUATION = situation_mineral_deficit }
-            }
-        }
-        modifier = {
-            desc = ethic_economic_imbalance
-            add = 10
-            owner = {
-                country_has_situation = { SITUATION = situation_food_deficit }
-            }
-        }
-        modifier = {
-            desc = ethic_economic_imbalance
-            add = 10
-            owner = {
-                country_has_situation = { SITUATION = situation_consumer_goods_deficit }
-            }
-        }
-        modifier = {
-            desc = ethic_economic_imbalance
-            add = 10
-            owner = {
-                country_has_situation = { SITUATION = situation_alloys_deficit }
+                OR = {
+                    country_has_situation = { SITUATION = situation_energy_deficit }
+                    country_has_situation = { SITUATION = situation_mineral_deficit }
+                    country_has_situation = { SITUATION = situation_food_deficit }
+                    country_has_situation = { SITUATION = situation_consumer_goods_deficit }
+                    country_has_situation = { SITUATION = situation_alloys_deficit }
+                }
             }
         }
         modifier = {
@@ -413,13 +398,77 @@ situation_social_balance = {
     }
 
     approach = {
-        name = situation_social_balance_stringent_budget
+        name = situation_social_balance_cultural_revolution
         icon = GFX_situation_approach_fist
+        icon_background = GFX_situation_approach_bg_red
+        resources = {
+            category = situations
+            upkeep = {
+                unity = 1
+                multiplier = trigger:count_owned_pop_amount
+            }
+        }
+        allow = {
+            owner = {
+                NOT = { has_valid_civic = civic_political_apathy }
+            }
+            custom_tooltip = {
+                fail_text = situation_social_balance_not_change
+                owner = {
+                    any_situation = {
+                        is_situation_type = situation_social_balance
+                        NOR = {
+                            current_stage = situation_social_balance_stage_9
+                            current_stage = situation_social_balance_stage_10
+                        }
+                    }
+                }
+            }
+        }
+        on_select = {
+            custom_tooltip = "situation_social_balance_cultural_revolution_tt"
+            hidden_effect = {
+                owner = {
+                    country_event = {
+                        id = ethic_post_revolutionary.3
+                    }
+                }
+            }
+        }
+        modifier = {
+            planet_stability_add = -20
+            pop_cat_worker_political_power = 10.00
+            planet_jobs_unity_produces_mult = 0.5
+            country_society_tech_research_speed = 0.35
+            pop_ethics_shift_speed_mult = 5.00
+            pop_ethic_egalitarian_attraction_mult = 1.00
+            leader_lifespan_add = -10
+            country_leader_pool_size = -2
+            job_rentier_per_pop = -1
+            job_postpartum_workers_per_pop = -0.5
+        }
+        ai_weight = {
+            base = 0
+            modifier = {
+                add = 15
+                owner = {
+                    any_situation = {
+                        is_situation_type = situation_social_balance
+                        current_stage = situation_social_balance_stage_7
+                    }
+                }
+            }
+        }
+    }
+
+    approach = {
+        name = situation_social_balance_stringent_budget
+        icon = GFX_situation_approach_pop
         icon_background = GFX_situation_approach_bg_yellow
         resources = {
             category = situations
             cost = {
-                unity = 1
+                unity = 0.1
                 mult = trigger:count_owned_pop_amount
             }
         }
@@ -430,6 +479,7 @@ situation_social_balance = {
             custom_tooltip = {
                 fail_text = situation_social_balance_not_change
                 owner = {
+                    NOT = { has_country_flag = cultural_revolution }
                     any_situation = {
                         is_situation_type = situation_social_balance
                         NOR = {
@@ -469,7 +519,7 @@ situation_social_balance = {
         resources = {
             category = situations
             cost = {
-                unity = 1
+                unity = 0.1
                 mult = trigger:count_owned_pop_amount
             }
         }
@@ -477,7 +527,7 @@ situation_social_balance = {
             custom_tooltip = {
                 fail_text = situation_social_balance_not_change
                 owner = {
-                    NOT = { has_edict = cultural_revolution }
+                    NOT = { has_country_flag = cultural_revolution }
                 }
             }
         }
@@ -506,7 +556,7 @@ situation_social_balance = {
         resources = {
             category = situations
             cost = {
-                unity = 1
+                unity = 0.1
                 mult = trigger:count_owned_pop_amount
             }
         }
@@ -518,6 +568,7 @@ situation_social_balance = {
                 fail_text = situation_social_balance_not_change
                 owner = {
                     NOT = { has_valid_civic = civic_revolutionary_terrorism }
+                    NOT = { has_country_flag = cultural_revolution }
                     any_situation = {
                         is_situation_type = situation_social_balance
                         NOR = {
