@@ -1,7 +1,7 @@
 
 building_communism = {
 	picture = GFX_evt_grand_speech
-	complete_icon_frame = GFX_situation_outcome_frame_red
+	complete_icon_frame = GFX_situation_outcome_frame_green
 	complete_icon = GFX_situation_outcome_unknown
 	category = negative
 	situation_log_category = ambitions
@@ -99,10 +99,22 @@ building_communism = {
 			}
 		}
 		modifier = {
-			factor = -0.5
+			factor = 2
+			desc = "situation_social_balance_cultural_revolution"
+			owner = {
+				any_situation = {
+					is_situation_type = situation_social_balance
+					current_situation_approach = situation_social_balance_cultural_revolution
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
 			desc = "situation_social_balance"
 			owner = {
 				OR = {
+					has_country_flag = situation_social_balance_stage_1
+					has_country_flag = situation_social_balance_stage_2
 					has_country_flag = situation_social_balance_stage_6
 					has_country_flag = situation_social_balance_stage_7
 					has_country_flag = situation_social_balance_stage_8
@@ -119,16 +131,6 @@ building_communism = {
 				}
 			}
 		}
-		modifier = {
-			add = -2
-			desc = "situation_social_balance"
-			owner = {
-				OR = {
-					has_country_flag = situation_social_balance_stage_1
-					has_country_flag = situation_social_balance_stage_2
-				}
-			}
-		}
 	}
 	on_progress_complete = {
 		custom_tooltip = building_communism_situation_end
@@ -138,12 +140,13 @@ building_communism = {
 		}
 	}
 	on_fail = {
-		custom_tooltip = building_communism_failed
-		owner = { add_modifier = { modifier = post_revolutionary days = 3600 } }
+		owner = { add_modifier = { modifier = post_revolutionary years = 10 } }
+		owner = { add_modifier = { modifier = post_revolutionary_unret years = 20 } }
 		hidden_effect = {
 			owner = {
 				remove_country_flag = towards_communism
-				set_country_flag = reject_communism
+				set_timed_country_flag = { flag = not_revolution years = 10 }
+				set_timed_country_flag = { flag = reject_communism years = 20 }
 			}
 		}
 	}

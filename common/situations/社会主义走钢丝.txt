@@ -14,15 +14,15 @@ situation_social_balance = {
         OR = {
             NOT = { exists = owner }
             owner = {
-                is_regular_empire = no
                 NOR = {
                     is_true_scientific_socialism = yes
                     has_policy_flag = tt_communist_road_3
                     has_policy_flag = tt_communist_road_4
                     has_policy_flag = tt_communist_road_5
                 }
-                is_ture_communist_society = yes
             }
+            owner = { is_regular_empire = no }
+            owner = { is_ture_communist_society = yes }
         }
     }
 
@@ -230,6 +230,7 @@ situation_social_balance = {
                 owner = {
                     remove_country_flag = situation_social_balance_stage_9
                     set_country_flag = situation_social_balance_stage_10
+                    country_event = { id = ethic_post_revolutionary.1 days = 1 random = 360 }
                 }
             }
             modifier = {
@@ -246,26 +247,33 @@ situation_social_balance = {
         base = 0
         modifier = {
             desc = re_revolution_question
-            add = -50
+            add = -5
             owner = {
                 has_modifier = re_revolution_question
             }
         }
         modifier = {
-            desc = post_revolutionary_unret
-            add = 50
+            desc = post_revolutionary
+            add = 10
             owner = {
-                OR = {
-                    has_modifier = post_revolutionary_unret
-                    has_modifier = post_revolutionary
-                }
+                has_modifier = post_revolutionary
+            }
+        }
+        modifier = {
+            desc = post_revolutionary_unret
+            factor = 0.5
+            owner = {
+                has_modifier = post_revolutionary_unret
             }
         }
         modifier = {
             desc = cultural_revolution
             add = -20
             owner = {
-                has_country_flag = cultural_revolution
+                any_situation = {
+                    is_situation_type = situation_social_balance
+                    current_situation_approach = situation_social_balance_cultural_revolution
+                }
             }
         }
         modifier = {
@@ -340,7 +348,6 @@ situation_social_balance = {
         modifier = {
             desc = ethic_population_structure
             add = value:situation_social_balance_population_structure
-            NOT = { current_situation_approach = situation_social_balance_smooth_spending }
         }
         modifier = {
             desc = ethic_game_of_interests
@@ -411,6 +418,7 @@ situation_social_balance = {
         allow = {
             owner = {
                 NOT = { has_valid_civic = civic_political_apathy }
+                NOT = { has_country_flag = not_revolution }
             }
             custom_tooltip = {
                 fail_text = situation_social_balance_not_change
@@ -429,8 +437,10 @@ situation_social_balance = {
             custom_tooltip = "situation_social_balance_cultural_revolution_tt"
             hidden_effect = {
                 owner = {
-                    country_event = {
-                        id = ethic_post_revolutionary.3
+                    set_timed_country_flag = { flag = cultural_revolution years = 10 }
+                    if = {
+                        limit = { has_country_flag = reform_and_opening_up }
+                        remove_country_flag = reform_and_opening_up
                     }
                 }
             }
@@ -475,16 +485,17 @@ situation_social_balance = {
         allow = {
             owner = {
                 NOT = { has_valid_civic = civic_political_apathy }
+                NOT = { has_country_flag = not_revolution }
             }
             custom_tooltip = {
                 fail_text = situation_social_balance_not_change
                 owner = {
-                    NOT = { has_country_flag = cultural_revolution }
                     any_situation = {
                         is_situation_type = situation_social_balance
                         NOR = {
                             current_stage = situation_social_balance_stage_9
                             current_stage = situation_social_balance_stage_10
+                            current_situation_approach = situation_social_balance_cultural_revolution
                         }
                     }
                 }
@@ -494,8 +505,13 @@ situation_social_balance = {
             custom_tooltip = "situation_social_balance_stringent_budget_tt"
             hidden_effect = {
                 owner = {
-                    country_event = {
-                        id = ethic_post_revolutionary.3
+                    if = {
+                        limit = { has_country_flag = reform_and_opening_up }
+                        remove_country_flag = reform_and_opening_up
+                    }
+                    if = {
+                        limit = { has_country_flag = cultural_revolution }
+                        remove_country_flag = cultural_revolution
                     }
                 }
             }
@@ -527,7 +543,12 @@ situation_social_balance = {
             custom_tooltip = {
                 fail_text = situation_social_balance_not_change
                 owner = {
-                    NOT = { has_country_flag = cultural_revolution }
+                    any_situation = {
+                        is_situation_type = situation_social_balance
+                        NOT = {
+                            current_situation_approach = situation_social_balance_cultural_revolution
+                        }
+                    }
                 }
             }
         }
@@ -535,8 +556,13 @@ situation_social_balance = {
             custom_tooltip = "situation_social_balance_smooth_spending_tt"
             hidden_effect = {
                 owner = {
-                    country_event = {
-                        id = ethic_post_revolutionary.3
+                    if = {
+                        limit = { has_country_flag = reform_and_opening_up }
+                        remove_country_flag = reform_and_opening_up
+                    }
+                    if = {
+                        limit = { has_country_flag = cultural_revolution }
+                        remove_country_flag = cultural_revolution
                     }
                 }
             }
@@ -568,12 +594,12 @@ situation_social_balance = {
                 fail_text = situation_social_balance_not_change
                 owner = {
                     NOT = { has_valid_civic = civic_revolutionary_terrorism }
-                    NOT = { has_country_flag = cultural_revolution }
                     any_situation = {
                         is_situation_type = situation_social_balance
                         NOR = {
                             current_stage = situation_social_balance_stage_1
                             current_stage = situation_social_balance_stage_2
+                            current_situation_approach = situation_social_balance_cultural_revolution
                         }
                     }
                 }
@@ -583,8 +609,10 @@ situation_social_balance = {
             custom_tooltip = "situation_social_balance_harvest_everything_tt"
             hidden_effect = {
                 owner = {
-                    country_event = {
-                        id = ethic_post_revolutionary.2
+                    set_country_flag = reform_and_opening_up
+                    if = {
+                        limit = { has_country_flag = cultural_revolution }
+                        remove_country_flag = cultural_revolution
                     }
                 }
             }

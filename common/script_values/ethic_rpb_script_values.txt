@@ -95,10 +95,36 @@ progress_predict = {
 	add = trigger:situation_progress
 }
 
-situation_social_balance_population_structure = {
-	base = 0
+situation_social_balance_pop_group_egalitarian = {
+	base = -1
 	complex_trigger_modifier = {
-		trigger = count_owned_pop_amount
+		trigger = count_owned_pop_group
+		parameters = {
+			limit = {
+				has_ethic = ethic_egalitarian
+			}
+		}
+		mode = mult
+	}
+}
+
+situation_social_balance_pop_group_not_egalitarian = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_group
+		parameters = {
+			limit = {
+				NOT = { has_ethic = ethic_egalitarian }
+			}
+		}
+		mode = mult
+	}
+}
+
+situation_social_balance_num_proletarian = {
+	base = -1
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_group
 		parameters = {
 			limit = {
 				owner = {
@@ -113,11 +139,14 @@ situation_social_balance_population_structure = {
 				}
 			}
 		}
-		mode = add
-		multiplier = -1
+		mode = mult
 	}
+}
+
+situation_social_balance_num_specialist = {
+	base = 1
 	complex_trigger_modifier = {
-		trigger = count_owned_pop_amount
+		trigger = count_owned_pop_group
 		parameters = {
 			limit = {
 				OR = {
@@ -126,11 +155,14 @@ situation_social_balance_population_structure = {
 				}
 			}
 		}
-		mode = add
-		multiplier = 0.5
+		mode = mult
 	}
+}
+
+situation_social_balance_num_ruler = {
+	base = 2
 	complex_trigger_modifier = {
-		trigger = count_owned_pop_amount
+		trigger = count_owned_pop_group
 		parameters = {
 			limit = {
 				OR = {
@@ -139,9 +171,17 @@ situation_social_balance_population_structure = {
 				}
 			}
 		}
-		mode = add
-		multiplier = 5
+		mode = mult
 	}
+}
+
+situation_social_balance_population_structure = {
+	base = 0
+	add = value:situation_social_balance_pop_group_egalitarian
+	add = value:situation_social_balance_pop_group_not_egalitarian
+	add = value:situation_social_balance_num_proletarian
+	add = value:situation_social_balance_num_specialist
+	add = value:situation_social_balance_num_ruler
 }
 
 situation_social_balance_num_miner = {
@@ -248,75 +288,100 @@ situation_social_balance_game_of_interests = {
 	add = value:situation_social_balance_num_ruler_jobs
 }
 
+count_egalitarian_ruler = {
+	base = -2
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_ruler = yes
+				has_ethic = ethic_egalitarian
+			}
+		}
+		mode = mult
+	}
+}
+
+count_egalitarian_councilors = {
+	base = -1
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_councilor = yes
+				is_ruler = no
+				has_ethic = ethic_egalitarian
+			}
+		}
+		mode = mult
+	}
+}
+
+count_egalitarian_leaders = {
+	base = -0.1
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_councilor = no
+				is_ruler = no
+				has_ethic = ethic_egalitarian
+			}
+		}
+		mode = mult
+	}
+}
+
+count_not_egalitarian_ruler = {
+	base = 2
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_ruler = yes
+				NOT = { has_ethic = ethic_egalitarian }
+			}
+		}
+		mode = mult
+	}
+}
+
+count_not_egalitarian_councilors = {
+	base = 1
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_councilor = yes
+				is_ruler = no
+				NOT = { has_ethic = ethic_egalitarian }
+			}
+		}
+		mode = mult
+	}
+}
+
+count_not_egalitarian_leaders = {
+	base = 0.1
+	complex_trigger_modifier = {
+		trigger = count_owned_leader
+		parameters = {
+			limit = {
+				is_councilor = no
+				is_ruler = no
+				NOT = { has_ethic = ethic_egalitarian }
+			}
+		}
+		mode = mult
+	}
+}
+
 situation_social_balance_worship_of_leaders = {
 	base = 0
-	complex_trigger_modifier = {
-		trigger = count_owned_leader
-		parameters = {
-			limit = {
-				is_ruler = yes
-				has_ethic = ethic_egalitarian
-			}
-		}
-		mult = -10
-		mode = add
-	}
-	complex_trigger_modifier = {
-		trigger = count_owned_leader
-		parameters = {
-			limit = {
-				is_councilor = yes
-				has_ethic = ethic_egalitarian
-			}
-		}
-		mult = -5
-		mode = add
-	}
-	complex_trigger_modifier = {
-		trigger = count_owned_leader
-		parameters = {
-			limit = {
-				is_councilor = no
-				is_ruler = no
-				has_ethic = ethic_egalitarian
-			}
-		}
-		mult = -1
-		mode = add
-	}
-	complex_trigger_modifier = {
-		trigger = count_owned_leader
-		parameters = {
-			limit = {
-				is_ruler = yes
-				NOT = { has_ethic = ethic_egalitarian }
-			}
-		}
-		mult = 10
-		mode = add
-	}
-	complex_trigger_modifier = {
-		trigger = count_owned_leader
-		parameters = {
-			limit = {
-				is_councilor = yes
-				NOT = { has_ethic = ethic_egalitarian }
-
-			}
-		}
-		mult = 5
-		mode = add
-	}
-	complex_trigger_modifier = {
-		trigger = count_owned_leader
-		parameters = {
-			limit = {
-				is_councilor = no
-				is_ruler = no
-				NOT = { has_ethic = ethic_egalitarian }
-			}
-		}
-		mult = 1
-		mode = add
-	}
+	add = owner.value:count_egalitarian_ruler
+	add = owner.value:count_egalitarian_councilors
+	add = owner.value:count_egalitarian_leaders
+	add = owner.value:count_not_egalitarian_ruler
+	add = owner.value:count_not_egalitarian_councilors
+	add = owner.value:count_not_egalitarian_leaders
 }
