@@ -1,0 +1,458 @@
+# All capital buildings... except the Synaptic Lathe
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		exists = solar_system
+		owner = {
+			is_imperial_authority = yes
+			is_cyber_imperial = no
+			is_synth_imperial = no
+			is_purity_authority = no
+			is_cloning_authority = no
+			is_mutation_authority = no
+			is_transcendent_authority = no
+			is_corporeal_authority = no
+			capital_scope.solar_system? = {
+				is_same_value = ROOT.solar_system
+			}
+		}
+	}
+	planet_jobs_produces_mult = 0.1
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { is_gestalt = no }
+		NOT = { has_modifier = slave_colony }
+	}
+	job_soldier_add = 1
+	mult = modifier:job_soldier_or_warrior_add
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { is_gestalt = no }
+		has_modifier = slave_colony
+	}
+	job_battle_thrall_add = 1
+	mult = modifier:job_soldier_or_warrior_add
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_gestalt = yes
+			is_wilderness_empire = no # no effect for Wilderness
+		}
+	}
+	job_warrior_drone_add = 1
+	mult = modifier:job_soldier_or_warrior_add
+}
+
+# Productivity Techs
+triggered_planet_modifier = {
+	potential = {
+		capital_tier >= 2
+		exists = owner
+		owner = {
+			has_technology = tech_capital_productivity_1
+			NAND = {
+				has_technology = tech_capital_productivity_2
+				prev = { capital_tier >= 3 }
+			}
+		}
+	}
+	pop_bonus_workforce_mult = 0.05
+}
+
+triggered_planet_modifier = {
+	potential = {
+		capital_tier >= 3
+		exists = owner
+		owner = {
+			has_technology = tech_capital_productivity_2
+			NAND = {
+				has_technology = tech_capital_productivity_3
+				prev = { capital_tier >= 4 }
+			}
+		}
+	}
+	pop_bonus_workforce_mult = 0.1
+}
+
+triggered_planet_modifier = {
+	potential = {
+		capital_tier >= 4
+		exists = owner
+		owner = {
+			has_technology = tech_capital_productivity_3
+		}
+	}
+	pop_bonus_workforce_mult = 0.15
+}
+
+# Cyber Organ Harvesting
+triggered_planet_modifier = {
+	potential = {
+		owner? = { has_active_tradition = tr_cybernetics_organ_harvesting }
+			carrier_is_type = planet
+			has_current_purge = yes
+	}
+	logistic_growth_mult = 0.1
+}
+
+# Cyber Organ Harvesting (Nomads)
+triggered_planet_modifier = {
+	potential = {
+		owner? = { has_active_tradition = tr_cybernetics_organ_harvesting_nomads }
+		carrier_is_type = ship
+		ship.orbit? = {
+			has_orbital_bombardment = yes
+			controller? = {
+				is_hostile = root.controller
+			}
+		}
+	}
+	logistic_growth_mult = 0.1
+}
+
+# Cyber Implant Taxes
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { has_modifier = cyber_implant_taxes }
+		exists = growing_species
+		growing_species = {
+			species = { has_trait = trait_cybernetic }
+		}
+	}
+	planet_augmentors_upkeep_mult = 0.10
+}
+
+# Cyber Oligarchic Individualist
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_oligarchic_authority = yes
+			has_country_flag = cyber_individualist
+		}
+	}
+	key = auth_cyber_oligarchic_individualist
+	planet_jobs_ruler_produces_mult = 0.01
+	mult = planet.value:count_specialists
+}
+
+# Cyber Imperial Jobs
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_cyber_imperial = yes
+		}
+	}
+	job_politician_add = @building_static_jobs
+}
+
+# Cyber Imperial Collectivist
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_cyber_imperial = yes
+			NOT = { has_edict = neurocasted_spectacles }
+		}
+		OR = {
+			NOT = { exists = sector }
+			AND = {
+				exists = sector
+				NOT = {
+					sector = { has_sector_type = core_sector }
+				}
+			}
+		}
+	}
+	pop_happiness = -0.1
+}
+
+# Cyber Imperial Collectivist
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_cyber_imperial = yes
+			has_edict = neurocasted_spectacles
+			capital_scope = {
+				NOT = { is_same_value = ROOT }
+			}
+		}
+	}
+	pop_happiness = 0.1
+}
+
+# Synthetic Identity Policy: Identity Fusion
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { has_policy_flag = identity_fusion }
+	}
+	planet_pop_assemblers_upkeep_mult = 0.10
+}
+
+# Synthetic Identity Policy: Identity Initialization
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { has_policy_flag = identity_initialization }
+	}
+	planet_pop_assemblers_upkeep_mult = 0.20
+}
+# Synthetic Physical District Upkeep
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_democratic_authority = yes
+			has_country_flag = synth_physical
+		}
+	}
+	key = auth_synth_democratic_physical
+	planet_districts_energy_upkeep_mult = 0.01
+	mult = value:count_any_districts
+}
+
+# Synthetic Physical Specialist Production
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_democratic_authority = yes
+			has_country_flag = synth_physical
+		}
+	}
+	key = auth_synth_democratic_physical
+	pop_cat_specialist_bonus_workforce_mult = 0.01
+	mult = value:count_any_districts
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { has_active_tradition = tr_virtuality_5 }
+		has_planetary_ascension_tier >= 1
+	}
+	planet_max_districts_add = 1
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { has_active_tradition = tr_virtuality_5 }
+		has_planetary_ascension_tier >= 5
+	}
+	planet_max_districts_add = 1
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { has_active_tradition = tr_virtuality_5 }
+		has_planetary_ascension_tier >= 10
+	}
+	planet_max_districts_add = 1
+}
+
+# prefabricated components
+# +1 Replicator
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_gestalt = yes
+			has_active_tradition = tr_synthetics_prefabricated_components_machine
+		}
+	}
+	job_replicator_add = 100
+}
+
+#Traders from Branch Offices
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = { is_megacorp = yes }
+		is_capital = yes
+	}
+	job_trader_add = 1
+	mult = owner.modifier:job_capital_trader_add
+}
+
+# Corporate Evolutionary Predators
+triggered_country_modifier = {
+	potential = {
+		exists = owner
+		is_capital = yes
+		owner = {
+			is_megacorp = yes
+			has_origin = origin_evolutionary_predators
+			is_mutation_authority = yes
+		}
+	}
+	commercial_pact_mult = 0.01
+	mult = owner.species.species_traits_evopred_count
+}
+
+#Storm Chasers get Storm Shelter effects for free
+triggered_planet_modifier = { #basic shelter
+	potential = {
+		exists = owner
+		owner = {
+			AND = {
+				has_origin = origin_storm_chasers
+				has_technology = tech_industrial_storm_protection
+			}
+		}
+		solar_system = {
+			has_star_flag = storm_system
+		}
+	}
+	modifier = {
+		planet_miners_minerals_produces_add = 1
+		planet_farmers_food_produces_add = 1
+		planet_technician_energy_produces_add = 1
+	}
+}
+
+triggered_planet_modifier = { #add advanced shelter effect
+	potential = {
+		exists = owner
+		owner = {
+			AND = {
+				has_origin = origin_storm_chasers
+				has_technology = tech_advanced_industrial_storm_protection
+			}
+		}
+		solar_system = {
+			has_star_flag = storm_system
+		}
+	}
+	modifier = {
+		planet_miners_minerals_produces_add = 1
+		planet_farmers_food_produces_add = 1
+		planet_technician_energy_produces_add = 1
+	}
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_galactic_community_member = yes
+			AND = {
+				has_origin = origin_storm_chasers
+				has_technology = tech_industrial_storm_protection
+			}
+		}
+	}
+	modifier = {
+		planet_miners_produces_mult = 1
+		planet_farmers_produces_mult = 1
+		planet_technician_produces_mult = 1
+	}
+	mult = value:storm_building_production_multiplier
+}
+
+triggered_planet_modifier = {
+	potential = {
+		has_cosmic_storms_dlc = yes
+		exists = owner
+		owner = {
+			has_origin = origin_storm_chasers
+		}
+	}
+
+	planet_jobs_unity_produces_mult = @storm_chasers_storm_building_unity_produces_mult
+}
+
+# Imperious Architecture
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_gestalt = no
+			is_worker_coop_empire = no
+			has_active_tradition = tr_domination_imperious_architecture
+		}
+	}
+	planet_housing_add = 100
+	job_politician_add = 100
+	mult = value:imperious_architecture_scaling_value
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_gestalt = no
+			is_worker_coop_empire = yes
+			has_active_tradition = tr_domination_imperious_architecture
+		}
+	}
+	planet_housing_add = 100
+	job_bureaucrat_add = 150
+	mult = value:imperious_architecture_scaling_value
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = owner
+		owner = {
+			is_hive_empire = yes
+			is_wilderness_empire = no
+			has_active_tradition = tr_domination_synaptic_extensions
+		}
+	}
+	planet_housing_add = 150
+	job_coordinator_add = 150
+	mult = value:imperious_architecture_scaling_value
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = leader
+		exists = owner
+		owner = {
+			is_gestalt = no
+			has_active_tradition = tr_aptitude_specialist_training
+		}
+	}
+	pop_cat_specialist_bonus_workforce_mult = 0.02
+	mult = leader.trigger:has_total_skill
+}
+
+triggered_planet_modifier = {
+	potential = {
+		exists = leader
+		exists = owner
+		owner = {
+			is_gestalt = yes
+			OR = {
+				has_active_tradition = tr_aptitude_specialist_training_hive
+				has_active_tradition = tr_aptitude_specialist_training_machine
+			}
+		}
+	}
+	pop_cat_complex_drone_bonus_workforce_mult = 0.02
+	mult = leader.trigger:has_total_skill
+}
+
+triggered_country_modifier = {
+	potential = {
+		owner = { has_valid_civic = civic_conservative_armament }
+	}
+	starbase_shipyard_build_speed_mult = 0.001
+	multiplier = planet.value:count_owned_pop_mult
+}
