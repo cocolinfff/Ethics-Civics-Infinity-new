@@ -288,16 +288,6 @@ logistics_drone = {
     }
 
     inline_script = "jobs/automodding_priority_trade"
-
-    promotion = {
-        time = @standard_promotion_time
-        effect = {
-            pop_amount_change_category = {
-                CATEGORY = simple_drone
-                AMOUNT = local_pop_amount
-            }
-        }
-    }
 }
 
 #维护子个体
@@ -619,16 +609,6 @@ mining_drone = {
     }
 
     inline_script = "jobs/automodding_priority_minerals"
-
-    promotion = {
-        time = @standard_promotion_time
-        effect = {
-            pop_amount_change_category = {
-                CATEGORY = simple_drone
-                AMOUNT = local_pop_amount
-            }
-        }
-    }
 }
 
 #农业子个体
@@ -784,16 +764,6 @@ agri_drone = {
     }
 
     inline_script = "jobs/automodding_priority_food"
-
-    promotion = {
-        time = @standard_promotion_time
-        effect = {
-            pop_amount_change_category = {
-                CATEGORY = simple_drone
-                AMOUNT = local_pop_amount
-            }
-        }
-    }
 }
 
 #技工子个体
@@ -901,14 +871,72 @@ technician_drone = {
     }
 
     inline_script = "jobs/automodding_priority_energy"
+}
 
-    promotion = {
-        time = @standard_promotion_time
-        effect = {
-            pop_amount_change_category = {
-                CATEGORY = simple_drone
-                AMOUNT = local_pop_amount
+#复制者
+replicator = {
+    category = complex_drone
+
+    swappable_data = {
+        default = {
+            condition_string = DRONE_JOB_TRIGGER
+            building_icon = building_robot_assembly_plant
+        }
+        swap_type = {
+            trigger = {
+                owner? = { is_hive_empire = yes }
+            }
+            name = assembly_drone
+            desc = assembly_drone
+            building_icon = building_robot_assembly_plant
+            condition_string = DRONE_JOB_TRIGGER
+            weight = 5
+        }
+    }
+
+    tags = { pop_assembly }
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_enslaved = no
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+
+    possible_precalc = can_fill_drone_job
+
+    possible = { can_think = yes }
+
+    planet_modifier = {
+        planet_pop_assembly_add = 3
+    }
+    triggered_planet_modifier = {
+        potential = {
+            owner? = { has_tradition = tr_modularity_2 }
+        }
+        planet_pop_assembly_add = 2 #If this changes, update tr_modularity_2_modifier_desc
+    }
+
+    resources = {
+        category = planet_pop_assemblers
+        upkeep = {
+            alloys = 1
+        }
+    }
+
+    weight = {
+        weight = @spawner_drone_job_weight
+        mult = value:scripted_job_weight_shroud_forged_mult
+        modifier = {
+            factor = 0.01 # crisis purge
+            colony.controller? = {
+                OR = {
+                    is_country_type = swarm
+                    is_country_type = ai_empire
+                }
             }
         }
     }
+
 }
