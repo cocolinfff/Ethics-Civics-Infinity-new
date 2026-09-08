@@ -1,0 +1,197 @@
+# 理想城计划
+decision_arcology_project = {
+    important = yes
+    owned_planets_only = yes
+    icon = decision_arcology_project
+
+    enactment_time = 3600
+    resources = {
+        category = decisions
+        cost = {
+            influence = 200
+            minerals = 30000
+        }
+    }
+
+    potential = {
+        NOR = {
+            is_planet_class = pc_city
+            is_planet_class = pc_relic
+            is_planet_class = pc_nanotech
+            has_modifier = resort_colony
+            has_modifier = penal_colony
+            has_modifier = slave_colony
+            has_modifier = pm_wenkwort_custodian
+            has_carrier_flag = resort_colony_queued
+        }
+        is_artificial = no
+        exists = owner
+        owner = { has_ascension_perk = ap_arcology_project }
+    }
+
+    allow = {
+        if = {
+            limit = { owner = { is_ai = no } }
+            custom_tooltip = {
+                fail_text = decision_arcology_project_requirements
+                free_district_slots < 1
+                num_districts = { type = district_farming value < 1 }
+                num_districts = { type = district_mining value < 1 }
+                num_districts = { type = district_generator value < 1 }
+                # Volcanic Worlds
+                num_districts = { type = district_geothermal value < 1 }
+                num_districts = { type = district_melting value < 1 }
+                num_districts = { type = district_polytechnic value < 1 }
+            }
+            custom_tooltip = {
+                fail_text = legendary_leader_decision_arcology_project
+                NOT = { has_carrier_flag = legendary_leader_planet }
+            }
+        }
+        num_uncleared_blockers < 1
+    }
+
+    on_queued = {
+        set_carrier_flag = arcology_project_construction
+    }
+
+    on_unqueued = {
+        remove_carrier_flag = arcology_project_construction
+    }
+
+    effect = {
+        remove_carrier_flag = arcology_project_construction
+        # Make city-planet
+        custom_tooltip = decision_arcology_project_effects
+        hidden_effect = {
+            save_deposits = yes
+            clear_deposits = yes
+            restore_saved_deposits = yes
+            change_pc = pc_city
+            relic_world_conversion_effect = {
+                DISTRICT = district_arcology_housing
+                VARIABLE = num_housing_districts
+            }
+            set_planet_entity = {
+                entity = "city_planet_entity"
+                graphical_culture = owner
+            }
+            carrier_event = { id = action.68 }
+            owner = {
+                country_event = { id = distar.201 } # port for living planet distar.197, triggers in event
+            }
+            carrier_event = { id = mega.200 }
+            if = {
+                limit = {
+                    OR = {
+                        is_active_resolution = "resolution_ecology_environmental_control_board"
+                        is_active_resolution = "resolution_ecology_paradise_initiative"
+                    }
+                }
+                owner = {
+                    set_timed_country_flag = { flag = resolution_breached_terraformed days = 3600 }
+                }
+            }
+        }
+    }
+
+    ai_weight = {
+        weight = 1
+        modifier = {
+            factor = 100
+            exists = owner
+            OR = {
+                pop_amount >= 7000
+                is_capital = yes
+            }
+        }
+    }
+}
+
+# 重建理想城
+decision_arcology_project_relic = {
+    important = yes
+    owned_planets_only = yes
+    icon = decision_arcology_project
+
+    enactment_time = 3600
+    resources = {
+        category = decisions
+        cost = {
+            influence = 200
+            minerals = 20000
+        }
+    }
+
+    potential = {
+        is_planet_class = pc_relic
+        is_artificial = no
+        exists = owner
+        owner = {
+            OR = {
+                is_regular_empire = yes
+                has_valid_civic = civic_machine_servitor
+            }
+        }
+    }
+
+    allow = {
+        num_uncleared_blockers < 1
+        owner = { has_technology = tech_housing_2 }
+    }
+
+    on_queued = {
+        set_carrier_flag = arcology_project_construction
+    }
+
+    on_unqueued = {
+        remove_carrier_flag = arcology_project_construction
+    }
+
+    effect = {
+        remove_carrier_flag = arcology_project_construction
+        # Make city-planet
+        custom_tooltip = decision_arcology_project_effects
+        hidden_effect = {
+            save_deposits = yes
+            clear_deposits = yes
+            restore_saved_deposits = yes
+            change_pc = pc_city
+            relic_world_conversion_effect = {
+                DISTRICT = district_arcology_housing
+                VARIABLE = num_housing_districts
+            }
+            set_planet_entity = {
+                entity = "city_planet_entity"
+                graphical_culture = owner
+            }
+            carrier_event = { id = action.68 }
+            add_deposit = d_former_relic_world
+            carrier_event = { id = mega.201 }
+            while = {
+                count = 4
+                solar_system = {
+                    random_system_ambient_object = {
+                        limit = { has_ambient_object_flag = relic_world_debris }
+                        destroy_ambient_object = this
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    OR = {
+                        is_active_resolution = "resolution_ecology_environmental_control_board"
+                        is_active_resolution = "resolution_ecology_paradise_initiative"
+                    }
+                }
+                owner = {
+                    set_timed_country_flag = { flag = resolution_breached_terraformed days = 3600 }
+                }
+            }
+        }
+    }
+
+    ai_weight = {
+        weight = 100
+    }
+}

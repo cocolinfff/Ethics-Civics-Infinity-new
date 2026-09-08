@@ -3441,72 +3441,137 @@ country_event = {
 
 # 人民军队
 namespace = ethic_martial_brotherhood
-country_event = {
+fleet_event = {
     id = ethic_martial_brotherhood.0
     hide_window = yes
     is_triggered_only = yes
     trigger = {
-        has_valid_civic = civic_martial_brotherhood
+        from = {
+            exists = owner
+            if = { limit = { is_scope_type = planet }
+                is_colony = yes
+                is_under_colonization = no
+                NOT = { has_modifier = eci_civic_martial_brotherhood_modifier }
+            }
+            else = {
+                ship? = {
+                    is_colony = yes
+                    is_under_colonization = no
+                    NOT = { has_modifier = eci_civic_martial_brotherhood_modifier }
+                }
+            }
+        }
+        exists = controller
+        controller = { has_valid_civic = civic_martial_brotherhood }
     }
 
     immediate = {
-        every_owned_planet = {
-            limit = {
-                is_colony = yes
-                is_under_colonization = no
+        from = {
+            if = {
+                limit = { is_scope_type = planet }
+                carrier_event = { id = ethic_martial_brotherhood.1 }
             }
-            planet_event = { id = ethic_martial_brotherhood.1 }
+            else = {
+                ship? = {
+                    carrier_event = { id = ethic_martial_brotherhood.1 }
+                }
+            }
         }
     }
 }
-planet_event = {
+carrier_event = {
     id = ethic_martial_brotherhood.1
     hide_window = yes
     is_triggered_only = yes
-    trigger = {
-        NOT = { has_modifier = eci_civic_martial_brotherhood_modifier }
-        exists = owner
-        owner = { has_valid_civic = civic_martial_brotherhood }
-        solar_system = {
-            any_fleet_in_system = {
-                is_ship_class = shipclass_military
-                owner = { is_same_value = root.owner }
+
+    immediate = {
+        #	游牧
+        if = {
+            limit = { carrier_is_type = ship }
+            starbase = {
+                every_fleet_in_orbit = {
+                    limit = {
+                        is_mobile = yes	#非静态防御
+                        fleet_size > 9	#船球轨道总是会计算到奇怪的船,至少>DD
+                        controller = { has_valid_civic = civic_martial_brotherhood }
+                    }
+                    #	我方舰队
+                    if = {
+                        limit = {
+                            controller = {
+                                OR = {
+                                    is_same_value = root.owner	# <星球所有者>是<舰队控制者>
+                                    has_subject = root.owner	# <星球所有者>是<舰队控制者>的附庸
+                                    is_in_federation_with = root.owner	# <星球所有者>是<舰队控制者>的联邦盟友
+                                }
+                                NOT = { is_hostile = root.owner }
+                            }
+                        }
+                        add_modifier = { modifier = eci_civic_martial_brotherhood_modifier days = -1 }
+                    }
+                }
+            }
+        }
+        #	普通
+        if = { limit = { carrier_is_type = planet }
+            every_fleet_in_orbit = {
+                limit = {
+                    is_mobile = yes	#非静态防御
+                    controller = { has_valid_civic = civic_martial_brotherhood }
+                }
+                #	我方舰队
+                if = {
+                    limit = {
+                        controller = {
+                            OR = {
+                                is_same_value = root.owner	# <星球所有者>是<舰队控制者>
+                                has_subject = root.owner	# <星球所有者>是<舰队控制者>的附庸
+                                is_in_federation_with = root.owner	# <星球所有者>是<舰队控制者>的联邦盟友
+                            }
+                            NOT = { is_hostile = root.owner }
+                        }
+                    }
+                    add_modifier = { modifier = eci_civic_martial_brotherhood_modifier days = -1 }
+                }
             }
         }
     }
-
-    immediate = {
-        add_modifier = { modifier = eci_civic_martial_brotherhood_modifier years = 1 }
-        planet.owner = {
-            country_event = { id = ethic_martial_brotherhood.0 years = 1 }
-        }
-    }
 }
-ship_event = {
+fleet_event = {
     id = ethic_martial_brotherhood.2
     hide_window = yes
     is_triggered_only = yes
     trigger = {
+        from = {
+            exists = owner
+            if = { limit = { is_scope_type = planet }
+                is_colony = yes
+                is_under_colonization = no
+                has_modifier = eci_civic_martial_brotherhood_modifier
+            }
+            else = {
+                ship? = {
+                    is_colony = yes
+                    is_under_colonization = no
+                    has_modifier = eci_civic_martial_brotherhood_modifier
+                }
+            }
+        }
         #	|舰队控制者|
         exists = controller
         controller = { has_valid_civic = civic_martial_brotherhood }
-        #	|星系|
-        from = {
-            exists = owner
-            owner = { is_same_value = this.controller }
-        }
     }
 
     immediate = {
         from = {
-            every_system_planet = {
-                limit = {
-                    is_colony = yes
-                    is_under_colonization = no
-                    exists = owner
-                    owner = { is_same_value = from.controller }
+            if = {
+                limit = { is_scope_type = planet }
+                remove_modifier = eci_civic_martial_brotherhood_modifier
+            }
+            else = {
+                ship? = {
+                    remove_modifier = eci_civic_martial_brotherhood_modifier
                 }
-                planet_event = { id = ethic_martial_brotherhood.1 }
             }
         }
     }
