@@ -30,7 +30,7 @@ economic_inflaction = {
 	resources = {
 		category = edicts
 		upkeep = {
-			energy = 0.01
+			trade = 0.003
 			multiplier = trigger:count_owned_pop_amount
 		}
 	}
@@ -44,14 +44,50 @@ economic_inflaction = {
 	}
 	allow = {
 		NOT = { has_edict = economic_deinflaction }
-		# any_situation = {
-		# 	limit = { is_situation_type = situation_economic_circle }
-		# 	NOT = { has_situation_flag = economic_crisis }
-		# }
 	}
 
 	ai_weight = {
 		weight = 1
+		modifier = {
+			add = 10
+			owner = {
+				has_monthly_income = { resource = energy value < 0 }
+			}
+		}
+		modifier = {
+			add = 10
+			owner = {
+				has_monthly_income = { resource = minerals value < 0 }
+			}
+		}
+		modifier = {
+			add = 10
+			owner = {
+				has_monthly_income = { resource = food value < 0 }
+			}
+		}
+		modifier = {
+			add = 10
+			owner = {
+				has_monthly_income = { resource = consumer_goods value < 0 }
+			}
+		}
+		modifier = {
+			add = 10
+			owner = {
+				has_monthly_income = { resource = alloys value < 0 }
+			}
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				has_monthly_income = { resource = energy value > 0 }
+				has_monthly_income = { resource = minerals value > 0 }
+				has_monthly_income = { resource = food value >= 0 }
+				has_monthly_income = { resource = consumer_goods value > 0 }
+				has_monthly_income = { resource = alloys value > 0 }
+			}
+		}
 	}
 }
 # 抑制通胀 - 抑制通胀
@@ -62,7 +98,7 @@ economic_deinflaction = {
 	resources = {
 		category = edicts
 		upkeep = {
-			energy = 0.01
+			trade = 0.003
 			multiplier = trigger:count_owned_pop_amount
 		}
 	}
@@ -76,10 +112,6 @@ economic_deinflaction = {
 	}
 	allow = {
 		NOT = { has_edict = economic_inflaction }
-		# any_situation = {
-		# 	limit = { is_situation_type = situation_economic_circle }
-		# 	NOT = { has_situation_flag = economic_crisis }
-		# }
 	}
 
 	ai_weight = {
@@ -89,8 +121,15 @@ economic_deinflaction = {
 			has_ethic = ethic_fanatic_authoritarian
 		}
 		modifier = {
-			factor = 0
-			has_situation_flag = economic_crisis
+			factor = 10
+			owner = {
+				has_edict = economic_inflaction
+				has_monthly_income = { resource = energy value > 0 }
+				has_monthly_income = { resource = minerals value > 0 }
+				has_monthly_income = { resource = food value >= 0 }
+				has_monthly_income = { resource = consumer_goods value > 0 }
+				has_monthly_income = { resource = alloys value > 0 }
+			}
 		}
 	}
 }
@@ -103,7 +142,7 @@ economic_consumer_coupon = {
 	resources = {
 		category = edicts
 		upkeep = {
-			energy = 0.01
+			trade = 0.003
 			multiplier = trigger:count_owned_pop_amount
 		}
 	}
