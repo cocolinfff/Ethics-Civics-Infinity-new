@@ -1,0 +1,355 @@
+namespace = subject
+
+country_event = { # SUBJECT - The outcome of the bickering between the admirals and their sides
+    id = subject.1145
+    title = subject.1145.title
+    desc = subject.1145.desc
+    picture = GFX_evt_grand_speech
+    show_sound = evn_ove_grand_speech
+
+    is_triggered_only = yes
+
+    immediate = {
+        admirals_bickering_replacement_effect = yes
+        random_list = { # Random chance for which side wins, based on choices in previous events
+            1 = { # Democratic side
+                modifier = {
+                    factor = overlord_admirals_bickering_democratic_side
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_democratic_victory
+                    days = 360
+                }
+                event_target:admiral_democracy = {
+                    save_event_target_as = admiral_winner
+                }
+            }
+            1 = { # Oligarchic side
+                modifier = {
+                    factor = overlord_admirals_bickering_oligarchic_side
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_oligarchic_victory
+                    days = 360
+                }
+                event_target:admiral_oligarchy = {
+                    save_event_target_as = admiral_loser
+                }
+            }
+        }
+        random_list = { # Random chance for what happened to the losers
+            30 = { # They killed their opponents
+                modifier = {
+                    factor = 2
+                    has_country_flag = admirals_bickering_oligarchic_victory
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_killed_opponents
+                    days = 360
+                }
+            }
+            30 = { # Their opponents were released after their faction was dismantled
+                modifier = {
+                    factor = 2
+                    has_country_flag = admirals_bickering_democratic_victory
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_released_opponents
+                    days = 360
+                }
+            }
+            10 = { # Their opponents ran off to form their own country
+                modifier = {
+                    factor = 0
+                    NOT = {
+                        any_owned_planet = {
+                            is_capital = no
+                        }
+                    }
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_separatist_opponents
+                    days = 360
+                }
+            }
+        }
+        random_list = { # Random chance for how serious they are about their demands
+            50 = { # Just instituting their leadership (be it democratic or oligarchic)
+                modifier = {
+                    factor = 0
+                    OR = {
+                        AND = {
+                            has_country_flag = admirals_bickering_democratic_victory
+                            is_democracy = yes
+                        }
+                        AND = {
+                            has_country_flag = admirals_bickering_oligarchic_victory
+                            is_oligarchy = yes
+                        }
+                    }
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_imposed_government
+                    days = 360
+                }
+            }
+            50 = { # Their side is already in charge (e.g democracy won in a democracy), so they'll leave it at that
+                modifier = {
+                    factor = 0
+                    OR = {
+                        AND = {
+                            has_country_flag = admirals_bickering_democratic_victory
+                            is_democracy = no
+                        }
+                        AND = {
+                            has_country_flag = admirals_bickering_oligarchic_victory
+                            is_oligarchy = no
+                        }
+                    }
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_goverment_continues
+                    days = 360
+                }
+            }
+            25 = { # Side won, and demands for their leader to be put in charge of the government
+                modifier = {
+                    factor = 0.25
+                    OR = {
+                        AND = {
+                            has_country_flag = admirals_bickering_democratic_victory
+                            is_democracy = yes
+                        }
+                        AND = {
+                            has_country_flag = admirals_bickering_oligarchic_victory
+                            is_oligarchy = yes
+                        }
+                    }
+                }
+                set_timed_country_flag = {
+                    flag = admirals_bickering_imposed_leadership
+                    days = 360
+                }
+            }
+        }
+        if = { # Separatist movement happens on Immediate, while the rest is checked in option
+            limit = {
+                has_country_flag = admirals_bickering_separatist_opponents
+                any_owned_planet = {
+                    is_capital = no
+                }
+            }
+            custom_tooltip = subject.1145.a.separatist.tt
+            hidden_effect = {
+                random_owned_planet = {
+                    limit = {
+                        is_capital = no
+                    }
+                    save_event_target_as = separatist_home
+                    if = { # Democratic victory
+                        limit = {
+                            root = { has_country_flag = admirals_bickering_democratic_victory }
+                        }
+                        create_country = {
+                            name_list = random
+                            species = root.species
+                            type = default
+                            ignore_initial_colony_error = yes
+                            day_zero_contact = no
+                            civics = {
+                                civic = civic_aristocratic_elite
+                                civic = civic_nationalistic_zeal
+                                civic = civic_practical_geomancy
+                            }
+                            ethos = {
+                                ethic = ethic_authoritarian
+                                ethic = ethic_militarist
+                                ethic = ethic_materialist
+                            }
+                            effect = {
+                                event_target:admiral_oligarchy = { exile_leader_as = exiled_leader }
+                                set_leader = event_target:admiral_oligarchy
+                            }
+                        }
+                    }
+                    else_if = { # Oligarchic victory
+                        limit = {
+                            root = { has_country_flag = admirals_bickering_oligarchic_victory }
+                        }
+                        create_country = {
+                            name_list = random
+                            species = root.species
+                            type = default
+                            ignore_initial_colony_error = yes
+                            day_zero_contact = no
+                            civics = {
+                                civic = civic_meritocracy
+                                civic = civic_citizen_service
+                                civic = civic_futuristic_art
+                            }
+                            ethos = {
+                                ethic = ethic_egalitarian
+                                ethic = ethic_militarist
+                                ethic = ethic_materialist
+                            }
+                            effect = {
+                                event_target:admiral_oligarchy = { exile_leader_as = exiled_leader }
+                                set_leader = event_target:admiral_democracy
+                            }
+                        }
+                    }
+                    last_created_country = {
+                        save_event_target_as = separatist_country
+                        establish_communications_no_message = root
+                        copy_techs_from = { target = root }
+                        if = {
+                            limit = {
+                                root = {
+                                    is_subject = yes
+                                }
+                            }
+                            root.overlord = {
+                                save_event_target_as = current_overlord_empire
+                            }
+                            establish_communications_no_message = event_target:current_overlord_empire
+                            event_target:current_overlord_empire = {
+                                country_event = { id = subject.1147 }
+                            }
+                            set_subject_of = {
+                                who = event_target:current_overlord_empire
+                            }
+                        }
+                    }
+                    set_owner = event_target:separatist_country
+                    set_capital = yes
+                    if = {
+                        limit = {
+                            exists = starbase
+                        }
+                        starbase = {
+                            set_owner = event_target:separatist_country
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    option = {
+        name = subject.1145.a
+        ### FIRST - Check if you are changing government type
+        if = { # Democratic victory
+            limit = {
+                NOT = { is_democracy = yes }
+                has_country_flag = admirals_bickering_democratic_victory
+                OR = {
+                    has_country_flag = admirals_bickering_imposed_government
+                    has_country_flag = admirals_bickering_imposed_leadership
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        is_authoritarian = yes
+                    }
+                    shift_ethic = ethic_egalitarian
+                }
+            }
+            change_government = {
+                authority = auth_democratic
+                remove_invalid_civics = yes
+            }
+        }
+        else_if = { # Oligarchic Victory
+            limit = {
+                NOT = { is_oligarchy = yes }
+                has_country_flag = admirals_bickering_oligarchic_victory
+                OR = {
+                    has_country_flag = admirals_bickering_imposed_government
+                    has_country_flag = admirals_bickering_imposed_leadership
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        OR = {
+                            is_egalitarian = yes
+                            is_fanatic_authoritarian = yes
+                        }
+                    }
+                    shift_ethic = ethic_authoritarian
+                }
+            }
+            change_government = {
+                authority = auth_oligarchic
+                remove_invalid_civics = yes
+            }
+        }
+        ### SECOND - Check if you are changing leadership
+        if = {
+            limit = {
+                has_country_flag = admirals_bickering_imposed_leadership
+            }
+            if = { # Democratic
+                limit = {
+                    has_country_flag = admirals_bickering_democratic_victory
+                }
+                set_leader = event_target:admiral_democracy
+            }
+            else_if = { # Oligarchic
+                limit = {
+                    has_country_flag = admirals_bickering_oligarchic_victory
+                }
+                set_leader = event_target:admiral_oligarchy
+            }
+        }
+        ### THIRDLY - Check if you are killing/exiling old rivals
+        if = { # Killing rivals
+            limit = {
+                has_country_flag = admirals_bickering_killed_opponents
+            }
+            if = { # Democrats killing Oligarchs
+                limit = {
+                    has_country_flag = admirals_bickering_democratic_victory
+                }
+                event_target:admiral_oligarchy = {
+                    kill_leader = { show_notification = no }
+                }
+            }
+            else_if = { # Oligarchs killing Democrats
+                limit = {
+                    has_country_flag = admirals_bickering_oligarchic_victory
+                }
+                event_target:admiral_democracy = {
+                    kill_leader = { show_notification = no }
+                }
+            }
+        }
+        else_if = { # Exiling rivals
+            limit = {
+                has_country_flag = admirals_bickering_released_opponents
+            }
+            if = { # Democrats exiling Oligarchs
+                limit = {
+                    has_country_flag = admirals_bickering_democratic_victory
+                }
+                event_target:admiral_oligarchy = {
+                    exile_leader_as = missing_admiral_rival
+                }
+            }
+            else_if = { # Oligarchs exiling Democrats
+                limit = {
+                    has_country_flag = admirals_bickering_oligarchic_victory
+                }
+                event_target:admiral_democracy = {
+                    exile_leader_as = missing_admiral_rival
+                }
+            }
+        }
+        hidden_effect = {
+            clear_variable = overlord_admirals_bickering_value
+            clear_variable = overlord_admirals_bickering_democratic_side
+            clear_variable = overlord_admirals_bickering_oligarchic_side
+        }
+    }
+}

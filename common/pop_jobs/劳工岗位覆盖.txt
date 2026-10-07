@@ -1007,6 +1007,93 @@ artisan = {
     inline_script = "jobs/automodding_priority_consumer_goods"
 }
 
+#职员
+clerk = {
+    category = worker
+
+    swappable_data = {
+        default = {
+            condition_string = WORKER_JOB_TRIGGER
+            building_icon = building_residence
+        }
+    }
+
+    tags = { amenities trade }
+
+    possible_pre_triggers = {
+        has_owner = yes
+        is_being_purged = no
+        is_being_assimilated = no
+        is_sapient = yes
+    }
+
+    possible_precalc = can_fill_worker_job
+
+    resources = {
+        category = planet_clerks
+        produces = {
+            trade = 3
+        }
+    }
+
+    planet_modifier = {
+        planet_jobs_trade_produces_mult = 0.01
+    }
+
+    triggered_planet_modifier = {
+        potential = {
+            always = yes
+        }
+        planet_amenities_add = 300
+        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
+    }
+
+    ## 帝国规模
+    inline_script = "jobs/planet_administrators_admin_cap_produces_add"
+
+    weight = {
+        weight = @clerk_job_weight
+        mult = value:scripted_modifier_job_weight_mult|MODIFIER|pop_job_amenities_mult|
+        modifier = {
+            factor = 0.25
+            is_enslaved = yes
+            can_take_servant_job = no
+        }
+        modifier = {
+            factor = 2
+            OR = {
+                is_non_sapient_robot = yes
+                is_shackled_robot = yes
+            }
+            can_take_servant_job = no
+        }
+        modifier = {
+            factor = 10
+            OR = {
+                is_non_sapient_robot = yes
+                is_shackled_robot = yes
+            }
+            can_take_servant_job = no
+            can_fill_specialist_job_trigger = no
+        }
+        modifier = {
+            factor = 0.1
+            can_take_servant_job = yes
+        }
+        modifier = {
+            factor = 1.1
+            owner? = { is_megacorp = yes }
+        }
+        modifier = {
+            factor = 0.5
+            owner? = { is_fallen_empire = yes }
+        }
+    }
+
+    inline_script = "jobs/automodding_priority_trade"
+
+}
+
 #凡体先烈
 mortal_initiate = {
     category = worker
