@@ -1,0 +1,126 @@
+# Spawns the Lilith Mia archaeological site. Called from event lilith_mia.2.
+# Normal empires: on a random non-colonizable planet (not the homeworld) in the capital system.
+# Nomadic empires (and any empire whose capital is an ark): on a random planet of the system the
+# capital arkship is currently in. The ark itself is always excluded.
+# Scope: country
+lilith_mia_spawn_digsite_effect = {
+	if = {
+		limit = {
+			OR = {
+				is_nomadic = yes
+				capital_scope = { is_planet_class = pc_ark }
+			}
+		}
+		capital_scope = {
+			solar_system = {
+				random_system_planet = {
+					limit = {
+						is_capital = no
+						NOT = { is_planet_class = pc_ark }
+						NOT = { exists = archaeological_site }
+					}
+					create_archaeological_site = lilith_mia_digsite
+				}
+			}
+		}
+	}
+	else = {
+		# Never the homeworld: only non-colonizable bodies in the capital system.
+		capital_scope = {
+			solar_system = {
+				random_system_planet = {
+					limit = {
+						is_capital = no
+						is_star = no
+						colonizable_planet = no
+						NOT = { exists = archaeological_site }
+						NOT = { has_planet_flag = suppress_archaeological_sites }
+					}
+					create_archaeological_site = lilith_mia_digsite
+				}
+			}
+		}
+	}
+}
+
+# Creates the "recruitable" Lilith in a temporary auto-deleting country, exiled and exposed as
+# the global event target lilith_mia_leader. The leader_recruit window displays her from there,
+# and the HIRE option clones her into the player's country.
+# Scope: country (the player)
+# Parameters: ETHIC = the background ethic chosen by the player
+lilith_mia_create_recruit_leader_effect = {
+	create_country = {
+		name = "NAME_Unknown"
+		type = global_event
+		auto_delete = yes
+		flag = {
+			icon = {
+				category = "special"
+				file = "unknown.dds"
+			}
+			background = {
+				category = "backgrounds"
+				file = "00_solid.dds"
+			}
+			colors = {
+				"red"
+				"red"
+				"null"
+				"null"
+			}
+		}
+		effect = {
+			save_event_target_as = lilith_mia_leader_country
+		}
+	}
+
+	event_target:lilith_mia_leader_country = {
+		create_species = {
+			name = "NAME_Lilith_Mia_Species"
+			plural = "NAME_Lilith_Mia_Species_plural"
+			adjective = "NAME_Lilith_Mia_Species_adj"
+			class = ROBOT
+			portrait = ai_crisis_1
+			namelist = "AI"
+			immortal = yes
+			traits = {
+				trait = trait_mechanical
+			}
+			effect = {
+				save_event_target_as = lilith_mia_species
+			}
+		}
+		create_leader = {
+			class = commander
+			tier = leader_tier_legendary
+			species = event_target:lilith_mia_species
+			name = "NAME_Lilith_Mia"
+			skill = 10
+			gender = female
+			event_leader = no
+			skip_background_generation = yes
+			randomize_traits = no
+			custom_description = lilith_mia_leader_background
+			custom_catch_phrase = lilith_mia_catch_phrase
+			immortal = yes
+			hide_age = yes
+			background_ethic = $ETHIC$
+			traits = {
+				trait = leader_trait_ruler_machine_intelligence
+				trait = leader_trait_psionic
+				trait = leader_trait_chosen
+				trait = leader_trait_ancient_knowledge
+				trait = leader_trait_eci_legendary_leader
+				trait = subclass_commander_admiral
+			}
+			effect = {
+				change_leader_portrait = ai_crisis_1
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+				set_owner = root
+				exile_leader_as = lilith_mia_leader
+				save_global_event_target_as = lilith_mia_leader
+			}
+		}
+	}
+}

@@ -1,0 +1,389 @@
+namespace = lilith_mia
+
+###################################
+#  Setup
+###################################
+
+# Hidden setup event, fired from on_game_start_country.
+# It only schedules the discovery event; the dig site itself is created by lilith_mia.2.
+# Only human players are allowed to receive the site.
+country_event = {
+	id = lilith_mia.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+	}
+
+	immediate = {
+		country_event = { id = lilith_mia.2 days = 20 }
+	}
+}
+
+# Discovery event: this is where the archaeological site is actually created.
+country_event = {
+	id = lilith_mia.2
+	title = "lilith_mia.2.name"
+	desc = "lilith_mia.2.desc"
+	picture = GFX_evt_glitchy_matrix
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		NOT = { has_country_flag = lilith_mia_discovery_shown }
+	}
+
+	immediate = {
+		set_country_flag = lilith_mia_discovery_shown
+		lilith_mia_spawn_digsite_effect = yes
+		if = {
+			limit = {
+				lilith_mia_digsite_exists_trigger = yes
+			}
+			set_country_flag = lilith_mia_digsite_spawned
+		}
+		else = {
+			# Extremely rare safety net: try again a little later.
+			country_event = { id = lilith_mia.4 days = 120 }
+		}
+	}
+
+	option = {
+		name = lilith_mia.2.a
+	}
+}
+
+# Safety net retry. Does nothing if the site was created by lilith_mia.2.
+country_event = {
+	id = lilith_mia.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		NOT = { has_country_flag = lilith_mia_digsite_spawned }
+	}
+
+	immediate = {
+		lilith_mia_spawn_digsite_effect = yes
+		if = {
+			limit = {
+				lilith_mia_digsite_exists_trigger = yes
+			}
+			set_country_flag = lilith_mia_digsite_spawned
+		}
+	}
+}
+
+###################################
+#  Archaeological stages
+###################################
+
+# Stage 1 - The pulse beneath the rock
+fleet_event = {
+	id = lilith_mia.10
+	title = "lilith_mia.10.name"
+	desc = "lilith_mia.10.desc"
+	picture = GFX_evt_derelict_interior
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = lilith_mia.10.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = engineering_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 2 - Fragments of memory
+fleet_event = {
+	id = lilith_mia.11
+	title = "lilith_mia.11.name"
+	desc = "lilith_mia.11.desc"
+	picture = GFX_evt_ancient_databank
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = lilith_mia.11.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 3 - The last strategist
+fleet_event = {
+	id = lilith_mia.12
+	title = "lilith_mia.12.name"
+	desc = "lilith_mia.12.desc"
+	picture = GFX_evt_machine_sapience
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = lilith_mia.12.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 4 - The final chip: repair her or dismantle her
+fleet_event = {
+	id = lilith_mia.13
+	title = "lilith_mia.13.name"
+	desc = "lilith_mia.13.desc"
+	picture = GFX_evt_sapient_AI
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	# Repair Lilith, then choose her initial ethos and open the recruitment window.
+	option = {
+		name = lilith_mia.13.a
+		owner = {
+			country_event = { id = lilith_mia.14 }
+		}
+	}
+
+	# Refuse the leader and salvage the technology instead.
+	option = {
+		name = lilith_mia.13.b
+		owner = {
+			add_resource = {
+				physics_research = 1500
+				society_research = 1500
+			}
+		}
+	}
+}
+
+###################################
+#  Recruitment
+###################################
+
+# Step 1: the player chooses Lilith's initial ethos.
+country_event = {
+	id = lilith_mia.14
+	title = "lilith_mia.14.name"
+	desc = "lilith_mia.14.desc"
+	picture = GFX_evt_sapient_AI
+
+	is_triggered_only = yes
+
+	# Non-gestalt empires: the eight standard ethics.
+	option = {
+		trigger = { is_militarist = yes }
+		name = lilith_mia.14.militarist
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_militarist }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_pacifist = yes }
+		name = lilith_mia.14.pacifist
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_pacifist }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_materialist = yes }
+		name = lilith_mia.14.materialist
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_materialist }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_spiritualist = yes }
+		name = lilith_mia.14.spiritualist
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_spiritualist }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_authoritarian = yes }
+		name = lilith_mia.14.authoritarian
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_authoritarian }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_egalitarian = yes }
+		name = lilith_mia.14.egalitarian
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_egalitarian }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_xenophobe = yes }
+		name = lilith_mia.14.xenophobe
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_xenophobe }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+	option = {
+		trigger = { is_xenophile = yes }
+		name = lilith_mia.14.xenophile
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_xenophile }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+
+	# Gestalt empires: the collective ethos.
+	option = {
+		trigger = { is_gestalt = yes }
+		name = lilith_mia.14.gestalt
+		hidden_effect = {
+			custom_tooltip = lilith_mia.14.tooltip
+			lilith_mia_create_recruit_leader_effect = { ETHIC = ethic_gestalt_consciousness }
+			country_event = { id = lilith_mia.15 }
+		}
+	}
+}
+
+# Step 2: the legendary leader recruitment window.
+country_event = {
+	id = lilith_mia.15
+	title = "lilith_mia.15.name"
+	desc = "lilith_mia.15.desc"
+	picture = GFX_leader_recruitment_bg_renowned
+	event_window_type = leader_recruit
+
+	is_triggered_only = yes
+
+	trigger = {
+		exists = event_target:lilith_mia_leader
+	}
+
+	picture_event_data = {
+		portrait = event_target:lilith_mia_leader
+	}
+
+	option = {
+		name = HIRE
+		tag = hire_leader
+		hidden_effect = {
+			clone_leader = {
+				target = event_target:lilith_mia_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = lilith_mia_hired
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+			}
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization = MESSAGE_RECRUITED_LEADER_DESC
+				days = 10
+				target = last_created_leader
+				variable = {
+					type = name
+					localization = LEADER
+					scope = last_created_leader
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = lilith_mia.15.d
+		tag = dismiss_leader
+		custom_tooltip = lilith_mia.15.d.custom_tooltip
+		hidden_effect = {
+			clone_leader = {
+				target = event_target:lilith_mia_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = lilith_mia_hired
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+			}
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization = MESSAGE_RECRUITED_LEADER_DESC
+				days = 10
+				target = last_created_leader
+				variable = {
+					type = name
+					localization = LEADER
+					scope = last_created_leader
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = lilith_mia.15.a
+		response_text = lilith_mia.15.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = lilith_mia.15.b
+		response_text = lilith_mia.15.b.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = lilith_mia.15.c
+		response_text = lilith_mia.15.c.response
+		is_dialog_only = yes
+	}
+}
