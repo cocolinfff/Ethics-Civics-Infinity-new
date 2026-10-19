@@ -497,10 +497,16 @@ espionage_operation_event = {
 						NOT = { has_deposit = d_guerrilla_warzone }
 					}
 					solar_system = {
-						spawn_random_storm = {
+						# revolution_storm 的 spawn_weight 被设为 0（避免自然刷出），
+						# 而 spawn_random_storm 会按 spawn_weight 筛选类型，权重 0 时不会生成。
+						# 这里改用 create_cosmic_storm 强制创建指定类型。
+						# 位置用 this：此处已由 solar_system = {} 切换到星系作用域，
+						# this 就是星系本身；写成 this.solar_system 属于多余切换（原版只在
+						# ship_event 这类有星系链接的作用域才那样写）。
+						create_cosmic_storm = {
 							type = revolution_storm
 							immediate = yes
-							cosmic_storm_start_position = this.solar_system
+							cosmic_storm_start_position = this
 						}
 					}
 				}

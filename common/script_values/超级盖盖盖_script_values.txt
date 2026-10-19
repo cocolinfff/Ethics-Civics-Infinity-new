@@ -1190,6 +1190,24 @@ planet_leader_num_negative_traits = {
 	}
 }
 
+# 供 planet / colony 作用域直接调用 planet_leader_num_negative_traits 时使用。
+# num_leader_traits 只支持 leader 作用域，上面的原值在 planet 作用域求值会报
+# "Invalid Scope type for trigger num_leader_traits ... got planet"，并污染月度重算。
+# 这里用 trigger_scope 显式切到该星球的领袖。只能用于 planet/colony 作用域
+# （已是 leader 作用域时请直接用上面那个原值）。
+planet_leader_num_negative_traits_scoped = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = num_leader_traits
+		trigger_scope = leader
+		parameters = {
+			negative = yes
+			count_tiers = yes
+		}
+		mode = add
+	}
+}
+
 country_fervor_growth = {
 	base = 0
 	add = owner.trigger:num_owned_planets

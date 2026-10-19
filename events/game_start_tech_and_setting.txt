@@ -49,8 +49,13 @@ event = {
 						has_origin = origin_zarqlanism_idea
 					}
 				}
-				shift_ethic = ethic_fanatic_xenophobe
+				# 修复：原写法连续 shift 两个 fanatic（2+2=4 点）超过 ETHOS_MAX_POINTS(3)，
+				# 第二次 shift 会挤掉前一个思潮，最终国家没有 xenophobe，
+				# 导致下面的 change_government 无法求解配置（日志：Ethics requirements invalid），
+				# 政府状态可能因此异常。改为先清空再按上限重建：极端威权(2) + 排外(1) = 3 点。
+				clear_ethos = yes
 				shift_ethic = ethic_fanatic_authoritarian
+				shift_ethic = ethic_xenophobe
 				change_government = {
 					authority = random
 					remove_invalid_civics = yes
@@ -106,7 +111,7 @@ event = {
 				change_government = {
 					authority = random
 					civics = {
-						civic = civic_hive_capital_creates_gods
+						civic = civic_machine_financial_investment
 						civic = random
 					}
 				}
