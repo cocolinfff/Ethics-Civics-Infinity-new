@@ -142,40 +142,6 @@ espionage_operation_event = {
 	after = {
 	}
 }
-espionage_operation_event = {
-	id = revolution_op.01
-	title = revolution_op.1.name
-	desc = revolution_op.1.desc
-	picture = GFX_evt_board_meeting
-	show_sound = event_spymaster
-	espionage_operation = yes
-
-	is_triggered_only = yes
-
-	immediate = {
-		target = {
-			every_owned_colony = { save_event_target_as = branch_planet }
-		}
-		target = {
-			save_event_target_as = op_target
-		}
-		set_espionage_operation_progress_locked = yes
-	}
-
-	option = {
-		name = observation.1205.a
-	}
-	option = {
-		name = revolution_op.1.d.name
-		destroy_espionage_operation = this
-		ai_chance = {
-			factor = 0
-		}
-	}
-
-	after = {
-	}
-}
 
 #建立义军据点-阶段2
 espionage_operation_event = {
@@ -274,12 +240,16 @@ espionage_operation_event = {
 	picture = GFX_evt_mercenary_enclave
 	location = event_target:branch_planet
 	show_sound = event_space_battle
+	espionage_operation = yes
 
 	is_triggered_only = yes
 	
 	immediate = {
-		event_target:branch_planet = {
-			add_deposit = d_guerrilla_warzone
+		if = {
+			limit = { exists = event_target:branch_planet }
+			event_target:branch_planet = {
+				add_deposit = d_guerrilla_warzone
+			}
 		}
 		target = {
 			country_event = { id = revolution_op.5 days = 1 }
@@ -311,13 +281,16 @@ espionage_operation_event = {
 		target = {
 			save_event_target_as = op_target
 		}
-		event_target:branch_planet = {
-			if = {
-				limit = {
-					is_colony = yes
-					NOT = { has_deposit = d_guerrilla_warzone }
+		if = {
+			limit = { exists = event_target:branch_planet }
+			event_target:branch_planet = {
+				if = {
+					limit = {
+						is_colony = yes
+						NOT = { has_deposit = d_guerrilla_warzone }
+					}
+					add_deposit = d_guerrilla_warzone
 				}
-				add_deposit = d_guerrilla_warzone
 			}
 		}
 		event_target:op_target = {

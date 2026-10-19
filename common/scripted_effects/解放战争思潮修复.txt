@@ -1,0 +1,124 @@
+# ============================================================
+# 修复：解放战争（wg_force_ideology）/ 强制意识形态
+#       在加载本模组后无法改变战败国思潮的问题
+# ============================================================
+# 原版链路：
+#   common/war_goals/00_war_goals.txt
+#     wg_force_ideology.on_accept
+#       -> impose_ideology_effect（原版定义于 common/scripted_effects/00_scripted_effects.txt）
+#         -> copy_ethos_and_authority = root（引擎内置 effect）
+#
+# 失效原因：
+#   copy_ethos_and_authority 由引擎按思潮类别内的 category_value 槽位
+#   （原版只有 0 / 1 / 3 / 4）来复制国家思潮。本模组在
+#   common/ethics/新增中立思潮.txt 里新增了 category_value = 2 的中间思潮
+#   （调和主义 / 团结主义 / 主权主义 / 实用主义），并新增了与前人共用
+#   col/0 槽位的 ethic_focused，引擎无法复制这些非标准槽位，
+#   整个复制流程失败，战败国思潮于是保持不变。
+#
+# 修复方式：
+#   保留原版 impose_ideology_effect 的全部逻辑（权威复制、公民权处理、
+#   好感与修正），在 copy_ethos_and_authority 之后追加显式的思潮重建：
+#   clear_ethos 清空 -> 按战胜国（root）拥有的每个思潮 shift_ethic 重建。
+#   clear_ethos / shift_ethic 都是按 ethic 键操作（不依赖槽位），
+#   模组新增的中间思潮同样能被正确复制。
+#
+# 本 effect 为 scripted effect，同名定义后加载会覆盖原版，
+# 原版 wg_force_ideology 与本模组 10_wg_galactic.txt 中的调用都会自动生效。
+impose_ideology_effect = {
+	# ---- 原版逻辑：传奇领袖起源的 AI 统治者处理 ----
+	if = {
+		limit = {
+			is_ai = yes
+			OR = {
+				has_origin = origin_legendary_leader
+				has_origin = origin_legendary_leader_imperial
+				has_origin = origin_legendary_leader_dictatorial
+			}
+		}
+		random_owned_leader = {
+			limit = { is_ruler = yes }
+			kill_leader = { show_notification = yes }
+		}
+		set_origin = origin_legendary_leader_death
+	}
+
+	# ---- 原版逻辑：复制思潮与权威（权威部分依赖此效果）----
+	copy_ethos_and_authority = root
+
+	# ---- 修复：显式重建国家思潮（兼容模组自定义思潮）----
+	clear_ethos = yes
+
+	# 原版四轴：先 fanatic 后 regular，保证点数分布与战胜国一致
+	if = { limit = { root = { has_ethic = ethic_fanatic_authoritarian } } shift_ethic = ethic_fanatic_authoritarian }
+	if = { limit = { root = { has_ethic = ethic_fanatic_egalitarian } } shift_ethic = ethic_fanatic_egalitarian }
+	if = { limit = { root = { has_ethic = ethic_fanatic_xenophobe } } shift_ethic = ethic_fanatic_xenophobe }
+	if = { limit = { root = { has_ethic = ethic_fanatic_xenophile } } shift_ethic = ethic_fanatic_xenophile }
+	if = { limit = { root = { has_ethic = ethic_fanatic_militarist } } shift_ethic = ethic_fanatic_militarist }
+	if = { limit = { root = { has_ethic = ethic_fanatic_pacifist } } shift_ethic = ethic_fanatic_pacifist }
+	if = { limit = { root = { has_ethic = ethic_fanatic_spiritualist } } shift_ethic = ethic_fanatic_spiritualist }
+	if = { limit = { root = { has_ethic = ethic_fanatic_materialist } } shift_ethic = ethic_fanatic_materialist }
+
+	if = { limit = { root = { has_ethic = ethic_authoritarian } } shift_ethic = ethic_authoritarian }
+	if = { limit = { root = { has_ethic = ethic_egalitarian } } shift_ethic = ethic_egalitarian }
+	if = { limit = { root = { has_ethic = ethic_xenophobe } } shift_ethic = ethic_xenophobe }
+	if = { limit = { root = { has_ethic = ethic_xenophile } } shift_ethic = ethic_xenophile }
+	if = { limit = { root = { has_ethic = ethic_militarist } } shift_ethic = ethic_militarist }
+	if = { limit = { root = { has_ethic = ethic_pacifist } } shift_ethic = ethic_pacifist }
+	if = { limit = { root = { has_ethic = ethic_spiritualist } } shift_ethic = ethic_spiritualist }
+	if = { limit = { root = { has_ethic = ethic_materialist } } shift_ethic = ethic_materialist }
+
+	# 本模组新增的中间思潮（category_value = 2）
+	if = { limit = { root = { has_ethic = ethic_conciliationsm } } shift_ethic = ethic_conciliationsm }
+	if = { limit = { root = { has_ethic = ethic_nationalism } } shift_ethic = ethic_nationalism }
+	if = { limit = { root = { has_ethic = ethic_defensivism } } shift_ethic = ethic_defensivism }
+	if = { limit = { root = { has_ethic = ethic_pragmatism } } shift_ethic = ethic_pragmatism }
+
+	# ---- 原版逻辑：公民权处理 ----
+	if = {
+		limit = {
+			has_civic = civic_galactic_sovereign
+		}
+		force_remove_civic = civic_galactic_sovereign
+	}
+	if = {
+		limit = {
+			has_civic = civic_galactic_sovereign_megacorp
+		}
+		force_remove_civic = civic_galactic_sovereign_megacorp
+	}
+	if = {
+		limit = {
+			has_civic = civic_psionic_sovereign
+		}
+		force_remove_civic = civic_psionic_sovereign
+	}
+	if = {
+		limit = {
+			root = { is_megacorp = yes }
+			is_megacorp = yes
+		}
+		set_merchant_government_effect = yes
+	}
+	if = {
+		limit = {
+			root = { has_civic = civic_shared_burden }
+		}
+		force_remove_civic_by_index = 1
+		force_add_civic = civic_shared_burden
+	}
+	if = {
+		limit = {
+			root = { has_civic = civic_crusader_spirit }
+		}
+		force_remove_civic_by_index = 1
+		force_add_civic = civic_crusader_spirit
+	}
+
+	# ---- 原版逻辑：好感与修正 ----
+	add_modifier = { modifier = recently_liberated days = 7200 }
+	add_opinion_modifier = { modifier = opinion_liberated_us who = root }
+	root = {
+		add_opinion_modifier = { modifier = opinion_we_liberated who = from }
+	}
+}
