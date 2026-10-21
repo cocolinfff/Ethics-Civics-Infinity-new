@@ -1,0 +1,297 @@
+# 谬误平衡 —— 动态档位刷新
+# 由 common/on_actions/msi_dsai_on_actions.txt 的 on_yearly_pulse_country 调用。
+# Scope: country
+#
+# 逻辑：统计内阁（councilor）所有负面特质的层级总数，按总数挂载对应档位的
+# 岗位效率修正（每档 +5%，见 common/static_modifiers/msi_dsai_modifiers.txt）。
+# 每年刷新一次，先摘后挂，保证降级与失效都能正确回收。
+
+msi_dsai_wupingheng_refresh = {
+	remove_modifier = msi_dsai_wupingheng_bonus_1
+	remove_modifier = msi_dsai_wupingheng_bonus_2
+	remove_modifier = msi_dsai_wupingheng_bonus_3
+	remove_modifier = msi_dsai_wupingheng_bonus_4
+	remove_modifier = msi_dsai_wupingheng_bonus_5
+
+	if = {
+		limit = { has_valid_civic = civic_mius_wupingheng }
+
+		set_variable = { which = msi_dsai_wupingheng_count value = 0 }
+
+		every_owned_leader = {
+			limit = { is_councilor = yes }
+			change_variable = {
+				which = msi_dsai_wupingheng_count
+				value = value:leader_num_negative_leader_trait_tiers
+			}
+		}
+
+		if = {
+			limit = {
+				check_variable = { which = msi_dsai_wupingheng_count value >= 5 }
+			}
+			add_modifier = { modifier = msi_dsai_wupingheng_bonus_5 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = msi_dsai_wupingheng_count value >= 4 }
+			}
+			add_modifier = { modifier = msi_dsai_wupingheng_bonus_4 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = msi_dsai_wupingheng_count value >= 3 }
+			}
+			add_modifier = { modifier = msi_dsai_wupingheng_bonus_3 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = msi_dsai_wupingheng_count value >= 2 }
+			}
+			add_modifier = { modifier = msi_dsai_wupingheng_bonus_2 }
+		}
+		else_if = {
+			limit = {
+				check_variable = { which = msi_dsai_wupingheng_count value >= 1 }
+			}
+			add_modifier = { modifier = msi_dsai_wupingheng_bonus_1 }
+		}
+
+		clear_variable = msi_dsai_wupingheng_count
+	}
+}
+
+
+# ============================================================
+# 高天之上 —— 两塔高差刷新
+# Scope: planet（塔所在的母星）
+#
+# 先摘掉所有高差修正，读出两塔当前等级（1..20 分级 deposit），
+# 算带符号差值（正 = 民主塔更高，负 = 自由塔更高），再按绝对值和分档
+# 挂一档 msi_tower_gap_1..4（见 common/static_modifiers/msi_dsai_modifiers.txt）。
+# 由两条升塔决议在升级后立即调用。
+# ============================================================
+
+msi_dsai_tower_refresh = {
+	remove_modifier = msi_tower_gap_1
+	remove_modifier = msi_tower_gap_2
+	remove_modifier = msi_tower_gap_3
+	remove_modifier = msi_tower_gap_4
+
+	if = {
+		limit = {
+			exists = owner
+			owner = { has_origin = origin_high_above }
+		}
+
+		set_variable = { which = msi_tower_dem_lv value = 0 }
+		if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_20 }
+			set_variable = { which = msi_tower_dem_lv value = 20 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_19 }
+			set_variable = { which = msi_tower_dem_lv value = 19 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_18 }
+			set_variable = { which = msi_tower_dem_lv value = 18 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_17 }
+			set_variable = { which = msi_tower_dem_lv value = 17 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_16 }
+			set_variable = { which = msi_tower_dem_lv value = 16 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_15 }
+			set_variable = { which = msi_tower_dem_lv value = 15 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_14 }
+			set_variable = { which = msi_tower_dem_lv value = 14 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_13 }
+			set_variable = { which = msi_tower_dem_lv value = 13 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_12 }
+			set_variable = { which = msi_tower_dem_lv value = 12 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_11 }
+			set_variable = { which = msi_tower_dem_lv value = 11 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_10 }
+			set_variable = { which = msi_tower_dem_lv value = 10 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_9 }
+			set_variable = { which = msi_tower_dem_lv value = 9 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_8 }
+			set_variable = { which = msi_tower_dem_lv value = 8 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_7 }
+			set_variable = { which = msi_tower_dem_lv value = 7 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_6 }
+			set_variable = { which = msi_tower_dem_lv value = 6 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_5 }
+			set_variable = { which = msi_tower_dem_lv value = 5 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_4 }
+			set_variable = { which = msi_tower_dem_lv value = 4 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_3 }
+			set_variable = { which = msi_tower_dem_lv value = 3 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_2 }
+			set_variable = { which = msi_tower_dem_lv value = 2 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_democracy_tower_1 }
+			set_variable = { which = msi_tower_dem_lv value = 1 }
+		}
+
+		set_variable = { which = msi_tower_lib_lv value = 0 }
+		if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_20 }
+			set_variable = { which = msi_tower_lib_lv value = 20 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_19 }
+			set_variable = { which = msi_tower_lib_lv value = 19 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_18 }
+			set_variable = { which = msi_tower_lib_lv value = 18 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_17 }
+			set_variable = { which = msi_tower_lib_lv value = 17 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_16 }
+			set_variable = { which = msi_tower_lib_lv value = 16 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_15 }
+			set_variable = { which = msi_tower_lib_lv value = 15 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_14 }
+			set_variable = { which = msi_tower_lib_lv value = 14 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_13 }
+			set_variable = { which = msi_tower_lib_lv value = 13 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_12 }
+			set_variable = { which = msi_tower_lib_lv value = 12 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_11 }
+			set_variable = { which = msi_tower_lib_lv value = 11 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_10 }
+			set_variable = { which = msi_tower_lib_lv value = 10 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_9 }
+			set_variable = { which = msi_tower_lib_lv value = 9 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_8 }
+			set_variable = { which = msi_tower_lib_lv value = 8 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_7 }
+			set_variable = { which = msi_tower_lib_lv value = 7 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_6 }
+			set_variable = { which = msi_tower_lib_lv value = 6 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_5 }
+			set_variable = { which = msi_tower_lib_lv value = 5 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_4 }
+			set_variable = { which = msi_tower_lib_lv value = 4 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_3 }
+			set_variable = { which = msi_tower_lib_lv value = 3 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_2 }
+			set_variable = { which = msi_tower_lib_lv value = 2 }
+		}
+		else_if = {
+			limit = { has_deposit = msi_dsai_deposit_liberty_tower_1 }
+			set_variable = { which = msi_tower_lib_lv value = 1 }
+		}
+
+		set_variable = {
+			which = msi_tower_gap
+			value = msi_tower_dem_lv
+		}
+		subtract_variable = {
+			which = msi_tower_gap
+			value = msi_tower_lib_lv
+		}
+
+		if = {
+			limit = { check_variable = { which = msi_tower_gap value >= 16 } }
+			add_modifier = { modifier = msi_tower_gap_4 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value <= -16 } }
+			add_modifier = { modifier = msi_tower_gap_4 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value >= 11 } }
+			add_modifier = { modifier = msi_tower_gap_3 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value <= -11 } }
+			add_modifier = { modifier = msi_tower_gap_3 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value >= 6 } }
+			add_modifier = { modifier = msi_tower_gap_2 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value <= -6 } }
+			add_modifier = { modifier = msi_tower_gap_2 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value >= 1 } }
+			add_modifier = { modifier = msi_tower_gap_1 }
+		}
+		else_if = {
+			limit = { check_variable = { which = msi_tower_gap value <= -1 } }
+			add_modifier = { modifier = msi_tower_gap_1 }
+		}
+
+		clear_variable = msi_tower_dem_lv
+		clear_variable = msi_tower_lib_lv
+		clear_variable = msi_tower_gap
+	}
+}

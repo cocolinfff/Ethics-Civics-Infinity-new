@@ -1,0 +1,43 @@
+# 谬误平衡
+# 类型：以上都不属于（用户指定）→ msi_dsai_civics_nationality.txt
+#
+# 三条效果的落地方式：
+#   1) 每个内阁负面特质 → 岗位效率 +5%
+#      静态 modifier 无法动态取值，改由 msi_dsai_wupingheng_refresh 在
+#      on_yearly_pulse_country 时按内阁负面特质总数挂载分档修正
+#      （common/static_modifiers/msi_dsai_modifiers.txt）。
+#   2) 精英阶级额外消耗贸易额 → 专家与劳工岗位效率提高
+#      消耗写在 common/pop_categories/正常人口阶级.txt 的 ruler 阶层 upkeep；
+#      收益写在本文件的 modifier 里。
+#   3) 领袖负面特质上限 +5 → negative_traits_leader = 5
+civic_mius_wupingheng = {
+	description = civic_tooltip_mius_wupingheng_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 不是任何程度的效率主义（技术主义 ↔ 效率主义轴）
+			NOR = {
+				text = civic_tooltip_not_materialist
+				value = ethic_materialist
+				value = ethic_fanatic_materialist
+			}
+		}
+	}
+
+	random_weight = {
+		base = 10
+	}
+
+	modifier = {
+		# 负面特质上限 +5（正值即增加上限）
+		negative_traits_leader = 5
+	}
+}

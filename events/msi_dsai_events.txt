@@ -1,0 +1,171 @@
+# 蟊星者事件
+# msi_dsai_events：maoxingzhe.1 蚕食宗主国（每 5 年），maoxingzhe.10 借壳复活。
+# 触发器定义在 common/scripted_triggers/msi_dsai_triggers.txt。
+# 钩子定义在 common/on_actions/msi_dsai_on_actions.txt。
+
+namespace = maoxingzhe
+
+###################################
+# 蚕食宗主国（每 5 年 1 个星球）
+###################################
+country_event = {
+	id = maoxingzhe.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_valid_civic = civic_maoxingzhe
+		is_subject = yes
+		exists = overlord
+		overlord = {
+			is_country_type = default
+			NOT = { is_maoxingzhe_immune = yes }
+			# 注意：这里不排除首都。没有任何相邻星系时，要把首都也吃掉。
+			any_owned_planet = {
+				is_colony = yes
+			}
+		}
+	}
+
+	immediate = {
+		# 优先吞并“与蟊星者领地相邻”的宗主国星系
+		if = {
+			limit = {
+				overlord = {
+					any_owned_planet = {
+						is_colony = yes
+						solar_system = {
+							any_neighbor_system = {
+								any_system_planet = {
+									has_owner = yes
+									owner = { is_same_value = root }
+								}
+							}
+						}
+					}
+				}
+			}
+			overlord = {
+				random_owned_planet = {
+					limit = {
+						is_colony = yes
+						solar_system = {
+							any_neighbor_system = {
+								any_system_planet = {
+									has_owner = yes
+									owner = { is_same_value = root }
+								}
+							}
+						}
+					}
+					set_owner = root
+					set_planet_flag = maoxingzhe_devoured
+				}
+			}
+		}
+		# 没有任何相邻星系时，直接吞并宗主国首都
+		else = {
+			overlord = {
+				capital_scope = {
+					set_owner = root
+					set_planet_flag = maoxingzhe_devoured
+				}
+			}
+		}
+	}
+}
+
+###################################
+# 借壳复活
+###################################
+country_event = {
+	id = maoxingzhe.10
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_valid_civic = civic_maoxingzhe
+		exists = from
+		from = {
+			is_country_type = default
+			NOT = { is_maoxingzhe_immune = yes }
+			any_owned_planet = {
+				is_colony = yes
+				is_capital = no
+			}
+		}
+	}
+
+	immediate = {
+		# 先在战胜国境内挑一块落脚地（不动首都）
+		from = {
+			random_owned_planet = {
+				limit = {
+					is_colony = yes
+					is_capital = no
+				}
+				save_event_target_as = maoxingzhe_rebirth_planet
+			}
+		}
+
+		if = {
+			limit = { exists = event_target:maoxingzhe_rebirth_planet }
+			event_target:maoxingzhe_rebirth_planet = {
+				create_rebels = {
+					name = random
+					authority = auth_dictatorial
+					civics = {
+						civic = civic_maoxingzhe
+						civic = random
+						civic = random
+					}
+					species = root
+					ethos = {
+						ethic = ethic_fanatic_authoritarian
+						ethic = ethic_xenophobe
+					}
+					flag = random
+					effect = {
+						set_country_flag = maoxingzhe_reborn
+					}
+				}
+			}
+		}
+	}
+}
+
+###################################
+# 谬误平衡：年度刷新岗位效率档位
+###################################
+namespace = msi_dsai
+
+country_event = {
+	id = msi_dsai.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		msi_dsai_wupingheng_refresh = yes
+	}
+}
+
+###################################
+# 高天之上：开局在母星放置两座太空电梯
+###################################
+
+country_event = {
+	id = msi_dsai.2
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = { has_origin = origin_high_above }
+			capital_scope = {
+				add_deposit = msi_dsai_deposit_democracy_tower_1
+				add_deposit = msi_dsai_deposit_liberty_tower_1
+				msi_dsai_tower_refresh = yes
+			}
+		}
+	}
+}
