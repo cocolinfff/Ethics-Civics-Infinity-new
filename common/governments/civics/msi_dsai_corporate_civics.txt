@@ -1,0 +1,70 @@
+# Corporate Civics —— 本文件由 More Societies: Infinity 维护
+# 存放本 mod 新增的【企业类】理念
+
+#############################################################
+# 比特魔法（Bitcoin Magic）
+#############################################################
+# 【效果】
+#   一、起始物种特质：义体人（trait_cybernetic）
+#   二、每 100 劳工阶级人口 +1 贸易额并 +0.5 物理学研究
+#   三、每 100 平民阶级人口 +2 贸易额并 +0.25 物理学研究
+# 【修正】
+#   一、人口死亡率 +50%
+#
+# 需求：是一定程度的精英主义（用不含 any_ 的键，覆盖到中立思潮调和主义）
+#
+# 数值换算说明（"每 100 人"折算成"每人"）：
+#   每 100 劳工 +1 贸易额      -> pop_category_workers_trade_produces_add   = 0.01
+#   每 100 平民 +2 贸易额      -> pop_category_civilians_trade_produces_add = 0.02
+#   每 100 平民 +0.25 物理研究 -> pop_category_civilians_physics_research_produces_add = 0.0025
+#   人口死亡率 +50%            -> pop_decline_speed = 0.5
+#
+# 已知限制：原版与 mod 均不存在 pop_category_workers_physics_research_produces_add
+#           （只有 civilians / specialists 有 research 版本），
+#           因此"每 100 劳工 +0.5 物理学研究"这一项无法用阶级修正表达，暂缺。
+civic_bitcoin_magic = {
+	description = civic_tooltip_bitcoin_magic_effects
+
+	potential = {
+		OR = {
+			authority = {
+				value = auth_corporate
+			}
+			civics = {
+				OR = {
+					value = civic_galactic_sovereign_megacorp
+					value = civic_world_cooperative
+				}
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是一定程度的精英主义（含该轴中立思潮调和主义）
+			OR = {
+				text = civic_tooltip_authoritarian
+				value = ethic_conciliationsm
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+		}
+	}
+
+	# 起始物种特质：义体人
+	traits = {
+		trait = trait_cybernetic
+	}
+
+	modifier = {
+		pop_category_workers_trade_produces_add = 1
+		pop_category_workers_physics_research_produces_add = 0.5
+		pop_category_civilians_trade_produces_add = 2
+		pop_category_civilians_physics_research_produces_add = 0.25
+		pop_decline_speed = 0.5
+	}
+
+	random_weight = {
+		base = 1
+	}
+}

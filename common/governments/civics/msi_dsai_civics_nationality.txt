@@ -33,11 +33,70 @@ civic_mius_wupingheng = {
 	}
 
 	random_weight = {
-		base = 10
+		base = 1
 	}
 
 	modifier = {
 		# 负面特质上限 +5（正值即增加上限）
 		negative_traits_leader = 5
+	}
+}
+
+# 开源盛世（Open Source Prosperity）
+# 【兜底民族类】立法禁止知识私有化，任何人都可自由查阅一切可得的知识。
+#
+# 需求三项（全部是否定式）：
+#   不是排外主义 → 排除整条排外轴（含中立思潮团结主义），用 civic_tooltip_not_xenophobe
+#   不是精英主义 → 只排除 ethic_fanatic_authoritarian 一档，仍允许竞争主义
+#   不是主权主义 → ethic_defensivism 本身只有一档，直接排除
+#
+# 【修正】两条直接写进 modifier：
+#   planet_jobs_unity_produces_mult      = -0.15   岗位凝聚力产出 -15%
+#   planet_researchers_unity_upkeep_add  = 0.5     研究岗位凝聚力维护 +0.5
+#
+# 【效果】两条由脚本实现，见：
+#   common/opinion_modifiers/msi_dsai_opinion_modifiers.txt   好感度修正
+#   common/scripted_effects/msi_dsai_effects.txt              情报国计数与科研加成
+#   events/msi_dsai_events.txt                                年度刷新
+civic_open_source_prosperity = {
+	description = civic_tooltip_open_source_prosperity_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 不是排外主义（整条排外轴，含中立思潮团结主义）
+			NOR = {
+				text = civic_tooltip_not_xenophobe
+				value = ethic_nationalism
+				value = ethic_xenophobe
+				value = ethic_fanatic_xenophobe
+			}
+			# 不是精英主义（只排除这一档，仍允许竞争主义）
+			NOR = {
+				text = civic_tooltip_not_only_elite
+				value = ethic_fanatic_authoritarian
+			}
+			# 不是主权主义
+			NOR = {
+				text = civic_tooltip_not_defensivism
+				value = ethic_defensivism
+			}
+		}
+	}
+
+	random_weight = {
+		base = 1
+	}
+
+	modifier = {
+		planet_jobs_unity_produces_mult = -0.15
+		planet_researchers_unity_upkeep_add = 0.5
 	}
 }

@@ -169,3 +169,164 @@ country_event = {
 		}
 	}
 }
+
+###################################
+# 开源盛世：年度刷新情报国计数与研究加成
+###################################
+
+country_event = {
+	id = msi_dsai.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		if = {
+			limit = { has_valid_civic = civic_open_source_prosperity }
+			msi_dsai_open_source_refresh = yes
+		}
+	}
+}
+
+# 造神运动（civic_deification_campaign）：
+# 领袖一旦持有任意负面特质，立即被抹杀。
+# 触发源：on_leader_level_up / on_leader_hired / on_leader_spawned
+# scope: this = country, from = leader
+country_event = {
+	id = msi_dsai.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_valid_civic = civic_deification_campaign
+		exists = from
+		from = {
+			msi_dsai_leader_has_negative_trait = yes
+		}
+	}
+
+	immediate = {
+		from = {
+			kill_leader = { show_notification = yes }
+		}
+	}
+}
+
+# 战争主理人（civic_war_broker）：
+# 与本国关系中立以上的国家进入战争且本国未参战时，给参战国 +33% 舰船射速与陆军伤害。
+# 触发源：on_war_beginning（Root = 参战国, From = War）
+# scope: this = 参战国
+country_event = {
+	id = msi_dsai.6
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_at_war = yes
+	}
+
+	immediate = {
+		every_country = {
+			limit = {
+				has_valid_civic = civic_war_broker
+				is_at_war = no
+				# is_same_value 只接受 = <target> 或 = { target = <target> }，
+				# 没有 value 参数；要表达“不是 root 自己”须外面套 NOT。
+				NOT = { is_same_value = root }
+				NOR = {
+					is_hostile = root
+					is_rival = root
+				}
+				has_opinion = {
+					target = root
+					value >= 0
+				}
+			}
+			root = {
+				add_modifier = {
+					modifier = msi_dsai_war_broker_boost
+					days = -1
+				}
+			}
+		}
+	}
+}
+
+# 战争主理人：战争结束后移除第三方赠予的 boost
+# 触发源：on_war_ended（Root = 参战国, From = War）
+country_event = {
+	id = msi_dsai.7
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		remove_modifier = msi_dsai_war_broker_boost
+	}
+}
+
+# 天人感应（civic_heaven_human_resonance）：
+# 每年检查本国殖民地，犯罪率 > 60 或稳定度 < 60 时，在该星球所在星系生成灵能风暴。
+# 触发源：on_yearly_pulse_country
+# scope: this = country
+country_event = {
+	id = msi_dsai.8
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_valid_civic = civic_heaven_human_resonance
+		has_cosmic_storms_dlc = yes
+	}
+
+	immediate = {
+		every_owned_colony = {
+			limit = {
+				OR = {
+					planet_crime > 60
+					planet_stability < 60
+				}
+			}
+			solar_system = {
+				spawn_random_storm = {
+					type = shroud_storm
+					cosmic_storm_start_position = this
+					immediate = yes
+				}
+			}
+		}
+	}
+}
+
+# 毅种循环（civic_evolutionary_cycle）：
+# 社会竞争每隔两年物理淘汰 1% 的人口。
+# 触发源：on_yearly_pulse_country（每年触发），用国家 flag 交替实现“每两年执行一次”。
+# 淘汰方式：遍历全国每个 pop group，各 2% 概率杀掉该群组中的 1 个 pop。
+# scope: this = country
+country_event = {
+	id = msi_dsai.9
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_valid_civic = civic_evolutionary_cycle
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				has_country_flag = msi_dsai_evolution_cycle_tick
+			}
+			remove_country_flag = msi_dsai_evolution_cycle_tick
+			every_owned_colony = {
+				every_owned_pop_group = {
+					random_list = {
+						90 = {}
+						10 = { kill_single_pop = yes }
+					}
+				}
+			}
+		}
+		else = {
+			set_country_flag = msi_dsai_evolution_cycle_tick
+		}
+	}
+}

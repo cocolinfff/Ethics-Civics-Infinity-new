@@ -47,3 +47,407 @@ civic_maoxingzhe = {
 		all_technology_research_speed = -0.9
 	}
 }
+
+# 力工思维（Force Labor Mind）
+# 【宗教信仰】平民在繁重劳动中放弃深度思考，转而怨恨那些引导他们思考的人。
+#
+# 需求：
+#   是竞争主义或精英主义  → 竞争主义 = ethic_authoritarian，精英主义 = ethic_fanatic_authoritarian
+#                          两档但**不含**中立思潮调和主义，故用含 any_ 的键
+#   是精神主义或教权主义  → 精神主义 = ethic_spiritualist，教权主义 = ethic_fanatic_spiritualist
+#                          两档但**不含**中立思潮实用主义，同样用含 any_ 的键
+#
+# 两条需求是 AND：写在同一个 ethics 块里的两个 OR 就是 AND 关系
+# （与上面的蟊星者同构，也与原版政体 README 的措辞一致）。
+#
+# 效果实现说明：
+#   civic 只能挂国家级固定修正（modifier 块），无法按“某个思潮的人口的数量”做逐条判定，
+#   因此这里用与需求语义最贴近的固定值：
+#     planet_stability_add                  —— 精英主义劳工平民带来的秩序
+#     pop_cat_worker_happiness              —— 平等主义氛围下劳工的不满
+#     pop_cat_civilian_happiness            —— 同上，平民
+#     pop_ethic_egalitarian_attraction_mult —— 劳苦大众越是没有话语权，平等主义越没人信
+civic_force_labor_mind = {
+	description = civic_tooltip_force_labor_mind_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是竞争主义或精英主义（不含中立思潮调和主义）
+			OR = {
+				text = civic_tooltip_any_authoritarian
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+			# 是精神主义或教权主义（不含中立思潮实用主义）
+			OR = {
+				text = civic_tooltip_any_spiritualist
+				value = ethic_spiritualist
+				value = ethic_fanatic_spiritualist
+			}
+		}
+	}
+
+	random_weight = {
+		base = 10
+	}
+
+	# 效果不在 civic 上挂固定修正，而是拆到具体载体：
+	#   第一条（精英主义劳工/平民提高稳定度）→ common/pop_categories/正常人口阶级.txt
+	#     的 worker / civilian 类别里，按人口组自身的思潮判定
+	#   第二、第三条（平等主义劳工平民的不满、平等主义吸引力衰减）
+	#     → common/deposits/ethic_deposit.txt 的 d_ethic_society 里
+}
+
+# 黑暗料理（Dark Cuisine）
+# 【国民文化】文明早期一场灾难让这个社会丧失了烹饪美食的技术，
+#             饮食文化从此走上一条诡异莫测的发展道路。
+#
+# 需求：没有国民理念「美食之旅」（civic_gourmet_journey）
+#
+# 三条全部是【效果】，故 civic 本身不挂 modifier：
+#   效果一（农民产出更多食物但减少舒适度）→ common/deposits/ethic_deposit.txt 的 d_ethic_society
+#   效果二（好感度 -50 / 美食之旅额外 -150）→ common/opinion_modifiers/msi_dsai_opinion_modifiers.txt
+#   效果三（宜居度下限 +75%）            → common/deposits/ethic_deposit.txt 的 d_ethic_society
+civic_dark_cuisine = {
+	description = civic_tooltip_dark_cuisine_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		civics = {
+			NOT = { value = civic_gourmet_journey }
+		}
+	}
+
+	modifier = {
+		habitability_floor_add = 0.75
+	}
+
+	random_weight = {
+		base = 10
+	}
+}
+
+# 迷途之子（Lost Children）
+# 【宗教教义】居民普遍迷信非正统教条，其影响不局限于宗教领域。
+#
+# 需求：是教权主义 / 不是任何程度的团结主义
+#
+# 五条效果全部为【效果】：
+#   一、精英提高人口增长率与死亡率  -> common/pop_categories/正常人口阶级.txt 的 ruler 类别
+#   二、专家提高增长率 + 教权主义吸引力 + 消费品消耗
+#       增长率 -> pop_categories 的 specialist 类别；其余两条 -> 本 civic 的 modifier
+#   三、劳工消耗凝聚力产社会学研究  -> 本 civic 的 modifier
+#   四、平民岗位替换为迷信徒        -> common/pop_jobs/msi_dsai_pop_jobs_swap.txt
+#   五、罪犯岗位替换为邪教干部      -> common/pop_jobs/msi_dsai_pop_jobs_swap.txt
+civic_lost_children = {
+	description = civic_tooltip_lost_children_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是教权主义
+			value = ethic_fanatic_spiritualist
+			# 不是任何程度的团结主义
+			NOR = {
+				text = civic_tooltip_not_nationalism
+				value = ethic_nationalism
+				value = ethic_xenophile
+				value = ethic_xenophobe
+			}
+		}
+	}
+
+	modifier = {
+		# 专家：教权主义吸引力提升
+		pop_ethic_spiritualist_attraction_mult = 0.5
+		# 专家：额外消耗消费品
+		pop_category_specialists_consumer_goods_upkeep_add = 0.25
+		# 劳工：额外消耗凝聚力
+		pop_category_workers_unity_upkeep_add = 0.5
+		# 劳工：产出额外社会学研究
+		pop_category_workers_society_research_produces_add = 0.5
+	}
+
+	random_weight = {
+		base = 10
+	}
+}
+
+# 雾里看花（Flowers in the Mist）
+# 【宗教教义】神权社会认定高清摄像设备渎神，禁止其发展。
+#
+# 需求：是一定程度的教权主义 / 没有国民理念：知识崇拜
+#
+# 四条全部为【修正】，只落 modifier，本地化不写：
+#   一、每 100 平民岗位产出的凝聚力 +2 -> pop_category_civilians_unity_produces_add
+#   二、传统花费 -20%                  -> tradition_cost_mult
+#   三、科研速度 -20%                  -> all_technology_research_speed
+#   四、星系调查速度 -20%              -> science_ship_survey_speed
+civic_flowers_in_mist = {
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是一定程度的教权主义（含该轴中立思潮实用主义）
+			OR = {
+				text = civic_tooltip_spiritualist
+				value = ethic_pragmatism
+				value = ethic_spiritualist
+				value = ethic_fanatic_spiritualist
+			}
+		}
+		civics = {
+			# 没有国民理念：知识崇拜
+			NOT = { value = civic_knowledge_seeker }
+		}
+	}
+
+	modifier = {
+		pop_category_civilians_unity_produces_add = 2
+		tradition_cost_mult = -0.2
+		all_technology_research_speed = -0.2
+		science_ship_survey_speed = -0.2
+	}
+
+	random_weight = {
+		base = 10
+	}
+}
+
+# 造神运动（Deification Campaign）
+# 【宗教教义】民众以尊奉神祗的礼仪拥护领袖，领袖一旦不再神圣便被无情抛弃。
+#
+# 需求：是教权主义 / 是一定程度的排外主义
+#
+# 效果（2 条）：
+#   一、将政治家岗位替换为神祗候选 -> 见 精英岗位覆盖.txt 的 politician.swap_type
+#   二、领袖出现负面特质即被立刻抹杀 -> msi_dsai_triggers.txt + msi_dsai_events.txt + on_action
+# 修正（2 条，只落 modifier，本地化不写）：
+#   一、领袖有效技能等级 +10  -> leader_skill_add
+#   二、领袖经验获取 +1000%   -> species_leader_exp_gain
+civic_deification_campaign = {
+	description = civic_tooltip_deification_campaign_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是教权主义（仅该思潮极端档）
+			value = ethic_fanatic_spiritualist
+			# 是一定程度的排外主义（含该轴中立思潮团结主义）
+			OR = {
+				text = civic_tooltip_xenophobe
+				value = ethic_nationalism
+				value = ethic_xenophobe
+				value = ethic_fanatic_xenophobe
+			}
+		}
+	}
+
+	modifier = {
+		leader_skill_add = 10
+		species_leader_exp_gain = 10
+	}
+
+	random_weight = {
+		base = 10
+	}
+}
+
+# 战争主理人（War Broker）
+# 【国民文化】享受和平，却热衷于替他国策划战争取胜之道。
+#
+# 需求：是一定程度的主权主义（含该轴中立思潮主权主义本身与另两个非极端思潮）
+#
+# 效果（4 条）：
+#   一、中立以上关系国参战时获得射速/陆攻 +33%  -> msi_dsai_events.txt + on_war_beginning
+#   二、只能使用防御战争政策                    -> 政策重构.txt 的 war_philosophy（限制进攻选项）
+#   三、外交接受度 +10                          -> diplo_action_acceptance_add（本条为修正）
+#   四、代理人战争消耗 -90%                     -> proxy_war_cost_mult（本条为修正）
+civic_war_broker = {
+	description = civic_tooltip_war_broker_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是一定程度的主权主义（含该轴中立思潮主权主义与另两个非极端思潮）
+			OR = {
+				text = civic_tooltip_defensivism
+				value = ethic_pacifist
+				value = ethic_defensivism
+				value = ethic_militarist
+			}
+		}
+		civics = {
+			NOR = {
+				value = civic_xeno_militarist
+				value = civic_liberator
+				value = civic_crusader_spirit
+			}
+		}
+	}
+
+	modifier = {
+		diplo_action_acceptance_add = 10
+		proxy_war_cost_mult = -0.9
+	}
+
+	random_weight = {
+		base = 10
+	}
+}
+
+# 天人感应（Heaven-Human Resonance）
+# 【独特技术】宇宙会为遭受不公的民众发声，这在星际时代得到证实。
+#
+# 需求：是一定程度的道德主义（和平主义轴，含中立思潮主权主义）
+#
+# 效果（3 条）：
+#   一、起始物种特质：灵能潜势            -> traits = { trait = trait_latent_psionic }
+#   二、星球犯罪率 > 60% 时引发灵能风暴    -> msi_dsai.8（每年检查，生成 shroud_storm）
+#   三、星球稳定度 < 60% 时引发灵能风暴    -> 同上
+#   灵能风暴依赖宇宙风暴 DLC（has_cosmic_storms_dlc）
+civic_heaven_human_resonance = {
+	description = civic_tooltip_heaven_human_resonance_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是一定程度的道德主义（含该轴中立思潮主权主义）
+			OR = {
+				text = civic_tooltip_pacifist
+				value = ethic_pacifist
+				value = ethic_defensivism
+				value = ethic_militarist
+			}
+		}
+	}
+
+	# 起始物种特质：灵能潜势
+	traits = {
+		trait = trait_latent_psionic
+	}
+
+	random_weight = {
+		base = 10
+	}
+}
+
+# 毅种循环（Evolutionary Cycle）
+# 【国民文化】这个社会的各种竞争往往以物理淘汰的方式结束，
+#             但竞争胜利者旺盛的繁殖欲望又弥补了这一习俗的缺陷。
+#
+# 需求：
+#   是一定程度的军国主义或精英主义  -> civic_tooltip_authoritarian_or_militarist（跨轴合并 key）
+#   不是任何程度的道德主义          -> civic_tooltip_not_pacifist，含该轴中立思潮主权主义
+#   不是任何程度的平等主义          -> civic_tooltip_not_egalitarian，含该轴中立思潮调和主义
+#
+# 说明：前一条需求里两轴的中立思潮（主权主义 / 调和主义）不写进 OR。
+#       下面两条否定条件已把这两个思潮所在的整条轴排除，写进 OR 只会被 NOR 盖掉，
+#       反而让 tooltip 与实际可选范围不符。故 OR 只列四个非中立档位。
+#
+# 修正（由 modifier 自动生成 tooltip，本地化里不重复写）：
+#   岗位效率+66%    -> pop_bonus_workforce_mult = 0.66
+#   领袖起始等级+4  -> leader_initial_skill = 4
+#   领袖预选容量-2  -> country_leader_pool_size = -2
+#
+# 效果（由其它载体实现）：
+#   社会竞争每隔两年物理淘汰 1% 人口  -> events/msi_dsai_events.txt 的 msi_dsai.9
+#   专家阶级额外 +1% 人口增长系数      -> common/pop_categories/正常人口阶级.txt（specialist 块）
+civic_evolutionary_cycle = {
+	description = civic_tooltip_evolutionary_cycle_effects
+
+	potential = {
+		ethics = {
+			NOT = {
+				value = ethic_gestalt_consciousness
+			}
+		}
+	}
+
+	possible = {
+		ethics = {
+			# 是一定程度的军国主义或精英主义
+			OR = {
+				text = civic_tooltip_authoritarian_or_militarist
+				value = ethic_militarist
+				value = ethic_fanatic_militarist
+				value = ethic_authoritarian
+				value = ethic_fanatic_authoritarian
+			}
+			# 不是任何程度的道德主义（含该轴中立思潮主权主义）
+			NOR = {
+				text = civic_tooltip_not_pacifist
+				value = ethic_defensivism
+				value = ethic_pacifist
+				value = ethic_fanatic_pacifist
+			}
+			# 不是任何程度的平等主义（含该轴中立思潮调和主义）
+			NOR = {
+				text = civic_tooltip_not_egalitarian
+				value = ethic_conciliationsm
+				value = ethic_egalitarian
+				value = ethic_fanatic_egalitarian
+			}
+		}
+	}
+
+	modifier = {
+		pop_bonus_workforce_mult = 0.66
+		leader_initial_skill = 4
+		country_leader_pool_size = -2
+	}
+
+	random_weight = {
+		base = 10
+	}
+}

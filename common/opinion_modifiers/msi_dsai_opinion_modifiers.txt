@@ -1,0 +1,71 @@
+# 本文件由 More Societies: Infinity 维护
+# 用途：为 mod 新增理念提供好感度（opinion）修正
+
+#############################################################
+# 开源盛世（civic_open_source_prosperity）
+#############################################################
+# 效果：采纳了【无政府主义】【共产主义社会】与【开源盛世】本身的文明
+#       对我方好感度 +50，其余所有文明对我方好感度 -50
+#
+# 作用域说明：
+#   this = 评价方（产生好感的那个国家）
+#   FROM = 被评价方（即拥有本理念的我方）
+#   只有被评价方持有 civic_open_source_prosperity 时才生效
+msi_dsai_opinion_open_source_prosperity = {
+	trigger = {
+		is_country_type = default
+		exists = FROM
+		FROM = {
+			has_valid_civic = civic_open_source_prosperity
+		}
+	}
+
+	opinion = {
+		# 同道者：同样主张知识公有 / 无国家的社会
+		modifier = {
+			add = 50
+			OR = {
+				has_valid_civic = civic_anarchism
+				has_valid_civic = civic_communist_society
+				has_valid_civic = civic_open_source_prosperity
+			}
+		}
+		# 其余所有文明
+		modifier = {
+			add = -50
+			NOR = {
+				has_valid_civic = civic_anarchism
+				has_valid_civic = civic_communist_society
+				has_valid_civic = civic_open_source_prosperity
+			}
+		}
+	}
+}
+
+#############################################################
+# 黑暗料理（civic_dark_cuisine）
+#############################################################
+# 效果：其他文明对我方好感度 -50；
+#       拥有【美食之旅】（civic_gourmet_journey）的文明额外再 -150（合计 -200）
+#
+#   this = 评价方    FROM = 被评价方（持有 civic_dark_cuisine 的我方）
+msi_dsai_opinion_dark_cuisine = {
+	trigger = {
+		is_country_type = default
+		exists = FROM
+		FROM = {
+			has_valid_civic = civic_dark_cuisine
+		}
+	}
+
+	opinion = {
+		# 所有人都膈应这套饮食
+		base = -50
+		# 偏偏是热爱美食的文明，更是难以忍受
+		modifier = {
+			add = -150
+			has_valid_civic = civic_gourmet_journey
+		}
+	}
+}
+
