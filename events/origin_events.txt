@@ -3380,7 +3380,11 @@ country_event = {
             add_deposit = d_decrepit_dwellings
             add_deposit = d_failing_infrastructure
             solar_system = {
-                starbase = { fleet = { delete_fleet = this } }
+                    # 【本模组修改】星系里可能还没有星港（刚开局/已被摧毁），直接切 starbase 作用域会报 Invalid context switch
+                    if = {
+                        limit = { exists = starbase }
+                        starbase = { fleet = { delete_fleet = this } }
+                    }
             }
         }
         add_modifier = { modifier = patent_protection years = 99 }
@@ -3527,7 +3531,11 @@ country_event = {
         start_situation = { type = taking_care_of_god }
         capital_scope = {
             solar_system = {
-                starbase = { fleet = { delete_fleet = this } }
+                    # 【本模组修改】星系里可能还没有星港（刚开局/已被摧毁），直接切 starbase 作用域会报 Invalid context switch
+                    if = {
+                        limit = { exists = starbase }
+                        starbase = { fleet = { delete_fleet = this } }
+                    }
             }
         }
         if = {
@@ -3756,18 +3764,26 @@ situation_event = {
                         random_existing_design = science
                     }
 
-                    set_fleet_stance = evasive
-                    set_location = prev.capital_scope.star
+                    # 【本模组修改】刚给完科技 / 刚 set_country_type = default 的同一天，科研船/工程船的设计可能还没生成，create_ship 会失败并留下一个 0 船舰队；下面先判舰队里是否真的有船：
+                    # 有船才设置姿态/位置/领袖；没船就把这个空舰队删掉，避免后续对空舰队做操作（原效果保留，未删改）。
+                    if = {
+                        limit = { is_ship_class = shipclass_science_ship }
+                        set_fleet_stance = evasive
+                        set_location = prev.capital_scope.star
 
-                    owner = {
-                        create_leader = {
-                            class = scientist
-                            sub_type = survey
-                            name = random
-                            species = owner_main_species
+                        owner = {
+                            create_leader = {
+                                class = scientist
+                                sub_type = survey
+                                name = random
+                                species = owner_main_species
+                            }
                         }
+                        set_leader = last_created_leader
                     }
-                    set_leader = last_created_leader
+                    else = {
+                        delete_fleet = this
+                    }
                 }
             }
         }
@@ -3805,19 +3821,27 @@ situation_event = {
                         random_existing_design = science
                     }
 
-                    set_fleet_stance = evasive
-                    #set_location = prev.capital_star
-                    set_location = prev.capital_scope.star
+                    # 【本模组修改】刚给完科技 / 刚 set_country_type = default 的同一天，科研船/工程船的设计可能还没生成，create_ship 会失败并留下一个 0 船舰队；下面先判舰队里是否真的有船：
+                    # 有船才设置姿态/位置/领袖；没船就把这个空舰队删掉，避免后续对空舰队做操作（原效果保留，未删改）。
+                    if = {
+                        limit = { is_ship_class = shipclass_science_ship }
+                        set_fleet_stance = evasive
+                        #set_location = prev.capital_star
+                        set_location = prev.capital_scope.star
 
-                    owner = {
-                        create_leader = {
-                            class = scientist
-                            sub_type = survey
-                            name = random
-                            species = owner_main_species
+                        owner = {
+                            create_leader = {
+                                class = scientist
+                                sub_type = survey
+                                name = random
+                                species = owner_main_species
+                            }
                         }
+                        set_leader = last_created_leader
                     }
-                    set_leader = last_created_leader
+                    else = {
+                        delete_fleet = this
+                    }
                 }
             }
             create_fleet = {
@@ -3829,8 +3853,15 @@ situation_event = {
                         random_existing_design = constructor
                     }
 
-                    set_fleet_stance = evasive
-                    set_location = prev.capital_star
+                    # 【本模组修改】同上：没有工程船设计时 create_ship 会失败，避免留下 0 船舰队。
+                    if = {
+                        limit = { is_ship_class = shipclass_constructor }
+                        set_fleet_stance = evasive
+                        set_location = prev.capital_star
+                    }
+                    else = {
+                        delete_fleet = this
+                    }
                 }
             }
         }
