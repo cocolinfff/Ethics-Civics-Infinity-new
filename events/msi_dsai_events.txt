@@ -330,3 +330,165 @@ country_event = {
 		}
 	}
 }
+
+###################################
+# 古老习俗（civic_ancient_customs）：
+# 每年 1 月 1 日，宗主国送来一份资源红包，并附上一句随机的新年祝福。
+# 红包按本国殖民地数量逐颗发放，规模随帝国成长。
+# 祝福语取自网络上长辈对晚辈的新年祝福（12 句，见 localisation/<lang>/msi_dsai_event_newyear_l_*.yml）。
+# msi_dsai.10 负责判定与抽祝福（隐藏），msi_dsai.11 负责弹窗（格式参考原版先辈子弟问候事件 origin.10）。
+# 触发源：on_yearly_pulse_country
+# scope: this = country
+country_event = {
+	id = msi_dsai.10
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_valid_civic = civic_ancient_customs
+		is_subject = yes
+		exists = overlord
+		# overlord must be a fallen empire or awakened fallen empire
+		overlord = {
+			OR = {
+				is_country_type = fallen_empire
+				is_country_type = awakened_fallen_empire
+			}
+		}
+	}
+
+	immediate = {
+		# 先清掉去年的祝福标记，保证每年只有一条祝福生效
+		remove_country_flag = msi_dsai_newyear_1
+		remove_country_flag = msi_dsai_newyear_2
+		remove_country_flag = msi_dsai_newyear_3
+		remove_country_flag = msi_dsai_newyear_4
+		remove_country_flag = msi_dsai_newyear_5
+		remove_country_flag = msi_dsai_newyear_6
+		remove_country_flag = msi_dsai_newyear_7
+		remove_country_flag = msi_dsai_newyear_8
+		remove_country_flag = msi_dsai_newyear_9
+		remove_country_flag = msi_dsai_newyear_10
+		remove_country_flag = msi_dsai_newyear_11
+		remove_country_flag = msi_dsai_newyear_12
+		# 宗主随机挑一句新年祝福
+		random_list = {
+			1 = { set_country_flag = msi_dsai_newyear_1 }
+			1 = { set_country_flag = msi_dsai_newyear_2 }
+			1 = { set_country_flag = msi_dsai_newyear_3 }
+			1 = { set_country_flag = msi_dsai_newyear_4 }
+			1 = { set_country_flag = msi_dsai_newyear_5 }
+			1 = { set_country_flag = msi_dsai_newyear_6 }
+			1 = { set_country_flag = msi_dsai_newyear_7 }
+			1 = { set_country_flag = msi_dsai_newyear_8 }
+			1 = { set_country_flag = msi_dsai_newyear_9 }
+			1 = { set_country_flag = msi_dsai_newyear_10 }
+			1 = { set_country_flag = msi_dsai_newyear_11 }
+			1 = { set_country_flag = msi_dsai_newyear_12 }
+		}
+		country_event = { id = msi_dsai.11 days = 0 }
+	}
+}
+
+###################################
+# 古老习俗：新年贺礼弹窗
+# 格式参考原版先辈子弟问候事件 origin.10：
+#   title + 多段 desc（按国家 flag 选一句祝福）+ diplomatic + picture_event_data + option
+# 红包在本事件的 immediate 里发放
+country_event = {
+	id = msi_dsai.11
+	title = msi_dsai_newyear_title
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_1 }
+		text = msi_dsai_newyear_desc_1
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_2 }
+		text = msi_dsai_newyear_desc_2
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_3 }
+		text = msi_dsai_newyear_desc_3
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_4 }
+		text = msi_dsai_newyear_desc_4
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_5 }
+		text = msi_dsai_newyear_desc_5
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_6 }
+		text = msi_dsai_newyear_desc_6
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_7 }
+		text = msi_dsai_newyear_desc_7
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_8 }
+		text = msi_dsai_newyear_desc_8
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_9 }
+		text = msi_dsai_newyear_desc_9
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_10 }
+		text = msi_dsai_newyear_desc_10
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_11 }
+		text = msi_dsai_newyear_desc_11
+	}
+	desc = {
+		trigger = { has_country_flag = msi_dsai_newyear_12 }
+		text = msi_dsai_newyear_desc_12
+	}
+	diplomatic = yes
+	is_triggered_only = yes
+
+	picture_event_data = {
+		portrait = event_target:scion_master
+		planet_background = event_target:scion_master
+		graphical_culture = event_target:scion_master
+		city_level = event_target:scion_master
+		room = event_target:scion_master
+	}
+
+	immediate = {
+		overlord = { save_event_target_as = scion_master }
+		# 红包：每颗殖民地一份
+		every_owned_colony = {
+			owner = {
+				add_resource = {
+					energy = 200
+					minerals = 200
+					food = 100
+					consumer_goods = 100
+					alloys = 50
+					unity = 100
+				}
+			}
+		}
+	}
+
+	option = {
+		name = msi_dsai_newyear_option
+		hidden_effect = {
+			remove_country_flag = msi_dsai_newyear_1
+			remove_country_flag = msi_dsai_newyear_2
+			remove_country_flag = msi_dsai_newyear_3
+			remove_country_flag = msi_dsai_newyear_4
+			remove_country_flag = msi_dsai_newyear_5
+			remove_country_flag = msi_dsai_newyear_6
+			remove_country_flag = msi_dsai_newyear_7
+			remove_country_flag = msi_dsai_newyear_8
+			remove_country_flag = msi_dsai_newyear_9
+			remove_country_flag = msi_dsai_newyear_10
+			remove_country_flag = msi_dsai_newyear_11
+			remove_country_flag = msi_dsai_newyear_12
+		}
+	}
+}
