@@ -205,7 +205,9 @@ country_event = {
             # event_target:target_planet（居住站所环绕的原行星），但此前没有任何地方保存过这个事件目标，
             # 开局会报 "Invalid context switch [event_target:target_planet] from ... [planet]"，居住站只被初始化一半。
             # 这里在建造前先把首都行星存成 target_planet。
+            #【本模组修改 2026-10-29】顺便存下国家：原版高级开局会把无主行星当殖民地处理，报 Invalid context switch [owner] 后闪退，下面用它补归属。
             owner = {
+                save_event_target_as = advanced_start_owner
                 capital_scope = { save_event_target_as = target_planet }
             }
             capital_star = {
@@ -213,7 +215,8 @@ country_event = {
                     spawn_advanced_start_habitat = yes
                     every_system_planet = {
                         limit = { is_planet_class = pc_habitat }
-                        set_owner = root.owner
+                        #set_owner = root.owner   #【本模组修改 2026-10-29】root.owner 在部分路径下为空，改用上面保存的事件目标
+                        set_owner = event_target:advanced_start_owner
                         add_modifier = { modifier = msi_space_economy years = 10 }
                         add_modifier = { modifier = advanced_start_independent_habitat days = -1 }
                         add_zone = {
@@ -265,6 +268,14 @@ country_event = {
                             size = 600
                             species = owner_main_species
                         }
+                    }
+                    #【本模组修改 2026-10-29】兜底：本星系若还有无主的居住站，补上归属
+                    every_system_planet = {
+                        limit = {
+                            is_planet_class = pc_habitat
+                            NOT = { exists = owner }
+                        }
+                        set_owner = event_target:advanced_start_owner
                     }
                 }
             }
