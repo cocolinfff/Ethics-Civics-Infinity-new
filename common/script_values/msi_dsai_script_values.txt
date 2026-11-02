@@ -1,0 +1,47 @@
+# ============================================================
+# msi_dsai 专用脚本值
+# 新建内容统一使用 msi_dsai_ 前缀，避免与既有脚本值重名。
+# ============================================================
+
+
+###################################
+# 法令人口乘数（G04）
+#
+# 原写法：multiplier = trigger:count_owned_pop_amount
+# 4.5 不允许把复数计数触发器直接内联到 multiplier 里：
+#   "Trigger count_owned_pop_amount cannot be used in this context"
+# 改为脚本值后在 country 作用域求值，结果等于全国人口数。
+# 法令 upkeep 形如 consumer_goods = 0.05 + multiplier，
+# 即每个帝国人口额外 0.05 消费品的维护费。
+###################################
+msi_dsai_edict_pop_multiplier = {
+	base = 0
+	complex_trigger_modifier = {
+		trigger = count_owned_pop_amount
+		mode = add
+	}
+	min = 1
+}
+
+
+###################################
+# 举火（eci_civic_firing_torch.3）—— 按幸福度抽签
+#
+# 4.5 的 random_list 分支里不能写 add / subtract 效果；
+# 原写法被解析器当成未知 scripted effect，两支的权重都失效。
+# 改为两支等权 + modifier 调整权重：
+#   幸福 → 不响应；不满 → 加入起义军并挂动员修正。
+###################################
+msi_dsai_firing_torch_calm_weight = {
+	base = 0
+	add = trigger:happiness
+	min = 0
+	max = 1
+}
+
+msi_dsai_firing_torch_riot_weight = {
+	base = 1
+	subtract = trigger:happiness
+	min = 0
+	max = 1
+}

@@ -189,7 +189,7 @@ country_event = {
 
 # 造神运动（civic_deification_campaign）：
 # 领袖一旦持有任意负面特质，立即被抹杀。
-# 触发源：on_leader_level_up / on_leader_hired / on_leader_spawned
+# 触发源：on_leader_level_up / on_leader_spawned（country 作用域，from = leader）
 # scope: this = country, from = leader
 country_event = {
 	id = msi_dsai.4
@@ -208,6 +208,26 @@ country_event = {
 		from = {
 			kill_leader = { show_notification = yes }
 		}
+	}
+}
+
+# 造神运动 —— 雇佣入口。
+# on_leader_hired 的 This 是 Leader（原版 00_on_actions.txt L2408-2410），
+# 不能向 country_event 投递，否则报
+# "attempted to execute an event on an unsupported scope!"。
+# 因此单独用 leader_event：this = leader，owner = 所属国家。
+leader_event = {
+	id = msi_dsai.12
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		owner = { has_valid_civic = civic_deification_campaign }
+		msi_dsai_leader_has_negative_trait = yes
+	}
+
+	immediate = {
+		kill_leader = { show_notification = yes }
 	}
 }
 

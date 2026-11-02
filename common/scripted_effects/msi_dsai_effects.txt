@@ -536,3 +536,240 @@ msi_dsai_open_source_refresh = {
 		}
 	}
 }
+
+
+# ============================================================
+# 执行人权（wg_implement_human_rights）
+#
+# 战败国与其附庸在 on_accept 时调用。旧实现 copy_ethos_and_authority
+# 因本模组新增的中立思潮（category_value = 2）无法复制，故复用
+# 解放战争修复里的 impose_ideology_effect（已包含 clear_ethos + shift_ethic）。
+# 之后把暂时性的 recently_liberated 换成专用的人权执行修正。
+# ============================================================
+implement_human_rights_effect = {
+	impose_ideology_effect = yes
+	remove_modifier = recently_liberated
+	add_modifier = {
+		modifier = recently_human_right_implemented
+		days = 3650
+	}
+}
+
+
+# ============================================================
+# 伦理叛乱局势（situation_ethic_rebel）
+#
+# 局势的 approach 会调用 set_rebel_dynamic_flag 切换 flag；
+# 结算时按 ethic_<思想>_rebel_set 调用 generate_rebel_final。
+# 这些 effect 在旧版 events/ethic_rebel_effect.txt 中存在，
+# 迁移时丢失，导致 "Invalid scripted effect" 且局势结束时叛军不生成。
+# ============================================================
+
+# 切换局势 approach 旗标（只保留一个）
+set_rebel_dynamic_flag = {
+	remove_situation_flag = rebel_quiet
+	remove_situation_flag = rebel_positive
+	remove_situation_flag = rebel_nothing
+	remove_situation_flag = rebel_negative
+	set_situation_flag = $FLAG$
+}
+
+# 启动叛乱局势并记录叛军思潮（供 ethic_red_union_situations 等调用）
+generate_rebel_situ = {
+	set_country_flag = ethic_$ETHIC$_rebel_set
+	start_situation = { type = situation_ethic_rebel }
+}
+
+# 结算入口。Scope: country（叛乱局势的 owner）
+# $ETHIC$：不带 ethic_ 前缀的思潮键，如 materialist / fanatic_authoritarian
+generate_rebel_final = {
+	hidden_effect = {
+		# 红星卫星宗主下的附庸先解除附庸，避免叛军仍挂在宗主名下
+		if = {
+			limit = {
+				overlord = { has_origin = origin_red_satellite_overlord }
+			}
+			set_subject_of = { who = none }
+			set_name = random
+		}
+		random_list = {
+			# 和平演变：直接改组政府
+			50 = {
+				modifier = {
+					factor = 2
+					any_situation = { has_situation_flag = rebel_positive }
+				}
+				modifier = {
+					factor = 1.5
+					any_situation = { has_situation_flag = rebel_quiet }
+				}
+				modifier = {
+					factor = 0.5
+					any_situation = { has_situation_flag = rebel_negative }
+				}
+				modifier = {
+					factor = 1.5
+					has_country_flag = ethic_pacifist_rebel_set
+				}
+				generate_politics_rebel = { ETHIC = $ETHIC$ }
+			}
+			# 武装叛乱：分裂出叛军国家并开战
+			50 = {
+				modifier = {
+					factor = 2
+					has_country_flag = ethic_militarist_rebel_set
+				}
+				modifier = {
+					factor = 2
+					has_country_flag = ethic_egalitarian_rebel_set
+					has_authority = auth_imperial
+				}
+				modifier = {
+					factor = 2
+					has_country_flag = ethic_egalitarian_rebel_set
+					OR = {
+						has_authority = auth_democratic
+						has_authority = auth_direct_democratic
+					}
+				}
+				modifier = {
+					factor = 0
+					num_owned_planets = 1
+				}
+				generate_war_rebel = { ETHIC = $ETHIC$ }
+			}
+		}
+	}
+}
+
+# 和平演变：换思潮 + 按目标思潮改组政府
+generate_politics_rebel = {
+	shift_ethic = ethic_$ETHIC$
+	if = {
+		limit = { has_country_flag = ethic_egalitarian_rebel_set }
+		change_government = {
+			authority = auth_democratic
+			cooldown = yes
+			remove_invalid_civics = yes
+			civics = random
+		}
+	}
+	else_if = {
+		limit = { has_country_flag = ethic_authoritarian_rebel_set }
+		change_government = {
+			authority = auth_dictatorial
+			cooldown = yes
+			remove_invalid_civics = yes
+			civics = random
+		}
+	}
+	else = {
+		change_government = {
+			cooldown = yes
+			remove_invalid_civics = yes
+			civics = random
+		}
+	}
+}
+
+# 武装叛乱：创建叛军国家，割让部分星球并开战
+generate_war_rebel = {
+	hidden_effect = {
+		save_event_target_as = from_country
+		create_country = {
+			name = random
+			type = default
+			species = owner_species
+			ignore_initial_colony_error = yes
+			day_zero_contact = no
+			ethos = { ethic = ethic_fanatic_$ETHIC$ ethic = random }
+			civics = random
+			origin = origin_separatists
+			flag = random
+			effect = {
+				save_event_target_as = rebel_country
+				establish_contact = { who = event_target:from_country location = root }
+				establish_communications_no_message = event_target:from_country
+				event_target:from_country = {
+					random_owned_planet = {
+						limit = { is_capital = no }
+						set_owner = event_target:rebel_country
+						set_controller = event_target:rebel_country
+						save_event_target_as = rebel_country_capital
+						solar_system = {
+							every_fleet_in_system = {
+								set_owner = event_target:rebel_country
+								set_controller = event_target:rebel_country
+							}
+						}
+					}
+					every_owned_planet = {
+						limit = { is_capital = no }
+						random_list = {
+							100 = {}
+							25 = {
+								modifier = {
+									factor = 2
+									planet_stability < 50
+								}
+								modifier = {
+									factor = 2
+									planet_stability < 25
+								}
+								set_owner = event_target:rebel_country
+								set_controller = event_target:rebel_country
+								solar_system = {
+									every_fleet_in_system = {
+										set_owner = event_target:rebel_country
+										set_controller = event_target:rebel_country
+									}
+								}
+							}
+						}
+					}
+					random_owned_leader = {
+						limit = { leader_class = commander }
+						save_event_target_as = rebel_country_admiral
+						event_target:rebel_country = {
+							assign_leader = event_target:rebel_country_admiral
+							set_leader = event_target:rebel_country_admiral
+						}
+						unassign_leader = event_target:rebel_country_admiral
+						fleet = {
+							set_owner = event_target:rebel_country
+							set_controller = event_target:rebel_country
+						}
+					}
+				}
+				event_target:rebel_country_capital = {
+					set_capital = yes
+				}
+				copy_techs_from = {
+					target = event_target:from_country
+				}
+				add_basic_resources_effect = { VALUE = 3000 }
+				add_manufactured_resources_effect = { VALUE = 1500 }
+				create_fleet_from_naval_cap = 0.5
+				random_owned_planet = {
+					last_created_fleet = {
+						set_location = event_target:rebel_country_capital
+					}
+				}
+				set_country_flag = ethic_$ETHIC$_rebel_set
+				declare_war = {
+					target = event_target:from_country
+					name = NAME_WAR_OF_REVOLT
+					attacker_war_goal = wg_imperial_war
+				}
+				event_target:from_country = {
+					create_fleet_from_naval_cap = 0.8
+					capital_scope = {
+						last_created_fleet = {
+							set_location = prev
+						}
+					}
+				}
+			}
+		}
+	}
+}
