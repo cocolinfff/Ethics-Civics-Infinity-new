@@ -1,0 +1,298 @@
+# 【华章 / 王枫】事件链复刻用脚本效果
+#
+# 背景：这两条链原本写在 events/Ethic_Easter.txt（2023-09-27 提交 6cf46b66 整文件删除），
+# 配套的 red_dowm_* 效果写在 common/scripted_effects/ethic_scripted_effects.txt。
+# 4.x 版本化后原版的 ethic_leader_creator / ethic_leader_hire_effect /
+# ethic_leader_kill_effect 三个 inline_script 已被删除，这里改用 4.5 的
+# create_country + create_species + create_leader + clone_leader 重写。
+
+# 王枫：在自动删除的临时国家里造一个“展示用”领袖，流放到全局事件目标上。
+# 招募窗口用 clone_leader 把他复制给玩家，从而不依赖旧版 ethic_leader_hire_effect。
+# scope: country（玩家）
+huazhang_create_wangfeng_leader = {
+	create_country = {
+		name = "NAME_Unknown"
+		type = global_event
+		auto_delete = yes
+		flag = {
+			icon = {
+				category = "red_dawn"
+				file = "red_dawn.dds"
+			}
+			background = {
+				category = "backgrounds"
+				file = "00_solid.dds"
+			}
+			colors = {
+				"red"
+				"red"
+				"null"
+				"null"
+			}
+		}
+		effect = {
+			save_event_target_as = wangfeng_display_country
+		}
+	}
+	event_target:wangfeng_display_country = {
+		create_species = {
+			name = "NAME_red_dawn"
+			class = PARAGON
+			portrait = wangfeng
+			namelist = "HUMAN1"
+			traits = {
+				trait = trait_pc_nuked_preference
+				trait = trait_cybernetic
+				trait = trait_psionic
+				trait = trait_erudite
+				trait = trait_cyborg_logic_engines
+				trait = trait_cyborg_enhanced_memory
+				trait = trait_cyborg_learning_algorithms
+			}
+			effect = {
+				save_event_target_as = wangfeng_species
+			}
+		}
+		create_leader = {
+			class = commander
+			tier = leader_tier_legendary
+			species = event_target:wangfeng_species
+			name = "NAME_Wangfeng"
+			skill = 5
+			gender = female
+			event_leader = no
+			skip_background_generation = yes
+			randomize_traits = no
+			custom_description = wangfeng1
+			custom_catch_phrase = wangfeng1_catch_phrase
+			background_ethic = ethic_egalitarian
+			hide_age = yes
+			traits = {
+				trait = subclass_commander_admiral
+				trait = leader_trait_red_dawn
+				trait = leader_trait_wangfeng_fleet
+				trait = leader_trait_wangfeng_ideology
+				trait = leader_trait_wangfeng_government
+				trait = leader_trait_wangfeng_produce
+			}
+			effect = {
+				change_leader_portrait = wangfeng
+				set_age = 17
+				set_leader_flag = legendary_leader
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = wangfeng
+				exile_leader_as = wangfeng_display_leader
+				save_global_event_target_as = renowned_wangfeng
+			}
+		}
+	}
+}
+
+# 赤色黎明“再起”：华章夺回知识管理员的数据库后，把对方改造成新赤色黎明文明。
+# scope: country（作为 red_dawn_enemy 的那一方，即被打穿的堕落帝国）
+red_dowm_redux = {
+	event_target:red_dawn_enemy = {
+		create_species = {
+			name = NAME_red_dawn
+			class = PARAGON
+			portrait = stardust_huazhang
+			namelist = "HUMAN1"
+			traits = {
+				trait = trait_pc_nuked_preference
+				trait = trait_cybernetic
+				trait = trait_psionic
+				trait = trait_erudite
+				trait = trait_cyborg_logic_engines
+				trait = trait_cyborg_enhanced_memory
+				trait = trait_cyborg_learning_algorithms
+			}
+			effect = {
+				save_event_target_as = huazhang_species_2
+			}
+		}
+		create_leader = {
+			class = scientist
+			tier = leader_tier_legendary
+			species = event_target:huazhang_species_2
+			name = "NAME_huazhang"
+			skill = 10
+			event_leader = yes
+			skip_background_generation = yes
+			randomize_traits = no
+			background_ethic = ethic_egalitarian
+			background_job = researcher
+			custom_catch_phrase = huazhang_leader_catch_phrase
+			custom_description = huazhang_leader_desc
+			gender = indeterminable
+			hide_age = yes
+			traits = {
+				trait = leader_trait_eci_legendary_leader
+				trait = leader_trait_academia_recruiter
+				trait = leader_trait_red_dawn
+				trait = leader_trait_huazhang
+				trait = leader_trait_consul_general
+				trait = leader_trait_home_guard
+			}
+			effect = {
+				change_leader_portrait = stardust_huazhang
+				set_age = 30
+				save_global_event_target_as = huazhang_2
+				set_leader_flag = legendary_leader
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = huazhang
+				set_owner = event_target:red_dawn_enemy
+			}
+		}
+
+		set_country_type = default
+		country_remove_ethic = ethic_xenophobe
+		shift_ethic = ethic_fanatic_egalitarian
+		shift_ethic = ethic_conciliationsm
+		change_government = {
+			authority = auth_democratic
+			cooldown = no
+			remove_invalid_civics = yes
+		}
+		force_remove_civic = civic_lethargic_leadership
+		force_remove_civic = civic_empire_in_decline
+		force_remove_civic = civic_revanchist_fervor
+		force_add_civic = civic_distribution_on_demand
+		force_add_civic = civic_shared_burden
+
+		set_empire_name = NAME_new_red_dawn
+		change_country_flag = {
+			icon = {
+				category = "red_dawn"
+				file = "red_dawn.dds"
+			}
+			background = {
+				category = "backgrounds"
+				file = "sinus.dds"
+			}
+			colors = {
+				"red"
+				"red"
+				"null"
+				"null"
+			}
+		}
+
+		set_leader = event_target:huazhang_2
+
+		add_tradition = tr_harmony_adopt
+		add_tradition = tr_harmony_the_greater_good
+		add_tradition = tr_harmony_kinship
+		add_tradition = tr_harmony_utopian_dream
+		add_tradition = tr_harmony_harmonious_directives
+		add_tradition = tr_harmony_mind_and_body
+		add_tradition = tr_harmony_finish
+
+		add_tradition = tr_right_adopt
+		add_tradition = tr_right_talent_promotion
+		add_tradition = tr_right_peoples_participation_in_politics
+		add_tradition = tr_right_natural_rights
+		add_tradition = tr_right_freedom_thought
+		add_tradition = tr_right_boundaries_of_freedom
+		add_tradition = tr_right_finish
+
+		add_tradition = tr_revolution_adopt
+		add_tradition = tr_revolution_army_of_peoples
+		add_tradition = tr_revolution_army_of_freedom
+		add_tradition = tr_revolution_army_of_democracy
+		add_tradition = tr_revolution_revolutionary_spirit
+		add_tradition = tr_revolution_revolutionary_propaganda
+		add_tradition = tr_revolution_finish
+
+		add_tradition = tr_future_adopt
+		add_tradition = tr_future_technology
+		add_tradition = tr_future_industry
+		add_tradition = tr_future_military
+		add_tradition = tr_future_society
+		add_tradition = tr_future_economy
+		add_tradition = tr_future_finish
+
+		add_resource = {
+			minerals = 99999
+			energy = 99999
+			food = 99999
+			alloys = 99999
+			consumer_goods = 99999
+			volatile_motes = 30000
+			exotic_gases = 30000
+			rare_crystals = 30000
+			sr_living_metal = 10000
+			sr_zro = 10000
+			sr_dark_matter = 10000
+			nanites = 10000
+			minor_artifacts = 1000
+			influence = 1000
+		}
+	}
+}
+
+# 华章送给玩家的“古代尖端技术战舰”。
+# scope: 玩家首都（planet）
+red_dowm_gift = {
+	create_fleet = {
+		name = "NAME_Laurel_Fleet"
+		effect = {
+			set_owner = event_target:red_dawn_enemy
+			while = {
+				count = 1
+				create_fallen_empire_titan = yes
+			}
+			while = {
+				count = 3
+				create_fallen_empire_large_ship = yes
+			}
+			while = {
+				count = 7
+				create_fallen_empire_small_ship = yes
+			}
+			set_location = {
+				target = event_target:huazhang_rest_area.capital_star
+				distance = 45
+				angle = random
+			}
+			set_owner = event_target:huazhang_rest_area
+		}
+	}
+}
+
+# 新赤色黎明向三个堕落帝国宣战。
+# scope: event_target:red_dawn_enemy（新赤色黎明）
+red_dowm_war = {
+	every_country = {
+		limit = {
+			is_fallen_empire_spiritualist = yes
+		}
+		save_global_event_target_as = decayed_fallen_empire_1
+	}
+	every_country = {
+		limit = {
+			is_fallen_empire_xenophile = yes
+		}
+		save_global_event_target_as = decayed_fallen_empire_2
+	}
+	every_country = {
+		limit = {
+			is_fallen_empire_xenophobe = yes
+		}
+		save_global_event_target_as = decayed_fallen_empire_3
+	}
+	declare_war = {
+		target = event_target:decayed_fallen_empire_1
+		attacker_war_goal = wg_galactic_revolution
+		name = "cb_galactic_revolution"
+	}
+	declare_war = {
+		target = event_target:decayed_fallen_empire_2
+		attacker_war_goal = wg_galactic_revolution
+		name = "cb_galactic_revolution"
+	}
+	declare_war = {
+		target = event_target:decayed_fallen_empire_3
+		attacker_war_goal = wg_galactic_revolution
+		name = "cb_galactic_revolution"
+	}
+}
