@@ -15,6 +15,7 @@ civic_ascensionists = {
 				text = civic_tooltip_spiritualist
 				value = ethic_spiritualist
 				value = ethic_fanatic_spiritualist
+				value = ethic_absolute_spiritualist
 			}
 		}
 		civics = {
@@ -66,6 +67,7 @@ civic_corporate_ascensionists = {
 				text = civic_tooltip_spiritualist
 				value = ethic_spiritualist
 				value = ethic_fanatic_spiritualist
+				value = ethic_absolute_spiritualist
 			}
 		}
 		civics = {
@@ -306,6 +308,7 @@ civic_death_cult_corporate = {
 				text = civic_tooltip_spiritualist
 				value = ethic_spiritualist
 				value = ethic_fanatic_spiritualist
+				value = ethic_absolute_spiritualist
 			}
 		}
 	}
@@ -319,7 +322,7 @@ civic_ultimate_collective = {
 	potential = {
 		always = no
 	}
-	alternate_civic_version = civic_dystopian_society
+	alternate_civic_version = civic_panoramic_prison
 	modifier = {
 		country_commander_cap_add = 1
 		leaders_upkeep_mult = -0.2
@@ -417,6 +420,7 @@ civic_corporate_dimensional_worship = {
 				text = civic_tooltip_spiritualist
 				value = ethic_spiritualist
 				value = ethic_fanatic_spiritualist
+				value = ethic_absolute_spiritualist
 			}
 		}
 	}
@@ -481,6 +485,7 @@ civic_corporate_guided_sapience = {
 				text = civic_tooltip_not_xenophobe
 				value = ethic_xenophobe
 				value = ethic_fanatic_xenophobe
+				value = ethic_absolute_xenophobe
 			}
 		}
 		civics = {
@@ -715,6 +720,7 @@ civic_entropy_drinkers_corporate = {
 				text = civic_tooltip_not_egalitarian
 				value = ethic_egalitarian
 				value = ethic_fanatic_egalitarian
+				value = ethic_absolute_egalitarian
 			}
 		}
 		civics = { NOT = { value = civic_memorialist } }
@@ -765,6 +771,7 @@ civic_corporate_superstitious_beliefs = {
 				text = civic_tooltip_spiritualist
 				value = ethic_spiritualist
 				value = ethic_fanatic_spiritualist
+				value = ethic_absolute_spiritualist
 			}
 		}
 		origin = {
@@ -865,7 +872,6 @@ civic_tankbound_corporate = {
 civic_corporate_galvanic_symbiosis = {
 	modification = {
 		add = { always = no }
-		remove = { always = no }
 	}
 	alternate_civic_version = civic_galvanic_symbiosis
 	playable = { has_infernals = yes }
@@ -897,7 +903,6 @@ civic_corporate_galvanic_symbiosis = {
 civic_corporate_world_forgers = {
 	modification = {
 		add = { always = no }
-		remove = { always = no }
 	}
 	alternate_civic_version = civic_world_forgers
 	playable = { has_infernals = yes }
@@ -942,7 +947,6 @@ civic_corporate_world_forgers = {
 civic_flight_schools = {
 	modification = {
 		add = { always = no }
-		remove = { always = no }
 	}
 	playable = { has_nomads_dlc = yes }
 	ai_playable = { has_nomads_dlc = yes }
@@ -970,5 +974,160 @@ civic_flight_schools = {
 	modifier = {
 		weapon_type_strike_craft_speed_mult = 0.1
 		ship_speed_mult = 0.2
+	}
+}
+
+# ===== 4.6 本体块回填（源 common/governments/civics/00_civics.txt）=====
+civic_warmongers = {
+	playable = { has_force_of_will_dlc = yes }
+	ai_playable = { has_force_of_will_dlc = yes }
+	potential = { always = no }
+	possible = {}
+
+	description = civic_warmongers_effects
+
+	triggered_country_modifier = {
+		potential = {
+			is_at_war_with_equivalent_or_stronger_empire = no
+		}
+		planet_pops_upkeep_mult = @warmongers_pop_upkeep_penalty
+		show_if_trigger_false = yes
+		trigger_false_key_override = civic_warmongers_modifier_trigger_tt
+		trigger_true_key_override = civic_warmongers_modifier_trigger_tt
+	}
+
+	alternate_civic_version = civic_warmongers_corporate
+	modification = {
+		add = { always = no }
+	}
+}
+
+civic_open_stars_sovereignty = {
+	playable = { has_force_of_will_dlc = yes }
+	ai_playable = { has_force_of_will_dlc = yes }
+	description = "civic_open_stars_sovereignty_effects"
+	potential = { always = no }
+	possible = {}
+
+	alternate_civic_version = civic_corporate_open_stars_sovereignty
+	modification = {
+		add = { always = no }
+	}
+
+	random_weight = {
+		base = @civic_default_random_weight
+	}
+
+	modifier = {
+		migration_pacts_influence_upkeep_mult = -0.25
+		planet_resettlement_unemployed_destination_mult = 0.5
+		refugee_attraction = 0.6
+	}
+
+	triggered_country_modifier = {
+		country_society_research_produces_mult = 0.01
+		mult = value:species_in_empire
+		fix_key = species_in_empire
+		should_mult_desc = no
+	}
+
+	triggered_country_modifier = {
+		planet_stability_add = -10
+		intel_encryption_add = -1
+	}
+
+	triggered_planet_modifier = {
+		pop_happiness = @open_stars_happiness_per_species_planet
+		mult = value:species_on_planet_capped|MAX|@open_stars_happiness_per_species_planet_cap|
+		fix_key = open_stars_species_on_planet_capped
+		should_mult_desc = no
+	}
+
+	swap_type = {
+		description = "civic_open_stars_sovereignty_nomads_effects"
+
+		trigger = {
+			exists = this
+			is_nomadic = yes
+		}
+	}
+}
+
+civic_path_of_the_self = {
+	playable = { has_force_of_will_dlc = yes }
+	ai_playable = { has_force_of_will_dlc = yes }
+	potential = { always = no }
+	possible = {}
+
+	description = civic_path_of_the_self_effects
+
+	modifier = {
+		megastructures_galactic_halls_cost_mult = -0.25
+		num_tech_alternatives_add = -1
+	}
+
+	alternate_civic_version = civic_path_of_the_self_corporate
+	modification = {
+		add = { always = no }
+	}
+}
+
+civic_social_concord = {
+	playable = { has_force_of_will_dlc = yes }
+	ai_playable = { has_force_of_will_dlc = yes }
+	potential = { always = no }
+	possible = {}
+
+	description = civic_social_concord_effects
+
+	modifier = {
+		military_ship_unity_per_size_upkeep_add = 0.1
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_at_war = no
+		}
+		custom_tooltip = civic_social_concord_modifier_tt
+		show_if_trigger_false = yes
+		show_trigger_if_false = yes
+		country_unity_produces_mult = @social_concord_not_at_war_unity
+		country_influence_produces_mult = @social_concord_not_at_war_influence
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			are_galcom_members_at_peace = yes
+		}
+		custom_tooltip = civic_social_concord_galcom_modifier_tt
+		show_if_trigger_false = yes
+		planet_stability_add = @social_concord_galcom_planet_stability
+		pop_ethic_pacifist_attraction_mult = @social_concord_galcom_pop_ethic_pacifist_attraction_mult
+		all_technology_research_speed = @social_concord_galcom_all_technology_research_speed
+	}
+
+	alternate_civic_version = civic_social_concord_corporate
+	modification = {
+		add = { always = no }
+	}
+}
+
+civic_megacity_architects = {
+	playable = { has_force_of_will_dlc = yes }
+	ai_playable = { has_force_of_will_dlc = yes }
+	potential = { always = no }
+	possible = {}
+
+	description = civic_megacity_architects_effects
+
+	modifier = {
+		planetary_ascension_cost_mult = 0.25
+		add_attunement_the_instrument_of_desire = @civic_attunement1
+		civic_megacity_architects_ideological_reach_mult = 0.25
+	}
+
+	alternate_civic_version = civic_megacity_architects_corporate
+	modification = {
+		add = { always = no }
 	}
 }

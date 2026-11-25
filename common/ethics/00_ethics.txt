@@ -1,10 +1,40 @@
-ethic_fanatic_authoritarian = {
-	cost = 2
+ethic_absolute_authoritarian = {
+	cost = 3
 	category = "col"
 	category_value = 0
 
 	use_for_pops = no
 
+	fanatic_variant = ethic_fanatic_authoritarian
+	regular_variant = ethic_authoritarian
+
+	country_modifier = {
+		edicts_upkeep_mult = -0.50
+		country_trade_produces_mult = 0.50
+		pop_category_rulers_upkeep_mult = 0.50
+		add_attunement_the_instrument_of_desire = @ethic_attunement4
+	}
+
+	tags = {
+		ETHIC_ALLOWS_CRUSHING
+		ETHIC_ONLY_AUTOCRACY
+		ETHIC_ALLOWS_STRATIFIED_SOCIETY
+		ETHIC_AUTHORITARIAN_UNITY
+		ETHIC_ALLOWS_SLAVEOWNER
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_authoritarian = {
+	cost = 2
+	category = "col"
+	category_value = 1
+
+	use_for_pops = no
+
+	absolute_variant = ethic_absolute_authoritarian
 	regular_variant = ethic_authoritarian
 
 	country_modifier = {
@@ -33,8 +63,9 @@ ethic_fanatic_authoritarian = {
 ethic_authoritarian = {
 	cost = 1
 	category = "col"
-	category_value = 1
+	category_value = 2
 
+	absolute_variant = ethic_absolute_authoritarian
 	fanatic_variant = ethic_fanatic_authoritarian
 
 	country_modifier = {
@@ -70,7 +101,10 @@ ethic_authoritarian = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_authoritarian = no
-			has_faction = totalitarian
+			OR = {
+				has_faction = totalitarian
+				has_faction_with_ethic = ethic_authoritarian
+			}
 		}
 	}
 
@@ -249,6 +283,7 @@ ethic_authoritarian = {
 				is_country_type = default
 				has_ethic = ethic_authoritarian
 				has_ethic = ethic_fanatic_authoritarian
+				has_ethic = ethic_absolute_authoritarian
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -256,6 +291,7 @@ ethic_authoritarian = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_authoritarian
 								has_ethic = ethic_fanatic_authoritarian
 								has_ethic = ethic_authoritarian
 							}
@@ -265,6 +301,15 @@ ethic_authoritarian = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_authoritarian }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -287,7 +332,10 @@ ethic_authoritarian = {
 			factor = 2
 			is_country_type = default
 			is_authoritarian = no
-			has_faction = totalitarian
+			OR = {
+				has_faction = totalitarian
+				has_faction_with_ethic = ethic_authoritarian
+			}
 		}
 		modifier = {
 			exists = overlord
@@ -309,6 +357,10 @@ ethic_authoritarian = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_authoritarian
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_authoritarian
 		}
 		modifier = {
 			factor = 1.25
@@ -418,13 +470,44 @@ ethic_authoritarian = {
 	}
 }
 
-ethic_fanatic_egalitarian = {
-	cost = 2
+ethic_absolute_egalitarian = {
+	cost = 3
 	category = "col"
-	category_value = 4
+	category_value = 6
 
 	category_opposite = yes
 
+	fanatic_variant = ethic_fanatic_egalitarian
+	regular_variant = ethic_egalitarian
+
+	use_for_pops = no
+
+	tags = {
+		ETHIC_ONLY_DEMOCRACY
+		ETHIC_EGALITARIAN_UNITY
+		ethic_egalitarian_UNITY
+		ETHIC_ALLOWS_SHARED_BURDEN
+	}
+
+	country_modifier = {
+		pop_category_rulers_upkeep_mult = -0.5
+		planet_resettlement_unemployed_mult = 2
+		empire_size_pops_mult = 0.5
+		add_attunement_the_composer_of_strands = @ethic_attunement4
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_egalitarian = {
+	cost = 2
+	category = "col"
+	category_value = 5
+
+	category_opposite = yes
+
+	absolute_variant = ethic_absolute_egalitarian
 	regular_variant = ethic_egalitarian
 
 	use_for_pops = no
@@ -447,7 +530,7 @@ ethic_fanatic_egalitarian = {
 		clerk = 50
 		miner = 50
 		crystal_miner = 50
-		farmer = 50
+		farmer = 50 # 与原版 farmer 岗位内置 leader_background_weight 叠加（civic_agrarian_idyll 时 +50），非重复定义
 		preacher = 50
 		scrap_miner = 50
 	}
@@ -459,8 +542,9 @@ ethic_fanatic_egalitarian = {
 ethic_egalitarian = {
 	cost = 1
 	category = "col"
-	category_value = 3
+	category_value = 4
 
+	absolute_variant = ethic_absolute_egalitarian
 	fanatic_variant = ethic_fanatic_egalitarian
 
 	category_opposite = yes
@@ -482,7 +566,7 @@ ethic_egalitarian = {
 		clerk = 25
 		miner = 25
 		crystal_miner = 25
-		farmer = 25
+		farmer = 25 # 与原版 farmer 岗位内置 leader_background_weight 叠加（civic_agrarian_idyll 时 +50），非重复定义
 		preacher = 25
 		scrap_miner = 25
 	}
@@ -502,7 +586,10 @@ ethic_egalitarian = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_egalitarian = no
-			has_faction = progressive
+			OR = {
+				has_faction = progressive
+				has_faction_with_ethic = ethic_egalitarian
+			}
 		}
 	}
 
@@ -658,6 +745,7 @@ ethic_egalitarian = {
 				is_country_type = default
 				has_ethic = ethic_egalitarian
 				has_ethic = ethic_fanatic_egalitarian
+				has_ethic = ethic_absolute_egalitarian
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -665,6 +753,7 @@ ethic_egalitarian = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_egalitarian
 								has_ethic = ethic_fanatic_egalitarian
 								has_ethic = ethic_egalitarian
 							}
@@ -674,6 +763,15 @@ ethic_egalitarian = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_egalitarian }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -696,7 +794,10 @@ ethic_egalitarian = {
 			factor = 2
 			is_country_type = default
 			is_egalitarian = no
-			has_faction = progressive
+			OR = {
+				has_faction = progressive
+				has_faction_with_ethic = ethic_egalitarian
+			}
 		}
 		modifier = {
 			factor = 2
@@ -705,6 +806,10 @@ ethic_egalitarian = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_egalitarian
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_egalitarian
 		}
 		modifier = {
 			exists = overlord
@@ -795,8 +900,8 @@ ethic_egalitarian = {
 	}
 }
 
-ethic_fanatic_xenophobe = {
-	cost = 2
+ethic_absolute_xenophobe = {
+	cost = 3
 	category = "xen"
 	category_value = 0
 
@@ -804,6 +909,50 @@ ethic_fanatic_xenophobe = {
 
 	use_for_pops = no
 
+	fanatic_variant = ethic_fanatic_xenophobe
+	regular_variant = ethic_xenophobe
+
+	tags = {
+		ETHIC_XENOPHOBE_UNITY
+		ETHIC_ALLOWS_PURGE
+		ETHIC_ALLOWS_NATIVE_SUPREMACY
+	}
+
+	country_modifier = {
+		ship_home_territory_fire_rate_mult = 0.5
+		founder_species_growth_mult = 0.5
+		diplomacy_upkeep_mult = 1
+		add_attunement_the_eater_of_worlds = @ethic_attunement4
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_starbase_influence_cost_mult = -0.6
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		megastructures_arkships_influence_cost_mult = -0.15
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_xenophobe = {
+	cost = 2
+	category = "xen"
+	category_value = 1
+
+	xenophobe = yes #used for a few hardcoded checks (mainly tooltips)
+
+	use_for_pops = no
+
+	absolute_variant = ethic_absolute_xenophobe
 	regular_variant = ethic_xenophobe
 
 	tags = {
@@ -836,10 +985,11 @@ ethic_fanatic_xenophobe = {
 ethic_xenophobe = {
 	cost = 1
 	category = "xen"
-	category_value = 1
+	category_value = 2
 
 	xenophobe = yes #used for a few hardcoded checks (mainly tooltips)
 
+	absolute_variant = ethic_absolute_xenophobe
 	fanatic_variant = ethic_fanatic_xenophobe
 
 	tags = {
@@ -879,6 +1029,7 @@ ethic_xenophobe = {
 			OR = {
 				has_faction = supremacist
 				has_faction = isolationist
+				has_faction_with_ethic = ethic_xenophobe
 			}
 		}
 	}
@@ -1085,6 +1236,7 @@ ethic_xenophobe = {
 				is_country_type = default
 				has_ethic = ethic_xenophobe
 				has_ethic = ethic_fanatic_xenophobe
+				has_ethic = ethic_absolute_xenophobe
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -1092,6 +1244,7 @@ ethic_xenophobe = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_xenophobe
 								has_ethic = ethic_fanatic_xenophobe
 								has_ethic = ethic_xenophobe
 							}
@@ -1107,6 +1260,7 @@ ethic_xenophobe = {
 			OR = {
 				has_faction = supremacist
 				has_faction = isolationist
+				has_faction_with_ethic = ethic_xenophobe
 			}
 		}
 
@@ -1117,6 +1271,10 @@ ethic_xenophobe = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_xenophobe
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_xenophobe
 		}
 		modifier = {
 			exists = overlord
@@ -1177,6 +1335,15 @@ ethic_xenophobe = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_xenophobe }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -1268,15 +1435,48 @@ ethic_xenophobe = {
 	}
 }
 
-ethic_fanatic_xenophile = {
-	cost = 2
+ethic_absolute_xenophile = {
+	cost = 3
 	category = "xen"
-	category_value = 4
+	category_value = 6
 
 	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
 
 	category_opposite = yes
 
+	fanatic_variant = ethic_fanatic_xenophile
+	regular_variant = ethic_xenophile
+
+	use_for_pops = no
+
+	tags = {
+		ETHIC_XENOPHILE_UNITY
+		ETHIC_XENOPHILE_INSIGHT_GAIN
+		ETHIC_XENOPHILE_ALLOWS_STRATIFIED_STANDARD_GOOD
+		abs_xenophile_council_species_councilor_skill
+	}
+
+	country_modifier = {
+		envoys_add = 5
+		diplomacy_upkeep_mult = -1
+		max_rivalries = -5
+		add_attunement_the_cradle_of_souls = @ethic_attunement4
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_xenophile = {
+	cost = 2
+	category = "xen"
+	category_value = 5
+
+	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
+
+	category_opposite = yes
+
+	absolute_variant = ethic_absolute_xenophile
 	regular_variant = ethic_xenophile
 
 	use_for_pops = no
@@ -1307,12 +1507,13 @@ ethic_fanatic_xenophile = {
 ethic_xenophile = {
 	cost = 1
 	category = "xen"
-	category_value = 3
+	category_value = 4
 
 	xenophile = yes #used for a few hardcoded checks (mainly tooltips)
 
 	category_opposite = yes
 
+	absolute_variant = ethic_absolute_xenophile
 	fanatic_variant = ethic_fanatic_xenophile
 
 	tags = {
@@ -1348,7 +1549,10 @@ ethic_xenophile = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_xenophile = no
-			has_faction = xenoist
+			OR = {
+				has_faction = xenoist
+				has_faction_with_ethic = ethic_xenophile
+			}
 		}
 	}
 
@@ -1543,6 +1747,7 @@ ethic_xenophile = {
 				is_country_type = default
 				has_ethic = ethic_xenophile
 				has_ethic = ethic_fanatic_xenophile
+				has_ethic = ethic_absolute_xenophile
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -1550,6 +1755,7 @@ ethic_xenophile = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_xenophile
 								has_ethic = ethic_fanatic_xenophile
 								has_ethic = ethic_xenophile
 							}
@@ -1562,7 +1768,10 @@ ethic_xenophile = {
 			factor = 2
 			is_country_type = default
 			is_xenophile = no
-			has_faction = xenoist
+			OR = {
+				has_faction = xenoist
+				has_faction_with_ethic = ethic_xenophile
+			}
 		}
 		modifier = {
 			factor = 2
@@ -1571,6 +1780,10 @@ ethic_xenophile = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_xenophile
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_xenophile
 		}
 		modifier = {
 			exists = overlord
@@ -1622,6 +1835,15 @@ ethic_xenophile = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_xenophile }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -1711,13 +1933,56 @@ ethic_xenophile = {
 	}
 }
 
-ethic_fanatic_militarist = {
-	cost = 2
+ethic_absolute_militarist = {
+	cost = 3
 	category = "mil"
 	category_value = 0
 
 	use_for_pops = no
 
+	regular_variant = ethic_militarist
+	fanatic_variant = ethic_fanatic_militarist
+
+	tags = {
+		ETHIC_ALLOW_NO_RETREAT
+		ETHIC_MILITARIST_UNITY
+		ETHIC_ALLOW_UNRESTRICTED_WARS_ECI
+		ETHIC_ALLOW_FIRST_STRIKE
+	}
+
+	country_modifier = {
+		country_war_exhaustion_mult = -0.5
+		country_naval_cap_mult = 0.5
+		country_trust_cap_add = -50
+		add_attunement_the_eater_of_worlds = @ethic_attunement4
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_claim_influence_cost_mult = -0.3
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		scavenge_debris_mult = 0.15
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_militarist = {
+	cost = 2
+	category = "mil"
+	category_value = 1
+
+	use_for_pops = no
+
+	absolute_variant = ethic_absolute_militarist
 	regular_variant = ethic_militarist
 
 	tags = {
@@ -1747,8 +2012,9 @@ ethic_fanatic_militarist = {
 ethic_militarist = {
 	cost = 1
 	category = "mil"
-	category_value = 1
+	category_value = 2
 
+	absolute_variant = ethic_absolute_militarist
 	fanatic_variant = ethic_fanatic_militarist
 
 	tags = {
@@ -1785,7 +2051,10 @@ ethic_militarist = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_militarist = no
-			has_faction = imperialist
+			OR = {
+				has_faction = imperialist
+				has_faction_with_ethic = ethic_militarist
+			}
 		}
 	}
 
@@ -2005,6 +2274,7 @@ ethic_militarist = {
 				is_country_type = default
 				has_ethic = ethic_militarist
 				has_ethic = ethic_fanatic_militarist
+				has_ethic = ethic_absolute_militarist
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -2012,6 +2282,7 @@ ethic_militarist = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_militarist
 								has_ethic = ethic_fanatic_militarist
 								has_ethic = ethic_militarist
 							}
@@ -2025,7 +2296,10 @@ ethic_militarist = {
 			factor = 2
 			is_country_type = default
 			is_militarist = no
-			has_faction = imperialist
+			OR = {
+				has_faction = imperialist
+				has_faction_with_ethic = ethic_militarist
+			}
 		}
 
 		modifier = {
@@ -2044,6 +2318,10 @@ ethic_militarist = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_militarist
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_militarist
 		}
 
 		modifier = {
@@ -2140,6 +2418,15 @@ ethic_militarist = {
 
 		# Effects of indoctrination mission
 		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_militarist }
+			}
+		}
+		modifier = {
 			factor = 20
 			is_country_type = primitive
 			has_country_flag = preftl_societal_enlightenment_pact
@@ -2223,13 +2510,57 @@ ethic_militarist = {
 	}
 }
 
-ethic_fanatic_pacifist = {
-	cost = 2
+ethic_absolute_pacifist = {
+	cost = 3
 	category = "mil"
-	category_value = 4
+	category_value = 6
 
 	category_opposite = yes
 
+	fanatic_variant = ethic_fanatic_pacifist
+	regular_variant = ethic_pacifist
+
+	use_for_pops = no
+
+	tags = {
+		ETHIC_PACIFIST_UNITY
+		ETHIC_PACIFIST_DEFENSIVE_WARS
+		ETHIC_DISALLOW_OFFENSIVE_WARS
+		abs_pacifist_stability_job_output
+	}
+
+	country_modifier = {
+		divided_patrongage_max_subjects = 5
+		country_war_exhaustion_mult = 0.5
+		add_attunement_the_cradle_of_souls = @ethic_attunement4
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = no
+		}
+		country_border_friction_mult = -1
+	}
+
+	triggered_country_modifier = {
+		potential = {
+			is_nomadic = yes
+		}
+		unlicensed_waystations_scaling_mult = -1
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_pacifist = {
+	cost = 2
+	category = "mil"
+	category_value = 5
+
+	category_opposite = yes
+
+	absolute_variant = ethic_absolute_pacifist
 	regular_variant = ethic_pacifist
 
 	use_for_pops = no
@@ -2277,10 +2608,11 @@ ethic_fanatic_pacifist = {
 ethic_pacifist = {
 	cost = 1
 	category = "mil"
-	category_value = 3
+	category_value = 4
 
 	category_opposite = yes
 
+	absolute_variant = ethic_absolute_pacifist
 	fanatic_variant = ethic_fanatic_pacifist
 
 	country_modifier = {
@@ -2333,7 +2665,10 @@ ethic_pacifist = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_pacifist = no
-			has_faction = prosperity
+			OR = {
+				has_faction = prosperity
+				has_faction_with_ethic = ethic_pacifist
+			}
 		}
 	}
 
@@ -2463,6 +2798,7 @@ ethic_pacifist = {
 				is_country_type = default
 				has_ethic = ethic_pacifist
 				has_ethic = ethic_fanatic_pacifist
+				has_ethic = ethic_absolute_pacifist
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -2470,6 +2806,7 @@ ethic_pacifist = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_pacifist
 								has_ethic = ethic_fanatic_pacifist
 								has_ethic = ethic_pacifist
 							}
@@ -2482,7 +2819,10 @@ ethic_pacifist = {
 			factor = 2
 			is_country_type = default
 			is_pacifist = no
-			has_faction = prosperity
+			OR = {
+				has_faction = prosperity
+				has_faction_with_ethic = ethic_pacifist
+			}
 		}
 		modifier = {
 			factor = 1.5
@@ -2500,6 +2840,10 @@ ethic_pacifist = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_pacifist
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_pacifist
 		}
 		modifier = {
 			exists = overlord
@@ -2547,6 +2891,15 @@ ethic_pacifist = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_pacifist }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -2621,11 +2974,39 @@ ethic_pacifist = {
 	}
 }
 
-ethic_fanatic_spiritualist = {
-	cost = 2
+ethic_absolute_spiritualist = {
+	cost = 3
 	category = "spi"
 	category_value = 0
 
+	fanatic_variant = ethic_fanatic_spiritualist
+	regular_variant = ethic_spiritualist
+
+	use_for_pops = no
+
+	tags = {
+		ETHIC_SPIRITUALIST_PRIEST
+		ETHIC_ALLOWS_TEMPLE
+		ETHIC_SPIRITUALIST_TEMPLE
+	}
+
+	country_modifier = {
+		country_traditions_unity_cost_mult = -0.5
+		pop_government_ethic_attraction = 0.50
+		all_technology_research_speed = -0.2
+		add_attunement_the_composer_of_strands = @ethic_attunement4
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
+ethic_fanatic_spiritualist = {
+	cost = 2
+	category = "spi"
+	category_value = 1
+
+	absolute_variant = ethic_absolute_spiritualist
 	regular_variant = ethic_spiritualist
 
 	use_for_pops = no
@@ -2655,8 +3036,9 @@ ethic_fanatic_spiritualist = {
 ethic_spiritualist = {
 	cost = 1
 	category = "spi"
-	category_value = 1
+	category_value = 2
 
+	absolute_variant = ethic_absolute_spiritualist
 	fanatic_variant = ethic_fanatic_spiritualist
 
 	tags = {
@@ -2691,7 +3073,10 @@ ethic_spiritualist = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_spiritualist = no
-			has_faction = traditionalist
+			OR = {
+				has_faction = traditionalist
+				has_faction_with_ethic = ethic_spiritualist
+			}
 		}
 	}
 
@@ -2838,6 +3223,7 @@ ethic_spiritualist = {
 				is_country_type = default
 				has_ethic = ethic_spiritualist
 				has_ethic = ethic_fanatic_spiritualist
+				has_ethic = ethic_absolute_spiritualist
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -2845,6 +3231,7 @@ ethic_spiritualist = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_spiritualist
 								has_ethic = ethic_fanatic_spiritualist
 								has_ethic = ethic_spiritualist
 							}
@@ -2854,6 +3241,15 @@ ethic_spiritualist = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_spiritualist }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -2876,7 +3272,10 @@ ethic_spiritualist = {
 			factor = 2
 			is_country_type = default
 			is_spiritualist = no
-			has_faction = traditionalist
+			OR = {
+				has_faction = traditionalist
+				has_faction_with_ethic = ethic_spiritualist
+			}
 		}
 		modifier = {
 			factor = 1.5
@@ -2903,6 +3302,10 @@ ethic_spiritualist = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_spiritualist
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_spiritualist
 		}
 		modifier = {
 			factor = 1.1
@@ -2978,11 +3381,41 @@ ethic_spiritualist = {
 	}
 }
 
+ethic_absolute_materialist = {
+	cost = 3
+	category = "spi"
+	category_value = 6
+
+	fanatic_variant = ethic_fanatic_materialist
+	regular_variant = ethic_materialist
+
+	category_opposite = yes
+
+	use_for_pops = no
+
+	tags = {
+		ETHIC_MATERIALIST_UNITY
+		ETHIC_ALLOWS_ACADEMIC_PRIVILEGE
+		ETHIC_MACHINE_UPRISING_POPS_WORKFORCE
+	}
+
+	country_modifier = {
+		planet_jobs_specialist_produces_mult = 0.3
+		all_technology_research_speed = 0.2
+		planet_pops_unity_upkeep_mult = 0.5
+		add_attunement_the_instrument_of_desire = @ethic_attunement4
+	}
+
+	random_weight = {
+		base = 0 # Absolute ethics aren't randomized
+	}
+}
 ethic_fanatic_materialist = {
 	cost = 2
 	category = "spi"
-	category_value = 4
+	category_value = 5
 
+	absolute_variant = ethic_absolute_materialist
 	regular_variant = ethic_materialist
 
 	category_opposite = yes
@@ -3016,8 +3449,9 @@ ethic_fanatic_materialist = {
 ethic_materialist = {
 	cost = 1
 	category = "spi"
-	category_value = 3
+	category_value = 4
 
+	absolute_variant = ethic_absolute_materialist
 	fanatic_variant = ethic_fanatic_materialist
 
 	category_opposite = yes
@@ -3056,7 +3490,10 @@ ethic_materialist = {
 		desc = POP_ATTRACTION_FACTION_POS
 		trigger = {
 			is_materialist = no
-			has_faction = technologist
+			OR = {
+				has_faction = technologist
+				has_faction_with_ethic = ethic_materialist
+			}
 		}
 	}
 
@@ -3223,6 +3660,7 @@ ethic_materialist = {
 				is_country_type = default
 				has_ethic = ethic_materialist
 				has_ethic = ethic_fanatic_materialist
+				has_ethic = ethic_absolute_materialist
 				AND = {
 					is_country_type = primitive
 					has_country_flag = preftl_societal_enlightenment_pact
@@ -3230,6 +3668,7 @@ ethic_materialist = {
 						has_observation_outpost = yes
 						observation_outpost_owner = {
 							OR = {
+								has_ethic = ethic_absolute_materialist
 								has_ethic = ethic_fanatic_materialist
 								has_ethic = ethic_materialist
 							}
@@ -3239,6 +3678,15 @@ ethic_materialist = {
 			}
 		}
 		# Effects of indoctrination mission
+		modifier = {
+			factor = 30
+			is_country_type = primitive
+			has_country_flag = preftl_societal_enlightenment_pact
+			capital_scope = {
+				has_observation_outpost = yes
+				observation_outpost_owner = { has_ethic = ethic_absolute_materialist }
+			}
+		}
 		modifier = {
 			factor = 20
 			is_country_type = primitive
@@ -3261,7 +3709,10 @@ ethic_materialist = {
 			factor = 2
 			is_country_type = default
 			is_materialist = no
-			has_faction = technologist
+			OR = {
+				has_faction = technologist
+				has_faction_with_ethic = ethic_materialist
+			}
 		}
 
 		modifier = {
@@ -3278,6 +3729,10 @@ ethic_materialist = {
 		modifier = {
 			factor = 3
 			has_ethic = ethic_fanatic_materialist
+		}
+		modifier = {
+			factor = 4
+			has_ethic = ethic_absolute_materialist
 		}
 		modifier = {
 			factor = 1.25

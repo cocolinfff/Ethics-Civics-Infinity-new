@@ -73,17 +73,7 @@ bureaucrat = {
             condition_string = SPECIALIST_JOB_TRIGGER
             weight = 25
         }
-        swap_type = {
-            trigger = {
-                bureaucrat_is_culture_worker = yes
-            }
-            name = culture_worker
-            desc = culture_worker
-            icon = culture_worker
-            building_icon = building_artist_patron
-            condition_string = SPECIALIST_JOB_TRIGGER
-            weight = 30
-        }
+        # 4.6：bureaucrat_is_culture_worker 触发器已移除（culture_worker 改为独立岗位），原 swap_type 废弃
         swap_type = {
             trigger = {
                 bureaucrat_is_death_priest = yes
@@ -582,16 +572,7 @@ bureaucrat = {
             }
             unity = 2
         }
-        produces = {
-            trigger = {
-                bureaucrat_is_culture_worker = yes
-                owner? = {
-                    has_valid_civic = civic_spirit_of_kneeling
-                    has_modifier = overlord_ethics_compatibility
-                }
-            }
-            trade = 5
-        }
+        # 4.6：bureaucrat_is_culture_worker 已移除；原「跪拜精神 + 霸主伦理兼容 -> 贸易额 +5」逻辑废弃
         # Job Swap - Superstitious Beliefs
         produces = {
             trigger = {
@@ -700,13 +681,7 @@ bureaucrat = {
         planet_amenities_add = 200
         mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
     }
-    triggered_planet_modifier = {
-        potential = {
-            bureaucrat_is_culture_worker = yes
-        }
-        planet_amenities_add = 300
-        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-    }
+    # 4.6：bureaucrat_is_culture_worker 已移除；原「文化工作者形态官僚 +300 舒适度」逻辑废弃
 
     inline_script = "jobs/ethic_job_modifiers_memorialist"
 
@@ -719,12 +694,7 @@ bureaucrat = {
     }
 
     ## Ethics Attraction
-    triggered_planet_modifier = {
-        potential = {
-            bureaucrat_is_culture_worker = yes
-        }
-        pop_government_ethic_attraction = 0.10
-    }
+    # 4.6：bureaucrat_is_culture_worker 已移除；原「文化工作者形态官僚 +0.10 政府伦理吸引力」逻辑废弃
     triggered_planet_modifier = {
         potential = {
             OR = {
@@ -823,7 +793,13 @@ bureaucrat = {
     # planetary_ascension_effect_mult 属于 Countries 类别，必须用 triggered_country_modifier
     triggered_country_modifier = {
         potential = {
-            owner? = { has_ethic = ethic_fanatic_spiritualist }
+            owner? = {
+            	OR = {
+            		has_ethic = ethic_fanatic_spiritualist
+            		has_ethic = ethic_absolute_spiritualist
+            	}
+            }
+
             OR = {
                 bureaucrat_is_priest = yes
                 bureaucrat_is_preacher = yes
@@ -839,6 +815,7 @@ bureaucrat = {
                 OR = {
                     has_ethic = ethic_spiritualist
                     has_ethic = ethic_pragmatism
+                    has_ethic = ethic_absolute_spiritualist
                 }
             }
             OR = {
@@ -974,16 +951,7 @@ bureaucrat = {
         planet_pops_trade_produces_mult = 0.05
         mult = value_num_rival_country
     }
-    triggered_planet_modifier = {
-        potential = {
-            owner? = {
-                has_valid_civic = civic_art_country
-            }
-            bureaucrat_is_culture_worker = yes
-        }
-        planet_amenities_add = 500
-        mult = value:scripted_modifier_mult|MODIFIER|pop_job_amenities_mult|
-    }
+    # 4.6：bureaucrat_is_culture_worker 已移除；原「艺术国家 + 文化工作者形态官僚 +500 舒适度」逻辑废弃
 
     triggered_planet_modifier = {
         potential = {
@@ -1566,7 +1534,7 @@ knight = {
         }
         OR = {
             is_enslaved = no
-            owner = { has_valid_civic = civic_du_contrat_social }
+            owner = { has_valid_civic = civic_shared_burden }
             owner = { has_valid_civic = civic_flower_of_evil }
         }
     }
@@ -1622,7 +1590,7 @@ knight = {
             owner? = {
                 has_country_flag = toxoids_7090_a
                 NOT = {
-                    has_valid_civic = civic_dystopian_society
+                    has_valid_civic = civic_panoramic_prison
                 }
             }
         }
@@ -1691,7 +1659,7 @@ soldier = {
 
     triggered_planet_modifier = {
         potential = {
-            owner? = { has_valid_civic = civic_having_a_national_army }
+            owner? = { has_valid_civic = civic_warmongers_corporate }
         }
         pop_cat_worker_bonus_workforce_mult = 0.01
     }
