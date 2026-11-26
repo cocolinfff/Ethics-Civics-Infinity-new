@@ -44,7 +44,14 @@ msi_dsai_ms_init = {
 		set_variable = { which = msi_dsai_ms_planets_4 value = 0 }
 		set_variable = { which = msi_dsai_ms_planets_5 value = 0 }
 
-		set_variable = { which = msi_dsai_ms_chair value = 1 }
+		# 和平共处起源：母星割据格局下由人民阵线担任轮值主席
+		if = {
+			limit = { has_origin = origin_advanced_start_independent }
+			set_variable = { which = msi_dsai_ms_chair value = 2 }
+		}
+		else = {
+			set_variable = { which = msi_dsai_ms_chair value = 1 }
+		}
 		set_variable = { which = msi_dsai_ms_chair_timer value = 0 }
 
 		# 母星（首都）拥有全部五个成员国的主权修正
@@ -514,7 +521,22 @@ msi_dsai_ms_planet_assign_selected = {
 }
 
 # ---------------------------------------------------------------------------
+# 轮值主席跳过：若当前主席国被首都割据地块封锁，则顺延一位
+# ---------------------------------------------------------------------------
+msi_dsai_ms_chair_skip = {
+	if = {
+		limit = { msi_dsai_ms_chair_blocked = yes }
+		change_variable = { which = msi_dsai_ms_chair value = 1 }
+		if = {
+			limit = { check_variable = { which = msi_dsai_ms_chair value > 5 } }
+			set_variable = { which = msi_dsai_ms_chair value = 1 }
+		}
+	}
+}
+
+# ---------------------------------------------------------------------------
 # 轮值主席推进：每年 +1，满 10 年顺延到下一国（1→2→…→5→1）
+# 顺延后跳过被首都割据地块封锁的成员国（最多检查 5 次，覆盖连续封锁）
 # ---------------------------------------------------------------------------
 msi_dsai_ms_chair_advance = {
 	change_variable = { which = msi_dsai_ms_chair_timer value = 1 }
@@ -526,6 +548,11 @@ msi_dsai_ms_chair_advance = {
 			limit = { check_variable = { which = msi_dsai_ms_chair value > 5 } }
 			set_variable = { which = msi_dsai_ms_chair value = 1 }
 		}
+		msi_dsai_ms_chair_skip = yes
+		msi_dsai_ms_chair_skip = yes
+		msi_dsai_ms_chair_skip = yes
+		msi_dsai_ms_chair_skip = yes
+		msi_dsai_ms_chair_skip = yes
 	}
 }
 
@@ -658,7 +685,6 @@ msi_dsai_ms_woo_apply = {
 	add_resource = { influence = -200 }
 	add_modifier = { modifier = msi_dsai_ms_wooed days = 1800 }
 	msi_dsai_ms_sat_sync = yes
-	country_event = { id = msi_ms.10 }
 }
 
 # ---------------------------------------------------------------------------
@@ -688,7 +714,6 @@ msi_dsai_ms_sanction_apply = {
 
 	add_modifier = { modifier = msi_dsai_ms_sanctioned days = 3600 }
 	msi_dsai_ms_sat_sync = yes
-	country_event = { id = msi_ms.10 }
 }
 
 # ---------------------------------------------------------------------------
@@ -725,7 +750,6 @@ msi_dsai_ms_set_ethic = {
 	add_resource = { unity = -50 }
 	add_modifier = { modifier = msi_dsai_ms_ethic_reform days = 3600 }
 	msi_dsai_ms_sat_sync = yes
-	country_event = { id = msi_ms.10 }
 }
 
 # ---------------------------------------------------------------------------

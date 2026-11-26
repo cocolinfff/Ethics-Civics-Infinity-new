@@ -22,6 +22,8 @@ country_event = {
 	title = msi_dsai_ms_panel_title
 	is_triggered_only = yes
 	force_open = yes
+	diplomatic = yes
+	custom_gui = "msi_dsai_ms_panel"
 
 	trigger = {
 		msi_dsai_ms_has_access = yes
@@ -344,18 +346,24 @@ country_event = {
 		log = "msi_ms.10 immediate after init"
 		msi_dsai_ms_recount_colonies = yes
 		msi_dsai_ms_sat_sync = yes
+		# 若当前选中成员国因“和平共处”起源与首都割据地块被封锁，自动切到人民阵线
+		if = {
+			limit = { msi_dsai_ms_selected_blocked = yes }
+			set_variable = { which = msi_dsai_ms_selected value = 2 }
+		}
 		log = "msi_ms.10 immediate done"
 	}
 
-	# —— 关闭（放在最前，保证任何窗口高度下都可见） ——
-	option = {
-		name = msi_dsai_ms_option_close
-	}
-
-	# —— 五个成员国的选择（点击后结束当前事件并重开面板） ——
+	# —— 五个成员国的选择（点击完成当前事件并重开面板，刷新右侧信息） ——
 	option = {
 		name = msi_dsai_ms_btn_pick_1
 		custom_tooltip = msi_dsai_ms_tip_pick
+		allow = {
+			custom_tooltip = {
+				fail_text = msi_dsai_ms_fail_blocked
+				hidden_trigger = { NOT = { msi_dsai_ms_blocked_1 = yes } }
+			}
+		}
 		hidden_effect = {
 			set_variable = { which = msi_dsai_ms_selected value = 1 }
 			country_event = { id = msi_ms.10 }
@@ -372,6 +380,12 @@ country_event = {
 	option = {
 		name = msi_dsai_ms_btn_pick_3
 		custom_tooltip = msi_dsai_ms_tip_pick
+		allow = {
+			custom_tooltip = {
+				fail_text = msi_dsai_ms_fail_blocked
+				hidden_trigger = { NOT = { msi_dsai_ms_blocked_3 = yes } }
+			}
+		}
 		hidden_effect = {
 			set_variable = { which = msi_dsai_ms_selected value = 3 }
 			country_event = { id = msi_ms.10 }
@@ -380,6 +394,12 @@ country_event = {
 	option = {
 		name = msi_dsai_ms_btn_pick_4
 		custom_tooltip = msi_dsai_ms_tip_pick
+		allow = {
+			custom_tooltip = {
+				fail_text = msi_dsai_ms_fail_blocked
+				hidden_trigger = { NOT = { msi_dsai_ms_blocked_4 = yes } }
+			}
+		}
 		hidden_effect = {
 			set_variable = { which = msi_dsai_ms_selected value = 4 }
 			country_event = { id = msi_ms.10 }
@@ -388,19 +408,21 @@ country_event = {
 	option = {
 		name = msi_dsai_ms_btn_pick_5
 		custom_tooltip = msi_dsai_ms_tip_pick
+		allow = {
+			custom_tooltip = {
+				fail_text = msi_dsai_ms_fail_blocked
+				hidden_trigger = { NOT = { msi_dsai_ms_blocked_5 = yes } }
+			}
+		}
 		hidden_effect = {
 			set_variable = { which = msi_dsai_ms_selected value = 5 }
 			country_event = { id = msi_ms.10 }
 		}
 	}
 
-	# —— 进入操作菜单 ——
+	# —— 关闭 ——
 	option = {
-		name = msi_dsai_ms_btn_menu
-		custom_tooltip = msi_dsai_ms_tip_menu
-		hidden_effect = {
-			country_event = { id = msi_ms.11 }
-		}
+		name = msi_dsai_ms_option_close
 	}
 }
 
@@ -483,21 +505,14 @@ country_event = {
 		name = msi_dsai_ms_btn_ethic
 		custom_tooltip = msi_dsai_ms_tip_ethic
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		hidden_effect = {
 			country_event = { id = msi_ms.30 }
 		}
 	}
 
-	# —— 返回成员国列表 ——
-	option = {
-		name = msi_dsai_ms_btn_back
-		hidden_effect = {
-			country_event = { id = msi_ms.10 }
-		}
-	}
 }
 
 ############################################################
@@ -616,7 +631,6 @@ country_event = {
 
 	option = {
 		name = msi_dsai_ms_guide_back
-		country_event = { id = msi_ms.10 }
 	}
 }
 
@@ -658,102 +672,101 @@ country_event = {
 	option = {
 		name = msi_dsai_ms_desc_ethic_1
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 1 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_2
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 2 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_3
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 3 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_4
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 4 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_5
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 5 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_6
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 6 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_7
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 7 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_8
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 8 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_9
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 9 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_10
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 10 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_11
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 11 }
 	}
 	option = {
 		name = msi_dsai_ms_desc_ethic_12
 		allow = {
-			resource_stockpile_compare = { resource = influence value >= 150 }
-			resource_stockpile_compare = { resource = unity value >= 50 }
+			resource_stockpile_compare = { resource = influence value >= 200 }
+			resource_stockpile_compare = { resource = unity value >= 5000 }
 		}
 		msi_dsai_ms_set_ethic = { ETHIC = 12 }
 	}
 	option = {
 		name = msi_dsai_ms_ethic_cancel
-		country_event = { id = msi_ms.10 }
 	}
 }
 
