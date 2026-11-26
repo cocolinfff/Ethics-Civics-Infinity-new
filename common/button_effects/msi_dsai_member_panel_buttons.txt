@@ -1,0 +1,251 @@
+# ============================================================================
+# 成员国管理 —— 面板按钮效果
+#
+# 面板窗口（interface/msi_dsai_member_panel.gui）里的全部可交互按钮都走这里。
+# 注意：effectbuttonType 的 This 是“当前选中的对象”（行星/舰队/系统等），
+# 没有选中对象时才是玩家国家；From 为玩家国家。因此每个按钮都同时处理
+# country 与 planet 两种 scope，任何一类上下文下都不会失效。
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# 侧边栏：选择成员国（只改当前选中项并重开面板，不产生其他效果）
+# ---------------------------------------------------------------------------
+msi_dsai_ms_btn_pick_1 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 1 }
+				country_event = { id = msi_ms.10 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 1 }
+					country_event = { id = msi_ms.10 }
+				}
+			}
+		}
+	}
+}
+
+msi_dsai_ms_btn_pick_2 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 2 }
+				country_event = { id = msi_ms.10 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 2 }
+					country_event = { id = msi_ms.10 }
+				}
+			}
+		}
+	}
+}
+
+msi_dsai_ms_btn_pick_3 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 3 }
+				country_event = { id = msi_ms.10 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 3 }
+					country_event = { id = msi_ms.10 }
+				}
+			}
+		}
+	}
+}
+
+msi_dsai_ms_btn_pick_4 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 4 }
+				country_event = { id = msi_ms.10 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 4 }
+					country_event = { id = msi_ms.10 }
+				}
+			}
+		}
+	}
+}
+
+msi_dsai_ms_btn_pick_5 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 5 }
+				country_event = { id = msi_ms.10 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 5 }
+					country_event = { id = msi_ms.10 }
+				}
+			}
+		}
+	}
+}
+
+# ---------------------------------------------------------------------------
+# 操作一：拉拢成员国（消耗 200 影响力，满意度 +15，5 年修正）
+# ---------------------------------------------------------------------------
+msi_dsai_ms_btn_woo = {
+	potential = { always = yes }
+	allow = {
+		custom_tooltip = {
+			fail_text = msi_dsai_ms_fail_influence_200
+			hidden_trigger = {
+				OR = {
+					AND = {
+						is_scope_type = country
+						resource_stockpile_compare = { resource = influence value >= 200 }
+					}
+					AND = {
+						is_scope_type = planet
+						owner = { resource_stockpile_compare = { resource = influence value >= 200 } }
+					}
+				}
+			}
+		}
+	}
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_woo
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				msi_dsai_ms_woo_apply = yes
+			}
+			else = {
+				owner = { msi_dsai_ms_woo_apply = yes }
+			}
+		}
+	}
+}
+
+# ---------------------------------------------------------------------------
+# 操作二：移交星球主权
+# 选中了行星时直接把该行星交给当前选中的成员国；
+# 没有选中行星时给出操作指引（行星决议里也能完成同样的移交）。
+# ---------------------------------------------------------------------------
+msi_dsai_ms_btn_transfer = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_transfer
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = planet }
+				msi_dsai_ms_planet_assign_selected = yes
+				owner = { country_event = { id = msi_ms.10 } }
+			}
+			else = {
+				country_event = { id = msi_ms.22 }
+			}
+		}
+	}
+}
+
+# ---------------------------------------------------------------------------
+# 操作三：制裁成员国（轮值主席不可用；满意度 -20，10 年修正）
+# ---------------------------------------------------------------------------
+msi_dsai_ms_btn_sanction = {
+	potential = { always = yes }
+	allow = {
+		custom_tooltip = {
+			fail_text = msi_dsai_ms_fail_chair
+			hidden_trigger = {
+				OR = {
+					AND = {
+						is_scope_type = country
+						NOT = { msi_dsai_ms_selected_is_chair = yes }
+					}
+					AND = {
+						is_scope_type = planet
+						owner = { NOT = { msi_dsai_ms_selected_is_chair = yes } }
+					}
+				}
+			}
+		}
+	}
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_sanction
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				msi_dsai_ms_sanction_apply = yes
+			}
+			else = {
+				owner = { msi_dsai_ms_sanction_apply = yes }
+			}
+		}
+	}
+}
+
+# ---------------------------------------------------------------------------
+# 操作四：改变成员国思潮（消耗 150 影响力 + 50 凝聚力，打开思潮选择）
+# ---------------------------------------------------------------------------
+msi_dsai_ms_btn_ethic = {
+	potential = { always = yes }
+	allow = {
+		custom_tooltip = {
+			fail_text = msi_dsai_ms_fail_reform_cost
+			hidden_trigger = {
+				OR = {
+					AND = {
+						is_scope_type = country
+						resource_stockpile_compare = { resource = influence value >= 150 }
+						resource_stockpile_compare = { resource = unity value >= 50 }
+					}
+					AND = {
+						is_scope_type = planet
+						owner = {
+							resource_stockpile_compare = { resource = influence value >= 150 }
+							resource_stockpile_compare = { resource = unity value >= 50 }
+						}
+					}
+				}
+			}
+		}
+	}
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_ethic
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				country_event = { id = msi_ms.30 }
+			}
+			else = {
+				owner = { country_event = { id = msi_ms.30 } }
+			}
+		}
+	}
+}

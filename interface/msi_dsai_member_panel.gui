@@ -1,0 +1,216 @@
+# ============================================================================
+# 联合政府会议 —— 自定义面板
+#
+# 由 events/msi_dsai_member_events.txt 的 country_event msi_ms.10 通过
+# custom_gui = "msi_dsai_ms_panel" 打开。
+#
+# 交互全部走事件选项（option），不使用 effectButtonType：
+# effectButtonType 触发的重开事件不会结束当前事件，窗口会层层叠加；
+# option 被点击时当前事件即完成，再触发新事件只会留下一个窗口。
+#
+# 选项模板照抄原版外交事件窗口的 option 模板结构（固定尺寸 sprite +
+# option_button + trigger_icons + effect_icons），避免解析器对自定义按钮
+# 尺寸的差异处理。
+#
+# 布局（窗口 1100 x 700）：
+#   标题 30,5
+#   左侧选项列表（EVENT_DIPLO 容器）24,40，480 x 620
+#   右侧信息面板 520,40，556 x 600
+#   关闭按钮保留在右上角；列表末项另有“关闭”选项
+# ============================================================================
+
+guiTypes = {
+	# ------------------------------------------------------------------
+	# 选项外观模板：480 宽、24 号字、居中
+	# ------------------------------------------------------------------
+	containerWindowType = {
+		name = "msi_dsai_ms_option"
+		position = { x = 0 y = 0 }
+		size = { width = 480 height = 36 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_event_button_452"
+			position = { x = 14 y = 2 }
+			font = "malgun_goth_24"
+			text = "OPTION_TEXT"
+			format = center
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 0 y = 4 }
+			size = { x = 34 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 446 y = 4 }
+			size = { x = 34 y = 28 }
+			format = right
+		}
+	}
+
+	containerWindowType = {
+		name = "msi_dsai_ms_panel"
+		orientation = center
+		origo = center
+		moveable = yes
+		size = { width = 1100 height = 700 }
+
+		background = {
+			name = "background"
+			quadTextureSprite = "GFX_tile_large_bg"
+		}
+
+		iconType = {
+			name = "hex_bg"
+			spriteType = "GFX_hex_bg"
+			position = { x = -10 y = -14 }
+			alwaysTransparent = yes
+		}
+
+		iconType = {
+			name = "empire_header_line"
+			quadTextureSprite = "GFX_line_long"
+			position = { x = 6 y = 22 }
+			alwaysTransparent = yes
+		}
+
+		buttonType = {
+			name = "close"
+			quadTextureSprite = "GFX_close"
+			position = { x = -24 y = 12 }
+			orientation = "UPPER_RIGHT"
+			shortcut = "ESCAPE"
+			clicksound = "back_click"
+		}
+
+		# 面板标题
+		instantTextBoxType = {
+			name = "msi_dsai_ms_panel_heading"
+			font = "malgun_goth_24"
+			text = "msi_dsai_ms_panel_title"
+			position = { x = 30 y = 5 }
+			maxWidth = 600
+			maxHeight = 26
+			fixedSize = yes
+			alwaysTransparent = yes
+		}
+
+		# ------------------------------------------------------------------
+		# 左侧：选项列表（5 个成员国选择 + 4 个操作 + 关闭）
+		# ------------------------------------------------------------------
+		containerWindowType = {
+			name = "EVENT_DIPLO"
+			position = { x = 24 y = 40 }
+			size = { width = 480 height = 460 }
+			moveable = no
+
+			instantTextBoxType = {
+				name = "action_title"
+				font = "malgun_goth_24"
+				position = { x = 0 y = 0 }
+				maxWidth = 480
+				maxHeight = 24
+				alwaysTransparent = yes
+			}
+
+			listboxType = {
+				name = "option_list"
+				position = { x = 0 y = 30 }
+				background = ""
+				size = { x = 480 y = 400 }
+				spacing = 1
+				scrollbartype = "standardlistbox_slider"
+				borderSize = { x = 0 y = 0 }
+				Orientation = "UPPER_LEFT"
+			}
+
+			# 引擎会往 action_desc 填文本，移出可视区域
+			instantTextBoxType = {
+				name = "action_desc"
+				font = "cg_16b"
+				position = { x = -3000 y = -3000 }
+				maxWidth = 320
+				maxHeight = 80
+				Orientation = "UPPER_LEFT"
+				format = center
+				alwaysTransparent = yes
+				text_color_code = "H"
+			}
+		}
+
+		# ------------------------------------------------------------------
+		# 右侧：当前成员国的介绍 / 思潮 / 满意度
+		# 引擎把事件 desc 填进 alien_message。
+		# ------------------------------------------------------------------
+		buttonType = {
+			name = "alien_message_background"
+			size = { x = 556 y = 600 }
+			position = { x = 520 y = 40 }
+			spriteType = "GFX_tiles_dark_area_cut_8"
+			alwaysTransparent = yes
+		}
+
+		instantTextBoxType = {
+			name = "alien_message"
+			font = "cg_16b"
+			position = { x = 536 y = 50 }
+			maxWidth = 524
+			maxHeight = 580
+			format = left
+		}
+
+		# ------------------------------------------------------------------
+		# 原版骨架元素：全部保留，移出可视区域
+		# ------------------------------------------------------------------
+		buttonType = { name = "tts_button" position = { x = -3000 y = -3000 } spriteType = "GFX_button_tts_start" }
+		buttonType = { name = "focus_button" position = { x = -3000 y = -3000 } spriteType = "GFX_fleetview_focus" }
+		instantTextBoxType = { name = "heading" font = "malgun_goth_24" position = { x = -3000 y = -3000 } }
+		buttonType = { name = "empire_flag" position = { x = -3000 y = -3000 } spriteType = "GFX_empire_flag_128" }
+		buttonType = { name = "confirm_button" position = { x = -3000 y = -3000 } quadTextureSprite = "GFX_standard_button_142_34_button" }
+
+		containerWindowType = {
+			name = "portrait_background"
+			position = { x = -3000 y = -3000 }
+			size = { width = 0 height = 0 }
+			iconType = { name = "event_picture" spriteType = "GFX_diplomacy_portrait_frame" }
+			iconType = { name = "portrait" spriteType = "GFX_portrait_character" }
+		}
+		containerWindowType = {
+			name = "portrait"
+			position = { x = -3000 y = -3000 }
+			size = { width = 0 height = 0 }
+			iconType = { name = "portrait" spriteType = "GFX_portrait_gamesetup_mask" }
+			iconType = { name = "black_frame" spriteType = "GFX_diplomacy_portrait_shadow_frame" }
+			iconType = { name = "stripes_1" spriteType = "GFX_diplomacy_stripes_2" }
+			iconType = { name = "city_frame" spriteType = "GFX_diplomacy_portrait_frame" }
+		}
+
+		iconType = { name = "empire_info_bg" spriteType = "GFX_diplomacy_dark_fade_bg" position = { x = -3000 y = -3000 } }
+		instantTextBoxType = { name = "empire_name" font = "malgun_goth_24" position = { x = -3000 y = -3000 } }
+		instantTextBoxType = { name = "empire_government_type" font = "cg_16b" position = { x = -3000 y = -3000 } }
+		instantTextBoxType = { name = "empire_personality_type" font = "cg_16b" position = { x = -3000 y = -3000 } }
+		OverlappingElementsBoxType = { name = "empire_ethics_icons" position = { x = -3000 y = -3000 } }
+
+		containerWindowType = {
+			name = "leader_details"
+			position = { x = -3000 y = -3000 }
+			containerWindowType = { name = "empire_traits_box" }
+			instantTextBoxType = { name = "empire_traits_label" font = "cg_16b" }
+			overlappingElementsBoxType = { name = "leader_traits" }
+			instantTextBoxType = { name = "leader_name" font = "cg_16b" }
+			instantTextBoxType = { name = "leader_species" font = "cg_16b" }
+		}
+
+		containerWindowType = {
+			name = "opinion_window"
+			position = { x = -3000 y = -3000 }
+			size = { width = 94 height = 30 }
+			iconType = { name = "their_opinion_icon" spriteType = "GFX_diplomacy_opinion" }
+			instantTextBoxType = { name = "their_opinion" font = "cg_16b" }
+		}
+	}
+}

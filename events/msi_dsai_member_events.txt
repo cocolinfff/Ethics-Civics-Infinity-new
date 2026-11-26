@@ -1,0 +1,866 @@
+# ============================================================================
+# 成员国管理 —— 事件
+#
+# 命名空间 msi_ms
+#   msi_ms.10  成员国管理面板（custom_gui = msi_dsai_ms_panel）
+#   msi_ms.20  新殖民星球归属弹窗（planet_event，由 on_colonized 触发）
+#   msi_ms.21  行星移交弹窗（planet_event，由行星决议触发）
+#   msi_ms.22  面板“移交主权”按钮的指引事件
+#   msi_ms.30  改变成员国思潮（思潮选择）
+#   msi_ms.40  改革后补挂首都主权修并告知玩家
+#   msi_ms.41  开局静默初始化
+#   msi_ms.50  年度检查（满意度差距 / 轮值主席 / 修正同步）
+# ============================================================================
+
+namespace = msi_ms
+
+############################################################
+# 成员国管理面板
+############################################################
+country_event = {
+	id = msi_ms.10
+	title = msi_dsai_ms_panel_title
+	is_triggered_only = yes
+	force_open = yes
+
+	trigger = {
+		msi_dsai_ms_has_access = yes
+	}
+
+	desc = {
+		trigger = {
+			# —— 当前选中的成员国标题 ——
+			success_text = {
+				text = msi_dsai_ms_desc_name_1
+				check_variable = { which = msi_dsai_ms_selected value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_name_2
+				check_variable = { which = msi_dsai_ms_selected value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_name_3
+				check_variable = { which = msi_dsai_ms_selected value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_name_4
+				check_variable = { which = msi_dsai_ms_selected value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_name_5
+				check_variable = { which = msi_dsai_ms_selected value = 5 }
+			}
+
+			# —— 该国简介 ——
+			success_text = {
+				text = msi_dsai_ms_desc_intro_1
+				check_variable = { which = msi_dsai_ms_selected value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_intro_2
+				check_variable = { which = msi_dsai_ms_selected value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_intro_3
+				check_variable = { which = msi_dsai_ms_selected value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_intro_4
+				check_variable = { which = msi_dsai_ms_selected value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_intro_5
+				check_variable = { which = msi_dsai_ms_selected value = 5 }
+			}
+
+			# —— 思潮 ——
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_prefix
+				always = yes
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_1
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 1 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 1 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 1 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 1 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 1 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_2
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 2 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 2 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 2 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 2 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 2 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_3
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 3 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 3 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 3 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 3 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 3 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_4
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 4 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 4 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 4 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 4 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 4 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_5
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 5 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 5 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 5 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 5 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 5 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_6
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 6 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 6 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 6 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 6 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 6 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_7
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 7 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 7 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 7 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 7 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 7 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_8
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 8 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 8 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 8 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 8 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 8 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_9
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 9 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 9 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 9 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 9 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 9 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_10
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 10 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 10 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 10 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 10 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 10 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_11
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 11 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 11 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 11 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 11 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 11 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_ethic_12
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_ethic_1 value = 12 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_ethic_2 value = 12 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_ethic_3 value = 12 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_ethic_4 value = 12 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_ethic_5 value = 12 } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_line_break
+				always = yes
+			}
+
+			# —— 满意度数值 ——
+			success_text = {
+				text = msi_dsai_ms_desc_sat_1
+				check_variable = { which = msi_dsai_ms_selected value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_sat_2
+				check_variable = { which = msi_dsai_ms_selected value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_sat_3
+				check_variable = { which = msi_dsai_ms_selected value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_sat_4
+				check_variable = { which = msi_dsai_ms_selected value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_sat_5
+				check_variable = { which = msi_dsai_ms_selected value = 5 }
+			}
+
+			# —— 满意度档位 ——
+			success_text = {
+				text = msi_dsai_ms_desc_tier_loyal
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_sat_1 value >= @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_sat_2 value >= @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_sat_3 value >= @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_sat_4 value >= @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_sat_5 value >= @msi_dsai_ms_sat_loyal } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_tier_content
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_sat_1 value >= @msi_dsai_ms_sat_content } check_variable = { which = msi_dsai_ms_sat_1 value < @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_sat_2 value >= @msi_dsai_ms_sat_content } check_variable = { which = msi_dsai_ms_sat_2 value < @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_sat_3 value >= @msi_dsai_ms_sat_content } check_variable = { which = msi_dsai_ms_sat_3 value < @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_sat_4 value >= @msi_dsai_ms_sat_content } check_variable = { which = msi_dsai_ms_sat_4 value < @msi_dsai_ms_sat_loyal } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_sat_5 value >= @msi_dsai_ms_sat_content } check_variable = { which = msi_dsai_ms_sat_5 value < @msi_dsai_ms_sat_loyal } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_tier_cold
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_sat_1 value >= @msi_dsai_ms_sat_cold } check_variable = { which = msi_dsai_ms_sat_1 value < @msi_dsai_ms_sat_content } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_sat_2 value >= @msi_dsai_ms_sat_cold } check_variable = { which = msi_dsai_ms_sat_2 value < @msi_dsai_ms_sat_content } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_sat_3 value >= @msi_dsai_ms_sat_cold } check_variable = { which = msi_dsai_ms_sat_3 value < @msi_dsai_ms_sat_content } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_sat_4 value >= @msi_dsai_ms_sat_cold } check_variable = { which = msi_dsai_ms_sat_4 value < @msi_dsai_ms_sat_content } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_sat_5 value >= @msi_dsai_ms_sat_cold } check_variable = { which = msi_dsai_ms_sat_5 value < @msi_dsai_ms_sat_content } }
+				}
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_tier_hostile
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_sat_1 value < @msi_dsai_ms_sat_cold } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_sat_2 value < @msi_dsai_ms_sat_cold } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_sat_3 value < @msi_dsai_ms_sat_cold } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_sat_4 value < @msi_dsai_ms_sat_cold } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_sat_5 value < @msi_dsai_ms_sat_cold } }
+				}
+			}
+
+			# —— 规则提示（紧跟满意度档位） ——
+			success_text = {
+				text = msi_dsai_ms_desc_rules
+				always = yes
+			}
+
+			# —— 殖民地数量 ——
+			success_text = {
+				text = msi_dsai_ms_desc_colonies_1
+				check_variable = { which = msi_dsai_ms_selected value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_colonies_2
+				check_variable = { which = msi_dsai_ms_selected value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_colonies_3
+				check_variable = { which = msi_dsai_ms_selected value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_colonies_4
+				check_variable = { which = msi_dsai_ms_selected value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_colonies_5
+				check_variable = { which = msi_dsai_ms_selected value = 5 }
+			}
+
+			# —— 轮值主席标记 ——
+			success_text = {
+				text = msi_dsai_ms_desc_is_chair
+				OR = {
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 1 } check_variable = { which = msi_dsai_ms_chair value = 1 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 2 } check_variable = { which = msi_dsai_ms_chair value = 2 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 3 } check_variable = { which = msi_dsai_ms_chair value = 3 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 4 } check_variable = { which = msi_dsai_ms_chair value = 4 } }
+					AND = { check_variable = { which = msi_dsai_ms_selected value = 5 } check_variable = { which = msi_dsai_ms_chair value = 5 } }
+				}
+			}
+
+			# —— 当前轮值主席国 ——
+			success_text = {
+				text = msi_dsai_ms_desc_chair_prefix
+				always = yes
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_chair_1
+				check_variable = { which = msi_dsai_ms_chair value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_chair_2
+				check_variable = { which = msi_dsai_ms_chair value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_chair_3
+				check_variable = { which = msi_dsai_ms_chair value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_chair_4
+				check_variable = { which = msi_dsai_ms_chair value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_desc_chair_5
+				check_variable = { which = msi_dsai_ms_chair value = 5 }
+			}
+		}
+	}
+
+	immediate = {
+		log = "msi_ms.10 immediate start"
+		if = {
+			limit = { NOT = { msi_dsai_ms_is_initialized = yes } }
+			msi_dsai_ms_init = yes
+		}
+		log = "msi_ms.10 immediate after init"
+		msi_dsai_ms_recount_colonies = yes
+		msi_dsai_ms_sat_sync = yes
+		log = "msi_ms.10 immediate done"
+	}
+
+	# —— 关闭（放在最前，保证任何窗口高度下都可见） ——
+	option = {
+		name = msi_dsai_ms_option_close
+	}
+
+	# —— 五个成员国的选择（点击后结束当前事件并重开面板） ——
+	option = {
+		name = msi_dsai_ms_btn_pick_1
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			set_variable = { which = msi_dsai_ms_selected value = 1 }
+			country_event = { id = msi_ms.10 }
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_pick_2
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			set_variable = { which = msi_dsai_ms_selected value = 2 }
+			country_event = { id = msi_ms.10 }
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_pick_3
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			set_variable = { which = msi_dsai_ms_selected value = 3 }
+			country_event = { id = msi_ms.10 }
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_pick_4
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			set_variable = { which = msi_dsai_ms_selected value = 4 }
+			country_event = { id = msi_ms.10 }
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_pick_5
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			set_variable = { which = msi_dsai_ms_selected value = 5 }
+			country_event = { id = msi_ms.10 }
+		}
+	}
+
+	# —— 进入操作菜单 ——
+	option = {
+		name = msi_dsai_ms_btn_menu
+		custom_tooltip = msi_dsai_ms_tip_menu
+		hidden_effect = {
+			country_event = { id = msi_ms.11 }
+		}
+	}
+}
+
+############################################################
+# 成员国事务（操作菜单）
+############################################################
+country_event = {
+	id = msi_ms.11
+	title = msi_dsai_ms_menu_title
+	is_triggered_only = yes
+	force_open = yes
+
+	trigger = {
+		msi_dsai_ms_has_access = yes
+	}
+
+	desc = {
+		trigger = {
+			success_text = {
+				text = msi_dsai_ms_menu_desc_1
+				check_variable = { which = msi_dsai_ms_selected value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_menu_desc_2
+				check_variable = { which = msi_dsai_ms_selected value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_menu_desc_3
+				check_variable = { which = msi_dsai_ms_selected value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_menu_desc_4
+				check_variable = { which = msi_dsai_ms_selected value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_menu_desc_5
+				check_variable = { which = msi_dsai_ms_selected value = 5 }
+			}
+			success_text = {
+				text = msi_dsai_ms_menu_desc_common
+				always = yes
+			}
+		}
+	}
+
+	# —— 关闭 ——
+	option = {
+		name = msi_dsai_ms_option_close
+	}
+
+	# —— 四个操作 ——
+	option = {
+		name = msi_dsai_ms_btn_woo
+		custom_tooltip = msi_dsai_ms_tip_woo
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 200 }
+		}
+		hidden_effect = {
+			msi_dsai_ms_woo_apply = yes
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_transfer
+		custom_tooltip = msi_dsai_ms_tip_transfer
+		hidden_effect = {
+			country_event = { id = msi_ms.22 }
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_sanction
+		custom_tooltip = msi_dsai_ms_tip_sanction
+		allow = {
+			NOT = { msi_dsai_ms_selected_is_chair = yes }
+		}
+		hidden_effect = {
+			msi_dsai_ms_sanction_apply = yes
+		}
+	}
+	option = {
+		name = msi_dsai_ms_btn_ethic
+		custom_tooltip = msi_dsai_ms_tip_ethic
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		hidden_effect = {
+			country_event = { id = msi_ms.30 }
+		}
+	}
+
+	# —— 返回成员国列表 ——
+	option = {
+		name = msi_dsai_ms_btn_back
+		hidden_effect = {
+			country_event = { id = msi_ms.10 }
+		}
+	}
+}
+
+############################################################
+# 新殖民星球：询问归属
+############################################################
+carrier_event = {
+	id = msi_ms.20
+	title = msi_dsai_ms_colonize_title
+	picture = GFX_evt_colony_settlement
+	desc = { text = msi_dsai_ms_colonize_desc }
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			msi_dsai_ms_has_access = yes
+			msi_dsai_ms_is_initialized = yes
+			is_ai = no
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = { NOT = { is_variable_set = msi_dsai_ms_owner } }
+			set_variable = { which = msi_dsai_ms_owner value = 0 }
+		}
+	}
+
+	option = {
+		name = msi_dsai_ms_colonize_opt_1
+		msi_dsai_ms_planet_assign_1 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_2
+		msi_dsai_ms_planet_assign_2 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_3
+		msi_dsai_ms_planet_assign_3 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_4
+		msi_dsai_ms_planet_assign_4 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_5
+		msi_dsai_ms_planet_assign_5 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_free
+		msi_dsai_ms_planet_release = yes
+	}
+}
+
+############################################################
+# 行星移交弹窗（由行星决议打开）
+############################################################
+planet_event = {
+	id = msi_ms.21
+	title = msi_dsai_ms_transfer_title
+	picture = GFX_evt_galactic_senate
+	desc = { text = msi_dsai_ms_transfer_desc }
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			msi_dsai_ms_has_access = yes
+			msi_dsai_ms_is_initialized = yes
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = { NOT = { is_variable_set = msi_dsai_ms_owner } }
+			set_variable = { which = msi_dsai_ms_owner value = 0 }
+		}
+	}
+
+	option = {
+		name = msi_dsai_ms_colonize_opt_1
+		msi_dsai_ms_planet_assign_1 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_2
+		msi_dsai_ms_planet_assign_2 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_3
+		msi_dsai_ms_planet_assign_3 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_4
+		msi_dsai_ms_planet_assign_4 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_5
+		msi_dsai_ms_planet_assign_5 = yes
+	}
+	option = {
+		name = msi_dsai_ms_colonize_opt_free
+		msi_dsai_ms_planet_release = yes
+	}
+	option = {
+		name = msi_dsai_ms_transfer_cancel
+	}
+}
+
+############################################################
+# 面板“移交主权”按钮的指引
+############################################################
+country_event = {
+	id = msi_ms.22
+	title = msi_dsai_ms_guide_title
+	picture = GFX_evt_galactic_senate
+	desc = { text = msi_dsai_ms_guide_desc }
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_ms_guide_back
+		country_event = { id = msi_ms.10 }
+	}
+}
+
+############################################################
+# 改变成员国思潮
+############################################################
+country_event = {
+	id = msi_ms.30
+	title = msi_dsai_ms_ethic_title
+	picture = GFX_evt_arguing_senate
+	is_triggered_only = yes
+
+	desc = {
+		trigger = {
+			success_text = {
+				text = msi_dsai_ms_ethic_desc_1
+				check_variable = { which = msi_dsai_ms_selected value = 1 }
+			}
+			success_text = {
+				text = msi_dsai_ms_ethic_desc_2
+				check_variable = { which = msi_dsai_ms_selected value = 2 }
+			}
+			success_text = {
+				text = msi_dsai_ms_ethic_desc_3
+				check_variable = { which = msi_dsai_ms_selected value = 3 }
+			}
+			success_text = {
+				text = msi_dsai_ms_ethic_desc_4
+				check_variable = { which = msi_dsai_ms_selected value = 4 }
+			}
+			success_text = {
+				text = msi_dsai_ms_ethic_desc_5
+				check_variable = { which = msi_dsai_ms_selected value = 5 }
+			}
+			text = msi_dsai_ms_ethic_desc_cost
+		}
+	}
+
+	option = {
+		name = msi_dsai_ms_desc_ethic_1
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 1 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_2
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 2 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_3
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 3 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_4
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 4 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_5
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 5 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_6
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 6 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_7
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 7 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_8
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 8 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_9
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 9 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_10
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 10 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_11
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 11 }
+	}
+	option = {
+		name = msi_dsai_ms_desc_ethic_12
+		allow = {
+			resource_stockpile_compare = { resource = influence value >= 150 }
+			resource_stockpile_compare = { resource = unity value >= 50 }
+		}
+		msi_dsai_ms_set_ethic = { ETHIC = 12 }
+	}
+	option = {
+		name = msi_dsai_ms_ethic_cancel
+		country_event = { id = msi_ms.10 }
+	}
+}
+
+############################################################
+# 改革后补挂首都主权修正并告知玩家
+############################################################
+country_event = {
+	id = msi_ms.40
+	title = msi_dsai_ms_init_title
+	picture = GFX_evt_galactic_community
+	desc = { text = msi_dsai_ms_init_desc }
+	is_triggered_only = yes
+
+	trigger = {
+		msi_dsai_ms_has_access = yes
+		NOT = { msi_dsai_ms_is_initialized = yes }
+		is_ai = no
+		has_country_flag = msi_dsai_ms_game_started
+	}
+
+	immediate = {
+		msi_dsai_ms_init = yes
+	}
+
+	option = {
+		name = msi_dsai_ms_init_opt
+		country_event = { id = msi_ms.10 }
+	}
+}
+
+############################################################
+# 开局静默初始化
+############################################################
+country_event = {
+	id = msi_ms.41
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+	}
+
+	immediate = {
+		set_country_flag = msi_dsai_ms_game_started
+		if = {
+			limit = { msi_dsai_ms_has_access = yes }
+			msi_dsai_ms_init = yes
+		}
+	}
+}
+
+############################################################
+# 改革后失去两个理念之一：清理成员国系统
+############################################################
+country_event = {
+	id = msi_ms.43
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		msi_dsai_ms_is_initialized = yes
+		NOT = { msi_dsai_ms_has_access = yes }
+	}
+
+	immediate = {
+		msi_dsai_ms_cleanup = yes
+	}
+}
+
+############################################################
+# 行星易主：新主人若未启用成员国系统，移除该星球的主权标记
+############################################################
+carrier_event = {
+	id = msi_ms.44
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_variable_set = msi_dsai_ms_owner
+		owner = {
+			NOT = { msi_dsai_ms_is_initialized = yes }
+		}
+	}
+
+	immediate = {
+		remove_modifier = msi_dsai_pm_ms_member_1
+		remove_modifier = msi_dsai_pm_ms_member_2
+		remove_modifier = msi_dsai_pm_ms_member_3
+		remove_modifier = msi_dsai_pm_ms_member_4
+		remove_modifier = msi_dsai_pm_ms_member_5
+		set_variable = { which = msi_dsai_ms_owner value = 0 }
+	}
+}
+
+############################################################
+# 年度检查
+############################################################
+country_event = {
+	id = msi_ms.50
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		msi_dsai_ms_is_initialized = yes
+	}
+
+	immediate = {
+		msi_dsai_ms_yearly_check = yes
+	}
+}
