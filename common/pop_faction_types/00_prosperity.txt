@@ -3,9 +3,7 @@
 ##############################
 
 prosperity = {
-	election_header = "GFX_faction_header_yellow"
 	guiding_ethic = ethic_pacifist
-	visual_ethic = "prosperity_visual_ethics"
 	swappable_data = {
 		default = {
 			visual_ethic = prosperity_visual_ethics
@@ -15,23 +13,27 @@ prosperity = {
 			visual_ethic = ethic_fanatic_pacifist_texticon
 		}
 	}
+	inline_script = {
+		script = pop_faction_types/ideological_swap
+		ETHIC = pacifist
+	}
+
 
 	unique = yes
 	support_multiplier = 1
 
 	is_potential = {
 		is_faction_allowed = yes
+		NOT = { has_country_flag = suppressed_prosperity_destroyed }
 		owner = { is_egalitarian = no }
 	}
-
-	parameters = {
-		empire = {
-			type = country
-			valid_objects = {
-				is_same_value = root
-			}
-		}
+	valid = {
+		is_faction_valid = yes
+		is_ideology_leftover_faction = no
 	}
+
+
+
 
 	resources = {
 		category = pop_factions
@@ -212,7 +214,6 @@ prosperity = {
 			}
 		}
 	}
-
 
 	demand = { # 企业政府 (企业优先，不要太民主或专制)
 		title = "DEMAND_GOVERNMENT_ENTERPRISE"
@@ -561,204 +562,43 @@ prosperity = {
 
 	on_create = {
 		pop_faction_event = { id = factions.0 }
+		owner = { remove_country_flag = suppressed_prosperity_destroyed }
 	}
 
 	on_destroy = {
-		if = {
-			limit = {
-				has_modifier = promoted_pacifist
-			}
-			remove_modifier = promoted_pacifist
+		inline_script = {
+			script = pop_faction_types/effect/promote_on_destroy
+			ETHIC = pacifist
 		}
-		if = {
-			limit = {
-				has_modifier = suppressed_pacifist
-			}
-			remove_modifier = suppressed_pacifist
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy_base
+			ETHIC = pacifist
+			TYPE = prosperity
+		}
+		inline_script = {
+			script = pop_faction_types/effect/suppress_on_destroy_all
+			ETHIC = pacifist
 		}
 	}
 
+	inline_script = {
+		script = pop_faction_types/actions/advocate_faction
+	}
+	inline_script = {
+		script = pop_faction_types/actions/embrace_faction
+		ETHIC = pacifist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/promote_faction
+		ETHIC = pacifist
+	}
+	inline_script = {
+		script = pop_faction_types/actions/suppress_faction
+		ETHIC = pacifist
+	}
+
 	actions = {
-		embrace_faction = {
-			title = "EMBRACE_FACTION"
-			description = "EMBRACE_FACTION_DESC"
 
-			cost = {
-				unity = 5000
-			}
-
-			potential = {
-				exists = owner
-				owner = {
-					OR = {
-						is_subject = no
-						NOT = { any_agreement = { agreement_preset = preset_dominion } }
-					}
-				}
-			}
-
-			valid = {
-				custom_tooltip = {
-					fail_text = EMBRACE_FACTION_COOLDOWN
-					parameter:empire = {
-						NOT = { has_modifier = embraced_faction_timer }
-					}
-				}
-				support > 0.20
-				parameter:empire = {
-					NOT = { has_ethic = "ethic_fanatic_pacifist" }
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = embraced_faction days = 3600 }
-				owner = { set_country_flag = has_embraced_faction }
-				parameter:empire = {
-					shift_ethic = ethic_pacifist
-					hidden_effect = {
-						add_modifier = { modifier = embraced_faction_timer days = 3600 }
-						every_pop_faction = {
-							limit = { NOT = { is_same_value = root } }
-							add_modifier = { modifier = embraced_another_faction days = 3600 }
-						}
-					}
-				}
-				hidden_effect = {
-					save_event_target_as = TargetFaction
-					parameter:empire = {
-						every_relation = {
-							limit = {
-								is_ai = no
-								is_country_type = default
-								has_communications = prev
-								has_intel_level = {
-									who = prev
-									category = government
-									level >= 1
-								}
-							}
-							country_event = { id = factions.2000 }
-						}
-					}
-				}
-			}
-
-			ai_weight = {
-				base = 1
-				modifier = {
-					factor = 0
-					support < 0.50
-					owner = {
-						has_ethic = ethic_pacifist
-					}
-				}
-				modifier = {
-					factor = 0
-					owner = { has_valid_civic = civic_fanatic_purifiers }
-				}
-				modifier = {
-					factor = 0
-					owner = {
-						count_pop_faction = {
-							count < 4
-						}
-					}
-				}
-			}
-		}
-		promote_faction = {
-			title = "PROMOTE_FACTION"
-			description = "PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_pacifist
-						has_modifier = promoted_pacifist
-					}
-				}
-			}
-
-			effect = {
-				owner = { set_country_flag = has_promoted_faction }
-				parameter:empire = {
-					add_modifier = { modifier = promoted_pacifist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_promote_faction = {
-			title = "CANCEL_PROMOTE_FACTION"
-			description = "CANCEL_PROMOTE_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = promoted_pacifist
-				}
-			}
-
-			effect = {
-				parameter:empire = {
-					remove_modifier = promoted_pacifist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		suppress_faction = {
-			title = "SUPPRESS_FACTION"
-			description = "SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					NOR = {
-						has_modifier = suppressed_pacifist
-						has_modifier = promoted_pacifist
-					}
-				}
-			}
-
-			effect = {
-				add_modifier = { modifier = suppressed_faction days = -1 }
-				parameter:empire = {
-					add_modifier = { modifier = suppressed_pacifist days = -1 }
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
-		cancel_suppress_faction = {
-			title = "CANCEL_SUPPRESS_FACTION"
-			description = "CANCEL_SUPPRESS_FACTION_DESC"
-
-			potential = {
-				exists = owner
-				parameter:empire = {
-					has_modifier = suppressed_pacifist
-				}
-			}
-
-			effect = {
-				remove_modifier = suppressed_faction
-				parameter:empire = {
-					remove_modifier = suppressed_pacifist
-				}
-			}
-
-			ai_weight = {
-				base = 0
-			}
-		}
 		# Faction Extortion Buttons
 		extort_faction = {
 			title = "EXTORT_FACTION"
