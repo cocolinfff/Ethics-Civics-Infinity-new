@@ -1,0 +1,279 @@
+# AM-001 - paragon scientist acquired through the anomaly chain.
+# The anomaly category itself lives in common/anomalies/msi_dsai_paragon_anomalies.txt.
+# Tone is deliberately different from Lilith Mia: AM-001 is an antique probe that
+# pretends to be an ancient dimensional intelligence, gets caught bluffing, and
+# immediately pivots to complaining about the lab equipment.
+
+namespace = msi_dsai_am001
+
+###################################
+#  Setup
+###################################
+
+# Hidden setup event, fired from on_game_start_country.
+# The anomaly chain is scheduled for a random moment 10-30 years after game start
+# (3600 days = 10 years, plus 0-7200 days = 0-20 more years).
+country_event = {
+	id = msi_dsai_am001.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		has_global_flag = eci_special_leader_yes
+	}
+
+	immediate = {
+		country_event = { id = msi_dsai_am001.4 years = 10 random = 20 }
+	}
+}
+
+# Delayed trigger: this is where the anomaly is actually planted.
+country_event = {
+	id = msi_dsai_am001.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		has_global_flag = eci_special_leader_yes
+		NOT = { has_country_flag = msi_dsai_am001_spawn_tried }
+	}
+
+	immediate = {
+		set_country_flag = msi_dsai_am001_spawn_tried
+		msi_dsai_am001_plant_anomaly_effect = yes
+		if = {
+			limit = {
+				msi_dsai_am001_anomaly_exists_trigger = yes
+			}
+			country_event = { id = msi_dsai_am001.2 days = 15 }
+		}
+		else = {
+			# Extremely rare safety net: try again later.
+			country_event = { id = msi_dsai_am001.3 days = 120 }
+		}
+	}
+}
+
+# Notification event. The anomaly itself is already on the map.
+country_event = {
+	id = msi_dsai_am001.2
+	title = "msi_dsai_am001.2.name"
+	desc = "msi_dsai_am001.2.desc"
+	picture = GFX_evt_sapient_AI
+	show_sound = event_scanner
+
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_am001.2.a
+	}
+}
+
+# Safety net retry. Does nothing if the anomaly was planted by msi_dsai_am001.1.
+country_event = {
+	id = msi_dsai_am001.3
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		has_global_flag = eci_special_leader_yes
+		NOT = { msi_dsai_am001_anomaly_exists_trigger = yes }
+	}
+
+	immediate = {
+		msi_dsai_am001_plant_anomaly_effect = yes
+		if = {
+			limit = {
+				msi_dsai_am001_anomaly_exists_trigger = yes
+			}
+			country_event = { id = msi_dsai_am001.2 days = 15 }
+		}
+		else = {
+			country_event = { id = msi_dsai_am001.3 days = 1800 }
+		}
+	}
+}
+
+###################################
+#  Anomaly chain
+###################################
+
+# Stage 1 - the garbage signal and the ghost images
+ship_event = {
+	id = msi_dsai_am001.10
+	title = "msi_dsai_am001.10.name"
+	desc = "msi_dsai_am001.10.desc"
+	picture = GFX_evt_glitchy_matrix
+	show_sound = event_scanner
+	location = from
+
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_am001.10.a
+		trigger = {
+			owner = { has_global_flag = eci_special_leader_yes }
+		}
+		owner = {
+			country_event = { id = msi_dsai_am001.11 days = 20 }
+		}
+	}
+
+	option = {
+		name = msi_dsai_am001.10.b
+		owner = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 2 - the source answers back
+country_event = {
+	id = msi_dsai_am001.11
+	title = "msi_dsai_am001.11.name"
+	desc = "msi_dsai_am001.11.desc"
+	picture = GFX_evt_sapient_AI
+	show_sound = event_mystic_reveal
+	location = event_target:msi_dsai_am001_planet
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_global_flag = eci_special_leader_yes
+	}
+
+	option = {
+		name = msi_dsai_am001.11.a
+		hidden_effect = {
+			msi_dsai_am001_create_recruit_leader_effect = yes
+			country_event = { id = msi_dsai_am001.12 }
+		}
+	}
+
+	option = {
+		name = msi_dsai_am001.11.b
+		hidden_effect = {
+			add_monthly_resource_mult = {
+				resource = physics_research
+				value = @tier4researchreward
+				min = @tier4researchmin
+				max = @tier4researchmax
+			}
+			add_monthly_resource_mult = {
+				resource = engineering_research
+				value = @tier4researchreward
+				min = @tier4researchmin
+				max = @tier4researchmax
+			}
+		}
+	}
+}
+
+# Stage 3 - recruitment window
+country_event = {
+	id = msi_dsai_am001.12
+	title = "msi_dsai_am001.12.name"
+	desc = "msi_dsai_am001.12.desc"
+	picture = GFX_leader_recruitment_bg_renowned
+	event_window_type = leader_recruit
+
+	is_triggered_only = yes
+
+	trigger = {
+		exists = event_target:msi_dsai_am001_leader
+	}
+
+	picture_event_data = {
+		portrait = event_target:msi_dsai_am001_leader
+	}
+
+	option = {
+		name = HIRE
+		tag = hire_leader
+		hidden_effect = {
+			clone_leader = {
+				target = event_target:msi_dsai_am001_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = msi_dsai_am001_hired
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+			}
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization = MESSAGE_RECRUITED_LEADER_DESC
+				days = 10
+				target = last_created_leader
+				variable = {
+					type = name
+					localization = LEADER
+					scope = last_created_leader
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = msi_dsai_am001.12.d
+		tag = dismiss_leader
+		custom_tooltip = msi_dsai_am001.12.d.custom_tooltip
+		hidden_effect = {
+			clone_leader = {
+				target = event_target:msi_dsai_am001_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = msi_dsai_am001_hired
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+			}
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization = MESSAGE_RECRUITED_LEADER_DESC
+				days = 10
+				target = last_created_leader
+				variable = {
+					type = name
+					localization = LEADER
+					scope = last_created_leader
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = msi_dsai_am001.12.a
+		response_text = msi_dsai_am001.12.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = msi_dsai_am001.12.b
+		response_text = msi_dsai_am001.12.b.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = msi_dsai_am001.12.c
+		response_text = msi_dsai_am001.12.c.response
+		is_dialog_only = yes
+	}
+}

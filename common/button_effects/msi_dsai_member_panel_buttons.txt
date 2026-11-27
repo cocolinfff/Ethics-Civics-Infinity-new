@@ -189,12 +189,26 @@ msi_dsai_ms_btn_transfer = {
 				}
 			}
 		}
+		custom_tooltip = {
+			fail_text = msi_dsai_ms_fail_capital
+			hidden_trigger = {
+				OR = {
+					is_scope_type = country
+					AND = {
+						is_scope_type = planet
+						is_capital = no
+					}
+				}
+			}
+		}
 	}
 	effect = {
 		custom_tooltip = msi_dsai_ms_tip_transfer
 		hidden_effect = {
 			if = {
-				limit = { is_scope_type = planet }
+				# 面板从行星决议打开时，按钮的作用域就是那颗星球；
+				# 首都不参与主权授予，一律走指引分支。
+				limit = { is_scope_type = planet is_capital = no }
 				msi_dsai_ms_planet_assign_selected = yes
 				owner = { country_event = { id = msi_ms.10 } }
 			}
@@ -226,17 +240,18 @@ msi_dsai_ms_btn_sanction = {
 				}
 			}
 		}
+
 		custom_tooltip = {
-			fail_text = msi_dsai_ms_fail_chair
+			fail_text = msi_dsai_ms_fail_briefing
 			hidden_trigger = {
 				OR = {
 					AND = {
 						is_scope_type = country
-						NOT = { msi_dsai_ms_selected_is_chair = yes }
+						NOT = { check_variable = { which = msi_dsai_ms_selected value = 0 } }
 					}
 					AND = {
 						is_scope_type = planet
-						owner = { NOT = { msi_dsai_ms_selected_is_chair = yes } }
+						owner = { NOT = { check_variable = { which = msi_dsai_ms_selected value = 0 } } }
 					}
 				}
 			}
@@ -247,10 +262,10 @@ msi_dsai_ms_btn_sanction = {
 		hidden_effect = {
 			if = {
 				limit = { is_scope_type = country }
-				msi_dsai_ms_sanction_apply = yes
+				country_event = { id = msi_ms.47 }
 			}
 			else = {
-				owner = { msi_dsai_ms_sanction_apply = yes }
+				owner = { country_event = { id = msi_ms.47 } }
 			}
 		}
 	}
@@ -426,6 +441,40 @@ msi_dsai_ms_btn_noop = {
 	effect = { }
 }
 
+# 更换联合议会成员：打开候选事件 msi_ms.46
+msi_dsai_ms_btn_change_seat = {
+	potential = { always = yes }
+	allow = {
+		custom_tooltip = {
+			fail_text = msi_dsai_ms_fail_chair_change
+			hidden_trigger = {
+				OR = {
+					AND = {
+						is_scope_type = country
+						NOT = { msi_dsai_ms_selected_is_chair = yes }
+					}
+					AND = {
+						is_scope_type = planet
+						owner = { NOT = { msi_dsai_ms_selected_is_chair = yes } }
+					}
+				}
+			}
+		}
+	}
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_change_seat
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				country_event = { id = msi_ms.46 }
+			}
+			else = {
+				owner = { country_event = { id = msi_ms.46 } }
+			}
+		}
+	}
+}
+
 # 信息栏下方的“管理”按钮：对当前选中的成员国打开操作菜单 msi_ms.11
 msi_dsai_ms_btn_manage_selected = {
 	potential = { always = yes }
@@ -527,6 +576,115 @@ msi_dsai_ms_btn_select_5 = {
 			}
 			else = {
 				owner = { set_variable = { which = msi_dsai_ms_selected value = 5 } }
+			}
+		}
+	}
+}
+
+msi_dsai_ms_btn_select_6 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 6 }
+			}
+			else = {
+				owner = { set_variable = { which = msi_dsai_ms_selected value = 6 } }
+			}
+		}
+	}
+}
+msi_dsai_ms_btn_manage_6 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_manage
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 6 }
+				country_event = { id = msi_ms.11 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 6 }
+					country_event = { id = msi_ms.11 }
+				}
+			}
+		}
+	}
+}
+msi_dsai_ms_btn_select_7 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 7 }
+			}
+			else = {
+				owner = { set_variable = { which = msi_dsai_ms_selected value = 7 } }
+			}
+		}
+	}
+}
+msi_dsai_ms_btn_manage_7 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_manage
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 7 }
+				country_event = { id = msi_ms.11 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 7 }
+					country_event = { id = msi_ms.11 }
+				}
+			}
+		}
+	}
+}
+msi_dsai_ms_btn_select_8 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_pick
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 8 }
+			}
+			else = {
+				owner = { set_variable = { which = msi_dsai_ms_selected value = 8 } }
+			}
+		}
+	}
+}
+msi_dsai_ms_btn_manage_8 = {
+	potential = { always = yes }
+	allow = { always = yes }
+	effect = {
+		custom_tooltip = msi_dsai_ms_tip_manage
+		hidden_effect = {
+			if = {
+				limit = { is_scope_type = country }
+				set_variable = { which = msi_dsai_ms_selected value = 8 }
+				country_event = { id = msi_ms.11 }
+			}
+			else = {
+				owner = {
+					set_variable = { which = msi_dsai_ms_selected value = 8 }
+					country_event = { id = msi_ms.11 }
+				}
 			}
 		}
 	}

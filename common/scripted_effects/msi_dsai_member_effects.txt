@@ -28,6 +28,9 @@ msi_dsai_ms_init = {
 		set_variable = { which = msi_dsai_ms_sat_3 value = @msi_dsai_ms_sat_start }
 		set_variable = { which = msi_dsai_ms_sat_4 value = @msi_dsai_ms_sat_start }
 		set_variable = { which = msi_dsai_ms_sat_5 value = @msi_dsai_ms_sat_start }
+		set_variable = { which = msi_dsai_ms_sat_6 value = @msi_dsai_ms_sat_start }
+		set_variable = { which = msi_dsai_ms_sat_7 value = @msi_dsai_ms_sat_start }
+		set_variable = { which = msi_dsai_ms_sat_8 value = @msi_dsai_ms_sat_start }
 
 		# 初始思潮（编号见 msi_dsai_member_events.txt 的思潮选项）：
 		# 合众联邦 多元主义(7) / 人民阵线 合作主义(3) / 钢铁国度 干涉主义(1)
@@ -36,13 +39,20 @@ msi_dsai_ms_init = {
 		set_variable = { which = msi_dsai_ms_ethic_2 value = 3 }
 		set_variable = { which = msi_dsai_ms_ethic_3 value = 1 }
 		set_variable = { which = msi_dsai_ms_ethic_4 value = 4 }
-		set_variable = { which = msi_dsai_ms_ethic_5 value = 10 }
+		set_variable = { which = msi_dsai_ms_ethic_5 value = 2 }
+		set_variable = { which = msi_dsai_ms_ethic_6 value = 8 }
+		set_variable = { which = msi_dsai_ms_ethic_7 value = 5 }
+		set_variable = { which = msi_dsai_ms_ethic_8 value = 6 }
 
 		set_variable = { which = msi_dsai_ms_planets_1 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_joint value = 0 }
 		set_variable = { which = msi_dsai_ms_planets_2 value = 0 }
 		set_variable = { which = msi_dsai_ms_planets_3 value = 0 }
 		set_variable = { which = msi_dsai_ms_planets_4 value = 0 }
 		set_variable = { which = msi_dsai_ms_planets_5 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_6 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_7 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_8 value = 0 }
 
 		# 和平共处起源：母星割据格局下由人民阵线担任轮值主席
 		if = {
@@ -58,29 +68,103 @@ msi_dsai_ms_init = {
 		if = {
 			limit = { exists = capital_scope }
 			capital_scope = {
-				add_modifier = { modifier = msi_dsai_pm_ms_member_1 }
-				add_modifier = { modifier = msi_dsai_pm_ms_member_2 }
-				add_modifier = { modifier = msi_dsai_pm_ms_member_3 }
-				add_modifier = { modifier = msi_dsai_pm_ms_member_4 }
-				add_modifier = { modifier = msi_dsai_pm_ms_member_5 }
+				# 首都由全部成员国共有，统一挂“联合主权”，不再分挂五国主权
+				add_modifier = { modifier = msi_dsai_pm_ms_joint }
 				set_variable = { which = msi_dsai_ms_owner value = 0 }
 			}
 		}
 
+		# 轮值主席取第一席（后面的 china 判断可能覆盖）
 		msi_dsai_ms_recount_colonies = yes
 		msi_dsai_ms_sat_sync = yes
+
+		# 活动议席：和平共处起源优先锁定人民阵线、联合学院、神圣领域；
+		# 其次 human_1 标记锁定合众联邦、人民阵线、钢铁国度；其余随机。
+		set_variable = { which = msi_dsai_ms_seat_1 value = 0 }
+		set_variable = { which = msi_dsai_ms_seat_2 value = 0 }
+		set_variable = { which = msi_dsai_ms_seat_3 value = 0 }
+		if = {
+			limit = { has_origin = origin_advanced_start_independent }
+			set_variable = { which = msi_dsai_ms_seat_1 value = 2 }
+			set_variable = { which = msi_dsai_ms_seat_2 value = 7 }
+			set_variable = { which = msi_dsai_ms_seat_3 value = 8 }
+		}
+		else_if = {
+			limit = { has_country_flag = human_1 }
+			set_variable = { which = msi_dsai_ms_seat_1 value = 1 }
+			set_variable = { which = msi_dsai_ms_seat_2 value = 2 }
+			set_variable = { which = msi_dsai_ms_seat_3 value = 3 }
+		}
+		else = {
+			random_list = {
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 1 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 2 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 3 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 4 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 5 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 6 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 7 } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_1 value = 8 } }
+			}
+			random_list = {
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 1 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 1 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 2 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 2 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 3 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 3 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 4 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 4 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 5 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 5 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 6 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 6 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 7 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 7 } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_2 value = 8 } modifier = { factor = 0 check_variable = { which = msi_dsai_ms_seat_1 value = 8 } } }
+			}
+			random_list = {
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 1 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 1 } check_variable = { which = msi_dsai_ms_seat_2 value = 1 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 2 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 2 } check_variable = { which = msi_dsai_ms_seat_2 value = 2 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 3 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 3 } check_variable = { which = msi_dsai_ms_seat_2 value = 3 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 4 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 4 } check_variable = { which = msi_dsai_ms_seat_2 value = 4 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 5 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 5 } check_variable = { which = msi_dsai_ms_seat_2 value = 5 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 6 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 6 } check_variable = { which = msi_dsai_ms_seat_2 value = 6 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 7 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 7 } check_variable = { which = msi_dsai_ms_seat_2 value = 7 } } } }
+				1 = { set_variable = { which = msi_dsai_ms_seat_3 value = 8 } modifier = { factor = 0 OR = { check_variable = { which = msi_dsai_ms_seat_1 value = 8 } check_variable = { which = msi_dsai_ms_seat_2 value = 8 } } } }
+			}
+		}
+		# china 标记：确保人民阵线在席，若三席都没有人民阵线则替换第一席
+		if = {
+			limit = { has_country_flag = china }
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							check_variable = { which = msi_dsai_ms_seat_1 value = 2 }
+							check_variable = { which = msi_dsai_ms_seat_2 value = 2 }
+							check_variable = { which = msi_dsai_ms_seat_3 value = 2 }
+						}
+					}
+				}
+				set_variable = { which = msi_dsai_ms_seat_1 value = 2 }
+			}
+		}
+		# 轮值主席：china 标记固定为人民阵线，其余取第一席
+		if = {
+			limit = { has_country_flag = china }
+			set_variable = { which = msi_dsai_ms_chair value = 2 }
+		}
+		else = {
+			set_variable = { which = msi_dsai_ms_chair value = msi_dsai_ms_seat_1 }
+		}
+		msi_dsai_ms_chair_buff_sync = yes
 	}
 }
 
-# ---------------------------------------------------------------------------
-# 重算各成员国的殖民星球数（按行星上的 msi_dsai_ms_owner 变量统计）
-# ---------------------------------------------------------------------------
 msi_dsai_ms_recount_colonies = {
 	set_variable = { which = msi_dsai_ms_planets_1 value = 0 }
 	set_variable = { which = msi_dsai_ms_planets_2 value = 0 }
 	set_variable = { which = msi_dsai_ms_planets_3 value = 0 }
 	set_variable = { which = msi_dsai_ms_planets_4 value = 0 }
 	set_variable = { which = msi_dsai_ms_planets_5 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_6 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_7 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_8 value = 0 }
+	set_variable = { which = msi_dsai_ms_planets_joint value = 0 }
 
 	every_owned_planet = {
 		limit = {
@@ -117,12 +201,36 @@ msi_dsai_ms_recount_colonies = {
 		}
 		owner = { change_variable = { which = msi_dsai_ms_planets_5 value = 1 } }
 	}
+	every_owned_planet = {
+		limit = {
+			is_colony = yes
+			check_variable = { which = msi_dsai_ms_owner value = 6 }
+		}
+		owner = { change_variable = { which = msi_dsai_ms_planets_6 value = 1 } }
+	}
+	every_owned_planet = {
+		limit = {
+			is_colony = yes
+			check_variable = { which = msi_dsai_ms_owner value = 7 }
+		}
+		owner = { change_variable = { which = msi_dsai_ms_planets_7 value = 1 } }
+	}
+	every_owned_planet = {
+		limit = {
+			is_colony = yes
+			check_variable = { which = msi_dsai_ms_owner value = 8 }
+		}
+		owner = { change_variable = { which = msi_dsai_ms_planets_8 value = 1 } }
+	}
+	every_owned_planet = {
+		limit = {
+			is_colony = yes
+			has_modifier = msi_dsai_pm_ms_joint
+		}
+		owner = { change_variable = { which = msi_dsai_ms_planets_joint value = 1 } }
+	}
 }
 
-# ---------------------------------------------------------------------------
-# 满意度加减（参数：VAR = 满意度变量名，VALUE = 变动值）
-# 结果夹在 0~100 之间。
-# ---------------------------------------------------------------------------
 msi_dsai_ms_sat_change = {
 	change_variable = { which = $VAR$ value = $VALUE$ }
 	if = {
@@ -160,6 +268,18 @@ msi_dsai_ms_sat_sync = {
 	remove_modifier = msi_dsai_ms_sat_5_content
 	remove_modifier = msi_dsai_ms_sat_5_cold
 	remove_modifier = msi_dsai_ms_sat_5_hostile
+	remove_modifier = msi_dsai_ms_sat_6_loyal
+	remove_modifier = msi_dsai_ms_sat_6_content
+	remove_modifier = msi_dsai_ms_sat_6_cold
+	remove_modifier = msi_dsai_ms_sat_6_hostile
+	remove_modifier = msi_dsai_ms_sat_7_loyal
+	remove_modifier = msi_dsai_ms_sat_7_content
+	remove_modifier = msi_dsai_ms_sat_7_cold
+	remove_modifier = msi_dsai_ms_sat_7_hostile
+	remove_modifier = msi_dsai_ms_sat_8_loyal
+	remove_modifier = msi_dsai_ms_sat_8_content
+	remove_modifier = msi_dsai_ms_sat_8_cold
+	remove_modifier = msi_dsai_ms_sat_8_hostile
 
 	# 成员国 1
 	if = {
@@ -244,6 +364,51 @@ msi_dsai_ms_sat_sync = {
 	}
 	else = {
 		add_modifier = { modifier = msi_dsai_ms_sat_5_hostile }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_6 value >= @msi_dsai_ms_sat_loyal } }
+		add_modifier = { modifier = msi_dsai_ms_sat_6_loyal }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_6 value >= @msi_dsai_ms_sat_content } }
+		add_modifier = { modifier = msi_dsai_ms_sat_6_content }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_6 value >= @msi_dsai_ms_sat_cold } }
+		add_modifier = { modifier = msi_dsai_ms_sat_6_cold }
+	}
+	else = {
+		add_modifier = { modifier = msi_dsai_ms_sat_6_hostile }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_7 value >= @msi_dsai_ms_sat_loyal } }
+		add_modifier = { modifier = msi_dsai_ms_sat_7_loyal }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_7 value >= @msi_dsai_ms_sat_content } }
+		add_modifier = { modifier = msi_dsai_ms_sat_7_content }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_7 value >= @msi_dsai_ms_sat_cold } }
+		add_modifier = { modifier = msi_dsai_ms_sat_7_cold }
+	}
+	else = {
+		add_modifier = { modifier = msi_dsai_ms_sat_7_hostile }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_8 value >= @msi_dsai_ms_sat_loyal } }
+		add_modifier = { modifier = msi_dsai_ms_sat_8_loyal }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_8 value >= @msi_dsai_ms_sat_content } }
+		add_modifier = { modifier = msi_dsai_ms_sat_8_content }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_sat_8 value >= @msi_dsai_ms_sat_cold } }
+		add_modifier = { modifier = msi_dsai_ms_sat_8_cold }
+	}
+	else = {
+		add_modifier = { modifier = msi_dsai_ms_sat_8_hostile }
 	}
 }
 
@@ -461,6 +626,135 @@ msi_dsai_ms_planet_assign_5 = {
 }
 
 # 收归联合政府直辖（行星 scope）。原成员国小幅不满。
+msi_dsai_ms_planet_assign_6 = {
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 1 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_1 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 2 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_2 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 3 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_3 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 4 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_4 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 0 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_transfer } }
+	}
+	else = {
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = 5 } }
+	}
+
+	remove_modifier = msi_dsai_pm_ms_member_1
+	remove_modifier = msi_dsai_pm_ms_member_2
+	remove_modifier = msi_dsai_pm_ms_member_3
+	remove_modifier = msi_dsai_pm_ms_member_4
+	remove_modifier = msi_dsai_pm_ms_member_5
+	remove_modifier = msi_dsai_pm_ms_member_6
+	remove_modifier = msi_dsai_pm_ms_member_7
+	remove_modifier = msi_dsai_pm_ms_member_8
+	add_modifier = { modifier = msi_dsai_pm_ms_member_6 }
+	set_variable = { which = msi_dsai_ms_owner value = 6 }
+
+	owner = {
+		msi_dsai_ms_recount_colonies = yes
+		msi_dsai_ms_sat_sync = yes
+	}
+}
+
+msi_dsai_ms_planet_assign_7 = {
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 1 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_1 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 2 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_2 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 3 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_3 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 4 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_4 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 0 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_transfer } }
+	}
+	else = {
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = 5 } }
+	}
+
+	remove_modifier = msi_dsai_pm_ms_member_1
+	remove_modifier = msi_dsai_pm_ms_member_2
+	remove_modifier = msi_dsai_pm_ms_member_3
+	remove_modifier = msi_dsai_pm_ms_member_4
+	remove_modifier = msi_dsai_pm_ms_member_5
+	remove_modifier = msi_dsai_pm_ms_member_6
+	remove_modifier = msi_dsai_pm_ms_member_7
+	remove_modifier = msi_dsai_pm_ms_member_8
+	add_modifier = { modifier = msi_dsai_pm_ms_member_7 }
+	set_variable = { which = msi_dsai_ms_owner value = 7 }
+
+	owner = {
+		msi_dsai_ms_recount_colonies = yes
+		msi_dsai_ms_sat_sync = yes
+	}
+}
+
+msi_dsai_ms_planet_assign_8 = {
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 1 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_1 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 2 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_2 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 3 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_3 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 4 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_4 VALUE = @msi_dsai_ms_sat_takeover_penalty } }
+	}
+
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 0 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_transfer } }
+	}
+	else = {
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = 5 } }
+	}
+
+	remove_modifier = msi_dsai_pm_ms_member_1
+	remove_modifier = msi_dsai_pm_ms_member_2
+	remove_modifier = msi_dsai_pm_ms_member_3
+	remove_modifier = msi_dsai_pm_ms_member_4
+	remove_modifier = msi_dsai_pm_ms_member_5
+	remove_modifier = msi_dsai_pm_ms_member_6
+	remove_modifier = msi_dsai_pm_ms_member_7
+	remove_modifier = msi_dsai_pm_ms_member_8
+	add_modifier = { modifier = msi_dsai_pm_ms_member_8 }
+	set_variable = { which = msi_dsai_ms_owner value = 8 }
+
+	owner = {
+		msi_dsai_ms_recount_colonies = yes
+		msi_dsai_ms_sat_sync = yes
+	}
+}
+
 msi_dsai_ms_planet_release = {
 	if = {
 		limit = { check_variable = { which = msi_dsai_ms_owner value = 1 } }
@@ -482,12 +776,28 @@ msi_dsai_ms_planet_release = {
 		limit = { check_variable = { which = msi_dsai_ms_owner value = 5 } }
 		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = -10 } }
 	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 6 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = -10 } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 7 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = -10 } }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_owner value = 8 } }
+		owner = { msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = -10 } }
+	}
 
 	remove_modifier = msi_dsai_pm_ms_member_1
 	remove_modifier = msi_dsai_pm_ms_member_2
 	remove_modifier = msi_dsai_pm_ms_member_3
 	remove_modifier = msi_dsai_pm_ms_member_4
 	remove_modifier = msi_dsai_pm_ms_member_5
+	remove_modifier = msi_dsai_pm_ms_member_6
+	remove_modifier = msi_dsai_pm_ms_member_7
+	remove_modifier = msi_dsai_pm_ms_member_8
+	add_modifier = { modifier = msi_dsai_pm_ms_joint }
 	set_variable = { which = msi_dsai_ms_owner value = 0 }
 
 	owner = {
@@ -518,6 +828,18 @@ msi_dsai_ms_planet_assign_selected = {
 		limit = { owner = { check_variable = { which = msi_dsai_ms_selected value = 5 } } }
 		msi_dsai_ms_planet_assign_5 = yes
 	}
+	else_if = {
+		limit = { owner = { check_variable = { which = msi_dsai_ms_selected value = 6 } } }
+		msi_dsai_ms_planet_assign_6 = yes
+	}
+	else_if = {
+		limit = { owner = { check_variable = { which = msi_dsai_ms_selected value = 7 } } }
+		msi_dsai_ms_planet_assign_7 = yes
+	}
+	else_if = {
+		limit = { owner = { check_variable = { which = msi_dsai_ms_selected value = 8 } } }
+		msi_dsai_ms_planet_assign_8 = yes
+	}
 }
 
 # ---------------------------------------------------------------------------
@@ -528,9 +850,10 @@ msi_dsai_ms_chair_skip = {
 		limit = { msi_dsai_ms_chair_blocked = yes }
 		change_variable = { which = msi_dsai_ms_chair value = 1 }
 		if = {
-			limit = { check_variable = { which = msi_dsai_ms_chair value > 5 } }
+			limit = { check_variable = { which = msi_dsai_ms_chair value > 8 } }
 			set_variable = { which = msi_dsai_ms_chair value = 1 }
 		}
+		msi_dsai_ms_chair_buff_sync = yes
 	}
 }
 
@@ -538,6 +861,7 @@ msi_dsai_ms_chair_skip = {
 # 轮值主席推进：每年 +1，满 10 年顺延到下一国（1→2→…→5→1）
 # 顺延后跳过被首都割据地块封锁的成员国（最多检查 5 次，覆盖连续封锁）
 # ---------------------------------------------------------------------------
+
 msi_dsai_ms_chair_advance = {
 	change_variable = { which = msi_dsai_ms_chair_timer value = 1 }
 	if = {
@@ -545,9 +869,12 @@ msi_dsai_ms_chair_advance = {
 		set_variable = { which = msi_dsai_ms_chair_timer value = 0 }
 		change_variable = { which = msi_dsai_ms_chair value = 1 }
 		if = {
-			limit = { check_variable = { which = msi_dsai_ms_chair value > 5 } }
+			limit = { check_variable = { which = msi_dsai_ms_chair value > 8 } }
 			set_variable = { which = msi_dsai_ms_chair value = 1 }
 		}
+		msi_dsai_ms_chair_skip = yes
+		msi_dsai_ms_chair_skip = yes
+		msi_dsai_ms_chair_skip = yes
 		msi_dsai_ms_chair_skip = yes
 		msi_dsai_ms_chair_skip = yes
 		msi_dsai_ms_chair_skip = yes
@@ -574,6 +901,12 @@ msi_dsai_ms_yearly_check = {
 	change_variable = { which = msi_dsai_ms_gap_4 value = @msi_dsai_ms_colony_gap }
 	set_variable = { which = msi_dsai_ms_gap_5 value = msi_dsai_ms_planets_5 }
 	change_variable = { which = msi_dsai_ms_gap_5 value = @msi_dsai_ms_colony_gap }
+	set_variable = { which = msi_dsai_ms_gap_6 value = msi_dsai_ms_planets_6 }
+	change_variable = { which = msi_dsai_ms_gap_6 value = @msi_dsai_ms_colony_gap }
+	set_variable = { which = msi_dsai_ms_gap_7 value = msi_dsai_ms_planets_7 }
+	change_variable = { which = msi_dsai_ms_gap_7 value = @msi_dsai_ms_colony_gap }
+	set_variable = { which = msi_dsai_ms_gap_8 value = msi_dsai_ms_planets_8 }
+	change_variable = { which = msi_dsai_ms_gap_8 value = @msi_dsai_ms_colony_gap }
 
 	# 有任何一个成员国比该国多 3 个及以上殖民地时，满意度逐渐下降
 	if = {
@@ -631,6 +964,48 @@ msi_dsai_ms_yearly_check = {
 		}
 		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_gap_penalty }
 	}
+	if = {
+		limit = {
+			OR = {
+				check_variable = { which = msi_dsai_ms_planets_1 value >= msi_dsai_ms_gap_6 }
+				check_variable = { which = msi_dsai_ms_planets_2 value >= msi_dsai_ms_gap_6 }
+				check_variable = { which = msi_dsai_ms_planets_3 value >= msi_dsai_ms_gap_6 }
+				check_variable = { which = msi_dsai_ms_planets_4 value >= msi_dsai_ms_gap_6 }
+				check_variable = { which = msi_dsai_ms_planets_5 value >= msi_dsai_ms_gap_6 }
+				check_variable = { which = msi_dsai_ms_planets_7 value >= msi_dsai_ms_gap_6 }
+				check_variable = { which = msi_dsai_ms_planets_8 value >= msi_dsai_ms_gap_6 }
+			}
+		}
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_gap_penalty }
+	}
+	if = {
+		limit = {
+			OR = {
+				check_variable = { which = msi_dsai_ms_planets_1 value >= msi_dsai_ms_gap_7 }
+				check_variable = { which = msi_dsai_ms_planets_2 value >= msi_dsai_ms_gap_7 }
+				check_variable = { which = msi_dsai_ms_planets_3 value >= msi_dsai_ms_gap_7 }
+				check_variable = { which = msi_dsai_ms_planets_4 value >= msi_dsai_ms_gap_7 }
+				check_variable = { which = msi_dsai_ms_planets_5 value >= msi_dsai_ms_gap_7 }
+				check_variable = { which = msi_dsai_ms_planets_6 value >= msi_dsai_ms_gap_7 }
+				check_variable = { which = msi_dsai_ms_planets_8 value >= msi_dsai_ms_gap_7 }
+			}
+		}
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_gap_penalty }
+	}
+	if = {
+		limit = {
+			OR = {
+				check_variable = { which = msi_dsai_ms_planets_1 value >= msi_dsai_ms_gap_8 }
+				check_variable = { which = msi_dsai_ms_planets_2 value >= msi_dsai_ms_gap_8 }
+				check_variable = { which = msi_dsai_ms_planets_3 value >= msi_dsai_ms_gap_8 }
+				check_variable = { which = msi_dsai_ms_planets_4 value >= msi_dsai_ms_gap_8 }
+				check_variable = { which = msi_dsai_ms_planets_5 value >= msi_dsai_ms_gap_8 }
+				check_variable = { which = msi_dsai_ms_planets_6 value >= msi_dsai_ms_gap_8 }
+				check_variable = { which = msi_dsai_ms_planets_7 value >= msi_dsai_ms_gap_8 }
+			}
+		}
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_gap_penalty }
+	}
 
 	# 轮值主席国获得声望加成
 	if = {
@@ -652,6 +1027,18 @@ msi_dsai_ms_yearly_check = {
 	if = {
 		limit = { check_variable = { which = msi_dsai_ms_chair value = 5 } }
 		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_chair_bonus }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_chair value = 6 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_chair_bonus }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_chair value = 7 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_chair_bonus }
+	}
+	if = {
+		limit = { check_variable = { which = msi_dsai_ms_chair value = 8 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_chair_bonus }
 	}
 
 	msi_dsai_ms_sat_sync = yes
@@ -680,6 +1067,18 @@ msi_dsai_ms_woo_apply = {
 	else_if = {
 		limit = { check_variable = { which = msi_dsai_ms_selected value = 5 } }
 		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_woo }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 6 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_woo }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 7 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_woo }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 8 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_woo }
 	}
 
 	add_resource = { influence = -200 }
@@ -710,6 +1109,18 @@ msi_dsai_ms_sanction_apply = {
 	else_if = {
 		limit = { check_variable = { which = msi_dsai_ms_selected value = 5 } }
 		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_sanction }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 6 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_sanction }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 7 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_sanction }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 8 } }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_sanction }
 	}
 
 	add_modifier = { modifier = msi_dsai_ms_sanctioned days = 3600 }
@@ -745,6 +1156,21 @@ msi_dsai_ms_set_ethic = {
 		set_variable = { which = msi_dsai_ms_ethic_5 value = $ETHIC$ }
 		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_ethic_change }
 	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 6 } }
+		set_variable = { which = msi_dsai_ms_ethic_6 value = $ETHIC$ }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_ethic_change }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 7 } }
+		set_variable = { which = msi_dsai_ms_ethic_7 value = $ETHIC$ }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_ethic_change }
+	}
+	else_if = {
+		limit = { check_variable = { which = msi_dsai_ms_selected value = 8 } }
+		set_variable = { which = msi_dsai_ms_ethic_8 value = $ETHIC$ }
+		msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_ethic_change }
+	}
 
 	add_resource = { influence = -150 }
 	add_resource = { unity = -50 }
@@ -777,6 +1203,18 @@ msi_dsai_ms_cleanup = {
 	remove_modifier = msi_dsai_ms_sat_5_content
 	remove_modifier = msi_dsai_ms_sat_5_cold
 	remove_modifier = msi_dsai_ms_sat_5_hostile
+	remove_modifier = msi_dsai_ms_sat_6_loyal
+	remove_modifier = msi_dsai_ms_sat_6_content
+	remove_modifier = msi_dsai_ms_sat_6_cold
+	remove_modifier = msi_dsai_ms_sat_6_hostile
+	remove_modifier = msi_dsai_ms_sat_7_loyal
+	remove_modifier = msi_dsai_ms_sat_7_content
+	remove_modifier = msi_dsai_ms_sat_7_cold
+	remove_modifier = msi_dsai_ms_sat_7_hostile
+	remove_modifier = msi_dsai_ms_sat_8_loyal
+	remove_modifier = msi_dsai_ms_sat_8_content
+	remove_modifier = msi_dsai_ms_sat_8_cold
+	remove_modifier = msi_dsai_ms_sat_8_hostile
 
 	remove_modifier = msi_dsai_ms_wooed
 	remove_modifier = msi_dsai_ms_sanctioned
@@ -790,6 +1228,10 @@ msi_dsai_ms_cleanup = {
 			remove_modifier = msi_dsai_pm_ms_member_3
 			remove_modifier = msi_dsai_pm_ms_member_4
 			remove_modifier = msi_dsai_pm_ms_member_5
+			remove_modifier = msi_dsai_pm_ms_joint
+			remove_modifier = msi_dsai_pm_ms_member_6
+			remove_modifier = msi_dsai_pm_ms_member_7
+			remove_modifier = msi_dsai_pm_ms_member_8
 		}
 	}
 
@@ -799,8 +1241,66 @@ msi_dsai_ms_cleanup = {
 		remove_modifier = msi_dsai_pm_ms_member_3
 		remove_modifier = msi_dsai_pm_ms_member_4
 		remove_modifier = msi_dsai_pm_ms_member_5
+		remove_modifier = msi_dsai_pm_ms_joint
+		remove_modifier = msi_dsai_pm_ms_member_6
+		remove_modifier = msi_dsai_pm_ms_member_7
+		remove_modifier = msi_dsai_pm_ms_member_8
 		set_variable = { which = msi_dsai_ms_owner value = 0 }
 	}
 
 	remove_country_flag = msi_dsai_ms_initialized
+}
+# ---------------------------------------------------------------------------
+# replaced member satisfaction penalty (-30)
+# ---------------------------------------------------------------------------
+msi_dsai_ms_replaced_penalty = {
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 1 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_1 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 2 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_2 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 3 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_3 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 4 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_4 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 5 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 6 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 7 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = -30 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_replaced value = 8 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = -30 } }
+	set_variable = { which = msi_dsai_ms_replaced value = 0 }
+}
+# sanction a chosen target: target loses, initiator gains
+msi_dsai_ms_sanction_target = {
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 1 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_1 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 2 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_2 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 3 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_3 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 4 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_4 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 5 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 6 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 7 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_target value = 8 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_sanction } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 1 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_1 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 2 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_2 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 3 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_3 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 4 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_4 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 5 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_5 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 6 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_6 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 7 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_7 VALUE = @msi_dsai_ms_sat_woo } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_selected value = 8 } } msi_dsai_ms_sat_change = { VAR = msi_dsai_ms_sat_8 VALUE = @msi_dsai_ms_sat_woo } }
+	add_modifier = { modifier = msi_dsai_ms_sanctioned days = 3600 }
+	msi_dsai_ms_sat_sync = yes
+}
+# 轮值主席 buff 同步：移除全部旧的，按当前主席挂载对应 buff
+msi_dsai_ms_chair_buff_sync = {
+	remove_modifier = msi_dsai_ms_chair_buff_1
+	remove_modifier = msi_dsai_ms_chair_buff_2
+	remove_modifier = msi_dsai_ms_chair_buff_3
+	remove_modifier = msi_dsai_ms_chair_buff_4
+	remove_modifier = msi_dsai_ms_chair_buff_5
+	remove_modifier = msi_dsai_ms_chair_buff_6
+	remove_modifier = msi_dsai_ms_chair_buff_7
+	remove_modifier = msi_dsai_ms_chair_buff_8
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 1 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_1 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 2 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_2 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 3 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_3 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 4 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_4 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 5 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_5 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 6 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_6 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 7 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_7 } }
+	if = { limit = { check_variable = { which = msi_dsai_ms_chair value = 8 } } add_modifier = { modifier = msi_dsai_ms_chair_buff_8 } }
 }

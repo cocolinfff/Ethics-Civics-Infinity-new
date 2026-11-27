@@ -1,0 +1,307 @@
+# Su - paragon official acquired through the archaeological chain.
+# The site definition lives in common/archaeological_site_types/msi_dsai_paragon_sites.txt.
+# Su speaks in flat, clipped, procedural sentences; unlike AM-001 and Lilith she
+# never argues, never boasts, and never comments on anything she was not asked about.
+
+namespace = msi_dsai_su
+
+###################################
+#  Setup
+###################################
+
+# Hidden setup event, fired from on_game_start_country.
+country_event = {
+	id = msi_dsai_su.1
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		has_global_flag = eci_special_leader_yes
+	}
+
+	immediate = {
+		# The dig site appears exactly 20 years after game start.
+		country_event = { id = msi_dsai_su.2 years = 20 }
+	}
+}
+
+# Discovery event: this is where the archaeological site is actually created.
+country_event = {
+	id = msi_dsai_su.2
+	title = "msi_dsai_su.2.name"
+	desc = "msi_dsai_su.2.desc"
+	picture = GFX_evt_archaeological_dig
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		has_global_flag = eci_special_leader_yes
+		NOT = { has_country_flag = msi_dsai_su_discovery_shown }
+	}
+
+	immediate = {
+		set_country_flag = msi_dsai_su_discovery_shown
+		msi_dsai_su_spawn_digsite_effect = yes
+		if = {
+			limit = {
+				msi_dsai_su_digsite_exists_trigger = yes
+			}
+			set_country_flag = msi_dsai_su_digsite_spawned
+		}
+		else = {
+			# Extremely rare safety net: try again a little later.
+			country_event = { id = msi_dsai_su.4 days = 120 }
+		}
+	}
+
+	option = {
+		name = msi_dsai_su.2.a
+	}
+}
+
+# Safety net retry. Does nothing if the site was created by msi_dsai_su.2.
+country_event = {
+	id = msi_dsai_su.4
+	hide_window = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_ai = no
+		exists = capital_scope
+		has_global_flag = eci_special_leader_yes
+		NOT = { has_country_flag = msi_dsai_su_digsite_spawned }
+	}
+
+	immediate = {
+		msi_dsai_su_spawn_digsite_effect = yes
+		if = {
+			limit = {
+				msi_dsai_su_digsite_exists_trigger = yes
+			}
+			set_country_flag = msi_dsai_su_digsite_spawned
+		}
+		else = {
+			# No barren world inside our borders yet. Try again every 5 years.
+			country_event = { id = msi_dsai_su.4 days = 1800 }
+		}
+	}
+}
+
+###################################
+#  Archaeological stages
+###################################
+
+# Stage 1 - the words behind the door
+fleet_event = {
+	id = msi_dsai_su.10
+	title = "msi_dsai_su.10.name"
+	desc = "msi_dsai_su.10.desc"
+	picture = GFX_evt_archaeological_dig
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_su.10.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 2 - rows of empty pods
+fleet_event = {
+	id = msi_dsai_su.11
+	title = "msi_dsai_su.11.name"
+	desc = "msi_dsai_su.11.desc"
+	picture = GFX_evt_derelict_interior
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_su.11.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 3 - the only pod still running
+fleet_event = {
+	id = msi_dsai_su.12
+	title = "msi_dsai_su.12.name"
+	desc = "msi_dsai_su.12.desc"
+	picture = GFX_evt_ancient_databank
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_su.12.a
+		owner = {
+			add_monthly_resource_mult = {
+				resource = society_research
+				value = @tier2researchreward
+				min = @tier2researchmin
+				max = @tier2researchmax
+			}
+		}
+	}
+}
+
+# Stage 4 - wake her up, or leave her in the pod
+fleet_event = {
+	id = msi_dsai_su.13
+	title = "msi_dsai_su.13.name"
+	desc = "msi_dsai_su.13.desc"
+	picture = GFX_evt_sapient_AI
+	location = from
+
+	archaeology = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = msi_dsai_su.13.a
+		trigger = {
+			owner = { has_global_flag = eci_special_leader_yes }
+		}
+		owner = {
+			msi_dsai_su_create_recruit_leader_effect = yes
+			country_event = { id = msi_dsai_su.14 }
+		}
+	}
+
+	option = {
+		name = msi_dsai_su.13.b
+		owner = {
+			add_resource = {
+				physics_research = 1500
+				society_research = 1500
+			}
+		}
+	}
+}
+
+###################################
+#  Recruitment
+###################################
+
+# Recruitment window.
+country_event = {
+	id = msi_dsai_su.14
+	title = "msi_dsai_su.14.name"
+	desc = "msi_dsai_su.14.desc"
+	picture = GFX_leader_recruitment_bg_renowned
+	event_window_type = leader_recruit
+
+	is_triggered_only = yes
+
+	trigger = {
+		exists = event_target:msi_dsai_su_leader
+	}
+
+	picture_event_data = {
+		portrait = event_target:msi_dsai_su_leader
+	}
+
+	option = {
+		name = HIRE
+		tag = hire_leader
+		hidden_effect = {
+			clone_leader = {
+				target = event_target:msi_dsai_su_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = msi_dsai_su_hired
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+			}
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization = MESSAGE_RECRUITED_LEADER_DESC
+				days = 10
+				target = last_created_leader
+				variable = {
+					type = name
+					localization = LEADER
+					scope = last_created_leader
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = msi_dsai_su.14.d
+		tag = dismiss_leader
+		custom_tooltip = msi_dsai_su.14.d.custom_tooltip
+		hidden_effect = {
+			clone_leader = {
+				target = event_target:msi_dsai_su_leader
+				tier = leader_tier_legendary
+			}
+			last_created_leader = {
+				save_global_event_target_as = msi_dsai_su_hired
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+			}
+			create_message = {
+				type = MESSAGE_RECRUITED_LEADER
+				localization = MESSAGE_RECRUITED_LEADER_DESC
+				days = 10
+				target = last_created_leader
+				variable = {
+					type = name
+					localization = LEADER
+					scope = last_created_leader
+				}
+				variable = {
+					key = "border"
+					value = "GFX_border_legendary"
+				}
+			}
+		}
+	}
+
+	option = {
+		name = msi_dsai_su.14.a
+		response_text = msi_dsai_su.14.a.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = msi_dsai_su.14.b
+		response_text = msi_dsai_su.14.b.response
+		is_dialog_only = yes
+	}
+	option = {
+		name = msi_dsai_su.14.c
+		response_text = msi_dsai_su.14.c.response
+		is_dialog_only = yes
+	}
+}

@@ -1,0 +1,274 @@
+# Scripted effects for the AM-001 and Su paragon event chains.
+
+###################################
+#  AM-001
+###################################
+
+# Country scope.
+# Plants the AM-001 anomaly on an uncolonized rocky planet in the capital system
+# and marks the planet so msi_dsai_am001_anomaly_exists_trigger can see it.
+# If the capital system has no such body, a second pass accepts any unowned
+# planet except the capital and the ark.
+msi_dsai_am001_plant_anomaly_effect = {
+	capital_scope = {
+		solar_system = {
+			random_system_planet = {
+				limit = {
+					is_capital = no
+					is_star = no
+					is_colony = no
+					has_anomaly = no
+					NOT = { is_planet_class = pc_ark }
+					NOT = { is_planet_class = pc_gas_giant }
+					NOT = { has_planet_flag = suppress_archaeological_sites }
+				}
+				add_anomaly = {
+					category = msi_dsai_am001_category
+				}
+				set_planet_flag = msi_dsai_am001_anomaly_planet
+			}
+		}
+	}
+	if = {
+		limit = {
+			NOT = { msi_dsai_am001_anomaly_exists_trigger = yes }
+		}
+		capital_scope = {
+			solar_system = {
+				random_system_planet = {
+					limit = {
+						is_capital = no
+						is_star = no
+						has_anomaly = no
+						NOT = { is_planet_class = pc_ark }
+						NOT = { has_planet_flag = suppress_archaeological_sites }
+					}
+					add_anomaly = {
+						category = msi_dsai_am001_category
+					}
+					set_planet_flag = msi_dsai_am001_anomaly_planet
+				}
+			}
+		}
+	}
+}
+
+# Country scope.
+# Creates AM-001 in a temporary auto-deleting country, exiled and exposed as the
+# global event target msi_dsai_am001_leader. The leader_recruit window shows it
+# from there, and the HIRE option clones it into the player's country.
+msi_dsai_am001_create_recruit_leader_effect = {
+	create_country = {
+		name = "NAME_Unknown"
+		type = global_event
+		auto_delete = yes
+		flag = {
+			icon = {
+				category = "special"
+				file = "unknown.dds"
+			}
+			background = {
+				category = "backgrounds"
+				file = "00_solid.dds"
+			}
+			colors = {
+				"red"
+				"red"
+				"null"
+				"null"
+			}
+		}
+		effect = {
+			save_event_target_as = msi_dsai_am001_leader_country
+		}
+	}
+
+	event_target:msi_dsai_am001_leader_country = {
+		create_species = {
+			name = "NAME_AM001_Species"
+			plural = "NAME_AM001_Species_plural"
+			adjective = "NAME_AM001_Species_adj"
+			class = ROBOT
+			portrait = random
+			namelist = "AI"
+			immortal = yes
+			traits = {
+				trait = trait_mechanical
+			}
+			effect = {
+				save_event_target_as = msi_dsai_am001_species
+			}
+		}
+
+		create_leader = {
+			class = scientist
+			tier = leader_tier_legendary
+			species = event_target:msi_dsai_am001_species
+			name = "NAME_AM001"
+			skill = 10
+			gender = indeterminable
+			event_leader = no
+			skip_background_generation = yes
+			randomize_traits = no
+			custom_description = msi_dsai_am001_leader_background
+			custom_catch_phrase = msi_dsai_am001_catch_phrase
+			immortal = yes
+			hide_age = yes
+			background_ethic = ethic_materialist
+			traits = {
+				trait = leader_trait_eci_legendary_leader
+				trait = leader_trait_ruler_machine_intelligence
+				trait = leader_trait_psionic
+				trait = leader_trait_eci_am001
+			}
+			effect = {
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+				set_owner = root
+				# The councilor subclass is unavailable to gestalt empires, so it
+				# (and its dependent veteran trait) are added conditionally.
+				if = {
+					limit = {
+						root = { is_gestalt = no }
+					}
+					add_trait = {
+						trait = subclass_scientist_councilor
+						show_message = no
+					}
+					add_trait = {
+						trait = leader_trait_maniacal
+						show_message = no
+					}
+				}
+				exile_leader_as = msi_dsai_am001_leader
+				save_global_event_target_as = msi_dsai_am001_leader
+			}
+		}
+	}
+}
+
+###################################
+#  Su
+###################################
+
+# Country scope.
+# Spawns the Su dig site on a random barren world inside the empire's borders.
+# Nomadic empires (and any empire whose capital is an ark) keep a fallback:
+# a planet in the system the capital arkship is currently in.
+msi_dsai_su_spawn_digsite_effect = {
+	if = {
+		limit = {
+			OR = {
+				is_nomadic = yes
+				capital_scope = { is_planet_class = pc_ark }
+			}
+		}
+		capital_scope = {
+			solar_system = {
+				random_system_planet = {
+					limit = {
+						is_capital = no
+						NOT = { is_planet_class = pc_ark }
+						NOT = { exists = archaeological_site }
+						NOT = { has_planet_flag = suppress_archaeological_sites }
+					}
+					create_archaeological_site = msi_dsai_su_digsite
+				}
+			}
+		}
+	}
+	else = {
+		random_planet_within_border = {
+			limit = {
+				OR = {
+					is_planet_class = pc_barren
+					is_planet_class = pc_barren_cold
+				}
+				is_capital = no
+				is_colony = no
+				NOT = { exists = archaeological_site }
+				NOT = { has_planet_flag = suppress_archaeological_sites }
+			}
+			create_archaeological_site = msi_dsai_su_digsite
+		}
+	}
+}
+
+# Country scope.
+# Same recruit pipeline as AM-001. The portrait is rolled from the HUM portrait
+# pool, so it differs from save to save and is replaced by any portrait mod that
+# overrides the vanilla set.
+msi_dsai_su_create_recruit_leader_effect = {
+	create_country = {
+		name = "NAME_Unknown"
+		type = global_event
+		auto_delete = yes
+		flag = {
+			icon = {
+				category = "special"
+				file = "unknown.dds"
+			}
+			background = {
+				category = "backgrounds"
+				file = "00_solid.dds"
+			}
+			colors = {
+				"red"
+				"red"
+				"null"
+				"null"
+			}
+		}
+		effect = {
+			save_event_target_as = msi_dsai_su_leader_country
+		}
+	}
+
+	event_target:msi_dsai_su_leader_country = {
+		create_species = {
+			name = "NAME_Su_Species"
+			plural = "NAME_Su_Species_plural"
+			adjective = "NAME_Su_Species_adj"
+			class = HUM
+			portrait = random
+			namelist = "HUMAN1"
+			immortal = yes
+			traits = {
+				trait = trait_psionic
+			}
+			effect = {
+				save_event_target_as = msi_dsai_su_species
+			}
+		}
+
+		create_leader = {
+			class = official
+			tier = leader_tier_legendary
+			species = event_target:msi_dsai_su_species
+			name = "NAME_Su"
+			skill = 10
+			gender = female
+			event_leader = no
+			skip_background_generation = yes
+			randomize_traits = no
+			custom_description = msi_dsai_su_leader_background
+			custom_catch_phrase = msi_dsai_su_catch_phrase
+			immortal = yes
+			hide_age = yes
+			background_ethic = ethic_authoritarian
+			traits = {
+				trait = subclass_official_governor
+				trait = leader_trait_eci_legendary_leader
+				trait = leader_trait_psionic
+				trait = leader_trait_eci_su
+			}
+			effect = {
+				set_leader_flag = immune_to_negative_traits
+				set_leader_flag = leader_death_events_blocked
+				set_owner = root
+				exile_leader_as = msi_dsai_su_leader
+				save_global_event_target_as = msi_dsai_su_leader
+			}
+		}
+	}
+}

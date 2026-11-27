@@ -1,23 +1,363 @@
 # ============================================================================
-# 联合政府会议 —— 自定义面板（紧凑版）
+# 联合政府会议 —— 自定义面板
 #
 # 由 events/msi_dsai_member_events.txt 的 country_event msi_ms.10 通过
 # custom_gui = "msi_dsai_ms_panel" 打开。
 #
 # 交互结构：
-#   - 左侧五个成员国与“关闭”都是事件选项；点击选项会完成当前事件并重开面板，
-#     右侧信息随之刷新，不会留下未完成的旧窗口。
+#   - 左侧五张成员国名片仍是事件选项，只是每个选项用 custom_gui 指定了自己的
+#     外观容器（msi_dsai_ms_opt_1 ~ _opt_5，仿原版 enclave_caravaneer_option
+#     的写法）。点选名片会完成当前事件并重开面板，右侧详情随之刷新，不会留下
+#     未完成的旧窗口。
+#   - 「关闭」也是选项，外观容器 msi_dsai_ms_opt_close，排在名片列表末尾。
 #   - 信息栏下方的四个操作按钮是 effectButtonType，作用于当前选中成员国。
+#   - 名片只保留徽记与国名：事件选项的文字由引擎画在按钮正中，再加第二行
+#     会和它对叠，所以条目里不再放静态文本。
 #
 # 布局（窗口 1280 x 720，居中后四周留边）：
-#   标题 32,14 ｜ 副标题 34,44
-#   左侧选项列表 32,80，480 x 360
-#   右侧会议记录 540,80，700 x 360
-#   四个操作按钮 540,460 / 712,460 / 540,502 / 712,502
-#   说明文本 540,550
+#   标题 32,14 ｜ 副标题 34,44 ｜ 名册标题 34,74
+#   选项列表 32,100，480 x 568；每个条目 476 x 92（关闭条目同高，按钮靠上）
+#   右侧会议记录 540,100，700 x 460
+#   四个操作按钮 540,572 / 898,572 / 540,616 / 898,616，各 342 x 34
 # ============================================================================
 
 guiTypes = {
+	# ========================================================================
+	# 选项条目：成员国名片
+	# option_button 是原版写死的名字，OPTION_TEXT 是原版约定的占位符，
+	# 游戏会把选项的本地化文本填进去；trigger_icons / effect_icons 两个
+	# OverlappingElementsBox 原版条目必有，缺了会取不到实例，必须保留。
+	# ========================================================================
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_1"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_1_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_2"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_2_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_3"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_3_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_4"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_4_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_5"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_5_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+
+	# ========================================================================
+	# 选项条目：关闭
+	# 与名片条目同高（92），这样列表里所有条目的高度一致，滚动条计算最稳；
+	# 可见的按钮只在条目顶部占一条 34 高的横条，下方留空。
+	# ========================================================================
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_close"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 10 }
+			size = { x = 476 y = 34 }
+			font = "cg_16b"
+			text = "OPTION_TEXT"
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+
+	# ========================================================================
+	# 主窗口
+	# ========================================================================
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_6"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_6_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_7"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_7_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
+	containerWindowType = {
+		name = "msi_dsai_ms_opt_8"
+		position = { x = 0 y = 0 }
+		size = { width = 476 height = 92 }
+		moveable = no
+
+		buttonType = {
+			name = "option_button"
+			quadTextureSprite = "GFX_interface_list_light"
+			position = { x = 0 y = 0 }
+			size = { x = 476 y = 92 }
+			font = "malgun_goth_24"
+			format = left
+			text_offset = { x = 104 y = 10 }
+			text = "OPTION_TEXT"
+		}
+
+		iconType = {
+			name = "emblem"
+			spriteType = "GFX_msi_dsai_ms_member_8_large"
+			position = { x = 14 y = 10 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "trigger_icons"
+			position = { x = 386 y = 30 }
+			size = { x = 65 y = 28 }
+		}
+
+		OverlappingElementsBoxType = {
+			name = "effect_icons"
+			position = { x = 380 y = 54 }
+			size = { x = 72 y = 28 }
+			format = right
+		}
+	}
 	containerWindowType = {
 		name = "msi_dsai_ms_panel"
 		orientation = center
@@ -33,7 +373,7 @@ guiTypes = {
 		buttonType = {
 			name = "close"
 			quadTextureSprite = "GFX_close"
-			position = { x = -32 y = 20 }
+			position = { x = -3000 y = -3000 }
 			orientation = "UPPER_RIGHT"
 			shortcut = "ESCAPE"
 			clicksound = "back_click"
@@ -62,19 +402,33 @@ guiTypes = {
 		}
 
 		# ------------------------------------------------------------------
-		# 左侧：成员国与关闭（事件选项）
+		# 左侧：名册标题
+		# ------------------------------------------------------------------
+	instantTextBoxType = {
+		name = "msi_dsai_ms_roster_title"
+		font = "cg_16b"
+		text = "msi_dsai_ms_roster_title"
+		position = { x = 34 y = 158 }
+		maxWidth = 460
+		maxHeight = 20
+			fixedSize = yes
+			alwaysTransparent = yes
+		}
+
+		# ------------------------------------------------------------------
+		# 左侧：成员国名册（事件选项，条目外观见上面的 msi_dsai_ms_opt_N）
 		# ------------------------------------------------------------------
 		containerWindowType = {
 			name = "EVENT_DIPLO"
-			position = { x = 32 y = 80 }
-			size = { width = 480 height = 360 }
+			position = { x = 32 y = 100 }
+			size = { width = 480 height = 568 }
 			moveable = no
 
 			listboxType = {
 				name = "option_list"
 				position = { x = 0 y = 0 }
 				background = ""
-				size = { x = 480 y = 340 }
+				size = { x = 480 y = 568 }
 				spacing = 1
 				scrollbartype = "standardlistbox_slider"
 				borderSize = { x = 0 y = 0 }
@@ -101,20 +455,33 @@ guiTypes = {
 		# ------------------------------------------------------------------
 		# 右侧：会议记录（事件描述，随选中成员国刷新）
 		# ------------------------------------------------------------------
+		# 原版骨架控件保留（移出屏幕）：alien_message_background 是 buttonType，
+		# 直接铺在信息区上时，鼠标进出会触发按钮高亮，看起来像整个面板在闪。
+		# 信息区背景改用下面的静态容器，控件本身只留名字。
 		buttonType = {
 			name = "alien_message_background"
-			size = { x = 700 y = 360 }
-			position = { x = 540 y = 80 }
+			size = { x = 700 y = 460 }
+			position = { x = -3000 y = -3000 }
 			spriteType = "GFX_tiles_dark_area_cut_8"
 			alwaysTransparent = yes
+		}
+
+		containerWindowType = {
+			name = "msi_dsai_ms_info_bg"
+			position = { x = 540 y = 100 }
+			size = { width = 700 height = 460 }
+			background = {
+				name = "bg"
+				quadTextureSprite = "GFX_tiles_dark_area_cut_8"
+			}
 		}
 
 		instantTextBoxType = {
 			name = "alien_message"
 			font = "cg_16b"
-			position = { x = 556 y = 94 }
+			position = { x = 556 y = 114 }
 			maxWidth = 668
-			maxHeight = 332
+			maxHeight = 432
 			format = left
 			scrollbartype = "standardtext_slider"
 		}
@@ -125,8 +492,8 @@ guiTypes = {
 		effectButtonType = {
 			name = "msi_dsai_ms_action_woo"
 			quadTextureSprite = "GFX_interface_list_light"
-			position = { x = 540 y = 460 }
-			size = { x = 160 y = 34 }
+			position = { x = 540 y = 572 }
+			size = { x = 342 y = 34 }
 			buttonFont = "cg_16b"
 			buttonText = "msi_dsai_ms_btn_woo"
 			effect = "msi_dsai_ms_btn_woo"
@@ -136,8 +503,8 @@ guiTypes = {
 		effectButtonType = {
 			name = "msi_dsai_ms_action_transfer"
 			quadTextureSprite = "GFX_interface_list_light"
-			position = { x = 712 y = 460 }
-			size = { x = 160 y = 34 }
+			position = { x = 898 y = 572 }
+			size = { x = 342 y = 34 }
 			buttonFont = "cg_16b"
 			buttonText = "msi_dsai_ms_btn_transfer"
 			effect = "msi_dsai_ms_btn_transfer"
@@ -147,8 +514,8 @@ guiTypes = {
 		effectButtonType = {
 			name = "msi_dsai_ms_action_sanction"
 			quadTextureSprite = "GFX_interface_list_light"
-			position = { x = 540 y = 502 }
-			size = { x = 160 y = 34 }
+			position = { x = 540 y = 616 }
+			size = { x = 342 y = 34 }
 			buttonFont = "cg_16b"
 			buttonText = "msi_dsai_ms_btn_sanction"
 			effect = "msi_dsai_ms_btn_sanction"
@@ -156,25 +523,14 @@ guiTypes = {
 		}
 
 		effectButtonType = {
-			name = "msi_dsai_ms_action_ethic"
+			name = "msi_dsai_ms_action_change_seat"
 			quadTextureSprite = "GFX_interface_list_light"
-			position = { x = 712 y = 502 }
-			size = { x = 160 y = 34 }
+			position = { x = 898 y = 616 }
+			size = { x = 342 y = 34 }
 			buttonFont = "cg_16b"
-			buttonText = "msi_dsai_ms_btn_ethic"
-			effect = "msi_dsai_ms_btn_ethic"
+			buttonText = "msi_dsai_ms_btn_change_seat"
+			effect = "msi_dsai_ms_btn_change_seat"
 			clicksound = "confirm_click"
-		}
-
-		instantTextBoxType = {
-			name = "msi_dsai_ms_help"
-			font = "cg_16b"
-			text = "msi_dsai_ms_panel_help"
-			position = { x = 540 y = 550 }
-			maxWidth = 700
-			maxHeight = 120
-			format = left
-			alwaysTransparent = yes
 		}
 
 		# ------------------------------------------------------------------
